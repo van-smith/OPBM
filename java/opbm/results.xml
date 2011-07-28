@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+	<resultsdata>
+		<result datetime="Jul 21, 2011 at 04:03PM" name="OPBM Benchmark" tested="yes" score="0">
+			<suite name="Empty Suite" shortname="empty" tags="" tested="yes" score="0">Suite
+				<scenario name="Empty Scenario" shortname="empty" tags="" tested="yes" score="0">Scenario
+					<molecule name="Empty Atom" shortname="empty" tags="" tested="yes" score="0">Molecule
+						<atom shortname="empty" tags="" tested="yes" score="0" name="Alice in Wonderland" status="success">
+							<worklet name="Launch Microsoft Word 2010" shortname="LMW2010" timing="1.37273834079521" score="106.276488317876" tested="yes"></worklet>
+							<worklet name="Close Empty Document" shortname="CED" timing="1.7307446725513" score="105.462899188759" tested="yes"></worklet>
+							<worklet name="Open AliceInWonderland.html" shortname="OAIW" timing="6.13574677355554" score="80.0685408340079" tested="yes"></worklet>
+							<worklet name="Time to page down 25 times" shortname="Ttpd25t" timing="7.56624083120381" score="99.0365629698192" tested="yes"></worklet>
+							<worklet name="Save as PDF" shortname="SaPDF" timing="5.19085501975765" score="101.174833902585" tested="yes"></worklet>
+							<worklet name="Close Word 2010" shortname="CW2010" timing="0.661247969143297" score="98.9189426255032" tested="yes"></worklet>
+						</atom>
+					</molecule>
+				</scenario>
+			</suite>
+		</result>
+	</resultsdata>
+</opbm>

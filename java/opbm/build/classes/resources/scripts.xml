@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+	<scriptdata>
+		<comment>Flows are flow control operations usable in scripting molecules, scenarios or suites</comment>
+		<comment>Customs are bits of raw code to insert in scripting molecules, scenarios or suites</comment>
+		<comment>Abstracts are definitions between our internal set of commands, and the underlying scripting engine</comment>
+		<comment>Atoms are the smallest autonomous item, do a single thing</comment>
+		<comment>Molecules are smallest group of autonomous item, does a sequence of things</comment>
+		<comment>Scenarios are smallest group of sequences, does multiple sequences of things</comment>
+		<comment>Suites are largest group of multiple sequences, does an entire range of things</comment>
+		<flows>
+			<flow name="call">
+				<variables>(leftbrace)(colon)function, FUNCTION(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="function">
+				<variables>(leftbrace)(colon)function, FUNCTION name(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="functionEnd">
+				<variables></variables>
+			</flow>
+			<flow name="return">
+				<variables></variables>
+			</flow>
+			<flow name="goto">
+				<variables>(leftbrace)(colon)label, LABEL(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="label">
+				<variables>(leftbrace)(colon)label, LABEL name(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="switch">
+				<variables>(leftbrace)(colon)variable, VARIABLE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="case">
+				<variables>(leftbrace)(colon)value, VALUE or VARIABLE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="break">
+				<variables></variables>
+			</flow>
+			<flow name="default">
+				<variables></variables>
+			</flow>
+			<flow name="switchEnd">
+				<variables></variables>
+			</flow>
+			<flow name="do">
+				<variables></variables>
+			</flow>
+			<flow name="until">
+				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="while">
+				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="whileEnd">
+				<variables></variables>
+			</flow>
+			<flow name="for">
+				<variables>(leftbrace)(colon)variable, Variable name(colon)(rightbrace) (leftbrace)(colon)startvalue, START or variable name(colon)(rightbrace) (leftbrace)(colon)finishvalue, END or variable name(colon)(rightbrace) (leftbrace)(colon)stepvalue, STEP or variable name(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="next">
+				<variables></variables>
+			</flow>
+			<flow name="if">
+				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="elseif">
+				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="else">
+				<variables></variables>
+			</flow>
+			<flow name="ifEnd">
+				<variables></variables>
+			</flow>
+			<flow name="log">
+				<variables>(leftbrace)(colon)message, MESSAGE to log(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="throw">
+				<variables>(leftbrace)(colon)message, ERROR MESSAGE to throw(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="debug">
+				<variables>(leftbrace)(colon)message, DEBUG MESSAGE to show(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="quit">
+				<variables>(leftbrace)(colon)value, EXIT value(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="prompt">
+				<variables>(leftbrace)(colon)message, MESSAGE to prompt user with(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="optionDuo">
+				<variables>(leftbrace)(colon)message, MESSAGE to prompt user with(colon)(rightbrace) (leftbrace)(colon)option1, OPTION (poundsign)1 Prompt(colon)(rightbrace) (leftbrace)(colon)option2, OPTION (poundsign)2 Prompt(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="onOption1">
+				<variables>(leftbrace)(colon)label, Label if option (poundsign)1 chosen(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="onOption2">
+				<variables>(leftbrace)(colon)label, Label if option (poundsign)2 chosen(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="variable">
+				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace) (leftbrace)(colon)value, VALUE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="(plus)(plus)">
+				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="(hyphen)(hyphen)">
+				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="(plus)(equals)">
+				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace) (leftbrace)(colon)value, VALUE(colon)(rightbrace)</variables>
+			</flow>
+			<flow name="(hyphen)(equals)">
+				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace) (leftbrace)(colon)value, VALUE(colon)(rightbrace)</variables>
+			</flow>
+		</flows>
+		<customs>
+			<custom name="unused">
+				<tags></tags>
+				<insert></insert>
+			</custom>
+		</customs>
+		<abstracts>
+			<abstract name="execute">
+				<engine>autoit</engine>
+				<logical>execute</logical>
+				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace)</real>
+			</abstract>
+			<abstract name="executeParams">
+				<engine>autoit</engine>
+				<logical>execute_params</logical>
+				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace) (leftbrace)(colon)p1, First parameter(colon)(rightbrace) (leftbrace)(colon)p2, Second parameter(colon)(rightbrace) (leftbrace)(colon)p3, Third parameter(colon)(rightbrace) (leftbrace)(colon)p4, Fourth parameter(colon)(rightbrace) (leftbrace)(colon)p5, Fifth parameter(colon)(rightbrace) (leftbrace)(colon)p6, Sixth parameter(colon)(rightbrace) (leftbrace)(colon)p7, Seventh parameter(colon)(rightbrace) (leftbrace)(colon)p8, Eighth parameter(colon)(rightbrace) (leftbrace)(colon)p9, Ninth parameter(colon)(rightbrace) (leftbrace)(colon)p10, Tenth parameter(colon)(rightbrace)</real>
+			</abstract>
+		</abstracts>
+		<atoms>
+			<atom name="Excel Heat">
+				<abstract name="World Heat Calculation" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Word Alice">
+				<abstract name="Alice in Wonderland" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Opera 11.50 Install">
+				<abstract name="Install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Opera 11.50 Un(hyphen)install">
+				<abstract name="Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Opera SunSpider">
+				<abstract name="SunSpider" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Opera Kraken">
+				<abstract name="Kraken" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Opera Google V8">
+				<abstract name="Google V8" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Safari 5.1.7534.50 Install">
+				<abstract name="Install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Safari 5.1.7534.50 Un(hyphen)install">
+				<abstract name="Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Safari SunSpider">
+				<abstract name="SunSpider" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Safari Kraken">
+				<abstract name="Kraken" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Safari Google V8">
+				<abstract name="Google V8" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="IE SunSpider">
+				<abstract name="SunSpider" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="IE Kraken">
+				<abstract name="Kraken" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="IE Google V8">
+				<abstract name="Google V8" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Chrome 12.0.742.122 Install">
+				<abstract name="Install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Chrome 12.0.742.122 Un(hyphen)install">
+				<abstract name="Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Chrome SunSpider">
+				<abstract name="SunSpider" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Chrome Kraken">
+				<abstract name="Kraken" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Chrome Google V8">
+				<abstract name="Google V8" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Firefox 5.0.1 Install">
+				<abstract name="Install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
+					</options>
+				</abstract>
+				<flow name="quit" sourcename="quit">
+					<options>
+						<value>0</value>
+					</options>
+				</flow>
+			</atom>
+			<atom name="Firefox 5.0.1 Un(hyphen)install">
+				<abstract name="Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
+					</options>
+				</abstract>
+				<flow name="quit" sourcename="quit">
+					<options>
+						<value>0</value>
+					</options>
+				</flow>
+			</atom>
+			<atom name="Firefox SunSpider">
+				<abstract name="SunSpider" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Firefox Kraken">
+				<abstract name="Kraken" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Firefox Google V8">
+				<abstract name="Google V8" sourcename="execute">
+					<options>
+						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+		</atoms>
+		<molecules>
+			<molecule name="Opera Tests">
+				<atom name="Opera SunSpider" sourcename="Opera SunSpider"></atom>
+				<atom name="Opera Kraken" sourcename="Opera Kraken"></atom>
+				<atom name="Opera Google V8" sourcename="Opera Google V8"></atom>
+			</molecule>
+			<molecule name="Safari Tests">
+				<atom name="Safari SunSpider" sourcename="Safari SunSpider"></atom>
+				<atom name="Safari Kraken" sourcename="Safari Kraken"></atom>
+				<atom name="Safari Google V8" sourcename="Safari Google V8"></atom>
+			</molecule>
+			<molecule name="IE Tests">
+				<atom name="IE SunSpider" sourcename="IE SunSpider"></atom>
+				<atom name="IE Kraken" sourcename="IE Kraken"></atom>
+				<atom name="IE Google V8" sourcename="IE Google V8"></atom>
+			</molecule>
+			<molecule name="Chrome Tests">
+				<atom name="Chrome SunSpider" sourcename="Chrome SunSpider"></atom>
+				<atom name="Chrome Kraken" sourcename="Chrome Kraken"></atom>
+				<atom name="Chrome Google V8" sourcename="Chrome Google V8"></atom>
+			</molecule>
+			<molecule name="Firefox Tests">
+				<atom name="Firefox SunSpider" sourcename="Firefox SunSpider"></atom>
+				<atom name="Firefox Kraken" sourcename="Firefox Kraken"></atom>
+				<atom name="Firefox Google V8" sourcename="Firefox Google V8"></atom>
+			</molecule>
+		</molecules>
+		<scenarios>
+			<scenario name="Internet">
+				<molecule name="Opera" sourcename="Opera Tests"></molecule>
+				<molecule name="Safari" sourcename="Safari Tests"></molecule>
+				<molecule name="IE" sourcename="IE Tests"></molecule>
+				<molecule name="Chrome" sourcename="Chrome Tests"></molecule>
+				<molecule name="Firefox" sourcename="Firefox Tests"></molecule>
+			</scenario>
+		</scenarios>
+		<suites>
+			<suite name="Network">
+				<scenario name="Internet" sourcename="Internet"></scenario>
+			</suite>
+		</suites>
+	</scriptdata>
+	<machinedata>
+		<machines>
+			<machine name="sample">
+				<cpu name="AMDN660" sourcename="AMDN660"></cpu>
+			</machine>
+		</machines>
+		<manufacturers>
+			<manufacturer name="unspecified">
+				<manufacturer></manufacturer>
+				<notes></notes>
+			</manufacturer>
+			<manufacturer name="AMD">
+				<notes>Manufacturer of CPUs, merged with ATI and now manufacturer of GPU cards.</notes>
+				<manufacturer>Advanced Micro Devices</manufacturer>
+			</manufacturer>
+		</manufacturers>
+		<cpus>
+			<cpu name="AMDN660">
+				<tempmaxf></tempmaxf>
+				<l4icache></l4icache>
+				<l4dcache></l4dcache>
+				<l3icache></l3icache>
+				<l3dcache></l3dcache>
+				<l2icache></l2icache>
+				<l2dcache></l2dcache>
+				<l1icache></l1icache>
+				<wattsmax>42</wattsmax>
+				<wattstypical>29</wattstypical>
+				<wattsidle>0.5</wattsidle>
+				<voltage>1.35</voltage>
+				<frequency>3.0</frequency>
+				<cores>2</cores>
+				<style>Dual(hyphen)Core</style>
+				<revision>N660</revision>
+				<model>Phenom II</model>
+				<manufacturer>Advanced Micro Devices</manufacturer>
+				<tempminf></tempminf>
+				<l1dcache></l1dcache>
+			</cpu>
+		</cpus>
+		<chipsets>
+			<chipset name="unspecified">
+				<manufacturer></manufacturer>
+				<model></model>
+				<revision></revision>
+				<style></style>
+			</chipset>
+			<chipset name="MSI2">
+				<manufacturer>MSI</manufacturer>
+				<model>MSI(hyphen)2</model>
+				<revision></revision>
+				<style></style>
+			</chipset>
+			<chipset name="MSI5">
+				<manufacturer>MSI</manufacturer>
+				<model>MSI(hyphen)5</model>
+				<revision></revision>
+				<style></style>
+			</chipset>
+		</chipsets>
+		<memorys>
+			<memory name="DDR3">
+				<timing></timing>
+				<speed></speed>
+				<size>8GB</size>
+				<style></style>
+				<revision></revision>
+				<model>xyz</model>
+				<manufacturer>Micron</manufacturer>
+			</memory>
+			<memory name="DDR2">
+				<timing></timing>
+				<speed></speed>
+				<size>8GB</size>
+				<style></style>
+				<revision></revision>
+				<model>xyz</model>
+				<manufacturer>Micron</manufacturer>
+			</memory>
+		</memorys>
+		<oses>
+			<os name="Win7 x32">
+				<manufacturer>Microsoft</manufacturer>
+				<model>Windows</model>
+				<revision>7</revision>
+				<style>Home Premium</style>
+				<bits>32</bits>
+				<addons></addons>
+				<notes></notes>
+			</os>
+			<os name="Win7 x64">
+				<manufacturer>Microsoft</manufacturer>
+				<model>Windows</model>
+				<revision>7</revision>
+				<style>Home Premium</style>
+				<bits>64</bits>
+				<addons></addons>
+				<notes></notes>
+			</os>
+			<os name="Ubuntu 10.10 x32">
+				<notes></notes>
+				<addons></addons>
+				<bits>32</bits>
+				<style>Standard</style>
+				<revision>10.10</revision>
+				<model>Ubuntu</model>
+				<manufacturer>Canonical</manufacturer>
+			</os>
+			<os name="Ubuntu 10.10 x64">
+				<notes></notes>
+				<addons></addons>
+				<bits>64</bits>
+				<style>Standard</style>
+				<revision>10.10</revision>
+				<model>Ubuntu</model>
+				<manufacturer>Canonical</manufacturer>
+			</os>
+		</oses>
+		<videos>
+			<video name="none">
+				<manufacturer></manufacturer>
+				<model>No video card pesent</model>
+				<revision></revision>
+				<style></style>
+				<memorytype></memorytype>
+				<memorysize></memorysize>
+				<frequency></frequency>
+			</video>
+			<video name="ATI Mobility Radeon HD 4250">
+				<frequency>1.8GHz</frequency>
+				<memorysize>1GB</memorysize>
+				<memorytype>GDDR5</memorytype>
+				<style>4250</style>
+				<revision>HD</revision>
+				<model>Mobility Radeon</model>
+				<manufacturer>ATI</manufacturer>
+			</video>
+		</videos>
+		<audios>
+			<audio name="none">
+				<manufacturer></manufacturer>
+				<model></model>
+				<revision></revision>
+				<style></style>
+				<notes>No audio card</notes>
+			</audio>
+			<audio name="Realtek HD Audio">
+				<manufacturer>Realtek</manufacturer>
+				<model>High Definition</model>
+				<revision></revision>
+				<style></style>
+				<notes></notes>
+			</audio>
+			<audio name="ATI HDMI Audio">
+				<notes></notes>
+				<style></style>
+				<revision></revision>
+				<model>HDMI</model>
+				<manufacturer>ATI</manufacturer>
+			</audio>
+		</audios>
+		<networkadapters>
+			<networkadapter name="none">
+				<manufacturer></manufacturer>
+				<model></model>
+				<revision></revision>
+				<style></style>
+				<notes>No network adapter</notes>
+			</networkadapter>
+			<networkadapter name="Broadcom NetLink Gigabit">
+				<manufacturer>Broadcom</manufacturer>
+				<model>NetLink</model>
+				<revision></revision>
+				<style>Gigabit</style>
+				<notes></notes>
+			</networkadapter>
+			<networkadapter name="Atheros AR5B97 WiFi">
+				<notes></notes>
+				<style>Wireless</style>
+				<revision>WiFi</revision>
+				<model>AR5B97</model>
+				<manufacturer>Atheros</manufacturer>
+			</networkadapter>
+		</networkadapters>
+		<harddrives>
+			<harddrive name="none">
+				<notes>No hard drive</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</harddrive>
+		</harddrives>
+		<cddrives>
+			<cddrive name="none">
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<notes>No CD drive</notes>
+				<manufacturer></manufacturer>
+			</cddrive>
+		</cddrives>
+		<dvddrives>
+			<dvddrive name="none">
+				<notes>No DVD drive</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</dvddrive>
+		</dvddrives>
+		<floppydrives>
+			<floppydrive name="none">
+				<notes>No floppy drive</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</floppydrive>
+		</floppydrives>
+		<mmcs>
+			<mmc name="none">
+				<notes>No MMC drives</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</mmc>
+		</mmcs>
+		<monitors>
+			<monitor name="none">
+				<notes>No monitor</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</monitor>
+		</monitors>
+		<usbs>
+			<usb name="none">
+				<notes>No USB devices</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</usb>
+		</usbs>
+		<mice>
+			<mouse name="none">
+				<notes>No mouse devices</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</mouse>
+			<mouse name="Generic USB">
+				<notes>Generic USB mouse</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</mouse>
+			<mouse name="Generic PS(slash)2">
+				<notes>Generic PS(slash)2 mouse</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</mouse>
+		</mice>
+		<keyboards>
+			<keyboard name="none">
+				<manufacturer></manufacturer>
+				<model></model>
+				<revision></revision>
+				<style></style>
+				<notes>No keyboard</notes>
+			</keyboard>
+			<keyboard name="Standard 104">
+				<notes>Standard 104(hyphen)key keyboard</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</keyboard>
+		</keyboards>
+		<others>
+			<other name="none">
+				<notes>No other devices noted</notes>
+				<style></style>
+				<revision></revision>
+				<model></model>
+				<manufacturer></manufacturer>
+			</other>
+		</others>
+	</machinedata>
+	<metadata>
+		<keywords>
+			<keyword name="video">
+				<notes>Contains data related to video card performance</notes>
+			</keyword>
+			<keyword name="network">
+				<notes>Contains data related to network performance</notes>
+			</keyword>
+			<keyword name="vidmemory">
+				<notes>Contains data related to the gpu video memory performance</notes>
+			</keyword>
+			<keyword name="cache">
+				<notes>Contains data related to the cpu cache performance</notes>
+			</keyword>
+			<keyword name="usb">
+				<notes>Contains data related to the usb system performance</notes>
+			</keyword>
+			<keyword name="memory">
+				<notes>Contains data related to the memory system performance</notes>
+			</keyword>
+			<keyword name="cpu">
+				<notes>Contains data related to the cpu performance</notes>
+			</keyword>
+			<keyword name="audio">
+				<notes>Contains data related to the audio card</notes>
+			</keyword>
+		</keywords>
+	</metadata>
+</opbm>

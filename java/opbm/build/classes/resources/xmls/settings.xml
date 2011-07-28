@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+	<settings>
+		<benchmarks>
+			<debugger>no</debugger>
+			<singlestep>no</singlestep>
+			<hud>
+				<visible>yes</visible>
+				<translucency>0.5</translucency>
+			</hud>
+		</benchmarks>
+	</settings>
+</opbm>

@@ -1,0 +1,52 @@
+﻿Build started 7/25/2011 7:07:59 PM.
+     1>Project "C:\cana\vs2010\GetCPU\Au3_WaitUntilIdle\Au3_WaitUntilIdle.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "Debug\opbm.lastbuildstate".
+       InitializeBuildStatus:
+         Creating "Debug\opbm.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D AU3_WAITUNTILIDLE_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Debug\opbm.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D AU3_WAITUNTILIDLE_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\GetCPU\CPU.cpp au3\au3plugin.cpp opbm.cpp
+         opbm.cpp
+         au3plugin.cpp
+         CPU.cpp
+         Generating Code...
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D AU3_WAITUNTILIDLE_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt dllmain.cpp
+         dllmain.cpp
+       ManifestResourceCompile:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\opbm.dll.embed.manifest.res" Debug\opbm_manifest.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\cana\vs2010\GetCPU\Debug\opbm.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\opbm.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\cana\vs2010\GetCPU\Debug\opbm.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\cana\vs2010\GetCPU\Debug\opbm.lib" /MACHINE:X86 /DLL Debug\opbm.dll.embed.manifest.res
+         Debug\CPU.obj
+         Debug\au3plugin.obj
+         Debug\opbm.obj
+         Debug\dllmain.obj
+         Debug\stdafx.obj
+            Creating library C:\cana\vs2010\GetCPU\Debug\opbm.lib and object C:\cana\vs2010\GetCPU\Debug\opbm.exp
+       Manifest:
+         Deleting file "Debug\opbm.dll.embed.manifest".
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\opbm.dll.embed.manifest" /manifest Debug\opbm.dll.intermediate.manifest
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\opbm.dll.embed.manifest.res" Debug\opbm_manifest.rc 
+       LinkEmbedManifest:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\cana\vs2010\GetCPU\Debug\opbm.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\opbm.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\cana\vs2010\GetCPU\Debug\opbm.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\cana\vs2010\GetCPU\Debug\opbm.lib" /MACHINE:X86 /DLL Debug\opbm.dll.embed.manifest.res
+         Debug\CPU.obj
+         Debug\au3plugin.obj
+         Debug\opbm.obj
+         Debug\dllmain.obj
+         Debug\stdafx.obj
+            Creating library C:\cana\vs2010\GetCPU\Debug\opbm.lib and object C:\cana\vs2010\GetCPU\Debug\opbm.exp
+         Au3_WaitUntilIdle.vcxproj -> C:\cana\vs2010\GetCPU\Debug\opbm.dll
+       PostBuildEvent:
+         Description: Copy WaitUntilIdle to common\opbm\dll\
+         copy "C:\cana\vs2010\GetCPU\Debug\opbm.dll" "C:\cana\java\autoIT\common\opbm\dll\"
+         :VCEnd
+                 1 file(s) copied.
+       FinalizeBuildStatus:
+         Deleting file "Debug\opbm.unsuccessfulbuild".
+         Touching "Debug\opbm.lastbuildstate".
+     1>Done Building Project "C:\cana\vs2010\GetCPU\Au3_WaitUntilIdle\Au3_WaitUntilIdle.vcxproj" (rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.75
