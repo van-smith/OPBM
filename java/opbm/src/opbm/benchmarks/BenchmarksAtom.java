@@ -955,7 +955,7 @@ public class BenchmarksAtom
 						process.waitFor();
 
 						// Identify the termination time
-						xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", "success"));
+						xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", process.exitValue() == 0 ? "success" : "fail"));
 
 						// Make sure we finish reading before continuing
 						m_bp.m_errorGobbler.join();

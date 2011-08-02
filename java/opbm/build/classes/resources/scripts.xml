@@ -131,377 +131,655 @@
 			</abstract>
 		</abstracts>
 		<atoms>
-			<atom name="All Office">
+			<atom name="All Tests">
 				<abstract name="Excel World Heat" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Word Alice" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opear Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="IE SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="IE Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="IE Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="All Tests w(slash)install">
+				<abstract name="Acrobat Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Excel World Heat" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Word Alice" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Acrobat Uninstall" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opear Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="IE SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="IE Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="IE Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox SunSpider" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Kraken" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="All Install">
+				<abstract name="Acrobat Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="All Un(slash)install">
+				<abstract name="Acrobat Uninstall" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Opera Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Safari Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Chrome Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Firefox Un(hyphen)install" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="All Office">
+				<abstract name="Excel World Heat" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Word Alice" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Opera">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Safari">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All IE">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Chrome">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Firefox">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Office w(slash)install">
 				<abstract name="Acrobat Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Excel World Heat" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Word Alice" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Acrobat Uninstall" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Opera w(slash)install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Safari w(slash)install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Chrome w(slash)install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="All Firefox w(slash)install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Excel Heat">
 				<abstract name="World Heat Calculation" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Word Alice">
 				<abstract name="Alice in Wonderland" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Opera 11.50 Install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Opera 11.50 Un(hyphen)install">
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Opera SunSpider">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Opera Kraken">
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Opera Google V8">
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Safari 5.1.7534.50 Install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Safari 5.1.7534.50 Un(hyphen)install">
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Safari SunSpider">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Safari Kraken">
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Safari Google V8">
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="IE SunSpider">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="IE Kraken">
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="IE Google V8">
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Chrome 12.0.742.122 Install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Chrome 12.0.742.122 Un(hyphen)install">
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Chrome SunSpider">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Chrome Kraken">
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Chrome Google V8">
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Firefox 5.0.1 Install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
 					</options>
 				</abstract>
 				<flow name="quit" sourcename="quit">
@@ -513,7 +791,7 @@
 			<atom name="Firefox 5.0.1 Un(hyphen)install">
 				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
 					</options>
 				</abstract>
 				<flow name="quit" sourcename="quit">
@@ -525,35 +803,35 @@
 			<atom name="Firefox SunSpider">
 				<abstract name="SunSpider" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Firefox Kraken">
 				<abstract name="Kraken" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Firefox Google V8">
 				<abstract name="Google V8" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
+						<executable>..(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Acrobat Reader 10.1 Install">
 				<abstract name="Install" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Acrobat Reader 10.1 Uninstall">
 				<abstract name="Uninstall" sourcename="execute">
 					<options>
-						<executable>C(colon)(backslash)cana(backslash)java(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
+						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
