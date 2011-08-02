@@ -32,7 +32,7 @@ InitializeGlobalVariables()
 
 If isSafariAlreadyInstalled() Then
 	outputError( "Safari 5.1.7534.50 already installed" )
-	Exit
+	Exit -1
 Endif
 
 outputDebug( "InitializeScript()" )
@@ -126,7 +126,7 @@ Func AcceptAndInstall()
 	Sleep(5000)
 	; And wait for it to be well finished for up to 6 minutes
 	opbmWaitUntilSystemIdle( 10, 1000, 360000 )
-	opbmWinWaitActivate( "Safari", "Congratulations", 5, $ERROR_PREFIX & "WinWait: Safari Congratulations Window: Unable to find Window.")
+	opbmWinWaitActivate( "Safari", "Congratulations", 30, $ERROR_PREFIX & "WinWait: Safari Congratulations Window: Unable to find Window.")
 	TimerEnd( $INSTALL_SAFARI )
 EndFunc
 

@@ -79,7 +79,7 @@ Func LaunchSafari()
 	
 	If Not isSafariAlreadyInstalled() Then
 		outputError("Safari is not installed.")
-		Exit
+		Exit -1
 	EndIf
 	
 	TimerBegin()

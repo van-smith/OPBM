@@ -263,12 +263,12 @@ Func ErrorHandle( $Text, $ShowMsgBox = True, $aExit = True )
 	FileWriteLine($lErrorFile, $Text)
 	FileClose($lErrorFile)
 	;ProcessClose($gPID)
-	If $ShowMsgBox = True Then
-		MsgBox(16,"Script Error!", $Text)
-	EndIf
+;	If $ShowMsgBox = True Then
+;		MsgBox(16,"Script Error!", $Text)
+;	EndIf
 	If $aExit Then
 		opbmCloseAllWindowsNotPreviouslyNoted()
-		Exit
+		Exit -1
 	EndIf
 EndFunc
 

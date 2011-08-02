@@ -82,7 +82,7 @@ Func LaunchChrome()
 	
 	If Not isChromeAlreadyInstalled() Then
 		outputError("Chrome is not installed.")
-		Exit
+		Exit -1
 	EndIf
 	
 	TimerBegin()

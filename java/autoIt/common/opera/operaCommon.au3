@@ -81,7 +81,7 @@ Func LaunchOpera()
 	
 	If Not isOperaAlreadyInstalled() Then
 		outputError("Opera is not installed.")
-		Exit
+		Exit -1
 	EndIf
 	
 	TimerBegin()

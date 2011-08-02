@@ -82,7 +82,7 @@ Func LaunchFirefox()
 	
 	If Not isFirefoxAlreadyInstalled() Then
 		outputError("Firefox is not installed.")
-		Exit
+		Exit -1
 	EndIf
 	
 	TimerBegin()

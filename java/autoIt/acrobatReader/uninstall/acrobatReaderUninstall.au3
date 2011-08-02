@@ -32,7 +32,7 @@ InitializeGlobalVariables()
 
 If not isAcrobatReaderAlreadyInstalled() Then
 	outputError( "Acrobat Reader is not installed" )
-	Exit
+	Exit -1
 Endif
 
 outputDebug( "InitializeScript()" )

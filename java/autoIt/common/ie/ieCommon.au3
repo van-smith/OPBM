@@ -63,7 +63,7 @@ Func VerifyIE9Installed()
 	If not isIE9Installed() Then
 		outputError( "Requires IE Version 9.0" )
 		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
-		Exit
+		Exit -1
 	EndIf
 EndFunc
 

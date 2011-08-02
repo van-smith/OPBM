@@ -33,7 +33,7 @@ InitializeGlobalVariables()
 
 If isFirefoxAlreadyInstalled() Then
 	outputError( "Firefox 5.0.1 already installed" )
-	Exit
+	Exit -1
 Endif
 
 outputDebug( "InitializeFirefoxScript()" )

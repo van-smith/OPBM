@@ -31,7 +31,7 @@ InitializeGlobalVariables()
 
 If not isChromeAlreadyInstalled() Then
 	outputError( "Chrome 12.0.742.122 is not installed" )
-	Exit
+	Exit -1
 Endif
 
 outputDebug( "InitializeScript()" )

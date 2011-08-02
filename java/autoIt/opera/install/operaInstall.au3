@@ -32,7 +32,7 @@ InitializeGlobalVariables()
 
 If isOperaAlreadyInstalled() Then
 	outputError( "Opera 11.50 already installed" )
-	Exit
+	Exit -1
 Endif
 
 outputDebug( "InitializeScript()" )

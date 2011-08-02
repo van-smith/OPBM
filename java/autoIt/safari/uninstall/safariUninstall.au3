@@ -32,7 +32,7 @@ InitializeGlobalVariables()
 
 If not isSafariAlreadyInstalled() Then
 	outputError( "Safari 5.1.7534.50 is not installed" )
-	Exit
+	Exit -1
 Endif
 
 outputDebug( "InitializeScript()" )
