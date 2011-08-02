@@ -1,0 +1,94 @@
+{
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "apps_promo_counter": 11,
+   "browser": {
+      "check_default_browser": false,
+      "window_placement": {
+         "bottom": 718,
+         "left": 10,
+         "maximized": false,
+         "right": 1014,
+         "top": 10,
+         "work_area_bottom": 728,
+         "work_area_left": 0,
+         "work_area_right": 1024,
+         "work_area_top": 0
+      }
+   },
+   "cloud_print": {
+      "email": ""
+   },
+   "countryid_at_install": 21843,
+   "default_search_provider": {
+      "enabled": true,
+      "encodings": "UTF-8",
+      "icon_url": "http://www.google.com/favicon.ico",
+      "id": "2",
+      "instant_url": "{google:baseURL}webhp?{google:RLZ}sourceid=chrome-instant&ie={inputEncoding}&ion=1{searchTerms}&nord=1",
+      "keyword": "google.com",
+      "name": "Google",
+      "prepopulate_id": "1",
+      "search_url": "{google:baseURL}search?{google:RLZ}{google:acceptedSuggestion}{google:originalQueryForSuggestion}sourceid=chrome&ie={inputEncoding}&q={searchTerms}",
+      "suggest_url": "{google:baseSuggestURL}search?client=chrome&hl={language}&q={searchTerms}"
+   },
+   "dns_prefetching": {
+      "host_referral_list": [ 2, [ "http://tools.google.com/", [ "http://fls.doubleclick.net/", 2.387589482583341, "http://fonts.googleapis.com/", 2.084686339270529, "http://ssl.gstatic.com/", 2.084686339270529, "http://themes.googleusercontent.com/", 2.387589482583341, "http://tools.google.com/", 3.2962989125217765, "http://www.google-analytics.com/", 2.084686339270529, "http://www.google.com/", 2.9933957692089646 ] ] ],
+      "startup_list": [ 1 ]
+   },
+   "download": {
+      "default_directory": "C:\\Users\\Public\\Downloads",
+      "directory_upgrade": true,
+      "extensions_to_open": ""
+   },
+   "extensions": {
+      "autoupdate": {
+         "next_check": "12956357304457734"
+      },
+      "chrome_url_overrides": {
+         "bookmarks": [ "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/main.html" ]
+      }
+   },
+   "google": {
+      "services": {
+         "username": ""
+      }
+   },
+   "homepage": "",
+   "homepage_is_newtabpage": false,
+   "ntp": {
+      "pref_version": 3,
+      "promo_build": 2,
+      "promo_closed": false,
+      "promo_end": 1299830340.0,
+      "promo_group": 3,
+      "promo_group_timeslice": 0,
+      "promo_line": "Use Chrome on another computer? Take your bookmarks and more with you.",
+      "promo_resource_cache_update": "1311883147.001859",
+      "promo_start": 1299830280.0,
+      "shown_sections": 4194305,
+      "webstore_last_promo_id": "1257606"
+   },
+   "plugins": {
+      "enabled_internal_pdf3": true
+   },
+   "profile": {
+      "content_settings": {
+         "pref_version": 1
+      },
+      "exited_cleanly": true
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "session": {
+      "restore_on_startup": 4
+   },
+   "tabs": {
+      "use_vertical_tabs": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}

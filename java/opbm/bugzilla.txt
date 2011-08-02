@@ -1,0 +1,4 @@
+The Bugzilla website was installed in an Ubuntu 10.10 virtual
+machine in VMware.  The database can be uploaded periodically.
+
+- Rick C. Hodgin

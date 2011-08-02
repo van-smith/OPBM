@@ -1,0 +1,175 @@
+/* This is the printing style sheet */
+body {font-size:11pt; font-family:Georgia, serif; }
+.screen-note { display:none; }
+div#cover {
+        clear:both;
+	background: url(cover.png) no-repeat top left;
+	width:6in;
+	height:9in;
+}
+div#cover,
+div.titlepage,
+div.halftitle,
+div.titleverso,
+div.contents,
+div.frontmatter,
+	div.docinfo,
+	div.dedication,
+	div.foreword,
+	div.preface,
+	div.prologue,
+	div.introduction,
+	div.acknowledgments,
+	div.frontispiece,
+	div.plate,
+div.body, div.page,
+	div.volume,
+	div.part,
+	div.book,
+	div.chapter,
+	div.act,
+	div.essay,
+	div.story,
+	div.canto,
+div.backmatter,
+	div.afterword,
+	div.epilogue,
+	div.postscript,
+	div.appendix,
+	div.notes,
+	div.glossary,
+	div.bibliography,
+	div.index {
+		clear:both;
+		page-break-after:always;
+}
+h1,h2,h3,h4,h5,h6 { page-break-after:avoid; }
+
+div.titlepage { margin:2em 0; }
+div.titlepage p.imprint { margin-bottom:1em; }
+
+div#controls { display:none; }
+div.navigation { display:none; }
+div.titlepage hr { display:none; }
+div.titlepage a { text-decoration:none; }
+div.contents hr { display:none; }
+div.docinfo hr { display:none; }
+
+/*
+The following is derived from "Printing a Book with CSS: Boom!",
+http://www.alistapart.com/articles/boom/ 
+
+Unfortunately, the CSS is not yet widely implemented :(
+*/
+
+h1 { string-set: title content();}
+/* div.chapter h3 { string-set: header "Chapter " counter(chapter) ": " content(); } */
+div.chapter h3 { string-set: header content(); }
+@page {
+	size: 6in 9in;
+	/* marks: crop; */
+	margin:25mm 20mm 20mm 20mm;
+}
+div#cover,
+div.titlepage,
+div.halftitle,
+div.titleverso,
+div.contents {
+	page: blank;
+}
+div.frontmatter,
+	div.docinfo,
+	div.dedication,
+	div.foreword,
+	div.preface,
+	div.prologue,
+	div.introduction,
+	div.acknowledgments {
+		page: frontmatter
+}
+
+div#chapter1 { counter-reset: page 1; }
+
+/* CSS3 */
+
+@page :left {
+	@top-left {
+		font: 11pt sans-serif;
+		content: string(title);
+		vertical-align: bottom;
+		padding-bottom: 2em;
+	}
+
+	@bottom-left {
+		font: 11pt sans-serif;
+		content: counter(page);
+		vertical-align: top;
+		padding-top: 2em;
+	}
+}
+
+@page :right {
+	@top-right {
+		font: 11pt sans-serif;
+		content: string(header, first); 
+		vertical-align: bottom;
+		padding-bottom: 2em; 
+	}
+
+	@bottom-right {
+		font: 11pt sans-serif;
+		content: counter(page);
+		text-align: right;
+		vertical-align: top;
+		padding-top: 2em;
+	}
+}
+
+@page frontmatter :left {
+	@top-left {
+		font: 11pt sans-serif;
+		content: string(title);
+		vertical-align: bottom;
+		padding-bottom: 2em;
+	}
+
+	@bottom-left {
+		font: 11pt sans-serif;
+		content: counter(page, lower-roman);
+		padding-top: 2em;
+		vertical-align: top;
+	}
+}
+@page frontmatter :right {
+	@top-right {
+		font: 11pt sans-serif;
+		content: string(header, first); 
+		vertical-align: bottom;
+		padding-bottom: 2em; 
+	}
+
+	@bottom-right {
+		font: 11pt sans-serif;
+		content: counter(page, lower-roman);
+		text-align: right;
+		vertical-align: top;
+		padding-top: 2em;
+	}
+}
+
+@page blank :left {
+	@top-left { content: normal }
+	@bottom-left { content: normal }
+}
+
+@page blank :right {
+	@top-right { content: normal }
+	@bottom-right { content: normal }
+}
+@page blank :left {
+	@top-left { content: normal; }
+}
+
+
+
+/* End of this style sheet */

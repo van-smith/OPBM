@@ -1,0 +1,38 @@
+Per Van, 2011-06-13 2:52am:
+the database funtionality in OPBM's result browser should allow filtering, averaging, selecting by various criteria, sorting, summing, etc.
+also calculate coefficient of variation, standard deviation
+medium, mean
+and export of results/query to csv, etc.
+
+
+Per Rick, 2011-06-13 2:54am:
+Rick: I think the data set, because of the way it will be stored in the xml files, and because of the way the Xml class has been implemented, will allow for some amazing results browsing abilities.
+Some stuff unprecedented.
+I've had in mind the idea of related items:
+(a) -- (b) -- (c) -- ... (z)
+however many they are
+Logically they are visualized in the mind as items side-by-side
+When filters are run, they sift through the data and produce:
+(a') -- (b') -- (c') -- ... etc.
+And then that sub-set is graphed, browsed in data, summed, etc.
+And the drill up/down abilities will allow us to arrive at some results set, and "freeze" it, or now create a comparison for other data items.
+I haven't worked out the mechanics of how to store this in xml files, but it should not be difficult.
+I was going to call those "freezes"
+vanshardware: it sounds great
+
+Rick: All Freezes and other query forms would be stored in the runs.xml file, so they persist across instances.
+I believe OPBM will "speak to us" and reveal the best way to do all of its parts as we go through it. For me designing it, it's been that way so far. :-)
+vanshardware: i agree
+
+
+Per Rick, 2011-06-13 2:59am:
+I envision the results browser having three main areas:
+1) graph area
+2) spreadsheet-like data area for navigation and highlighting of data points (so they visually flash, for example)
+3) command area
+commands will be like this:
+"filter video"
+and only those items which have video keyword tags will be included.
+And "sum scenarios"
+and every scenario which was pulled through at that filter level will be summed, and graphed
+etc

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+	<settings>
+		<benchmarks>
+			<debugger>no</debugger>
+			<singlestep>no</singlestep>
+			<hud>
+				<visible>yes</visible>
+				<translucency>0.5</translucency>
+			</hud>d
+		</benchmarks>
+<!-- End use: Differentiate platforms -->
+	</settings>
+	<skins>
+		<skin name="standard">
+		</skin>
+	</skins>
+</opbm>
