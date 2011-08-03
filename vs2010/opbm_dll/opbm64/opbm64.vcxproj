@@ -90,7 +90,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy c:\cana\vs2010\opbm_dll\release\opbm64.dll c:\cana\java\opbm\opbm64.dll</Command>
+      <Command>copy ..\Debug\opbm64.dll ..\..\..\java\opbm\opbm64.dll</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy opbm64.dll to opbm</Message>
@@ -110,7 +110,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy c:\cana\vs2010\opbm_dll\x64\debug\opbm64.dll \cana\java\opbm\opbm64.dll</Command>
+      <Command>copy ..\x64\Debug\opbm64.dll ..\..\..\java\opbm\opbm64.dll</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy opbm64.dll to opbm</Message>
@@ -164,7 +164,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy c:\cana\vs2010\opbm_dll\release\opbm64.dll \cana\java\opbm\opbm64.dll</Command>
+      <Command>copy ..\Release\opbm64.dll ..\..\..\java\opbm\opbm64.dll</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy opbm64.dll to opbm</Message>

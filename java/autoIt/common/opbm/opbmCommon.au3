@@ -54,13 +54,33 @@ Func InitializeGlobalVariables()
 		$gTimeIndex[$i] = ""
 	Next
 	
-	; Load the opbm.dll plugin, which allows these functions as "native" AutoIt functions:
+	; Load the opbm.dll plugin.
+	; It allows these functions to appear as "native" AutoIt functions, usable anywhere:
 	;		WaitUntilIdle($aPID, $aCpuUsageThreshold, $aPollPeriodMS, $aTimeoutMS )
+	;			Example:  WaitUntilIdle( $gPID, 10, 100, 1000 )  ; Wait up to 1 second for the process CPU usage to drop below 10% for 100ms
 	;		WaitUntilSystemIdle( $aCpuUsageThreshold, $aPollPeriodMS, $aTimeoutMS )
-	;		GetUsage($aPID, $aPollPeriodMS )
-	;		GetSystemUsage( $aPollPeriodMS )
-	;		NoteAllOpenWindows()
-	;		CloseAllWindowsNotPreviouslyNoted()
+	;			Example:  WaitUntilSystemIdle( 10, 200, 2000 )  ; Wait up to 2 seconds for the entire system's CPU usage to drop below 10% for 200ms
+	;		GetUsage($aPID, $aPollPeriodMS )		; Immediately return the process usage sampled over the poll period in milliseconds
+	;		GetSystemUsage( $aPollPeriodMS )		; Immediatley return the system usage sampled over the poll period in milliseconds
+	;		NoteAllOpenWindows()					; Use at start of script
+	;		CloseAllWindowsNotPreviouslyNoted()		; Use anywhere during script to close all windows that weren't already open when noted
+	;		FirefoxInstallerAssist()				; Sets Firefox to a reasonable state after initial install (no prompting, scripts run, etc.)
+	;		ChromeInstallerAssist()					; Sets Chrome to a reasonable state after initial install (no prompting, scripts run, etc.)
+	;		OperaInstallerAssist()					; Sets Opera to a reasonable state after initial install (no prompting, scripts run, etc.)
+	;		SafariInstallerAssist()					; Sets Safari to a reasonable state after initial install (no prompting, scripts run, etc.)
+	;		InternetExplorerInstallerAssist()		; Sets IE keys to a reasonable state, to disable initial promptings
+	;		CheckIfRegistryKeyStartsWith( $key, $valueShouldStartWith )
+	;		CheckIfRegistryKeyContains( $key, $stringItShouldContain )
+	;		CheckIfRegistryKeyIsExactly( $key, $value )
+	;		SetRegistryKeyString( $key, $stringValue )
+	;		SetRegistryKeyDword( $key, $dwordValue )
+	;		GetRegistryKey( $key )
+	;		GetScriptCSVDirectory()					; Returns c:\users\user\AppData\Roaming\opbm\scriptOutput\
+	;		GetHarnessXmlDirectory()				; Returns c:\users\user\AppData\Roaming\opbm\results\xml\
+	;		GetHarnessCSVDirectory()				; Returns c:\users\user\AppData\Roaming\opbm\results\csv\
+	;		GetCSIDLDirectory( $CSIDL_nameWithoutLeadingCSIDL_)
+	;			Example:  GetCSIDLDirectory( "MYDOCUMENTS" )
+	;			Returns:  c:\users\user\documents\
 	$gOpbmPluginHandle = PluginOpen( $OPBM_DLL )
 	If $gOpbmPluginHandle <> 0 Then 
 		errorHandle( $OPBM_DLL & " did not open" )
@@ -330,7 +350,7 @@ EndFunc
 
 Func opbmFinalizeScript($name)
 	; Save the captures time events to the CSV
-	TimerWriteTimesToCSV( @ScriptDir & "\Results\" & $name )
+	TimerWriteTimesToCSV( GetScriptCSVDirectory() & $name )
 	
 	; Wait for the system to settle down
 	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )

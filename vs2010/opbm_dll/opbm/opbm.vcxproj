@@ -90,7 +90,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy opbm_dll\Debug\opbm.dll "C:\cana\java\autoIT\common\opbm\dll\"</Command>
+      <Command>copy ..\Debug\opbm.dll "..\..\..\java\autoIT\common\opbm\dll\"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy WaitUntilIdle to common\opbm\dll\</Message>
@@ -131,7 +131,7 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy opbm_dll\Release\opbm.dll "C:\cana\java\autoIT\common\opbm\dll\"</Command>
+      <Command>copy ..\Release\opbm.dll "..\..\..\java\autoIT\common\opbm\dll\"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy opbm.dll to common\opbm\dll\</Message>
