@@ -1,5 +1,7 @@
 ; office2010Common.au3
 
+
+
 Const $WINDOW_OFFICE2010_WELCOME = "Welcome to Microsoft Office 2010"
 Const $TIMEOUT = 5
 

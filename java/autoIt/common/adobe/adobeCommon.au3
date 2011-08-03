@@ -5,14 +5,8 @@ Const $ROOT_DIR = @ScriptDir & "\..\.."
 ; Relative locations for content
 Const $EXE_DIRECTORY							= @ScriptDir & "\exe"
 
-; Default physical installation directory from Chrome 12.0.742.122 installer
-Const $ACROBAT_READER_DIRECTORY					= "C:\Program Files (x86)\Adobe\Reader 10.0\Reader"
-
 ; Executables used to install, uninstall, or execute Chrome
-Const $ACROBAT_READER_INSTALLER					= $EXE_DIRECTORY				&	"\AdbeRdr1010_en_US.exe"
-Const $ACROBAT_READER_UNINSTALLER				= "MsiExec.exe /I{AC76BA86-7AD7-1033-7B44-AA1000000001}"
-Const $ACROBAT_READER_EXECUTABLE				= $ACROBAT_READER_DIRECTORY		&	"\AcroRd32.exe"
-Const $ACROBAT_READER_EXECUTABLE_TO_LAUNCH		= $ACROBAT_READER_DIRECTORY		&	"\AcroRd32.exe"
+#include "adobeVersion.au3"
 
 ; Constants used throughout for various scripts
 Const $LAUNCH_ACROBAT_READER					= "Launch Adobe Acrobat 10.1"
@@ -35,7 +29,6 @@ Const $REMOVE_THE_PROGRAM						= "Remove the Program"
 Const $PREFERENCES								= "Preferences"
 Const $ACROBAT_READER_LICENSE_AGREEMENT			= "Adobe Reader X - Distribution License Agreement"
 Const $ADOBE_READER_X_MAINTENANCE				= "Adobe Reader X (10.1.0) Maintenance"
-Const $ACROBAT_READER_IS_NOT_INSTALLED			= "Acrobat Reader is not installed"
 
 ; Global declaration for timing constants
 Dim $gBaselineSize
@@ -54,13 +47,6 @@ Next
 ;============================================================================================================================
 ;============================================================================================================================
 
-
-Func isAcrobatReaderAlreadyInstalled()
-	If FileExists( $ACROBAT_READER_EXECUTABLE ) Then
-		return True
-	EndIf	
-	return False
-EndFunc
 
 Func InitializeAdobeScript()
 	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase

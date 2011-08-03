@@ -3,6 +3,11 @@ Const $ROOT_DIR = @ScriptDir & "\..\.."
 #include <..\opbm\opbmCommon.au3>
 #include <office2010Common.au3>
 
+
+; Relative locations for content
+Const $DATA_DIRECTORY					= @ScriptDir & "\data"
+Const $EXE_DIRECTORY					= @ScriptDir & "\exe"
+
 ; Source directories for data
 Const $DIRECTORY_ALICE_IN_WONDERLAND_HTML		= @ScriptDir & "\data"
 

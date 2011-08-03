@@ -14,7 +14,7 @@
 ;
 ;======================================================================================================================================
 #include <../../common/office2010/wordCommon.au3>
-#include <../../common/adobe/adobeCommon.au3>
+#include <../../common/adobe/adobeVersion.au3>
 
 
 ; Begin at 2, refer to wordCommon.au3 to see 0 and 1
@@ -40,13 +40,13 @@ EndIf
 For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	outputDebug( "InitializeWordScript()" )
-	InitializeWordScript()
+	outputDebug( "InitializeAliceScript()" )
+	InitializeAliceScript()
 	
-	If not isAcrobatReaderAlreadyInstalled()
+	If not isAcrobatReaderAlreadyInstalled() Then
 		outputError( $ACROBAT_READER_IS_NOT_INSTALLED )
 		Exit -1
-	Then
+	EndIf
 	
 	outputDebug( "LaunchWord()" )
 	LaunchWord()
@@ -78,7 +78,7 @@ Exit
 ;======================================================================================================================================
 ;======================================================================================================================================
 
-Func InitializeWordScript()
+Func InitializeAliceScript()
 	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
 	
