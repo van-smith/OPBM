@@ -25,7 +25,9 @@ $gBaselines[3][1] = $ALICE_OPEN_ALICE_IN_WONDERLAND_SCORE
 $gBaselines[4][0] = $TIME_TO_PAGE_DOWN_N_TIMES
 $gBaselines[4][1] = $ALICE_TIME_TO_PAGE_DOWN_N_TIMES_SCORE
 $gBaselines[5][0] = $SAVE_AS_PDF
-$gBaselines[5][1] = $ALICE_SAVE_AS_PDF_SCORE = 3.81
+$gBaselines[5][1] = $ALICE_SAVE_AS_PDF_SCORE
+$gBaselines[6][0] = $MANIPULATE_IN_ACROBAT_READER
+$gBaselines[6][1] = $ALICE_MANIPULATE_IN_ACROBAT_READER_SCORE
 
 Dim $CurrentLoop
 Dim $LoopLimit
@@ -64,6 +66,9 @@ For $CurrentLoop = 1 to $LoopLimit
 	
 	outputDebug( "SaveAsAliceInWonderLandPdf()" )
 	SaveAsAliceInWonderLandPdf()
+	
+	outputDebug( "ManipulateInAcrobatReader()" )
+	ManipulateInAcrobatReader()
 	
 	outputDebug( "CloseWord()" )
 	CloseWord()
@@ -182,14 +187,84 @@ Func SaveAsAliceInWonderLandPdf()
 	; Choose "Save" button
 	Send("!s")
 	
+	; Wait for Adobe Reader to appear
 	opbmWinWaitActivate( $ADOBE_READER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Adobe Reader: Unable to find Window." )
-	; Exit Adobe Reader
-	Send("!fx")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	TimerEnd( $SAVE_AS_PDF )
+EndFunc
+
+Func ManipulateInAcrobatReader()
+	Local $i
 	
-	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	TimerBegin()
+	; Turn on navigation pane
+	Send("{F4}")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	
-	TimerEnd( $SAVE_AS_PDF )
+	For $i = 1 to 4
+		; Fit actual size
+		Send("^1")
+		; Fit to page width
+		Send("^2")
+		; Fit to page height
+		Send("^0")
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Next
+	
+	; Move from front to back and rotate at each step
+	For $i = 1 to 8
+		; Last page
+		Send("{End}")
+		If $i <= 4 then
+			; Rotate clockwise
+			Send("^+{+}")
+		Else
+			; Rotate counter-clockwise
+			Send("^+{-}")
+		EndIf
+		
+		; First page
+		Send("{Home}")
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Next
+	
+	; Move forward N pages, a page at a time
+	for $i = 1 to $NBR_OF_PAGE_DOWN
+		Send("{PGDN}")
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Next
+	
+	; Turn off navigation
+	Send("{F4}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	
+	; Goto page 25
+	Send("+^n25{Enter}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	; Goto page 1
+	Send("+^n1{Enter}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	; Goto page 10
+	Send("+^n10{Enter}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	; Goto page 30
+	Send("+^n30{Enter}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	; Goto page 3
+	Send("+^n3{Enter}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	; Goto page 1
+	Send("{Home}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	
+	; Finished manipulating, exit Acrobat Reader
+	Send("!fx")
+	
+	; Wait for the Word window to have focus again
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	; and for the system to settle down
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	TimerEnd( $MANIPULATE_IN_ACROBAT_READER )
 EndFunc
 
 Func CloseWord()

@@ -30,6 +30,7 @@ Const $CLOSE_EMPTY_DOCUMENT						= "Close Empty Document"
 Const $OPEN_ALICE_IN_WONDERLAND					= "Open AliceInWonderland.html"
 Const $TIME_TO_PAGE_DOWN_N_TIMES				= "Time to page down " & $NBR_OF_PAGE_DOWN & "times"
 Const $SAVE_AS_PDF								= "Save as PDF"
+Const $MANIPULATE_IN_ACROBAT_READER				= "Manipulate in Acrobat Reader"
 Const $MICROSOFT_WORD_WINDOW					= "Microsoft Word"
 Const $DOCUMENT1								= "Document1"
 Const $STATUS_BAR								= "Status Bar"
@@ -39,7 +40,7 @@ Const $OPEN_DIALOG								= "Open"
 
 ; Setup references for timing items
 Dim $gBaselineSize
-$gBaselineSize = 10
+$gBaselineSize = 40
 Dim $gBaselines[ $gBaselineSize ][2]
 $gBaselines[0][0] = $LAUNCH_MICROSOFT_WORD
 $gBaselines[0][1] = $LAUNCH_MICROSOFT_WORD_SCORE

@@ -282,7 +282,7 @@ public class Commands
 //////////
 // RESULTS VIEWER
 		} else if (command.equals("run_results_viewer_sample")) {
-			m_opbm.createAndShowResultsViewer("results_sample.xml");
+			m_opbm.createAndShowResultsViewer("resultsample.xml");
 
 		} else if (command.equals("run_results_viewer")) {
 			m_opbm.createAndShowResultsViewer("output.xml");
