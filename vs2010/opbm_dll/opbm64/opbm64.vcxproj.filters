@@ -21,9 +21,15 @@
     <ClCompile Include="opbm64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\opbm_common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\java\opbm\jni\opbm64.h">
+    <ClInclude Include="..\common\opbm_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="opbm64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

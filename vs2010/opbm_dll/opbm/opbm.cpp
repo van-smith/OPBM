@@ -15,7 +15,6 @@
 #include "stdafx.h"
 #include "windows.h"
 #include "winbase.h"
-//#include "shfolder.h"
 #include "shlobj.h"
 #include "resource2.h"
 #include "AtlBase.h"
@@ -24,6 +23,7 @@
 
 #include "..\CPU\cpu.h"
 #include "au3\au3plugin.h"
+#include "..\common\opbm_common.h"
 // Note: AU3_GetString() allocates some memory that must be manually freed later using AU3_FreeString()
 
 extern HMODULE ghModule;
@@ -1177,21 +1177,8 @@ extern HMODULE ghModule;
 		AU3_PLUGIN_VAR*		pMyResult;
 		char				dirname[ MAX_PATH ];
 
-		// Initialize the path
-		memset(&dirname[0], 0, sizeof(dirname));
-
-		// Grab the directory from Windows
-		SHGetSpecialFolderPathA(0, dirname, CSIDL_APPDATA, TRUE);
-
-		// Make sure it ends with a backslash
-		if (dirname[strlen(dirname) - 1] != '\\')
-			dirname[strlen(dirname)] = '\\';
-
-		// Append the portion relative to the script's CSV directory
-		memcpy(&dirname[strlen(dirname)], "opbm\\scriptOutput\\", 18);
-
-		// Make sure the directory exists
-		SHCreateDirectoryEx(NULL, A2T(&dirname[0]), NULL);
+		// Grab the directory from opbm_common.cpp
+		GetScriptCSVDirectory(&dirname[0], sizeof(dirname));
 
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
@@ -1226,21 +1213,8 @@ extern HMODULE ghModule;
 		AU3_PLUGIN_VAR*		pMyResult;
 		char				dirname[ MAX_PATH ];
 
-		// Initialize the path
-		memset(&dirname[0], 0, sizeof(dirname));
-
-		// Grab the directory from Windows
-		SHGetSpecialFolderPathA(0, dirname, CSIDL_APPDATA, TRUE);
-
-		// Make sure it ends with a backslash
-		if (dirname[strlen(dirname) - 1] != '\\')
-			dirname[strlen(dirname)] = '\\';
-
-		// Append the portion relative to the harness's XML directory
-		memcpy(&dirname[strlen(dirname)], "opbm\\results\\xml\\", 17);
-
-		// Make sure the directory exists
-		SHCreateDirectoryEx(NULL, A2T(&dirname[0]), NULL);
+		// Grab the directory from opbm_common.cpp
+		GetHarnessXMLDirectory(&dirname[0], sizeof(dirname));
 
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
@@ -1275,21 +1249,8 @@ extern HMODULE ghModule;
 		AU3_PLUGIN_VAR*		pMyResult;
 		char				dirname[ MAX_PATH ];
 
-		// Initialize the path
-		memset(&dirname[0], 0, sizeof(dirname));
-
-		// Grab the directory from Windows
-		SHGetSpecialFolderPathA(0, dirname, CSIDL_APPDATA, TRUE);
-
-		// Make sure it ends with a backslash
-		if (dirname[strlen(dirname) - 1] != '\\')
-			dirname[strlen(dirname)] = '\\';
-
-		// Append the portion relative to the harness's CSV directory
-		memcpy(&dirname[strlen(dirname)], "opbm\\results\\csv\\", 17);
-
-		// Make sure the directory exists
-		SHCreateDirectoryEx(NULL, A2T(&dirname[0]), NULL);
+		// Grab the directory from opbm_common.cpp
+		GetHarnessCSVDirectory(&dirname[0], sizeof(dirname));
 
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
@@ -1321,262 +1282,14 @@ extern HMODULE ghModule;
 	{
 		USES_CONVERSION;
 		AU3_PLUGIN_VAR*		pMyResult;
-		int					csid;
 		char				dirname[ MAX_PATH ];
 		char*				request;
-		bool				failure;
 
 		// Get the parameter
 		request	= AU3_GetString(&p_AU3_Params[0]);
 
-		// Initialize the path
-		memset(&dirname[0], 0, sizeof(dirname));
-
-		// Find out what directory they're after
-		failure = false;
-		if (_stricmp(request, "DESKTOP") == 0)
-		{	// <desktop>
-			csid = CSIDL_DESKTOP;
-	
-		} else if (_stricmp(request, "INTERNET") == 0) {
-			// Internet Explorer (icon on desktop)
-			csid = CSIDL_INTERNET;
-	
-		} else if (_stricmp(request, "PROGRAMS") == 0) {
-			// Start Menu\Programs
-			csid = CSIDL_PROGRAMS;
-	
-		} else if (_stricmp(request, "CONTROLS") == 0) {
-			// My Computer\Control Panel
-			csid = CSIDL_CONTROLS;
-	
-		} else if (_stricmp(request, "PRINTERS") == 0) {
-			// My Computer\Printers
-			csid = CSIDL_PRINTERS;
-	
-		} else if (_stricmp(request, "PERSONAL")		== 0 ||
-				   _stricmp(request, "MY_DOCUMENTS")	== 0 ||
-				   _stricmp(request, "MY_DOCS")			== 0 ||
-				   _stricmp(request, "MYDOCS")			== 0 ||
-				   _stricmp(request, "MYDOCUMENTS")		== 0) {
-			// My Documents
-			csid = CSIDL_PERSONAL;
-	
-		} else if (_stricmp(request, "FAVORITES") == 0) {
-			// <user name>\Favorites
-			csid = CSIDL_FAVORITES;
-	
-		} else if (_stricmp(request, "STARTUP") == 0) {
-			// Start Menu\Programs\Startup
-			csid = CSIDL_STARTUP;
-	
-		} else if (_stricmp(request, "RECENT") == 0) {
-			// <user name>\Recent
-			csid = CSIDL_RECENT;
-	
-		} else if (_stricmp(request, "SENDTO") == 0) {
-			// <user name>\SendTo
-			csid = CSIDL_SENDTO;
-	
-		} else if (_stricmp(request, "BITBUCKET") == 0) {
-			// <desktop>\Recycle Bin
-			csid = CSIDL_BITBUCKET;
-	
-		} else if (_stricmp(request, "STARTMENU") == 0) {
-			// <user name>\Start Menu
-			csid = CSIDL_STARTMENU;
-	
-		} else if (_stricmp(request, "MYMUSIC") == 0) {
-			// "My Music" folder
-			csid = CSIDL_MYMUSIC;
-	
-		} else if (_stricmp(request, "MYVIDEO") == 0) {
-			// "My Videos" folder
-			csid = CSIDL_MYVIDEO;
-	
-		} else if (_stricmp(request, "DESKTOPDIRECTORY") == 0) {
-			// <user name>\Desktop
-			csid = CSIDL_DESKTOPDIRECTORY;
-	
-		} else if (_stricmp(request, "DRIVES") == 0) {
-			// My Computer
-			csid = CSIDL_DRIVES;
-	
-		} else if (_stricmp(request, "NETWORK") == 0) {
-			// Network Neighborhood (My Network Places)
-			csid = CSIDL_NETWORK;
-	
-		} else if (_stricmp(request, "NETHOOD") == 0) {
-			// <user name>\nethood
-			csid = CSIDL_NETHOOD;
-	
-		} else if (_stricmp(request, "FONTS") == 0) {
-			// windows\fonts
-			csid = CSIDL_FONTS;
-	
-		} else if (_stricmp(request, "COMMON_STARTMENU") == 0) {
-			// All Users\Start Menu
-			csid = CSIDL_COMMON_STARTMENU;
-	
-		} else if (_stricmp(request, "COMMON_PROGRAMS") == 0) {
-			// All Users\Start Menu\Programs
-			csid = CSIDL_COMMON_PROGRAMS;
-	
-		} else if (_stricmp(request, "COMMON_STARTUP") == 0) {
-			// All Users\Startup
-			csid = CSIDL_COMMON_STARTUP;
-	
-		} else if (_stricmp(request, "COMMON_DESKTOPDIRECTORY") == 0) {
-			// All Users\Desktop
-			csid = CSIDL_COMMON_DESKTOPDIRECTORY;
-	
-		} else if (_stricmp(request, "APPDATA") == 0) {
-			// <user name>\Application Data
-			csid = CSIDL_APPDATA;
-	
-		} else if (_stricmp(request, "PRINTHOOD") == 0) {
-			// <user name>\PrintHood
-			csid = CSIDL_PRINTHOOD;
-	
-		} else if (_stricmp(request, "LOCAL_APPDATA") == 0) {
-			// <user name>\Local Settings\Applicaiton Data (non roaming)
-			csid = CSIDL_LOCAL_APPDATA;
-	
-		} else if (_stricmp(request, "ALTSTARTUP") == 0) {
-			// non localized startup
-			csid = CSIDL_ALTSTARTUP;
-	
-		} else if (_stricmp(request, "COMMON_ALTSTARTUP") == 0) {
-			// non localized common startup
-			csid = CSIDL_COMMON_ALTSTARTUP;
-	
-		} else if (_stricmp(request, "COMMON_FAVORITES") == 0) {
-			// favorites folder
-			csid = CSIDL_COMMON_FAVORITES;
-	
-		} else if (_stricmp(request, "INTERNET_CACHE") == 0) {
-			// internet cache folder
-			csid = CSIDL_INTERNET_CACHE;
-	
-		} else if (_stricmp(request, "COOKIES") == 0) {
-			// cookies folder
-			csid = CSIDL_COOKIES;
-	
-		} else if (_stricmp(request, "HISTORY") == 0) {
-			// history folder
-			csid = CSIDL_HISTORY;
-	
-		} else if (_stricmp(request, "COMMON_APPDATA") == 0) {
-			// All Users\Application Data
-			csid = CSIDL_COMMON_APPDATA;
-	
-		} else if (_stricmp(request, "WINDOWS") == 0) {
-			// GetWindowsDirectory()
-			csid = CSIDL_WINDOWS;
-	
-		} else if (_stricmp(request, "SYSTEM") == 0) {
-			// GetSystemDirectory()
-			csid = CSIDL_SYSTEM;
-	
-		} else if (_stricmp(request, "PROGRAM_FILES") == 0) {
-			// C:\Program Files
-			csid = CSIDL_PROGRAM_FILES;
-	
-		} else if (_stricmp(request, "MYPICTURES") == 0) {
-			// C:\Program Files\My Pictures
-			csid = CSIDL_MYPICTURES;
-	
-		} else if (_stricmp(request, "PROFILE") == 0) {
-			// USERPROFILE
-			csid = CSIDL_PROFILE;
-	
-		} else if (_stricmp(request, "SYSTEMX86") == 0) {
-			// x86 system directory on RISC
-			csid = CSIDL_SYSTEMX86;
-	
-		} else if (_stricmp(request, "PROGRAM_FILESX86") == 0) {
-			// x86 C:\Program Files on RISC
-			csid = CSIDL_PROGRAM_FILESX86;
-	
-		} else if (_stricmp(request, "PROGRAM_FILES_COMMON") == 0) {
-			// C:\Program Files\Common
-			csid = CSIDL_PROGRAM_FILES_COMMON;
-	
-		} else if (_stricmp(request, "PROGRAM_FILES_COMMONX86") == 0) {
-			// x86 Program Files\Common on RISC
-			csid = CSIDL_PROGRAM_FILES_COMMONX86;
-	
-		} else if (_stricmp(request, "COMMON_TEMPLATES") == 0) {
-			// All Users\Templates
-			csid = CSIDL_COMMON_TEMPLATES;
-	
-		} else if (_stricmp(request, "COMMON_DOCUMENTS") == 0) {
-			// All Users\Documents
-			csid = CSIDL_COMMON_DOCUMENTS;
-	
-		} else if (_stricmp(request, "COMMON_ADMINTOOLS") == 0) {
-			// All Users\Start Menu\Programs\Administrative Tools
-			csid = CSIDL_COMMON_ADMINTOOLS;
-	
-		} else if (_stricmp(request, "ADMINTOOLS") == 0) {
-			// <user name>\Start Menu\Programs\Administrative Tools
-			csid = CSIDL_ADMINTOOLS;
-	
-		} else if (_stricmp(request, "CONNECTIONS") == 0) {
-			// Network and Dial-up Connections
-			csid = CSIDL_CONNECTIONS;
-	
-		} else if (_stricmp(request, "COMMON_MUSIC") == 0) {
-			// All Users\My Music
-			csid = CSIDL_COMMON_MUSIC;
-	
-		} else if (_stricmp(request, "COMMON_PICTURES") == 0) {
-			// All Users\My Pictures
-			csid = CSIDL_COMMON_PICTURES;
-	
-		} else if (_stricmp(request, "COMMON_VIDEO") == 0) {
-			// All Users\My Video
-			csid = CSIDL_COMMON_VIDEO;
-	
-		} else if (_stricmp(request, "RESOURCES") == 0) {
-			// Resource Directory
-			csid = CSIDL_RESOURCES;
-	
-		} else if (_stricmp(request, "RESOURCES_LOCALIZED") == 0) {
-			// Localized Resource Direcotry
-			csid = CSIDL_RESOURCES_LOCALIZED;
-	
-		} else if (_stricmp(request, "COMMON_OEM_LINKS") == 0) {
-			// Links to All Users OEM specific apps
-			csid = CSIDL_COMMON_OEM_LINKS;
-	
-		} else if (_stricmp(request, "CDBURN_AREA") == 0) {
-			// USERPROFILE\Local Settings\Application Data\Microsoft\CD Burning
-			csid = CSIDL_CDBURN_AREA;
-	
-		} else if (_stricmp(request, "COMPUTERSNEARME") == 0) {
-			// Computers Near Me (computered from Workgroup membership)
-			csid = CSIDL_COMPUTERSNEARME;
-
-		} else {
-			failure = true;
-			strcpy_s(&dirname[0], sizeof(dirname), "?unknown?csidl?name?");
-		}
-
-
-		if (!failure)
-		{
-			// Grab the directory from Windows
-			SHGetSpecialFolderPathA(0, dirname, csid, TRUE);
-
-			// Make sure it ends with a backslash
-			if (dirname[strlen(dirname) - 1] != '\\')
-				dirname[strlen(dirname)] = '\\';
-
-			// Make sure the directory exists
-			SHCreateDirectoryEx(NULL, A2T(&dirname[0]), NULL);
-		}
-
+		// Grab the specified CSIDL name
+		GetCSIDLDirectory(&dirname[0], sizeof(dirname), request);
 
 		// Free the parameter
 		AU3_FreeString(request);
@@ -1597,3 +1310,4 @@ extern HMODULE ghModule;
 
 // Helper functions called by the above au3 plugin functions
 #include "opbm_assist.cpp"
+#include "..\common\opbm_common.cpp"

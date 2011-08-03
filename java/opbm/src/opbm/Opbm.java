@@ -1,15 +1,6 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * Defined tests in .\tests\
- *		@1xOpera @1xChrome @1xSafari @1xIE @1xFirefox
- *		@5xOpera @5xChrome @5xSafari @5xIE @5xFirefox
- *		@10xOpera @10xChrome @10xSafari @10xIE @10xFirefox
- *		@1xOffice
- *		@5xOffice
- *		@10xOffice
- *		@testBrowsers
- *
  * This class is the top-level class of the OPBM.  It creates a GUI, loads
  * necessary files, beings processing based on context, etc.
  *
@@ -63,8 +54,8 @@ import org.xml.sax.SAXException;
  *
  * @author Rick C. Hodgin
  */
-public class Opbm extends		ModalApp
-				  implements	AdjustmentListener,
+public final class Opbm extends	ModalApp
+					 implements	AdjustmentListener,
 								KeyListener,
 								MouseWheelListener,
 								ComponentListener
@@ -74,7 +65,12 @@ public class Opbm extends		ModalApp
 // NATIVE functions in opbm64.dll:
 //
 //////
-	private native void sendWindowToForeground_native(String title);
+	static { System.loadLibrary("opbm64"); }
+	public native static void sendWindowToForeground(String title);
+	public native static String getHarnessCSVDirectory();
+	public native static String getHarnessXMLDirectory();
+	public native static String getScriptCSVDirectory();
+	public native static String getSettingsDirectory();
 
 
 
@@ -86,10 +82,17 @@ public class Opbm extends		ModalApp
 	 */
     public Opbm(String[] args)
 	{
+/*
+ * Used for debugging, or reference.  This data comes from opbm64.dll's functions:
+		System.out.println("Harness CSV Directory: " + getHarnessCSVDirectory());
+		System.out.println("Harness XML Directory: " + getHarnessXMLDirectory());
+		System.out.println(" Script CSV Directory: " + getScriptCSVDirectory());
+		System.out.println("   Settings Directory: " + getSettingsDirectory());
+*/
 		// Make sure we're the only app running
 		if (!isModalApp( "opbm.dat", m_title ))
 		{	// Already another app instance running
-			sendWindowToForeground_native(m_title);
+			sendWindowToForeground(m_title);
 			System.exit(-1);
 		}
 
@@ -831,7 +834,8 @@ public class Opbm extends		ModalApp
 		Document docPanelsXml;
 
 		root			= null;
-		panelsXmlFile	= new File(locateFile(fileName));
+		// If the filename contains a \ character, we assume it's a fully qualified path, otherwise we search our path for it
+		panelsXmlFile	= new File(fileName.contains("\\") ? fileName : locateFile(fileName));
 		fileToProcess	= panelsXmlFile.getAbsolutePath();
 		try {
 			factory			= DocumentBuilderFactory.newInstance();
@@ -865,17 +869,21 @@ public class Opbm extends		ModalApp
 	 */
 	public static String locateFile(String fileName)
 	{
-		File f1, f2, f3, f4, f5, f6, f7, f8;
-		String path = fileName;
+		File f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12;
+		String path;
 
-		f1 = new File("./"								+ fileName);
-		f2 = new File("./resources/"					+ fileName);
-		f3 = new File("./resources/xmls/"				+ fileName);
-		f4 = new File("./src/resources/"				+ fileName);
-		f5 = new File("./src/resources/xmls/"			+ fileName);
-		f6 = new File("./src/resources/backgrounds/"	+ fileName);
-		f7 = new File("./src/resources/graphics/"		+ fileName);
-		f8 = new File("./src/resources/masks/"			+ fileName);
+		f1	= new File("./"								+ fileName);
+		f2	= new File("./resources/"					+ fileName);
+		f3	= new File("./src/resources/"				+ fileName);
+		f4	= new File(getSettingsDirectory()			+ fileName);
+		f5	= new File("./resources/xmls/"				+ fileName);
+		f6	= new File("./src/resources/xmls/"			+ fileName);
+		f7	= new File("./resources/backgrounds/"		+ fileName);
+		f8	= new File("./src/resources/backgrounds/"	+ fileName);
+		f9	= new File("./resources/graphics/"			+ fileName);
+		f10	= new File("./src/resources/graphics/"		+ fileName);
+		f11	= new File("./resources/masks/"				+ fileName);
+		f12	= new File("./src/resources/masks/"			+ fileName);
 
 		do {
 			if (f1.exists()) {
@@ -910,10 +918,28 @@ public class Opbm extends		ModalApp
 				path = f8.getAbsolutePath();
 				break;
 			}
+			if (f9.exists()) {
+				path = f9.getAbsolutePath();
+				break;
+			}
+			if (f10.exists()) {
+				path = f10.getAbsolutePath();
+				break;
+			}
+			if (f11.exists()) {
+				path = f11.getAbsolutePath();
+				break;
+			}
+			if (f12.exists()) {
+				path = f12.getAbsolutePath();
+				break;
+			}
+			// We didn't find the file.
+			// Default to the regular filename (for error reporting)
+			path = fileName;
 			break;
 		} while (false);
-
-		// If we get here, not found
+		// Regardless of whether it was found or not, return the result
 		return(path);
 	}
 
@@ -1646,15 +1672,6 @@ public class Opbm extends		ModalApp
 	public DroppableFrame getGUIFrame()
 	{
 		return(frame);
-	}
-
-	/**
-	 * Sends the specified title native window in Windows to the foreground
-	 * @param title
-	 */
-	public void sendWindowToForeground(String title)
-	{
-		sendWindowToForeground_native(title);
 	}
 
 	/** Main app entry point.

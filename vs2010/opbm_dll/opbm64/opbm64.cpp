@@ -15,11 +15,7 @@
 // functions in this file.
 //
 /////
-	#include "windows.h"
-	#include "winbase.h"
 	#include "opbm64.h"
-	#include "atlconv.h"
-
 
 
 

@@ -27,6 +27,7 @@ import opbm.common.Tupel;
 import opbm.common.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import opbm.Opbm;
 import opbm.common.Xml;
 
 public class BenchmarksAtom
@@ -1173,7 +1174,7 @@ public class BenchmarksAtom
 // Summarize each command, averaging multiple runs for each command (if any)
 		for (i = 0; i < groups.size(); i++)
 		{
-			fileName	= "results\\" + Utils.justFileName(Utils.forceExtension(groups.getFirst(i), ".csv"));
+			fileName	= Opbm.getHarnessCSVDirectory() + Utils.justFileName(Utils.forceExtension(groups.getFirst(i), ".csv"));
 			groupItems	= (ArrayList<String>)groups.getSecond(i);
 			if (groupItems.size() > 1)
 			{

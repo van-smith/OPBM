@@ -100,7 +100,7 @@ public class Benchmarks
 		}
 
 		// Create a unique filename for this operation, based on the date and time
-		fileName = "results_" + Utils.convertToLettersAndNumbersOnly(Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
+		fileName = Opbm.getHarnessXMLDirectory() + "results_" + Utils.convertToLettersAndNumbersOnly(Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
 
 		// Save the output
 		m_bp.m_xmlRoot.saveNode(fileName);

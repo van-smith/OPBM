@@ -18,7 +18,6 @@
 	#include "windows.h"
 	#include "winbase.h"
 	#include "opbm64.h"
-	#include "atlconv.h"
 
 
 
@@ -29,16 +28,6 @@
 //
 /////
 	HMODULE ghModule;
-
-
-
-
-//////////
-//
-// Forward declarations for opbm64.cpp functions
-//
-/////
-	void			sendWindowToForeground					(const TCHAR* title);
 
 
 
@@ -67,6 +56,9 @@
 	}
 
 
+// Handls common functions between opbm.dll and opbm64.dll, such as CSIDL directory locations
+#include "..\common\opbm_common.cpp"
+
 
 
 //////////
@@ -82,7 +74,7 @@
 //
 /////
 	// sendWindowToForeground()
-	JNIEXPORT void JNICALL Java_opbm_Opbm_sendWindowToForeground_1native(JNIEnv* env, jobject obj, jstring title)
+	JNIEXPORT void JNICALL Java_opbm_Opbm_sendWindowToForeground(JNIEnv* env, jobject obj, jstring title)
 	{
 		USES_CONVERSION;
 		const char* wtptr;	// Window title pointer
@@ -97,4 +89,106 @@
 		env->ReleaseStringUTFChars(title, wtptr);
 
 		return;
+	}
+
+
+
+
+//////////
+//
+// dir = GetHarnessCSVDirectory()
+//
+// Called to return the CSIDL location of the harness's CSV directory.
+//
+/////
+	// GetHarnessCSVDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessCSVDirectory(JNIEnv* env, jobject obj)
+	{
+		USES_CONVERSION;
+		char		dirname[ MAX_PATH ];
+		jstring		directory;
+
+		// Allocate the variable
+		GetHarnessCSVDirectory(dirname, sizeof(dirname));
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+
+		return(directory);
+	}
+
+
+
+
+//////////
+//
+// dir = GetHarnessXMLDirectory()
+//
+// Called to return the CSIDL location of the harness's XML directory.
+//
+/////
+	// GetHarnessXMLDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessXMLDirectory(JNIEnv* env, jobject obj)
+	{
+		USES_CONVERSION;
+		char		dirname[ MAX_PATH ];
+		jstring		directory;
+
+		// Allocate the variable
+		GetHarnessXMLDirectory(dirname, sizeof(dirname));
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+		return(directory);
+	}
+
+
+
+
+//////////
+//
+// dir = GetScriptCSVDirectory()
+//
+// Called to return the CSIDL location of the script's CSV directory.
+//
+/////
+	// GetScriptCSVDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptCSVDirectory(JNIEnv* env, jobject obj)
+	{
+		USES_CONVERSION;
+		char		dirname[ MAX_PATH ];
+		jstring		directory;
+
+		// Allocate the variable
+		GetScriptCSVDirectory(dirname, sizeof(dirname));
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+		return(directory);
+	}
+
+
+
+
+//////////
+//
+// dir = GetSettingsDirectory()
+//
+// Called to return the CSIDL location of the harness's settings directory.
+//
+/////
+	// GetSettingsDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getSettingsDirectory(JNIEnv* env, jobject obj)
+	{
+		USES_CONVERSION;
+		char		dirname[ MAX_PATH ];
+		jstring		directory;
+
+		// Allocate the variable
+		GetCSIDLDirectory(dirname, sizeof(dirname), "MYDOCUMENTS");
+		memcpy(&dirname[0] + strlen(dirname), "opbm\\settings\\", 14);
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+		return(directory);
 	}
