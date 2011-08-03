@@ -10,7 +10,7 @@
 ;	Van Smith
 ;	Rick C. Hodgin
 ;
-; Usage:	alice
+; Usage:	alice [repeat_count]
 ;
 ;======================================================================================================================================
 #include <../../common/office2010/wordCommon.au3>
