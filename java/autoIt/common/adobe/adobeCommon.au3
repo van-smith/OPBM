@@ -35,6 +35,7 @@ Const $REMOVE_THE_PROGRAM						= "Remove the Program"
 Const $PREFERENCES								= "Preferences"
 Const $ACROBAT_READER_LICENSE_AGREEMENT			= "Adobe Reader X - Distribution License Agreement"
 Const $ADOBE_READER_X_MAINTENANCE				= "Adobe Reader X (10.1.0) Maintenance"
+Const $ACROBAT_READER_IS_NOT_INSTALLED			= "Acrobat Reader is not installed"
 
 ; Global declaration for timing constants
 Dim $gBaselineSize

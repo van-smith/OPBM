@@ -14,6 +14,7 @@
 ;
 ;======================================================================================================================================
 #include <../../common/office2010/wordCommon.au3>
+#include <../../common/adobe/adobeCommon.au3>
 
 
 ; Begin at 2, refer to wordCommon.au3 to see 0 and 1
@@ -39,9 +40,13 @@ EndIf
 For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
 	outputDebug( "InitializeWordScript()" )
 	InitializeWordScript()
+	
+	If not isAcrobatReaderAlreadyInstalled()
+		outputError( $ACROBAT_READER_IS_NOT_INSTALLED )
+		Exit -1
+	Then
 	
 	outputDebug( "LaunchWord()" )
 	LaunchWord()

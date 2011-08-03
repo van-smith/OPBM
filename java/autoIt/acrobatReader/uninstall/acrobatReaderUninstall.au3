@@ -31,7 +31,7 @@ outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
 
 If not isAcrobatReaderAlreadyInstalled() Then
-	outputError( "Acrobat Reader is not installed" )
+	outputError( $ACROBAT_READER_IS_NOT_INSTALLED )
 	Exit -1
 Endif
 
