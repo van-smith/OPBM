@@ -539,3 +539,25 @@
 
 		return(keyName);
 	}
+
+
+
+	// From a running 32-bit DLL, determines if running under WOW64
+	// If so, then is 64-bit OS, if not, then is 32-bit OS
+	BOOL isRunningUnderWOW64(void)
+	{
+		typedef BOOL (WINAPI* LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
+		LPFN_ISWOW64PROCESS fnIsWow64Process;
+		BOOL bIs64BitOS = FALSE;
+
+		// Check if the OS is 64 Bit
+		fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(L"kernel32"), "IsWow64Process");
+		if (fnIsWow64Process != NULL)
+		{
+			if (!fnIsWow64Process(GetCurrentProcess(), &bIs64BitOS))
+			{	// error
+				bIs64BitOS = false;
+			}
+		}
+		return bIs64BitOS;
+	}

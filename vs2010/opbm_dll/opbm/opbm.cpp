@@ -58,7 +58,7 @@ extern HMODULE ghModule;
 	int				SetRegistryKeyValueAsDword		(char* key, int value);
 	int				SetRegistryKeyValueAsBinary		(char* key, char* value, int length);
 	char*			breakoutHkeyComponents			(char* key, HKEY& hk, int& skip);
-
+	BOOL			isRunningUnderWOW64				(void);
 
 
 
@@ -73,7 +73,7 @@ extern HMODULE ghModule;
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 21;
+	int numberOfCustomAU3Functions = 23;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
 			/* Function Name,					   Min,	   Max
@@ -98,7 +98,9 @@ extern HMODULE ghModule;
 /* 18 */	{ "GetScriptCSVDirectory",				0,		0},			/* Called to return the output directory used for script-written *.csv files */
 /* 19 */	{ "GetHarnessXmlDirectory",				0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
 /* 20 */	{ "GetHarnessCSVDirectory",				0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
-/* 21 */	{ "GetCSIDLDirectory",					1,		1}			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
+/* 21 */	{ "GetCSIDLDirectory",					1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
+/* 22 */	{ "Is32BitOS",							0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
+/* 23 */	{ "Is64BitOS",							0,		0}			/* Returns whether or not the installed OS is a 64-bit version or not */
 			/* Don't forget to update numberOfCustomAU3Functions above */
 	};
 
@@ -1297,6 +1299,76 @@ extern HMODULE ghModule;
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
 		AU3_SetString(pMyResult, dirname);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// Is32BitOS()
+//
+// Returns whether or not the installed OS is 32-bit or 64-bit
+//
+// Parameters:  
+//
+// 		Is32BitOS()
+//
+/////
+	AU3_PLUGIN_DEFINE(Is32BitOS)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					is32Bits;
+
+		// Ask Windows what it is?
+		is32Bits = !isRunningUnderWOW64();
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, is32Bits);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// Is64BitOS()
+//
+// Returns whether or not the installed OS is 32-bit or 64-bit
+//
+// Parameters:  
+//
+// 		Is64BitOS()
+//
+/////
+	AU3_PLUGIN_DEFINE(Is64BitOS)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					is64Bits;
+
+		// Ask Windows what it is?
+		is64Bits = isRunningUnderWOW64();
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, is64Bits);
 
 		*p_AU3_Result		= pMyResult;
 		*n_AU3_ErrorCode	= 0;

@@ -81,11 +81,18 @@ Func InitializeGlobalVariables()
 	;		GetCSIDLDirectory( $CSIDL_nameWithoutLeadingCSIDL_)
 	;			Example:  GetCSIDLDirectory( "MYDOCUMENTS" )
 	;			Returns:  c:\users\user\documents\
+	;		is32BitOS()		; Is the OS installed a 32-bit OS?
+	;		is64BitOS()		; Is the OS installed a 64-bit OS?
 	$gOpbmPluginHandle = PluginOpen( $OPBM_DLL )
 	If $gOpbmPluginHandle <> 0 Then 
 		errorHandle( $OPBM_DLL & " did not open" )
 	EndIf
 	outputDebug( "Plugin " & $OPBM_DLL & " opened properly" )
+	If is32BitOS() Then
+		outputDebug( "Detected Windows 32-bit Operating System" )
+	Else
+		outputDebug( "Detected Windows 64-bit Operating System" )
+	EndIf
 	
 	; Note all open windows at the present time (can be used to restore the system to its previous state)
 	; from opbm.dll
