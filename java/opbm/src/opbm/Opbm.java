@@ -65,7 +65,17 @@ public final class Opbm extends	ModalApp
 // NATIVE functions in opbm64.dll:
 //
 //////
-	static { System.loadLibrary("opbm64"); }
+	static {
+		if (System.getProperty("sun.arch.data.model").equals("32"))
+		{	// 32-bit JVM
+			System.loadLibrary("opbm32");
+			System.out.println("Running 32-bit JVM");
+		} else {
+			// 64-bit JVM
+			System.loadLibrary("opbm64");
+			System.out.println("Running 64-bit JVM");
+		}
+	}
 	public native static void sendWindowToForeground(String title);
 	public native static String getHarnessCSVDirectory();
 	public native static String getHarnessXMLDirectory();

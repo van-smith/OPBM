@@ -99,10 +99,10 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\Debug\opbm64.dll ..\..\..\java\opbm\opbm64.dll</Command>
+      <Command>copy ..\Debug\opbm64.dll ..\..\..\java\opbm\opbm32.dll</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy opbm64.dll to opbm</Message>
+      <Message>Copy opbm32.dll to opbm</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -145,10 +145,10 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy c:\cana\vs2010\opbm_dll\release\opbm64.dll c:\cana\java\opbm\opbm64.dll</Command>
+      <Command>copy ..\Release\opbm64.dll ..\..\..\java\opbm\opbm32.dll</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy opbm64.dll to opbm</Message>
+      <Message>Copy opbm32.dll to opbm</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
