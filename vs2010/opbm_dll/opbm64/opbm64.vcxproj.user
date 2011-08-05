@@ -10,4 +10,10 @@
     <LocalDebuggerWorkingDirectory>c:\cana\java\opbm\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommandArguments>-jar dist\opbm.jar</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>C:\Program Files (x86)\Java\jre6\bin\java.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>c:\cana\java\opbm\</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
 </Project>

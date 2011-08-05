@@ -176,6 +176,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\opbm_common.h" />
     <ClInclude Include="..\CPU\CPU.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="resource2.h" />

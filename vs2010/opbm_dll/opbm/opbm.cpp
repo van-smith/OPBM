@@ -35,16 +35,10 @@ extern HMODULE ghModule;
 // Note:  Windows doesn't just have windows 
 //
 /////
-	#define _MAX_HWND_COUNT	16384
-	HWND		enumeratedWindows[_MAX_HWND_COUNT];
-	int			hwndMaxCount	= 0;
-	int			hwndsClosed		= 0;
 	char		converted[2048];
 
 
 	// opbm_assist.cpp functions:
-	BOOL CALLBACK	EnumWindowsCallbackProc			(HWND hwnd, LPARAM lParam);
-	BOOL CALLBACK	ComparativeWindowsCallbackProc	(HWND hwnd, LPARAM lParam);
 	bool			iCopyFile						(wchar_t* prefixDir, wchar_t* srcFile, char* content, int length);
 	bool			iMakeDirectory					(wchar_t* prefixDir, wchar_t* postfixDir);
 	int				wcstrncpy						(wchar_t* dest, int max, wchar_t* src);

@@ -29,6 +29,13 @@
 /////
 	HMODULE ghModule;
 
+	// Used for snapshotProcesses() and stopProcesses()
+	DWORD	gProcIDs[2048];
+	DWORD	gProcIDsSize = 0;
+	HWND	enumeratedWindows[_MAX_HWND_COUNT];
+	int		hwndMaxCount	= 0;
+	int		hwndsClosed		= 0;
+
 
 
 
@@ -49,6 +56,7 @@
 			case DLL_PROCESS_ATTACH:
 			case DLL_THREAD_ATTACH:
 			case DLL_THREAD_DETACH:
+				break;
 			case DLL_PROCESS_DETACH:
 				break;
 		}
@@ -202,8 +210,16 @@
 	// snapshotProcesses()
 	JNIEXPORT void JNICALL Java_opbm_Opbm_snapshotProcesses(JNIEnv* env, jclass cls)
 	{
-		// Not currently implemented
-		// REMEMBER will implement in future
+		// Note all windows
+		hwndMaxCount = -1;
+		EnumWindows(&EnumWindowsCallbackProc, 0);
+
+		// Note all processes
+		if (EnumProcesses(&gProcIDs[0], sizeof(gProcIDs), &gProcIDsSize))
+		{	// Convert byte count to dword count
+			gProcIDsSize /= 4;
+			// It stored everything that exists up to 2048 processes (a way high number)
+		}
 	}
 
 
@@ -219,6 +235,56 @@
 	// stopProcesses()
 	JNIEXPORT void JNICALL Java_opbm_Opbm_stopProcesses(JNIEnv* env, jclass cls)
 	{
-		// Not currently implemented
-		// REMEMBER will implement in future
+		int result;
+		DWORD i, j;
+		DWORD lProcIDs[2048];
+		DWORD lProcIDsSize;
+		HANDLE handle;
+
+		// Close windows
+		hwndsClosed = 0;
+		EnumWindows(&ComparativeWindowsCallbackProc, 0);
+
+		// Wait three seconds (for windo
+		Sleep(3000);
+
+		// Close processes
+		if (gProcIDsSize != 0)
+		{
+			// Get a list of current processes, and kill every one that's not in our original list
+			if (EnumProcesses(&lProcIDs[0], sizeof(lProcIDs), &lProcIDsSize))
+			{
+				// Convert byte count to dword count
+				lProcIDsSize /= 4;
+
+				// Compare against everything that existed previously
+				// Iterate through the current ones, see if they're found in the old ones
+				for (i = 0; i < lProcIDsSize; i++)	// current ones
+				{
+					for (j = 0; j < gProcIDsSize; j++)	// old ones
+					{
+						// If we find a match, it's a process to keep
+						if (lProcIDs[i] == gProcIDs[j])
+						{
+							// We found a match, keep it
+							break;
+						}
+						// If we get here, it wasn't found, keep checking
+					}
+					// If we get here, we either left the loop early by finding a match, or not
+					if (j >= gProcIDsSize)
+					{
+						// If we get here, we did not find this one
+						// So, we are desiring to terminate this process with extreme prejudice (ie, immediately)
+						handle = OpenProcess(PROCESS_TERMINATE, FALSE, lProcIDs[i]);
+						if (handle != NULL)
+						{
+							// Terminate the process (or try to, Windows may not allow us to)
+							result = TerminateProcess(handle, -1);
+						}
+						// If we get here, we've done our earnest best... nothing else to do
+					}
+				}
+			}
+		}
 	}

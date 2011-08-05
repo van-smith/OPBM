@@ -11,63 +11,6 @@
 //////////
 //
 // Functions related to the above AU3 plugin functions:
-//		NoteAllOpenWindows()
-//		CloseAllWindowsNotPreviouslyNoted()
-//
-//////
-	// Begin:
-	// Callback function, physically appends this HWND to the list of HWNDs already captured
-	BOOL CALLBACK EnumWindowsCallbackProc(HWND hwnd, LPARAM lParam)
-	{
-		++hwndMaxCount;
-		if (hwndMaxCount < _MAX_HWND_COUNT)
-		{	// We're good, we can store this one
-			enumeratedWindows[hwndMaxCount] = hwnd;
-
-		} else {
-			// Too many ducks in the barrel!
-			// We just have to ignore the count beyond here
-		}
-		// Keep enumerating
-		return TRUE;
-	}
-
-	//	Callback function, physically appends this HWND to the list of HWNDs already captured
-	BOOL CALLBACK ComparativeWindowsCallbackProc(HWND hwnd, LPARAM lParam)
-	{
-		wchar_t windowName[2048];
-		int i;
-
-		if (GetParent(hwnd) == NULL)
-		{	// We only close top-level windows, all subordinate windows should be closed politely when their top-level window closes
-			for (i = 0; i < hwndMaxCount; i++)
-			{
-				if (enumeratedWindows[i] == hwnd)
-				{	// We found a match, this one is already known to us, it was there when noted previously
-					// Ignore it
-					return TRUE;
-				}
-			}
-
-			// If we get here, this window wasn't found
-			GetWindowText(hwnd, &windowName[0], sizeof(windowName));
-			if (windowName[0] != 0)
-			{	// We only close windows with real names
-				SendMessage(hwnd, WM_CLOSE, 0, 0);
-				++hwndsClosed;
-			}
-		}
-
-		// Keep enumerating
-		return TRUE;
-	}
-	// :End
-
-
-
-//////////
-//
-// Functions related to the above AU3 plugin functions:
 //		FirefoxInstallerAssist()
 //		ChromeInstallerAssist()
 //		OperaInstallerAssist()

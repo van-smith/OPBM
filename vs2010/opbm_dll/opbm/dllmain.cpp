@@ -1,7 +1,13 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
+#include "..\common\opbm_common.h"
+
 
 HMODULE ghModule;
+HWND	enumeratedWindows[_MAX_HWND_COUNT];
+int		hwndMaxCount	= 0;
+int		hwndsClosed		= 0;
+
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

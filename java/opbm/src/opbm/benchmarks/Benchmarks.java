@@ -129,6 +129,7 @@ public class Benchmarks
 			// Not displayted (typical condition)
 			bp.m_deb					= null;
 		}
+		bp.m_debuggerOrHUDAction		= BenchmarksParams._NO_ACTION;
 
 		bp.m_headsUpActive				= bp.m_settingsMaster.isHUDVisible();
 		if (bp.m_headsUpActive)
@@ -393,6 +394,7 @@ public class Benchmarks
 				}
 
 				// Process the next command
+				Opbm.snapshotProcesses();
 				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRunAppendTo);
 				if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
 					break;
@@ -461,10 +463,10 @@ public class Benchmarks
 				if (m_bp.m_debuggerActive)
 				{
 					// Update the debugger display
-					m_bp.m_debugLastAction	= m_bp.m_debuggerOrHUDAction;
+					m_bp.m_debugLastAction		= m_bp.m_debuggerOrHUDAction;
 					m_bp.m_debuggerOrHUDAction	= BenchmarksParams._NO_ACTION;
-					m_bp.m_debugParent		= molecule;
-					m_bp.m_debugChild		= child;
+					m_bp.m_debugParent			= molecule;
+					m_bp.m_debugChild			= child;
 					// Put focus in the window
 					m_bp.m_deb.forceWindowToHaveFocus();
 					m_bp.m_deb.update();
@@ -505,7 +507,10 @@ public class Benchmarks
 				}
 
 				// Process the next command
+				Opbm.snapshotProcesses();
 				child = m_bp.m_bpMolecule.processCommand(child, molecule, xmlRunAppendTo);
+				if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
+					break;
 			}
 
 			if (iterations != 1 && xml != null)

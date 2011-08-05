@@ -11,6 +11,7 @@
 	#include "atlconv.h"
 	#include "shlobj.h"
 	#include "..\common\opbm_common.h"
+	#include "psapi.h"
 
 
 
