@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (Ljava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_opbm_Opbm_sendWindowToForeground
-  (JNIEnv *, jobject, jstring);
+  (JNIEnv *, jclass, jstring);
 
 /*
  * Class:     opbm_Opbm
@@ -21,7 +21,7 @@ JNIEXPORT void JNICALL Java_opbm_Opbm_sendWindowToForeground
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessCSVDirectory
-  (JNIEnv *, jobject);
+  (JNIEnv *, jclass);
 
 /*
  * Class:     opbm_Opbm
@@ -29,7 +29,7 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessCSVDirectory
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessXMLDirectory
-  (JNIEnv *, jobject);
+  (JNIEnv *, jclass);
 
 /*
  * Class:     opbm_Opbm
@@ -37,7 +37,7 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessXMLDirectory
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptCSVDirectory
-  (JNIEnv *, jobject);
+  (JNIEnv *, jclass);
 
 /*
  * Class:     opbm_Opbm
@@ -45,7 +45,23 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptCSVDirectory
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_opbm_Opbm_getSettingsDirectory
-  (JNIEnv *, jobject);
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    snapshotProcesses
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_opbm_Opbm_snapshotProcesses
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    stopProcesses
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_opbm_Opbm_stopProcesses
+  (JNIEnv *, jclass);
 
 #ifdef __cplusplus
 }

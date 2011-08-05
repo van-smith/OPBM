@@ -32,5 +32,8 @@
     <ClInclude Include="opbm64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\java\opbm\jni\opbm64_jni.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

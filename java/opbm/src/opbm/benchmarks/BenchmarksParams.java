@@ -1,8 +1,9 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class is the top-level class for benchmarking.  It executes scripts,
- * shows the heads-up display, displays the single-step debugger, etc.
+ * This class is a container class for data items and parameters used during
+ * benchmarking.  It has only those methods necessary to process the data
+ * consumed or referenced during benchmark execution.
  *
  * Last Updated:  Aug 01, 2011
  *
@@ -39,7 +40,10 @@ public class BenchmarksParams
 	 * like "1.4839839838393" (indicating seconds), and ofBaselinePercent is
 	 * something like "99.73833938262" where 100 is the baseline.
 	 * Populates into m_status, m_timing, m_ofBaseline
-	 * @param line
+	 * @param line "Launch program,1.4839839838393,99.73833938262"
+	 * @sets m_status = "Launch Program"
+	 * @sets m_timing = 1.4839839838393
+	 * @sets m_ofBaseline = 99.73833938262
 	 */
 	public void extractTimingLineElements(String line)
 	{
@@ -81,7 +85,6 @@ public class BenchmarksParams
 			m_timingOfBaseline = 0.0;
 	}
 
-
 	public Opbm					m_opbm;
 	public Macros				m_macroMaster;
 	public Settings				m_settingsMaster;
@@ -100,7 +103,7 @@ public class BenchmarksParams
 	public boolean				m_singleStepping;
 	public int					m_debugLastAction;
 	public Debugger				m_deb;
-	public int					m_debuggerAction;
+	public int					m_debuggerOrHUDAction;
 	public Xml					m_debugParent;
 	public Xml					m_debugChild;
 

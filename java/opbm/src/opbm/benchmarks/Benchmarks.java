@@ -133,7 +133,7 @@ public class Benchmarks
 		bp.m_headsUpActive				= bp.m_settingsMaster.isHUDVisible();
 		if (bp.m_headsUpActive)
 		{	// The HUD is displayed
-			bp.m_hud					= new HUD(bp.m_opbm, false);
+			bp.m_hud					= new HUD(bp.m_opbm, bp, false);
 		} else {
 			// Not displayed (typical condition)
 			bp.m_hud					= null;
@@ -343,14 +343,14 @@ public class Benchmarks
 
 			}
 
-			// Process all atom commands one-by-one
+			// Process all atom commands one-by-one until finished, or until the user presses the stop button
 			while (child != null)
 			{
 				if (m_bp.m_debuggerActive)
 				{
 					// Update the debugger display
-					m_bp.m_debugLastAction	= m_bp.m_debuggerAction;
-					m_bp.m_debuggerAction	= BenchmarksParams._NO_ACTION;
+					m_bp.m_debugLastAction	= m_bp.m_debuggerOrHUDAction;
+					m_bp.m_debuggerOrHUDAction	= BenchmarksParams._NO_ACTION;
 					m_bp.m_debugParent		= atom;
 					m_bp.m_debugChild		= child;
 					// Put focus in the window
@@ -368,7 +368,7 @@ public class Benchmarks
 								Thread.sleep(10);
 
 								// Did they select something while they were running?
-								if (m_bp.m_debuggerAction != BenchmarksParams._NO_ACTION)
+								if (m_bp.m_debuggerOrHUDAction != BenchmarksParams._NO_ACTION)
 									break;
 
 							} while (true);
@@ -378,14 +378,14 @@ public class Benchmarks
 						m_bp.m_deb.setVisible(false);
 
 						// See what option they chose
-						if (m_bp.m_debuggerAction == BenchmarksParams._RUN) {
+						if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._RUN) {
 							// Lower the single-stepping flag
 							m_bp.m_singleStepping = false;
 
-						} else if (m_bp.m_debuggerAction == BenchmarksParams._SINGLE_STEP) {
+						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._SINGLE_STEP) {
 							// Do nothing, except continue on
 
-						} else if (m_bp.m_debuggerAction == BenchmarksParams._STOP) {
+						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP) {
 							// We're finished
 							break;
 						}
@@ -394,12 +394,14 @@ public class Benchmarks
 
 				// Process the next command
 				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRunAppendTo);
+				if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
+					break;
 			}
 
 			if (iterations != 1 && xml != null)
 				xmlRunAppendTo = xml;
 
-			if (m_bp.m_debuggerAction == BenchmarksParams._STOP)
+			if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
 				break;
 		}
 		// When we get here, we are finished with the run, now generate the outputs
@@ -459,8 +461,8 @@ public class Benchmarks
 				if (m_bp.m_debuggerActive)
 				{
 					// Update the debugger display
-					m_bp.m_debugLastAction	= m_bp.m_debuggerAction;
-					m_bp.m_debuggerAction	= BenchmarksParams._NO_ACTION;
+					m_bp.m_debugLastAction	= m_bp.m_debuggerOrHUDAction;
+					m_bp.m_debuggerOrHUDAction	= BenchmarksParams._NO_ACTION;
 					m_bp.m_debugParent		= molecule;
 					m_bp.m_debugChild		= child;
 					// Put focus in the window
@@ -478,7 +480,7 @@ public class Benchmarks
 								Thread.sleep(10);
 
 								// Did they select something while they were running?
-								if (m_bp.m_debuggerAction != BenchmarksParams._NO_ACTION)
+								if (m_bp.m_debuggerOrHUDAction != BenchmarksParams._NO_ACTION)
 									break;
 
 							} while (true);
@@ -488,14 +490,14 @@ public class Benchmarks
 						m_bp.m_deb.setVisible(false);
 
 						// See what option they chose
-						if (m_bp.m_debuggerAction == BenchmarksParams._RUN) {
+						if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._RUN) {
 							// Lower the single-stepping flag
 							m_bp.m_singleStepping = false;
 
-						} else if (m_bp.m_debuggerAction == BenchmarksParams._SINGLE_STEP) {
+						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._SINGLE_STEP) {
 							// Do nothing, except continue on
 
-						} else if (m_bp.m_debuggerAction == BenchmarksParams._STOP) {
+						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP) {
 							// We're finished
 							break;
 						}
@@ -509,7 +511,7 @@ public class Benchmarks
 			if (iterations != 1 && xml != null)
 				xmlRunAppendTo = xml;
 
-			if (m_bp.m_debuggerAction == BenchmarksParams._STOP)
+			if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
 				break;
 		}
 		// Indicate the atom is done

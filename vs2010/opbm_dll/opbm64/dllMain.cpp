@@ -74,7 +74,7 @@
 //
 /////
 	// sendWindowToForeground()
-	JNIEXPORT void JNICALL Java_opbm_Opbm_sendWindowToForeground(JNIEnv* env, jobject obj, jstring title)
+	JNIEXPORT void JNICALL Java_opbm_Opbm_sendWindowToForeground(JNIEnv* env, jclass cls, jstring title)
 	{
 		USES_CONVERSION;
 		const char* wtptr;	// Window title pointer
@@ -102,9 +102,8 @@
 //
 /////
 	// GetHarnessCSVDirectory()
-	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessCSVDirectory(JNIEnv* env, jobject obj)
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessCSVDirectory(JNIEnv* env, jclass cls)
 	{
-		USES_CONVERSION;
 		char		dirname[ MAX_PATH ];
 		jstring		directory;
 
@@ -128,9 +127,8 @@
 //
 /////
 	// GetHarnessXMLDirectory()
-	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessXMLDirectory(JNIEnv* env, jobject obj)
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessXMLDirectory(JNIEnv* env, jclass cls)
 	{
-		USES_CONVERSION;
 		char		dirname[ MAX_PATH ];
 		jstring		directory;
 
@@ -153,9 +151,8 @@
 //
 /////
 	// GetScriptCSVDirectory()
-	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptCSVDirectory(JNIEnv* env, jobject obj)
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptCSVDirectory(JNIEnv* env, jclass cls)
 	{
-		USES_CONVERSION;
 		char		dirname[ MAX_PATH ];
 		jstring		directory;
 
@@ -178,9 +175,8 @@
 //
 /////
 	// GetSettingsDirectory()
-	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getSettingsDirectory(JNIEnv* env, jobject obj)
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getSettingsDirectory(JNIEnv* env, jclass cls)
 	{
-		USES_CONVERSION;
 		char		dirname[ MAX_PATH ];
 		jstring		directory;
 
@@ -191,4 +187,38 @@
 		// Create the return variable
 		directory = env->NewStringUTF( dirname );
 		return(directory);
+	}
+
+
+
+
+//////////
+//
+// snapshotProcesses()
+//
+// Called to take a snapshot of all running processes as of the time of this call.
+//
+/////
+	// snapshotProcesses()
+	JNIEXPORT void JNICALL Java_opbm_Opbm_snapshotProcesses(JNIEnv* env, jclass cls)
+	{
+		// Not currently implemented
+		// REMEMBER will implement in future
+	}
+
+
+
+
+//////////
+//
+// stopProcesses()
+//
+// Called to stop all processes that weren't running when the last snapshot was taken.
+//
+/////
+	// stopProcesses()
+	JNIEXPORT void JNICALL Java_opbm_Opbm_stopProcesses(JNIEnv* env, jclass cls)
+	{
+		// Not currently implemented
+		// REMEMBER will implement in future
 	}

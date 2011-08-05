@@ -1,8 +1,9 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class is the top-level class for benchmarking.  It executes scripts,
- * shows the heads-up display, displays the single-step debugger, etc.
+ * This class is the top-level class for atom benchmarking.  It executes atoms,
+ * including all abstracts, flow controls and customs, one-by-one, through the
+ * entire sequence provided for by the source Xml, called "atom" here.
  *
  * Last Updated:  Aug 01, 2011
  *
@@ -46,8 +47,8 @@ public class BenchmarksAtom
 	 * @return next command to execute (if any)
 	 */
 	public Xml processCommand(Xml	thisCommand,
-										   Xml	atom,
-										   Xml	xmlRunAppendTo)
+							  Xml	atom,
+							  Xml	xmlRunAppendTo)
 	{
 //////////
 // FLOW

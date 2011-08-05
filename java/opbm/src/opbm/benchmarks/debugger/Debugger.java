@@ -495,21 +495,21 @@ public final class Debugger extends DroppableFrame implements KeyListener, Mouse
 
 	public void debuggerRun()
 	{
-		m_bp.m_debuggerAction = BenchmarksParams._RUN;
+		m_bp.m_debuggerOrHUDAction = BenchmarksParams._RUN;
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug("Resuming at " + m_thisDebuggerStepName);
 	}
 
 	public void debuggerSingleStep()
 	{
-		m_bp.m_debuggerAction = BenchmarksParams._SINGLE_STEP;
+		m_bp.m_debuggerOrHUDAction = BenchmarksParams._SINGLE_STEP;
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug("Single stepping through " + m_thisDebuggerStepName);
 	}
 
 	public void debuggerStop()
 	{
-		m_bp.m_debuggerAction = BenchmarksParams._STOP;
+		m_bp.m_debuggerOrHUDAction = BenchmarksParams._STOP;
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug("Stopped at " + m_thisDebuggerStepName);
 	}

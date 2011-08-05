@@ -77,10 +77,12 @@ public final class Opbm extends	ModalApp
 		}
 	}
 	public native static void sendWindowToForeground(String title);
-	public native static String getHarnessCSVDirectory();
-	public native static String getHarnessXMLDirectory();
-	public native static String getScriptCSVDirectory();
-	public native static String getSettingsDirectory();
+	public native static String getHarnessCSVDirectory();			// Returns c:\\users\\user\\documents\\obbm\\results\\csv\\
+	public native static String getHarnessXMLDirectory();			// Returns c:\\users\\user\\documents\\opbm\\results\\xml\
+	public native static String getScriptCSVDirectory();			// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\
+	public native static String getSettingsDirectory();				// Returns c:\\users\\user\\documents\\opbm\\settings\\
+	public native static void snapshotProcesses();					// Takes a snapshot of the currently running processes
+	public native static void stopProcesses();						// Stops all processes that were not running when the snapshot was taken
 
 
 

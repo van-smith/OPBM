@@ -26,6 +26,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import opbm.benchmarks.hud.HUD;
 
 public class AnimateImageTask extends TimerTask
 {
@@ -56,15 +57,55 @@ public class AnimateImageTask extends TimerTask
 	@Override
 	public void run()
 	{
-		m_label.setIcon(m_images.get(m_activeImage));
-		++m_activeImage;
+		HUD hud;
 
-		if (m_activeImage >= m_images.size())
-			m_activeImage = 0;
+		if (!m_paused)
+		{
+			m_label.setIcon(m_images.get(m_activeImage));
+			++m_activeImage;
+
+			if (m_activeImage >= m_images.size())
+			{
+				m_activeImage = 0;
+				if (m_callbackObject != null)
+				{
+					if (m_callbackIdentifier.equalsIgnoreCase("hud"))
+					{	// It's a HUD, call its callback
+						hud = (HUD)m_callbackObject;
+						hud.animateImageTaskCallback(m_callbackParam);
+					}
+				}
+			}
+		}
+	}
+
+	public void pause()
+	{
+		m_paused = true;
+	}
+
+	public void restart()
+	{
+		m_paused = false;
+	}
+
+	public void setupCallback(Object	obj,
+							  String	identifier,
+							  Object	parameter)
+	{
+		m_callbackObject		= obj;
+		m_callbackIdentifier	= identifier;
+		m_callbackParam			= parameter;
 	}
 
 	private List<ImageIcon>		m_images;
 	private int					m_activeImage;
 	private JLabel				m_label;
 	private Timer				m_timer;
+	private boolean				m_paused;
+
+	// Setup for callback information
+	private Object				m_callbackObject;
+	private String				m_callbackIdentifier;
+	private Object				m_callbackParam;
 }

@@ -187,6 +187,7 @@
     <ClCompile Include="opbm64.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\java\opbm\jni\opbm64_jni.h" />
     <ClInclude Include="..\common\opbm_common.h" />
     <ClInclude Include="opbm64.h" />
   </ItemGroup>
