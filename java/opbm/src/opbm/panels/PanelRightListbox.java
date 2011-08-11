@@ -811,17 +811,21 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 	 */
 	public void updateListBoxArray()
 	{
-		int saveIndex = m_listBox.getSelectedIndex();
+		int saveIndex;
 
-		m_listBox.setListData(m_xmlListboxMaster.toArray());
+		if (m_listBox != null && m_xmlListboxMaster != null)
+		{
+			saveIndex = m_listBox.getSelectedIndex();
+			m_listBox.setListData(m_xmlListboxMaster.toArray());
 
-		if (saveIndex != -1 && saveIndex < m_xmlListboxMaster.size())
-			m_listBox.setSelectedIndex(saveIndex);
-		else
-			m_listBox.setSelectedIndex(m_xmlListboxMaster.size() - 1);
+			if (saveIndex != -1 && saveIndex < m_xmlListboxMaster.size())
+				m_listBox.setSelectedIndex(saveIndex);
+			else
+				m_listBox.setSelectedIndex(m_xmlListboxMaster.size() - 1);
 
-		m_parentPR.updateRelativeToFields();
-		m_listBox.repaint();
+			m_parentPR.updateRelativeToFields();
+			m_listBox.repaint();
+		}
 	}
 
 	/**
@@ -867,7 +871,8 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 
 		// Locate all the nodes within the xml node space
 		Xml.getNodeList(m_xmlListboxMaster, m_listBoxXml, m_listBoxSource, false);
-		if (m_listBox == null) {
+		if (m_listBox == null)
+		{
 			m_listBox = new JList();
 			m_listBoxScroller = new JScrollPane(m_listBox);
 			m_listBox.setSize(m_width, m_height);
@@ -876,7 +881,9 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 			m_listBox.setForeground(m_foreground);
 			m_listBox.setBackground(m_background);
 			m_listBox.setOpaque(m_opaque);
-			m_listBox.setCellRenderer(new PanelRightListboxRenderer(m_listByP1, m_listByP2, m_listByP3, m_listByP4, m_listByP5, m_listByP6, m_listByP7, m_listByP8, m_listByP9, m_listByP10));
+			PanelRightListboxRenderer prlr = new PanelRightListboxRenderer(m_listByP1, m_listByP2, m_listByP3, m_listByP4, m_listByP5, m_listByP6, m_listByP7, m_listByP8, m_listByP9, m_listByP10);
+			if (prlr != null)
+				m_listBox.setCellRenderer(prlr);
 			m_listBox.setVisible(true);
 
 			m_listBoxScroller.setSize(m_width, m_height);
@@ -887,14 +894,17 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 			m_listBox.addMouseListener(this);
 			m_parentPanel.add(m_listBoxScroller);
 		}
-		m_listBox.setListData(m_xmlListboxMaster.toArray());
+		if (m_xmlListboxMaster != null)
+		{
+			m_listBox.setListData(m_xmlListboxMaster.toArray());
 
-		if (saveIndex != -1)
-			m_listBox.setSelectedIndex(saveIndex);
-		else
-			m_listBox.setSelectedIndex(0);
+			if (saveIndex != -1)
+				m_listBox.setSelectedIndex(saveIndex);
+			else
+				m_listBox.setSelectedIndex(0);
 
-		m_parentPR.updateRelativeToFields();
+			m_parentPR.updateRelativeToFields();
+		}
 	}
 
 	/**

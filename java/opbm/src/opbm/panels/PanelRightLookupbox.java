@@ -4,7 +4,7 @@
  * This class is used to create a lookupbox.  A lookupbox visually appears to be
  * a listbox, but it contains different internal abilities.  It is designed
  * primiarly to not be a key for field edits, but rather to be something that
- * is itself updated by the listbox that is 
+ * is itself updated by the listbox that is
  *
  * Last Updated:  Aug 01, 2011
  *
@@ -935,17 +935,22 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 	 */
 	public void updateLookupBoxArray()
 	{
-		int saveIndex = m_lookupBox.getSelectedIndex();
+		int saveIndex;
 
-		m_lookupBox.setListData(m_xmlLookupboxMaster.toArray());
+		if (m_lookupBox != null && m_xmlLookupboxMaster != null)
+		{
+			saveIndex = m_lookupBox.getSelectedIndex();
 
-		if (saveIndex != -1 && saveIndex < m_xmlLookupboxMaster.size())
-			m_lookupBox.setSelectedIndex(saveIndex);
-		else
-			m_lookupBox.setSelectedIndex(m_xmlLookupboxMaster.size() - 1);
+			m_lookupBox.setListData(m_xmlLookupboxMaster.toArray());
 
-		m_parentPR.updateRelativeToFields();
-		m_lookupBox.repaint();
+			if (saveIndex != -1 && saveIndex < m_xmlLookupboxMaster.size())
+				m_lookupBox.setSelectedIndex(saveIndex);
+			else
+				m_lookupBox.setSelectedIndex(m_xmlLookupboxMaster.size() - 1);
+
+			m_parentPR.updateRelativeToFields();
+			m_lookupBox.repaint();
+		}
 	}
 
 	/**
@@ -993,7 +998,8 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 		}
 
 		// Create the lookup box if it's not already created
-		if (m_lookupBox == null) {
+		if (m_lookupBox == null)
+		{
 			m_lookupBox = new JList();
 			m_lookupboxScroller = new JScrollPane(m_lookupBox);
 			m_lookupBox.setSize(m_width, m_height);
@@ -1002,7 +1008,9 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 			m_lookupBox.setForeground(m_foreground);
 			m_lookupBox.setBackground(m_background);
 			m_lookupBox.setOpaque(m_opaque);
-			m_lookupBox.setCellRenderer(new PanelRightListboxRenderer(m_listByP1, m_listByP2, m_listByP3, m_listByP4, m_listByP5, m_listByP6, m_listByP7, m_listByP8, m_listByP9, m_listByP10));
+			PanelRightListboxRenderer prlr = new PanelRightListboxRenderer(m_listByP1, m_listByP2, m_listByP3, m_listByP4, m_listByP5, m_listByP6, m_listByP7, m_listByP8, m_listByP9, m_listByP10);
+			if (prlr != null)
+				m_lookupBox.setCellRenderer(prlr);
 			m_lookupBox.setVisible(true);
 			m_lookupboxScroller.setSize(m_width, m_height);
 			m_lookupboxScroller.setLocation(m_x, m_y);
@@ -1012,23 +1020,26 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 			m_parentPanel.add(m_lookupboxScroller);
 		}
 
-		// Clear out any list that may already be there
-		if (!m_xmlLookupboxMaster.isEmpty())
-			m_xmlLookupboxMaster.clear();
+		if (m_xmlLookupboxMaster != null)
+		{
+			// Clear out any list that may already be there
+			if (!m_xmlLookupboxMaster.isEmpty())
+				m_xmlLookupboxMaster.clear();
 
-		// Locate all the nodes within this lookupbox's xml node space
-		if (m_lookupboxXml != null)
-			Xml.getNodeList(m_xmlLookupboxMaster, m_lookupboxXml, m_lookupboxSource, false);
+			// Locate all the nodes within this lookupbox's xml node space
+			if (m_lookupboxXml != null)
+				Xml.getNodeList(m_xmlLookupboxMaster, m_lookupboxXml, m_lookupboxSource, false);
 
-		if (!m_xmlLookupboxMaster.isEmpty())
-			m_lookupBox.setListData(m_xmlLookupboxMaster.toArray());
+			if (!m_xmlLookupboxMaster.isEmpty())
+				m_lookupBox.setListData(m_xmlLookupboxMaster.toArray());
 
-		if (saveIndex != -1)
-			m_lookupBox.setSelectedIndex(saveIndex);
-		else
-			m_lookupBox.setSelectedIndex(0);
+			if (saveIndex != -1)
+				m_lookupBox.setSelectedIndex(saveIndex);
+			else
+				m_lookupBox.setSelectedIndex(0);
 
-		m_parentPR.updateRelativeToFields();
+			m_parentPR.updateRelativeToFields();
+		}
 	}
 
 	/**

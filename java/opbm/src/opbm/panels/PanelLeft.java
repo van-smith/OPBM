@@ -253,9 +253,6 @@ public class PanelLeft {
 	/** Setter sets the logical visible state of the control, but does not
 	 * update its actual visibility.
 	 *
-	 * @deprecated No longer needed with <code>navigateTo()</code> and
-	 * <code>navigateAway()</code>, which handle panel visibility.
-	 *
 	 * @param visible
 	 */
 	public void setVisible(boolean visible)

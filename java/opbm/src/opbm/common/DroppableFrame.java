@@ -204,7 +204,8 @@ public class DroppableFrame extends JFrame
 			Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
 			Method mSetWindowOpacity;
 			mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
-			mSetWindowOpacity.invoke(null, this, Float.valueOf(opaquePercent));
+			if (mSetWindowOpacity != null)
+				mSetWindowOpacity.invoke(null, this, Float.valueOf(opaquePercent));
 
 		} catch (NoSuchMethodException ex) {
 		} catch (SecurityException ex) {

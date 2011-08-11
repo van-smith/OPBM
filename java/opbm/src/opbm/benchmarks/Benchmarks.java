@@ -111,6 +111,9 @@ public class Benchmarks
 
 	public void benchmarkInitializeExecutionEnvironment(BenchmarksParams bp)
 	{
+		// Take a snapshot of the system as it exists right now before we run the benchmarks
+		Opbm.snapshotProcesses();
+
 		// Initialize our relative items
 		bp.m_bpAtom.m_executeCounter	= 0;
 		bp.m_atomVariables				= new ArrayList<Variables>(0);
@@ -394,7 +397,6 @@ public class Benchmarks
 				}
 
 				// Process the next command
-				Opbm.snapshotProcesses();
 				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRunAppendTo);
 				if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
 					break;
@@ -507,7 +509,6 @@ public class Benchmarks
 				}
 
 				// Process the next command
-				Opbm.snapshotProcesses();
 				child = m_bp.m_bpMolecule.processCommand(child, molecule, xmlRunAppendTo);
 				if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
 					break;

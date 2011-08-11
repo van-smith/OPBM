@@ -95,7 +95,7 @@ public final class Opbm extends	ModalApp
     public Opbm(String[] args)
 	{
 /*
- * Used for debugging, or reference.  This data comes from opbm64.dll's functions:
+ * Used for debugging, or reference.  This data comes from the opbm64.dll or opbm32.dll functions:
 		System.out.println("Harness CSV Directory: " + getHarnessCSVDirectory());
 		System.out.println("Harness XML Directory: " + getHarnessXMLDirectory());
 		System.out.println(" Script CSV Directory: " + getScriptCSVDirectory());

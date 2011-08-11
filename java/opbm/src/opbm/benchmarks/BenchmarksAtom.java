@@ -1177,93 +1177,105 @@ public class BenchmarksAtom
 		{
 			fileName	= Opbm.getHarnessCSVDirectory() + Utils.justFileName(Utils.forceExtension(groups.getFirst(i), ".csv"));
 			groupItems	= (ArrayList<String>)groups.getSecond(i);
-			if (groupItems.size() > 1)
+			if (groupItems != null)
 			{
-				// There's more than one run in this command, we must average first, then write the results
-				// Iterate through the items in this group, storing the average in the 0th position, which serves as our "foundation" or "bedrock" entry
-				timings0 = (List<String>)tupels.getSecond(Integer.valueOf(groupItems.get(0)));
-
-				// For this bedrock line, average everything that's found, and storing the average back in the first entry's position after each summation
-				for (timing0Iterator = 0; timing0Iterator < timings0.size(); timing0Iterator++)
+				if (groupItems.size() > 1)
 				{
-					// Grab this item's value
-					line	= timings0.get(timing0Iterator);		// The source timing line (extracted initially above) is extracted, and
-					m_bp.extractTimingLineElements(line);
-					status0	= m_bp.m_timingName;					// the status name is used to identify the sub-entry within the command's group of entries, and
-					timing	= m_bp.m_timingInSeconds;				// the timing value is extracted (which sets our initial variable)
-					count	= 1;									// So far, we have one entry summed
+					// There's more than one run in this command, we must average first, then write the results
+					// Iterate through the items in this group, storing the average in the 0th position, which serves as our "foundation" or "bedrock" entry
+					timings0 = (List<String>)tupels.getSecond(Integer.valueOf(groupItems.get(0)));
 
-					// Now, iterate through every item in this N-entry list, searching for matching status names in those other items
-					for (j = 1; j < groupItems.size(); j++)
+					// For this bedrock line, average everything that's found, and storing the average back in the first entry's position after each summation
+					if (timings0 != null)
 					{
-						// Compare this N-item listing's entries to the selected one from the 0-item listing's entries
-						timingsN = (List<String>)tupels.getSecond(Integer.valueOf(groupItems.get(j)));
-
-						// See if we find a matching name withing this list
-						for (timingNIterator = 0; timingNIterator < timingsN.size(); timingNIterator++)
+						for (timing0Iterator = 0; timing0Iterator < timings0.size(); timing0Iterator++)
 						{
-							line	= timingsN.get(timingNIterator);
+							// Grab this item's value
+							line	= timings0.get(timing0Iterator);		// The source timing line (extracted initially above) is extracted, and
 							m_bp.extractTimingLineElements(line);
-							statusN	= m_bp.m_timingName;
-							if (status0.equalsIgnoreCase(statusN))
+							status0	= m_bp.m_timingName;					// the status name is used to identify the sub-entry within the command's group of entries, and
+							timing	= m_bp.m_timingInSeconds;				// the timing value is extracted (which sets our initial variable)
+							count	= 1;									// So far, we have one entry summed
+
+							// Now, iterate through every item in this N-entry list, searching for matching status names in those other items
+							for (j = 1; j < groupItems.size(); j++)
 							{
-								// We found a match, the status from the 0-entry matches the status from this N-entry
-								timing += m_bp.m_timingInSeconds;	// Increase the value
-								++count;							// Increase the count
+								// Compare this N-item listing's entries to the selected one from the 0-item listing's entries
+								timingsN = (List<String>)tupels.getSecond(Integer.valueOf(groupItems.get(j)));
+
+								// See if we find a matching name withing this list
+								if (timingsN != null)
+								{
+									for (timingNIterator = 0; timingNIterator < timingsN.size(); timingNIterator++)
+									{
+										line	= timingsN.get(timingNIterator);
+										m_bp.extractTimingLineElements(line);
+										statusN	= m_bp.m_timingName;
+										if (status0.equalsIgnoreCase(statusN))
+										{
+											// We found a match, the status from the 0-entry matches the status from this N-entry
+											timing += m_bp.m_timingInSeconds;	// Increase the value
+											++count;							// Increase the count
+										}
+									}
+								}
 							}
+							// When we get here, we have our totals summed up in value, and the count in count
+							timing /= count;		// Compute the average
+
+							// And store it back in the 0-entry's location
+							// REMEMBER we could add additional information here, such as a string of the numbers used to sum it up, as in [1, 2, 1] resulting in an average of 1.3333
+							timings0.set(timing0Iterator, status0 + "," + Double.toString(timing));
+							// Once we get here, we've done this single entry in the 0-entry list
+							// We need to continue on to the other entries
 						}
 					}
-					// When we get here, we have our totals summed up in value, and the count in count
-					timing /= count;		// Compute the average
-
-					// And store it back in the 0-entry's location
-					// REMEMBER we could add additional information here, such as a string of the numbers used to sum it up, as in [1, 2, 1] resulting in an average of 1.3333
-					timings0.set(timing0Iterator, status0 + "," + Double.toString(timing));
-					// Once we get here, we've done this single entry in the 0-entry list
-					// We need to continue on to the other entries
-				}
-				// Once we get here, we've processed all "like-minded" groups
-			}
-
-			// Add the totals/summary line to the end of the group's entries
-			thisElement		= Integer.valueOf(groupItems.get(0));
-			timings			= (List<String>)tupels.getSecond(thisElement);
-			qualifiedName	= (String)tupels.getExtra1(thisElement);
-			timing			= 0.0;
-			ofBaseline		= 0.0;
-			power			= 1.0 / (double)timings.size();
-			results = new Xml("results", "", "name", qualifiedName);
-			for (k = 0; k < timings.size(); k++)
-			{
-				// Grab the line and break out its components
-				line = timings.get(k);
-				m_bp.extractTimingLineElements(line);
-
-				// For timing, sum
-				timing += m_bp.m_timingInSeconds;
-
-				// For % of baseline, geometric mean
-				if (ofBaseline == 0)
-				{	// First time through, we set our value
-					ofBaseline	= Math.pow(m_bp.m_timingOfBaseline, power);
-				} else {
-					// Each successive time through we compute this portion of the total geometric mean
-					ofBaseline	*= Math.pow(m_bp.m_timingOfBaseline, power);
+					// Once we get here, we've processed all "like-minded" groups (if any)
 				}
 
-				// Add the line into the results tally (as it appeared from the source script)
-				results.appendChild("timing", line);
-			}
-			timings.add("Total," + Double.toString(timing) + "," + Double.toString(ofBaseline));
-			timings.add("");	// Add a blank line for a double-space at the end
+				// Add the totals/summary line to the end of the group's entries
+				thisElement		= Integer.valueOf(groupItems.get(0));
+				timings			= (List<String>)tupels.getSecond(thisElement);
+				qualifiedName	= (String)tupels.getExtra1(thisElement);
+				timing			= 0.0;
+				ofBaseline		= 0.0;
+				results			= new Xml("results", "", "name", qualifiedName);
+				if (timings != null)
+				{
+					power = 1.0 / (double)timings.size();
+					for (k = 0; k < timings.size(); k++)
+					{
+						// Grab the line and break out its components
+						line = timings.get(k);
+						m_bp.extractTimingLineElements(line);
 
-			// Append the timing entry to the results
-			results.appendChild("timing", timings.get(k));
-			m_bp.m_xmlRun.appendChild(results);
+						// For timing, sum
+						timing += m_bp.m_timingInSeconds;
+
+						// For % of baseline, geometric mean
+						if (ofBaseline == 0)
+						{	// First time through, we set our value
+							ofBaseline	= Math.pow(m_bp.m_timingOfBaseline, power);
+						} else {
+							// Each successive time through we compute this portion of the total geometric mean
+							ofBaseline	*= Math.pow(m_bp.m_timingOfBaseline, power);
+						}
+
+						// Add the line into the results tally (as it appeared from the source script)
+						results.appendChild("timing", line);
+					}
+					timings.add("Total," + Double.toString(timing) + "," + Double.toString(ofBaseline));
+					timings.add("");	// Add a blank line for a double-space at the end
+
+					// Append the timing entry to the results
+					results.appendChild("timing", timings.get(k));
+				}
+				m_bp.m_xmlRun.appendChild(results);
 // REMEMBER we could add additional information here
 
-			// Output the results to the CSV file
-			Utils.appendTerminatedLinesToFile(fileName, timings);
+				// Output the results to the CSV file
+				Utils.appendTerminatedLinesToFile(fileName, timings);
+			}
 		}
 	}
 

@@ -331,7 +331,7 @@ public final class HUD extends DroppableFrame
 		m_animatedButton = new AnimateImageTask();
 		m_animatedButton.add(m_stopOver1);
 		m_animatedButton.add(m_stopOver2);
-		m_animatedButton.animateComponent(m_stop, 333);
+		m_animatedButton.animateComponent(m_stop, 500);
 	}
 
 	public void setupAnimateFlashingStopWarningTask()
@@ -346,11 +346,11 @@ public final class HUD extends DroppableFrame
 
 	public void animateImageTaskCallback(Object obj)
 	{
-		updateCounter("Stopping, please wait...");
-		updateStatus("Stopping, please wait...");
-		updateError("Stopping, please wait...");
-		updateTiming("Stopping, please wait...");
-		updateDebug("Stopping, please wait...");
+		updateCounter("Attempting to stop, please wait...");
+		updateStatus("Attempting to stop, please wait...");
+		updateError("Attempting to stop, please wait...");
+		updateTiming("Attempting to stop, please wait...");
+		updateDebug("Attempting to stop, please wait...");
 	}
 
 	@Override
@@ -362,12 +362,9 @@ public final class HUD extends DroppableFrame
 	{
 		if (e.getComponent().equals(m_stop))
 		{	// Pressed on the stop button
-			if (m_bp.m_debuggerOrHUDAction != BenchmarksParams._STOP)
-			{
-				setupAnimateFlashingStopWarningTask();
-				Opbm.stopProcesses();
-				m_bp.m_debuggerOrHUDAction = BenchmarksParams._STOP;
-			}
+			setupAnimateFlashingStopWarningTask();
+			Opbm.stopProcesses();
+			m_bp.m_debuggerOrHUDAction = BenchmarksParams._STOP;
 		}
 	}
 
