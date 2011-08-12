@@ -35,10 +35,10 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputStatus( "InitializeExcelScript()" )
 	InitializeExcelScript()
 	
-	FirstRunCheck()
-	
 	outputStatus( "LaunchExcel()" )
 	LaunchExcel()
+	
+	FirstRunCheck()
 	
 	outputStatus( "CloseEmptyWorksheet()" )
 	CloseEmptyWorksheet()
@@ -57,6 +57,7 @@ For $CurrentLoop = 1 to $LoopLimit
 	
 	outputStatus( "FinalizeScript()" )
 	opbmFinalizeScript( "office2010ExcelHeat.csv" )
+	outputStatus( "Removing temporary file" )
 	opbmFileDelete( $FILENAME_SPREADSHEET )
 Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
@@ -77,84 +78,84 @@ Func InitializeExcelScript()
 	If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & "FileCopy: " & $FILENAME_SPREADSHEET_BACKUP & ": Unable to copy file.")
 EndFunc
 
-Func LaunchExcel()
-	Local $filename
-	If FileExists($FILENAME_EXCEL_X64) Then
-		$filename = $FILENAME_EXCEL_X64
-	ElseIf FileExists( $FILENAME_EXCEL_I386 ) Then
-		$filename = $FILENAME_EXCEL_I386
-	Else
-		ErrorHandle("Launch: Excel 2010 not found in " & $FILENAME_EXCEL_X64 & " or " & $FILENAME_EXCEL_I386 & ", unable to launch.")
-	EndIf
-	outputDebug( "Attempting to launch " & $filename)
-	TimerBegin()
-	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
-	opbmWinWaitActivate("Microsoft Excel", "Book1", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
-	TimerEnd("Launch Microsoft Excel 2010")
-EndFunc
-
 Func CloseEmptyWorksheet()
 	TimerBegin()
 	Send("!fc")
-	opbmWinWaitActivate("Microsoft Excel", "Status Bar", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
+	opbmWinWaitActivate( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	TimerEnd("Close Empty Worksheet")
+	TimerEnd( $HEAT_CLOSE_EMPTY_WORKSHEET )
 EndFunc
 
 Func OpenSurfaceChartWorksheet()
 	local $i
 	TimerBegin()
 	Send("!fo")
-	opbmWinWaitActivate("Open", "Open", $gTimeout, $ERROR_PREFIX & "WinWait: Open: Unable to find Window." )
+	opbmWinWaitActivate( $OPEN, $OPEN, $gTimeout, $ERROR_PREFIX & "WinWait: Open: Unable to find Window." )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	ControlSend("Open", "Open", "Edit1", $FILENAME_SPREADSHEET, 1)
+	ControlSend( $OPEN, $OPEN, "Edit1", $FILENAME_SPREADSHEET, 1)
 	Send("{ENTER}")
 	
-	; the following is necessary to properly regain focus
+	; The following is necessary to properly regain focus
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Send("{PGDN}")
 	Send("{PGUP}")
 
 	opbmWinWaitActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
-	; the following is necessary to properly regain focus
+	; The following is necessary to properly regain focus
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Send("{PGDN}")
 	Send("{PGUP}")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	TimerEnd("Open Worksheet")
+	TimerEnd( $HEAT_OPEN_WORKSHEET )
 EndFunc
 
 Func IterateCalculations()
 	Local $i
+	
+	opbmWinWaitActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
 	TimerBegin()
 	for $i = 1 to $NBR_OF_CALCULATIONS
 		Send( "{F9}" )
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-		; Used to force a redraw after each iteration
+		
+		; Ctrl+Home is used to force a redraw after each iteration
 		Send("^{HOME}")
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		
+		; Depending on where we are in the computation, change the graph type
+		If $i = 5 Then
+			; Switch to a different perspective, send macro command Ctrl+Shift+A
+			Send("^+a")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		ElseIf $i = 10 Then
+			; Switch to a different graph type, send macro command Ctrl+Shift+B
+			; Requires "n" to answer "no" to popup dialog which says "This will display faster if you ... blah blah blah"
+			Send("^+bn")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		ElseIf $i = 15 Then
+			; Switch to a different perspective, send macro command Ctrl+Shift+C
+			Send("^+c")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		ElseIf $i = 20 Then
+			; Switch to a different graph type, send macro command Ctrl+Shift+D
+			Send("^+d")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		EndIf
 	Next
-	TimerEnd( "Time to iterate sheet " & $NBR_OF_CALCULATIONS & " times" )
+	
+	TimerEnd( $HEAT_TIME_TO_ITERATE_N_TIMES )
 EndFunc
 
 Func CloseSurfaceChartWorksheet()
 	opbmWinWaitActivate( $WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait:" & $WINDOW_SURF_CHART & ": Unable to find Window." )
 	TimerBegin()
 	Send("!fc")
-	opbmWinWaitActivate("Microsoft Excel", "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Unable to find Window." )
+	opbmWinWaitActivate( $MICROSOFT_EXCEL, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Unable to find Window." )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	
 	;save changes to the spreadsheet:
 	Send("!n")
-	opbmWinWaitActivate("Microsoft Excel", "Status Bar", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Unable to find Window." )
+	opbmWinWaitActivate( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Unable to find Window." )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	TimerEnd("Save and Close Worksheet")
-EndFunc
-
-Func CloseExcel()
-	TimerBegin()
-	Send("!fx")
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	opbmWinWaitClose("Microsoft Excel", "Status Bar", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )
-	TimerEnd("Close Microsoft Excel 2010")
+	TimerEnd( $HEAT_SAVE_AND_CLOSE_WORKSHEET )
 EndFunc

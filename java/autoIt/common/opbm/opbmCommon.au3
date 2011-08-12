@@ -7,12 +7,12 @@ Opt("SendKeyDelay", 25)
 #include <..\scoring\baselineScores.au3>
 
 
-Const $ERROR_PREFIX					= @ScriptName & ":" & @ScriptLineNumber & ": "
-Const $OPBM_DLL						= $ROOT_DIR & "\common\opbm\dll\opbm.dll"
-Const $OPBM_SPLASH_HTML				= $ROOT_DIR & "\common\opbm\html\opbm_splash.html"
-Const $CPU_ACTIVITY_THRESHOLD		= 5
-Const $TIMER_MAX_INDEX_COUNT		= 100
-Const $OPBM_SPLASH_HTML_TITLE		= "OPBM Benchmark Splash"
+Const $ERROR_PREFIX								= @ScriptName & ":" & @ScriptLineNumber & ": "
+Const $OPBM_DLL									= $ROOT_DIR & "\common\opbm\dll\opbm.dll"
+Const $OPBM_SPLASH_HTML							= $ROOT_DIR & "\common\opbm\html\opbm_splash.html"
+Const $CPU_ACTIVITY_THRESHOLD					= 5
+Const $TIMER_MAX_INDEX_COUNT					= 100
+Const $OPBM_SPLASH_HTML_TITLE					= "OPBM Benchmark Splash"
 
 Global $gIterations
 Global $gPID
@@ -23,31 +23,36 @@ Global $gIndex						= 0
 Global $gTimeIndex[ $TIMER_MAX_INDEX_COUNT ]
 Global $gScriptBeginTime
 Global $gCSVPath
-Global $gTimeout					= 30
-Global $gLongTimeout				= 300
+Global $gTimeout								= 30
+Global $gLongTimeout							= 300
 Global $gMessage
-Global $gErrorTrap					= -9999
+Global $gErrorTrap								= -9999
 Global $gOpbmPluginHandle
+Global $gcRegistryKeyRestorer					= "none"
 
 ; Used for WaitUntilIdle()
-Global $gPercent					= 10
-Global $gDurationMS					= 100
-Global $gTimeoutMS					= 1000
+Global $gPercent								= 10
+Global $gDurationMS								= 100
+Global $gTimeoutMS								= 1000
+
+; Parameters used for registry key saving / restoration
+Const $RESTORING_OFFICE_2010_REGISTRY_KEYS			= "Restoring Office 2010 registry keys"
+Const $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS	= "Saving & Setting Office 2010 registry keys"
 
 Func InitializeGlobalVariables()
 	Local $i
 	
-	$gIterations					= ""
-	$gPID							= ""
-	$gTimerPoint					= ""
-	$gTimer							= ""
-	$gIndex							= 0
-	$gScriptBeginTime				= ""
-	$gCSVPath						= ""
-	$gTimeOut						= 30
-	$gLongTimeOut					= 300
-	$gMessage						= ""
-	$gErrorTrap						= -9999
+	$gIterations			= ""
+	$gPID					= ""
+	$gTimerPoint			= ""
+	$gTimer					= ""
+	$gIndex					= 0
+	$gScriptBeginTime		= ""
+	$gCSVPath				= ""
+	$gTimeOut				= 30
+	$gLongTimeOut			= 300
+	$gMessage				= ""
+	$gErrorTrap				= -9999
 	
 	; Initialize the time indices
 	For $i = 0 to $TIMER_MAX_INDEX_COUNT - 1
@@ -248,8 +253,10 @@ Func TimerWriteTimesToCSV( $CSVPath )
 	;$liArraySize = UBound( $gTimeIndex )
 	For $i = 0 To $gIndex
 		$gErrorTrap = FileWriteLine($lFileTimerCsv, $gTimeIndex[$i])
-		If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & "TimerFinish:FileWriteLine($lFileTimerCsv, $gTimeIndex[$i]). Unable to write to file.")
-		Next
+		If $gErrorTrap = 0 Then
+			ErrorHandle($ERROR_PREFIX & "TimerFinish:FileWriteLine($lFileTimerCsv, $gTimeIndex[$i]). Unable to write to file.")
+		EndIf
+	Next
 		
 	$gErrorTrap = FileWriteLine($lFileTimerCsv, "")
 	If $gErrorTrap = 0 Then
@@ -264,24 +271,33 @@ EndFunc
 
 Func WordGoToLine($Line)
 	$gErrorTrap = WinActivate(" - Microsoft Word", "Status Bar")
-	If $gErrorTrap = 0 Then ErrorHandle(" - Microsoft Word. Window was not found or could not be activated.")
+	If $gErrorTrap = 0 Then
+		ErrorHandle(" - Microsoft Word. Window was not found or could not be activated.")
+	EndIf
 	Send("^g")
 	$gErrorTrap = WinWait("Find and Replace", "", $gTimeout)
-	If $gErrorTrap = 0 Then ErrorHandle("WinWait: Find and Replace. Unable to find Window.")
+	If $gErrorTrap = 0 Then
+		ErrorHandle("WinWait: Find and Replace. Unable to find Window.")
+	EndIf
 	$gErrorTrap = WinActivate("Find and Replace", "")
-	If $gErrorTrap = 0 Then ErrorHandle("WinActivate: Find and Replace. Window was not found or could not be activated.")
+	If $gErrorTrap = 0 Then
+		ErrorHandle("WinActivate: Find and Replace. Window was not found or could not be activated.")
+	EndIf
 	Send("!o")
 	Send("l")
 	ControlSend("Find and Replace", "", "RichEdit20W4", $line)
 	Send("{ENTER}")
 	$gErrorTrap = WinClose("Find and Replace", "")
-	If $gErrorTrap = 0 Then ErrorHandle("WinClose: Find and Replace. Unable to close window.")
-	;WaitUntilProcessIdle($gPID, -1, 250, 2, 5)
+	If $gErrorTrap = 0 Then
+		ErrorHandle("WinClose: Find and Replace. Unable to close window.")
+	EndIf
 	$gErrorTrap = WinActivate(" - Microsoft Word", "Status Bar")
-	If $gErrorTrap = 0 Then ErrorHandle("WinActivate:  - Microsoft Word. Window was not found or could not be activated.")
+	If $gErrorTrap = 0 Then
+		ErrorHandle("WinActivate:  - Microsoft Word. Window was not found or could not be activated.")
+	EndIf
 EndFunc
 
-Func ErrorHandle( $Text, $ShowMsgBox = True, $aExit = True )
+Func ErrorHandle( $Text, $ShowMsgBox = False, $aExit = True )
 	Local $lErrorFile
 	outputError("Error was handled: " & $Text & @CRLF)
 	$lErrorFile = FileOpen(@ScriptDir & "\" &@ScriptName & "-Error.txt", 2)
@@ -289,18 +305,22 @@ Func ErrorHandle( $Text, $ShowMsgBox = True, $aExit = True )
 	FileWriteLine($lErrorFile, @MON & "/" & @MDAY & "/" & @YEAR & "  " & @HOUR & ":" & @MIN & ":" & @SEC)
 	FileWriteLine($lErrorFile, $Text)
 	FileClose($lErrorFile)
-	;ProcessClose($gPID)
-;	If $ShowMsgBox = True Then
+; Disabled modal message box, and error is logged to the harness
+;	If $ShowMsgBox Then
 ;		MsgBox(16,"Script Error!", $Text)
 ;	EndIf
 	If $aExit Then
 		opbmCloseAllWindowsNotPreviouslyNoted()
+		; Upon exit, we potentially need to restore the registry for the specified operation we're running
+		checkRegistryKeysNeedingRestored()
 		Exit -1
 	EndIf
 EndFunc
 
 Func ErrorDlg()
-	If WinActive("Error", "") Then ErrorHandle("An Error Dialog Box appeared")
+	If WinActive("Error", "") Then
+		ErrorHandle( "An Error Dialog Box appeared" )
+	EndIf
 EndFunc
 
 Func opbmWinWaitActivate( $title, $text = "", $timeout = 0, $errorText = "" )
@@ -345,7 +365,7 @@ EndFunc
 Func opbmFileDelete( $filename )
 	$gErrorTrap = FileDelete( $filename )
 	If $gErrorTrap = 0 Then
-		ErrorHandle( $ERROR_PREFIX & "FileDelete: Unable to delete file: " & $filename)
+		ErrorHandle( $ERROR_PREFIX & "FileDelete: Unable to delete file: " & $filename )
 	EndIf
 EndFunc
 
@@ -378,4 +398,42 @@ Func opbmTypeURL( $url, $timerText, $open )
 	Send( "file://" & StringReplace( $url, "\", "/" ) )
 	TimerEnd( $timerText )
 	; Don't sleep afterward because it sets up the next keystroke
+EndFunc
+
+; Rick C. Hodgin, August 12, 2011
+; ! Used only by apps that launch Office2010 !
+;
+; Should be used at startup by calling these two in this order:
+;	Office2010SaveRegistryKeys()
+;	Office2010InstallRegistryKeys()
+;
+; and then a clean termination procedure is to call one of these:
+;	Office2010RestoreRegistryKeys()
+;	checkRegistryKeysNeedingRestored()
+;
+; Note:  A better solution would be to have the harness handle all registry key saving / restoring automatically.
+; Note:  The called functions reside in common\opbm\dlls\opbm.dll
+Func Office2010SaveRegistryKeys()
+	$gcRegistryKeyRestorer = "Office2010"
+	Office2010SaveKeys()
+EndFunc
+Func Office2010InstallRegistryKeys()
+	Office2010InstallKeys()
+EndFunc
+Func Office2010RestoreRegistryKeys()
+	Office2010RestoreKeys()
+EndFunc
+
+; If the $gcRegistryKeyRestorer variable contains something recognized, restore those registry key settings
+; Note:  There is logic within opbm.dll which prevents improperly called registry keys from being restored,
+;        if for example they had never been saved in the first place.
+Func checkRegistryKeysNeedingRestored()
+	$gcRegistryKeyRestorer = StringLower( $gcRegistryKeyRestorer )
+	If $gcRegistryKeyRestorer = "office2010" Then
+		; Undo any registry key settings handled by Office2010 startup code
+		outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
+		Office2010RestoreRegistryKeys()
+	;ElseIf $registryKeyRestorer = "something else"
+	;ElseIf $registryKeyRestorer = "another thing"
+	EndIf
 EndFunc

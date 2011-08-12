@@ -6,8 +6,10 @@ Const $ROOT_DIR = @ScriptDir & "\..\.."
 Const $DIRECTORY_SPREADSHEET			= @ScriptDir & "\Data"
 Const $DIRECTORY_EXCEL_I386				= "C:\Program Files (x86)\Microsoft Office\OFFICE14"
 Const $DIRECTORY_EXCEL_X64				= "C:\Program Files\Microsoft Office\OFFICE14"
-Const $FILENAME_SPREADSHEET				= $DIRECTORY_SPREADSHEET & "\surfaceChart.xlsx"
-Const $FILENAME_SPREADSHEET_BACKUP		= $DIRECTORY_SPREADSHEET & "\surfaceChart.backup"
+;Const $FILENAME_SPREADSHEET				= $DIRECTORY_SPREADSHEET & "\surfaceChart.xlsx"
+;Const $FILENAME_SPREADSHEET_BACKUP		= $DIRECTORY_SPREADSHEET & "\surfaceChart.backup"
+Const $FILENAME_SPREADSHEET				= $DIRECTORY_SPREADSHEET & "\surfaceChartWithMacros.xlsm"
+Const $FILENAME_SPREADSHEET_BACKUP		= $DIRECTORY_SPREADSHEET & "\surfaceChartWithMacros.backup"
 Const $FILENAME_EXCEL_I386				= $DIRECTORY_EXCEL_I386 & "\Excel.exe"
 Const $FILENAME_EXCEL_X64				= $DIRECTORY_EXCEL_X64 & "\Excel.exe"
 Const $WINDOW_SURF_CHART				= "surfaceChart"
@@ -20,6 +22,11 @@ Const $HEAT_CLOSE_EMPTY_WORKSHEET		= "Close Empty Worksheet"
 Const $HEAT_OPEN_WORKSHEET				= "Open Worksheet"
 Const $HEAT_SAVE_AND_CLOSE_WORKSHEET	= "Save and Close Worksheet"
 Const $HEAT_TIME_TO_ITERATE_N_TIMES		= "Time to iterate sheet " & $NBR_OF_CALCULATIONS & " times"
+Const $MICROSOFT_EXCEL					= "Microsoft Excel"
+Const $OPEN								= "Open"
+Const $BOOK1							= "Book1"
+Const $STATUS_BAR						= "Status Bar"
+
 
 ; Setup references for timing items
 Dim $gBaselineSize
@@ -48,4 +55,42 @@ Func ExcelGotoCell($cell)
 	ControlSend("Go To", "", "[CLASSNN:EDTBX1]", $cell, 1)
 	Send("{ENTER}")
 	opbmWinActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
+EndFunc
+
+Func LaunchExcel()
+	Local $filename
+	
+	; Find out which version we're running
+	If FileExists($FILENAME_EXCEL_X64) Then
+		$filename = $FILENAME_EXCEL_X64
+		outputDebug( "Running 64-bit Office" )
+	ElseIf FileExists( $FILENAME_EXCEL_I386 ) Then
+		$filename = $FILENAME_EXCEL_I386
+		outputDebug( "Running 32-bit Office" )
+	Else
+		ErrorHandle("Launch: Excel 2010 not found in " & $FILENAME_EXCEL_X64 & " or " & $FILENAME_EXCEL_I386 & ", unable to launch.")
+	EndIf
+	
+	; Opbm sets some registry keys at startup
+	outputDebug( $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS )
+	Office2010SaveRegistryKeys()
+	Office2010InstallRegistryKeys()
+
+	; Attempt to launch the application
+	outputDebug( "Attempting to launch " & $filename)
+	TimerBegin()
+	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
+	opbmWinWaitActivate( $MICROSOFT_EXCEL, $BOOK1, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
+	TimerEnd( $HEAT_LAUNCH_MICROSOFT_EXCEL )
+EndFunc
+
+Func CloseExcel()
+	TimerBegin()
+	Send("!fx")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	opbmWinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )
+	TimerEnd( $HEAT_CLOSE_MICROSOFT_EXCEL )
+	
+	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
+	Office2010RestoreRegistryKeys()
 EndFunc

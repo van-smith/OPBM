@@ -67,7 +67,7 @@ extern HMODULE ghModule;
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 23;
+	int numberOfCustomAU3Functions = 26;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
 			/* Function Name,					   Min,	   Max
@@ -83,18 +83,21 @@ extern HMODULE ghModule;
 /* 9 */		{ "OperaInstallerAssist",				0,		0},			/* Called to help install Opera */
 /* 10 */	{ "SafariInstallerAssist",				0,		0},			/* Called to help install Safari */
 /* 11 */	{ "InternetExplorerInstallerAssist",	0,		0},			/* Called to help install Internet Explorer */
-/* 12 */	{ "CheckIfRegistryKeyStartsWith",		2,		2},			/* Called to compare the registry key to a value */
-/* 13 */	{ "CheckIfRegistryKeyContains",			2,		2},			/* Called to compare the registry key to a value */
-/* 14 */	{ "CheckIfRegistryKeyIsExactly",		2,		2},			/* Called to compare the registry key to a value */
-/* 15 */	{ "SetRegistryKeyString",				2,		2},			/* Called to set the registry key to a string value */
-/* 16 */	{ "SetRegistryKeyDword",				2,		2},			/* Called to set the registry key to a dword value */
-/* 17 */	{ "GetRegistryKey",						1,		1},			/* Called to return the registry key's value */
-/* 18 */	{ "GetScriptCSVDirectory",				0,		0},			/* Called to return the output directory used for script-written *.csv files */
-/* 19 */	{ "GetHarnessXmlDirectory",				0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
-/* 20 */	{ "GetHarnessCSVDirectory",				0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
-/* 21 */	{ "GetCSIDLDirectory",					1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
-/* 22 */	{ "Is32BitOS",							0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
-/* 23 */	{ "Is64BitOS",							0,		0}			/* Returns whether or not the installed OS is a 64-bit version or not */
+/* 12 */	{ "Office2010SaveKeys",					0,		0},			/* Called to save the values in Microsoft Office 2010's registry keys needed by OPBM */
+/* 13 */	{ "Office2010InstallKeys",				0,		0},			/* Called to install Microsoft Office 2010 registry keys needed by OPBM*/
+/* 14 */	{ "Office2010RestoreKeys",				0,		0},			/* Called to restore the values in Microsoft Office 2010's registry keys as previously saved */
+/* 15 */	{ "CheckIfRegistryKeyStartsWith",		2,		2},			/* Called to compare the registry key to a value */
+/* 16 */	{ "CheckIfRegistryKeyContains",			2,		2},			/* Called to compare the registry key to a value */
+/* 17 */	{ "CheckIfRegistryKeyIsExactly",		2,		2},			/* Called to compare the registry key to a value */
+/* 18 */	{ "SetRegistryKeyString",				2,		2},			/* Called to set the registry key to a string value */
+/* 19 */	{ "SetRegistryKeyDword",				2,		2},			/* Called to set the registry key to a dword value */
+/* 20 */	{ "GetRegistryKey",						1,		1},			/* Called to return the registry key's value */
+/* 21 */	{ "GetScriptCSVDirectory",				0,		0},			/* Called to return the output directory used for script-written *.csv files */
+/* 22 */	{ "GetHarnessXmlDirectory",				0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
+/* 23 */	{ "GetHarnessCSVDirectory",				0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
+/* 24 */	{ "GetCSIDLDirectory",					1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
+/* 25 */	{ "Is32BitOS",							0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
+/* 26 */	{ "Is64BitOS",							0,		0}			/* Returns whether or not the installed OS is a 64-bit version or not */
 			/* Don't forget to update numberOfCustomAU3Functions above */
 	};
 
@@ -813,6 +816,213 @@ extern HMODULE ghModule;
 		*(sptr++)	= ((char)SetRegistryKeyValueAsString(kptr,		"yes" )) + '0';
 		sprintf_s(&key[0], sizeof(key), "%s\000", "HKCU\\Software\\Microsoft\\Internet Explorer\\Main\\Error Dlg Displayed On Every Error");
 		*(sptr++)	= ((char)SetRegistryKeyValueAsString(kptr,		"no" )) + '0';
+
+		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
+		pMyResult = AU3_AllocVar();
+		//AU3_SetInt32(pMyResult, (int)result);
+		AU3_SetString(pMyResult, successString);
+		
+
+		/* Pass back the result, error code and extended code.
+		 * Note: AutoIt is responsible for freeing the memory used in p_AU3_Result
+		 */
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+	
+	
+	
+//////////
+//
+// Office2010SaveKeys()
+//
+// Called during a run of the Office2010 tests, to restore the registry
+// settings of those required by OPBM, which were changed previously
+//
+// Parameters:  
+//
+// 		Office2010SaveKeys( )
+//
+/////
+	char gcOffice2010_AccessVBOM_String[]	= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\AccessVBOM";
+	char gcOffice2010_VBAWarnings_String[]	= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\VBAWarnings";
+	char* gcOffice2010_AccessVBOM			= NULL;
+	char* gcOffice2010_VBAWarnings			= NULL;
+	AU3_PLUGIN_DEFINE(Office2010SaveKeys)
+	// See notes about parameters and return codes above
+	{
+		AU3_PLUGIN_VAR*		pMyResult;
+		char				key[1024];			// Holds the keys that are updated/searched
+
+		// No parameters are passed
+MessageBox( NULL, L"Office2010SaveKeys", L"Called", MB_OK );
+/*
+		// Clear out any previous key contents (if any)
+		if (gcOffice2010_AccessVBOM != NULL)
+		{
+			free(gcOffice2010_AccessVBOM);
+			gcOffice2010_AccessVBOM = NULL;
+		}
+
+		if (gcOffice2010_VBAWarnings != NULL)
+		{
+			free(gcOffice2010_VBAWarnings);
+			gcOffice2010_VBAWarnings = NULL;
+		}
+
+		// Save Office2010's run macros
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_String);
+		gcOffice2010_AccessVBOM = GetRegistryKeyValue( &key[0] );
+
+		// Save Office2010's disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_String);
+		gcOffice2010_VBAWarnings = GetRegistryKeyValue( &key[0] );
+*/
+
+
+		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, 1);
+		
+
+		/* Pass back the result, error code and extended code.
+		 * Note: AutoIt is responsible for freeing the memory used in p_AU3_Result
+		 */
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+	
+	
+	
+//////////
+//
+// Office2010InstallKeys()
+//
+// Called during a run of the Office2010 tests, to change registry
+// settings to those required by OPBM
+//
+// Parameters:  
+//
+// 		Office2010InstallKeys( )
+//
+/////
+	AU3_PLUGIN_DEFINE(Office2010InstallKeys)
+	// See notes about parameters and return codes above
+	{
+		AU3_PLUGIN_VAR*		pMyResult;
+		char				successString[256];	// Holds sequence like "11110101101011" indicating the success of each read/write
+		char				key[1024];			// Holds the keys that are updated/searched
+		char*				sptr;
+		char*				kptr;
+
+		// No parameters are passed
+
+		// IE data is stored in registry keys.  We create or set the keys specified in the ie_keys array.
+		memset(&successString[0], 0, sizeof(successString));
+		sptr = &successString[0];
+		kptr = &key[0];
+
+MessageBox( NULL, L"Office2010InstallKeys", L"Called", MB_OK );
+/*
+		// Tell Office2010 to run macros
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_String);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+
+		// Tell Office2010 to disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_String);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+*/
+
+		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
+		pMyResult = AU3_AllocVar();
+		//AU3_SetInt32(pMyResult, (int)result);
+		AU3_SetString(pMyResult, successString);
+		
+
+		/* Pass back the result, error code and extended code.
+		 * Note: AutoIt is responsible for freeing the memory used in p_AU3_Result
+		 */
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+	
+	
+/*
+Office2010SaveKeys
+*/
+	
+//////////
+//
+// Office2010RestoreKeys()
+//
+// Called during a run of the Office2010 tests, to restore the registry
+// settings of those required by OPBM, which were changed previously
+//
+// Parameters:  
+//
+// 		Office2010RestoreKeys( )
+//
+/////
+	AU3_PLUGIN_DEFINE(Office2010RestoreKeys)
+	// See notes about parameters and return codes above
+	{
+		AU3_PLUGIN_VAR*		pMyResult;
+		char				successString[256];	// Holds sequence like "11110101101011" indicating the success of each read/write
+		char				key[1024];			// Holds the keys that are updated/searched
+		char*				sptr;
+		char*				kptr;
+		int					lnOffice2010_AccessVBOM;
+		int					lnOffice2010_VBAWarnings;
+
+		// No parameters are passed
+
+		// IE data is stored in registry keys.  We create or set the keys specified in the ie_keys array.
+		memset(&successString[0], 0, sizeof(successString));
+		sptr = &successString[0];
+		kptr = &key[0];
+
+MessageBox( NULL, L"Office2010RestoreKeys", L"Called", MB_OK );
+/*
+		// Restore the keys for those items previously saved
+		if (gcOffice2010_AccessVBOM != NULL)
+		{
+			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM);
+			// Restore Office2010's run macros
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_String);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
+			free(gcOffice2010_AccessVBOM);
+			gcOffice2010_AccessVBOM = NULL;
+
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_VBAWarnings != NULL)
+		{
+			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings);
+			// Restore Office2010's disable warnings
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_String);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
+			free(gcOffice2010_VBAWarnings);
+			gcOffice2010_VBAWarnings = NULL;
+
+		} else {
+			*(sptr++)	= '0';
+		}
+*/
+
 
 		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
 		pMyResult = AU3_AllocVar();
