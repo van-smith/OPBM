@@ -153,6 +153,30 @@
 
 //////////
 //
+// dir = GetHarnessTempDirectory()
+//
+// Called to return the CSIDL location of the harness's temporary directory.
+//
+/////
+	// GetHarnessTempDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessTempDirectory(JNIEnv* env, jclass cls)
+	{
+		char		dirname[ MAX_PATH ];
+		jstring		directory;
+
+		// Allocate the variable
+		GetHarnessTempDirectory(dirname, sizeof(dirname));
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+		return(directory);
+	}
+
+
+
+
+//////////
+//
 // dir = GetScriptCSVDirectory()
 //
 // Called to return the CSIDL location of the script's CSV directory.
@@ -166,6 +190,30 @@
 
 		// Allocate the variable
 		GetScriptCSVDirectory(dirname, sizeof(dirname));
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+		return(directory);
+	}
+
+
+
+
+//////////
+//
+// dir = GetScriptTempDirectory()
+//
+// Called to return the CSIDL location of the script's temporary directory.
+//
+/////
+	// GetScriptTempDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptTempDirectory(JNIEnv* env, jclass cls)
+	{
+		char		dirname[ MAX_PATH ];
+		jstring		directory;
+
+		// Allocate the variable
+		GetScriptTempDirectory(dirname, sizeof(dirname));
 
 		// Create the return variable
 		directory = env->NewStringUTF( dirname );

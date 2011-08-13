@@ -59,12 +59,14 @@ Func InitializeGlobalVariables()
 		$gTimeIndex[$i] = ""
 	Next
 	
-	; Load the opbm.dll plugin.
+	; Load the opbm.dll plugin:
 	; It allows these functions to appear as "native" AutoIt functions, usable anywhere:
 	;		WaitUntilIdle($aPID, $aCpuUsageThreshold, $aPollPeriodMS, $aTimeoutMS )
-	;			Example:  WaitUntilIdle( $gPID, 10, 100, 1000 )  ; Wait up to 1 second for the process CPU usage to drop below 10% for 100ms
 	;		WaitUntilSystemIdle( $aCpuUsageThreshold, $aPollPeriodMS, $aTimeoutMS )
+	;			Example:  WaitUntilIdle( $gPID, 10, 100, 1000 )  ; Wait up to 1 second for the process CPU usage to drop below 10% for 100ms
 	;			Example:  WaitUntilSystemIdle( 10, 200, 2000 )  ; Wait up to 2 seconds for the entire system's CPU usage to drop below 10% for 200ms
+	;
+	;	Additional functions in opbm.dll:
 	;		GetUsage($aPID, $aPollPeriodMS )		; Immediately return the process usage sampled over the poll period in milliseconds
 	;		GetSystemUsage( $aPollPeriodMS )		; Immediatley return the system usage sampled over the poll period in milliseconds
 	;		NoteAllOpenWindows()					; Use at start of script
@@ -74,15 +76,20 @@ Func InitializeGlobalVariables()
 	;		OperaInstallerAssist()					; Sets Opera to a reasonable state after initial install (no prompting, scripts run, etc.)
 	;		SafariInstallerAssist()					; Sets Safari to a reasonable state after initial install (no prompting, scripts run, etc.)
 	;		InternetExplorerInstallerAssist()		; Sets IE keys to a reasonable state, to disable initial promptings
+	;		Office2010SaveKeys()					; Saves existing registry keys overwritten/used by Office 2010 scripts for this instance
+	;		Office2010InstallKeys()					; Installs Opbm registry keys for Office 2010
+	;		Office2010RestoreKeys()					; Retores previously saved registry keys (from Office2010SaveKeys() call during this instance of the script)
 	;		CheckIfRegistryKeyStartsWith( $key, $valueShouldStartWith )
 	;		CheckIfRegistryKeyContains( $key, $stringItShouldContain )
 	;		CheckIfRegistryKeyIsExactly( $key, $value )
 	;		SetRegistryKeyString( $key, $stringValue )
 	;		SetRegistryKeyDword( $key, $dwordValue )
 	;		GetRegistryKey( $key )
-	;		GetScriptCSVDirectory()					; Returns c:\users\user\AppData\Roaming\opbm\scriptOutput\
-	;		GetHarnessXmlDirectory()				; Returns c:\users\user\AppData\Roaming\opbm\results\xml\
-	;		GetHarnessCSVDirectory()				; Returns c:\users\user\AppData\Roaming\opbm\results\csv\
+	;		GetScriptCSVDirectory()					; Returns c:\users\user\documents\opbm\scriptOutput\
+	;		GetScriptTempDirectory()				; Returns c:\users\user\documents\opbm\scriptOutput\temp\
+	;		GetHarnessXmlDirectory()				; Returns c:\users\user\documents\opbm\results\xml\
+	;		GetHarnessCSVDirectory()				; Returns c:\users\user\documents\opbm\results\csv\
+	;		GetHarnessTempDirectory()				; Returns c:\users\user\documents\opbm\temp\
 	;		GetCSIDLDirectory( $CSIDL_nameWithoutLeadingCSIDL_)
 	;			Example:  GetCSIDLDirectory( "MYDOCUMENTS" )
 	;			Returns:  c:\users\user\documents\

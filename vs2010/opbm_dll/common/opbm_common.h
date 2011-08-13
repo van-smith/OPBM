@@ -16,7 +16,9 @@
 /////
 	void			GetHarnessCSVDirectory			(char* dirname, int dirnameLength);
 	void			GetHarnessXMLDirectory			(char* dirname, int dirnameLength);
+	void			GetHarnessTempDirectory			(char* dirname, int dirnameLength);
 	void			GetScriptCSVDirectory			(char* dirname, int dirnameLength);
+	void			GetScriptTempDirectory			(char* dirname, int dirnameLength);
 	void			GetCSIDLDirectory				(char* dirname, int dirnameLength, char* csidl_name);
 	BOOL CALLBACK	EnumWindowsCallbackProc			(HWND hwnd, LPARAM lParam);
 	BOOL CALLBACK	ComparativeWindowsCallbackProc	(HWND hwnd, LPARAM lParam);

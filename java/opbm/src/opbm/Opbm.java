@@ -79,7 +79,9 @@ public final class Opbm extends	ModalApp
 	public native static void sendWindowToForeground(String title);
 	public native static String getHarnessCSVDirectory();			// Returns c:\\users\\user\\documents\\obbm\\results\\csv\\
 	public native static String getHarnessXMLDirectory();			// Returns c:\\users\\user\\documents\\opbm\\results\\xml\
+	public native static String getHarnessTempDirectory();			// Returns c:\\users\\user\\documents\\opbm\\temp\\
 	public native static String getScriptCSVDirectory();			// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\
+	public native static String getScriptTempDirectory();			// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\temp\\
 	public native static String getSettingsDirectory();				// Returns c:\\users\\user\\documents\\opbm\\settings\\
 	public native static void snapshotProcesses();					// Takes a snapshot of the currently running processes
 	public native static void stopProcesses();						// Stops all processes that were not running when the snapshot was taken
@@ -96,11 +98,14 @@ public final class Opbm extends	ModalApp
 	{
 /*
  * Used for debugging, or reference.  This data comes from the opbm64.dll or opbm32.dll functions:
-		System.out.println("Harness CSV Directory: " + getHarnessCSVDirectory());
-		System.out.println("Harness XML Directory: " + getHarnessXMLDirectory());
-		System.out.println(" Script CSV Directory: " + getScriptCSVDirectory());
-		System.out.println("   Settings Directory: " + getSettingsDirectory());
+		System.out.println(" Harness CSV Directory: " + getHarnessCSVDirectory());
+		System.out.println(" Harness XML Directory: " + getHarnessXMLDirectory());
+		System.out.println("Harness Temp Directory: " + getHarnessTempDirectory());
+		System.out.println("  Script CSV Directory: " + getScriptCSVDirectory());
+		System.out.println(" Script Temp Directory: " + getScriptTempDirectory());
+		System.out.println("    Settings Directory: " + getSettingsDirectory());
 */
+
 		// Make sure we're the only app running
 		if (!isModalApp( "opbm.dat", m_title ))
 		{	// Already another app instance running

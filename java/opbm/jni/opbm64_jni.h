@@ -33,10 +33,26 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessXMLDirectory
 
 /*
  * Class:     opbm_Opbm
+ * Method:    getHarnessTempDirectory
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_getHarnessTempDirectory
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     opbm_Opbm
  * Method:    getScriptCSVDirectory
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptCSVDirectory
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    getScriptTempDirectory
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_getScriptTempDirectory
   (JNIEnv *, jclass);
 
 /*

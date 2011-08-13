@@ -64,7 +64,7 @@ extern HMODULE ghModule;
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 26;
+	int numberOfCustomAU3Functions = 28;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
 			/* Function Name,					   Min,	   Max
@@ -90,11 +90,13 @@ extern HMODULE ghModule;
 /* 19 */	{ "SetRegistryKeyDword",				2,		2},			/* Called to set the registry key to a dword value */
 /* 20 */	{ "GetRegistryKey",						1,		1},			/* Called to return the registry key's value */
 /* 21 */	{ "GetScriptCSVDirectory",				0,		0},			/* Called to return the output directory used for script-written *.csv files */
-/* 22 */	{ "GetHarnessXmlDirectory",				0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
-/* 23 */	{ "GetHarnessCSVDirectory",				0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
-/* 24 */	{ "GetCSIDLDirectory",					1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
-/* 25 */	{ "Is32BitOS",							0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
-/* 26 */	{ "Is64BitOS",							0,		0}			/* Returns whether or not the installed OS is a 64-bit version or not */
+/* 22 */	{ "GetScriptTempDirectory",				0,		0},			/* Called to return the output directory used for script-written temporary files */
+/* 23 */	{ "GetHarnessXmlDirectory",				0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
+/* 24 */	{ "GetHarnessCSVDirectory",				0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
+/* 25 */	{ "GetHarnessTempDirectory",			0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
+/* 26 */	{ "GetCSIDLDirectory",					1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
+/* 27 */	{ "Is32BitOS",							0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
+/* 28 */	{ "Is64BitOS",							0,		0}			/* Returns whether or not the installed OS is a 64-bit version or not */
 			/* Don't forget to update numberOfCustomAU3Functions above */
 	};
 
@@ -1395,6 +1397,42 @@ Office2010SaveKeys
 
 //////////
 //
+// GetScriptTempDirectory()
+//
+// Returns the CSIDL-based directory for where the scripts should
+// write their temporary files.
+//
+// Parameters:  
+//
+// 		GetScriptTempDirectory ( void )
+//
+/////
+	AU3_PLUGIN_DEFINE(GetScriptTempDirectory)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		char				dirname[ MAX_PATH ];
+
+		// Grab the directory from opbm_common.cpp
+		GetScriptTempDirectory(&dirname[0], sizeof(dirname));
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, dirname);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
 // GetHarnessXmlDirectory()
 //
 // Returns the CSIDL-based directory for where the harness should
@@ -1450,6 +1488,42 @@ Office2010SaveKeys
 
 		// Grab the directory from opbm_common.cpp
 		GetHarnessCSVDirectory(&dirname[0], sizeof(dirname));
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, dirname);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// GetHarnessTempDirectory()
+//
+// Returns the CSIDL-based directory for where the harness should
+// write its temporary files.
+//
+// Parameters:  
+//
+// 		GetHarnessTempDirectory ( void )
+//
+/////
+	AU3_PLUGIN_DEFINE(GetHarnessTempDirectory)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		char				dirname[ MAX_PATH ];
+
+		// Grab the directory from opbm_common.cpp
+		GetHarnessTempDirectory(&dirname[0], sizeof(dirname));
 
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();

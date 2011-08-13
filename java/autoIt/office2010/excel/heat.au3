@@ -109,6 +109,8 @@ Func OpenSurfaceChartWorksheet()
 	TimerEnd( $HEAT_OPEN_WORKSHEET )
 EndFunc
 
+; These iterations might take a while on some graphics cards,
+; so we wait up to 20 seconds for each operation to complete
 Func IterateCalculations()
 	Local $i
 	
@@ -116,30 +118,44 @@ Func IterateCalculations()
 	TimerBegin()
 	for $i = 1 to $NBR_OF_CALCULATIONS
 		Send( "{F9}" )
-		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
 		
-		; Ctrl+Home is used to force a redraw after each iteration
+		; Ctrl+Home is used to force a redraw after each iteration by moving to cell A1
 		Send("^{HOME}")
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		
+		; Every 4th iteration, write a file
+		If Mod($i, 4) = 1 Then
+			; Create the filename for this iteration
+			$filename = GetScriptTempDirectory() & "chartExport" & $i & ".png"
+			; Put it on Windows' clipboard
+			ClipPut( $filename )
+			; Paste filename into cell A1 (that cell is used by the excel macro)
+			Send("^v")
+			; Execute the "export" macro, which writes to the file using the export function, as
+			; well as appending a copied image to the spreadsheet
+			Send("^+e")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
+		EndIf
 		
 		; Depending on where we are in the computation, change the graph type
 		If $i = 5 Then
 			; Switch to a different perspective, send macro command Ctrl+Shift+A
 			Send("^+a")
-			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
 		ElseIf $i = 10 Then
 			; Switch to a different graph type, send macro command Ctrl+Shift+B
 			; Requires "n" to answer "no" to popup dialog which says "This will display faster if you ... blah blah blah"
-			Send("^+bn")
-			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+			Send("^+b")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
 		ElseIf $i = 15 Then
 			; Switch to a different perspective, send macro command Ctrl+Shift+C
 			Send("^+c")
-			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
 		ElseIf $i = 20 Then
 			; Switch to a different graph type, send macro command Ctrl+Shift+D
 			Send("^+d")
-			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
 		EndIf
 	Next
 	

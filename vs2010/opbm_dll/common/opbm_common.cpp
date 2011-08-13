@@ -52,6 +52,29 @@ void GetHarnessXMLDirectory(char* dirname, int dirnameLength)
 
 
 
+
+void GetHarnessTempDirectory(char* dirname, int dirnameLength)
+{
+	USES_CONVERSION;
+	// Clear out the dirname contents
+	memset(dirname, 0, dirnameLength);
+
+	// Grab the directory from Windows
+	SHGetSpecialFolderPathA(0, dirname, CSIDL_MYDOCUMENTS, TRUE);
+
+	// Make sure it ends with a backslash
+	if (*(dirname +strlen(dirname) - 1) != '\\')
+		*(dirname + strlen(dirname)) = '\\';
+
+	// Append the portion relative to the harness's temp directory
+	memcpy(dirname + strlen(dirname), "opbm\\temp\\", 10);
+
+	// Make sure the directory exists
+	SHCreateDirectoryEx(NULL, A2T(dirname), NULL);
+}
+
+
+
 void GetScriptCSVDirectory(char* dirname, int dirnameLength)
 {
 	USES_CONVERSION;
@@ -71,6 +94,31 @@ void GetScriptCSVDirectory(char* dirname, int dirnameLength)
 	// Make sure the directory exists
 	SHCreateDirectoryEx(NULL, A2T(dirname), NULL);
 }
+
+
+
+void GetScriptTempDirectory(char* dirname, int dirnameLength)
+{
+	USES_CONVERSION;
+	// Initialize the path
+	memset(dirname, 0, dirnameLength);
+
+	// Grab the directory from Windows
+	SHGetSpecialFolderPathA(0, dirname, CSIDL_MYDOCUMENTS, TRUE);
+
+	// Make sure it ends with a backslash
+	if (*(dirname +strlen(dirname) - 1) != '\\')
+		*(dirname + strlen(dirname)) = '\\';
+
+	// Append the portion relative to the script's temp directory
+	memcpy(&dirname[strlen(dirname)], "opbm\\scriptOutput\\temp\\", 23);
+
+	// Make sure the directory exists
+	SHCreateDirectoryEx(NULL, A2T(dirname), NULL);
+}
+
+
+
 
 void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 {
