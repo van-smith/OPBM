@@ -35,9 +35,6 @@ extern HMODULE ghModule;
 // Note:  Windows doesn't just have windows 
 //
 /////
-	char		converted[2048];
-
-
 	// opbm_assist.cpp functions:
 	bool			iCopyFile						(wchar_t* prefixDir, wchar_t* srcFile, char* content, int length);
 	bool			iMakeDirectory					(wchar_t* prefixDir, wchar_t* postfixDir);
@@ -848,10 +845,14 @@ extern HMODULE ghModule;
 // 		Office2010SaveKeys( )
 //
 /////
+	// "Run macros?" key:
 	char gcOffice2010_AccessVBOM_String[]	= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\AccessVBOM";
+	// "Disable Warnings?" key:
 	char gcOffice2010_VBAWarnings_String[]	= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\VBAWarnings";
+	// Holds saved values for later restoration:
 	char* gcOffice2010_AccessVBOM			= NULL;
 	char* gcOffice2010_VBAWarnings			= NULL;
+
 	AU3_PLUGIN_DEFINE(Office2010SaveKeys)
 	// See notes about parameters and return codes above
 	{
@@ -859,9 +860,8 @@ extern HMODULE ghModule;
 		char				key[1024];			// Holds the keys that are updated/searched
 
 		// No parameters are passed
-MessageBox( NULL, L"Office2010SaveKeys", L"Called", MB_OK );
-/*
-		// Clear out any previous key contents (if any)
+
+		// Clear out any previous saved key contents (if any)
 		if (gcOffice2010_AccessVBOM != NULL)
 		{
 			free(gcOffice2010_AccessVBOM);
@@ -874,14 +874,13 @@ MessageBox( NULL, L"Office2010SaveKeys", L"Called", MB_OK );
 			gcOffice2010_VBAWarnings = NULL;
 		}
 
-		// Save Office2010's run macros
+		// Save Office2010's existing "run macros" key
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_String);
 		gcOffice2010_AccessVBOM = GetRegistryKeyValue( &key[0] );
 
-		// Save Office2010's disable warnings
+		// Save Office2010's existing "disable warnings" key
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_String);
 		gcOffice2010_VBAWarnings = GetRegistryKeyValue( &key[0] );
-*/
 
 
 		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
@@ -930,16 +929,13 @@ MessageBox( NULL, L"Office2010SaveKeys", L"Called", MB_OK );
 		sptr = &successString[0];
 		kptr = &key[0];
 
-MessageBox( NULL, L"Office2010InstallKeys", L"Called", MB_OK );
-/*
-		// Tell Office2010 to run macros
+		// Set Office2010 key to run macros
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_String);
 		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
 
-		// Tell Office2010 to disable warnings
+		// Set Office2010 key to disable warnings
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_String);
 		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
-*/
 
 		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
 		pMyResult = AU3_AllocVar();
@@ -993,13 +989,11 @@ Office2010SaveKeys
 		sptr = &successString[0];
 		kptr = &key[0];
 
-MessageBox( NULL, L"Office2010RestoreKeys", L"Called", MB_OK );
-/*
-		// Restore the keys for those items previously saved
+		// Restore keys for those items previously saved
 		if (gcOffice2010_AccessVBOM != NULL)
 		{
 			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM);
-			// Restore Office2010's run macros
+			// Restore Office2010's "run macros" prior key setting
 			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_String);
 			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
 			free(gcOffice2010_AccessVBOM);
@@ -1012,7 +1006,7 @@ MessageBox( NULL, L"Office2010RestoreKeys", L"Called", MB_OK );
 		if (gcOffice2010_VBAWarnings != NULL)
 		{
 			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings);
-			// Restore Office2010's disable warnings
+			// Restore Office2010's "disable warnings" prior key setting
 			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_String);
 			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
 			free(gcOffice2010_VBAWarnings);
@@ -1021,7 +1015,6 @@ MessageBox( NULL, L"Office2010RestoreKeys", L"Called", MB_OK );
 		} else {
 			*(sptr++)	= '0';
 		}
-*/
 
 
 		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success

@@ -198,10 +198,10 @@
 		DWORD type, length;
 		BYTE* intermediate;
 		char* keyName;
+		char* converted;
 
 		// Break out our HKEY root, and keyname components
 		keyName = breakoutHkeyComponents(key, hk, skip);
-
 		if (RegOpenKeyExA( hk, key + skip, 0, KEY_READ, &hkout ) == ERROR_SUCCESS)
 		{	// Success, we can read the key value
 			if (RegQueryValueExA( hkout, keyName, 0, &type, null, &length ) == ERROR_SUCCESS)
@@ -221,15 +221,23 @@
 
 					case REG_DWORD:
 						// Convert the dword value to its string form
-						sprintf_s(converted, sizeof(converted), "%u", *(DWORD*)intermediate);
+						converted = (char*)malloc(length);
+						if (converted != NULL)
+						{
+							sprintf_s(converted, length, "%u", *(DWORD*)intermediate);
+						}
 						free(intermediate);
-						return(&converted[0]);
+						return(converted);
 
 					case REG_QWORD:
 						// Convert the qword value to its string form
-						sprintf_s(converted, sizeof(converted), "%I64u", *(__int64*)intermediate);
+						converted = (char*)malloc(length + 32);
+						if (converted != NULL)
+						{
+							sprintf_s(converted, length, "%I64u", *(__int64*)intermediate);
+						}
 						free(intermediate);
-						return(&converted[0]);
+						return(converted);
 
 					default:
 						// Unhandled type
