@@ -231,7 +231,7 @@
 
 					case REG_QWORD:
 						// Convert the qword value to its string form
-						converted = (char*)malloc(length + 32);
+						converted = (char*)malloc(length);
 						if (converted != NULL)
 						{
 							sprintf_s(converted, length, "%I64u", *(__int64*)intermediate);
