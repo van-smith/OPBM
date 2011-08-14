@@ -15,19 +15,39 @@
 ;======================================================================================================================================
 #include <../../common/office2010/wordCommon.au3>
 #include <../../common/adobe/adobeVersion.au3>
+#include <../../common/ie/ieCommonIE9Functions.au3>
 
+; Defined in wordCommon.au3, but overridden here for "alice"-specific launch and close entries
+;$gBaselines[0][0] = $LAUNCH_MICROSOFT_WORD
+$gBaselines[0][1] = $ALICE_LAUNCH_MICROSOFT_WORD_SCORE
+;$gBaselines[1][0] = $CLOSE_MICROSOFT_WORD
+$gBaselines[1][1] = $ALICE_CLOSE_MICROSOFT_WORD_SCORE
 
-; Begin at 2, refer to wordCommon.au3 to see 0 and 1
-$gBaselines[2][0] = $CLOSE_EMPTY_DOCUMENT
-$gBaselines[2][1] = $ALICE_CLOSE_EMPTY_DOCUMENT_SCORE
-$gBaselines[3][0] = $OPEN_ALICE_IN_WONDERLAND
-$gBaselines[3][1] = $ALICE_OPEN_ALICE_IN_WONDERLAND_SCORE
-$gBaselines[4][0] = $TIME_TO_PAGE_DOWN_N_TIMES
-$gBaselines[4][1] = $ALICE_TIME_TO_PAGE_DOWN_N_TIMES_SCORE
-$gBaselines[5][0] = $SAVE_AS_PDF
-$gBaselines[5][1] = $ALICE_SAVE_AS_PDF_SCORE
-$gBaselines[6][0] = $MANIPULATE_IN_ACROBAT_READER
-$gBaselines[6][1] = $ALICE_MANIPULATE_IN_ACROBAT_READER_SCORE
+; Only defined in this AutoIt script
+$gBaselines[2][0]	= $CLOSE_EMPTY_DOCUMENT
+$gBaselines[2][1]	= $ALICE_CLOSE_EMPTY_DOCUMENT_SCORE
+$gBaselines[3][0]	= $OPEN_ALICE_IN_WONDERLAND
+$gBaselines[3][1]	= $ALICE_OPEN_ALICE_IN_WONDERLAND_SCORE
+$gBaselines[4][0]	= $SAVE_AS_PDF
+$gBaselines[4][1]	= $ALICE_SAVE_AS_PDF_SCORE
+$gBaselines[5][0]	= $MANIPULATE_IN_ACROBAT_READER
+$gBaselines[5][1]	= $ALICE_MANIPULATE_IN_ACROBAT_READER_SCORE
+$gBaselines[6][0]	= $ALICE_TIME_TO_PGDN_N_TIMES_NORMALLY
+$gBaselines[6][1]	= $ALICE_TIME_TO_PGDN_N_TIMES_NORMALLY_SCORE
+$gBaselines[7][0]	= $LAUNCH_IE
+$gBaselines[7][1]	= $ALICE_LAUNCH_IE_SCORE
+$gBaselines[8][0]	= $CLOSE_IE
+$gBaselines[8][1]	= $ALICE_CLOSE_IE_SCORE
+$gBaselines[9][0]	= $ALICE_COPY_TO_CLIPBOARD
+$gBaselines[9][1]	= $ALICE_COPY_TO_CLIPBOARD_SCORE
+$gBaselines[10][0]	= $ALICE_TIME_TO_PGDN_N_TIMES_FONT_FX
+$gBaselines[10][1]	= $ALICE_TIME_TO_PGDN_N_TIMES_FONT_FX_SCORE
+$gBaselines[11][0]	= $ALICE_SET_FONT_LIGATURES
+$gBaselines[11][1]	= $ALICE_SET_FONT_LIGATURES_SCORE
+$gBaselines[12][0]	= $ALICE_PASTE_INTO_DOCUMENT
+$gBaselines[12][1]	= $ALICE_PASTE_INTO_DOCUMENT_SCORE
+$gBaselines[13][0]	= $ALICE_PAGE_DOWN_N_TIMES_IN_IE9
+$gBaselines[13][1]	= $ALICE_PAGE_DOWN_N_TIMES_IN_IE9_SCORE
 
 Dim $CurrentLoop
 Dim $LoopLimit
@@ -50,32 +70,45 @@ For $CurrentLoop = 1 to $LoopLimit
 		Exit -1
 	EndIf
 	
+	If not isIE9Installed() Then
+		outputError( $IE9_IS_NOT_INSTALLED )
+		Exit -1
+	EndIf
+	
+; Parsing through Internet Explorer 9
+	outputDebug( "LaunchIE9()" )
+	LaunchIE()
+	OpenAliceInWonderLandHtml()
+	PageDownNTimes()
+	CopyToClipboard()
+	CloseIE( $WINDOW_IE9_ALICE_IN_WONDERLAND )
+; End
+
+; Parsing in Word, with Acrobat manipulation
 	outputDebug( "LaunchWord()" )
 	LaunchWord()
 	
 	FirstRunCheck()
 	
-	outputDebug( "CloseEmptyDocument()" )
-	CloseEmptyDocument()
+	PasteIntoDocument()
+	PageThroughDocument( $ALICE_TIME_TO_PGDN_N_TIMES_NORMALLY )
+	SetFontEffects()
+	PageThroughDocument( $ALICE_TIME_TO_PGDN_N_TIMES_FONT_FX )
+	MakeTextWrapTightAroundPictures()
 	
-	outputDebug( "OpenAliceInWonderLandHtml()" )
-	OpenAliceInWonderLandHtml()
-	
-	outputDebug( "PageThroughDocument()" )
-	PageThroughDocument()
-	
-	outputDebug( "SaveAsAliceInWonderLandPdf()" )
-	SaveAsAliceInWonderLandPdf()
-	
-	outputDebug( "ManipulateInAcrobatReader()" )
-	ManipulateInAcrobatReader()
+;	outputDebug( "SaveAsAliceInWonderLandPdf()" )
+;	SaveAsAliceInWonderLandPdf()
+;	
+;	outputDebug( "ManipulateInAcrobatReader()" )
+;	ManipulateInAcrobatReader()
 	
 	outputDebug( "CloseWord()" )
 	CloseWord()
+; End
 	
 	outputDebug( "FinalizeWordScript()" )
 	opbmFinalizeScript( "aliceTimes.csv" )
-	opbmFileDelete( $FILENAME_ALICE_IN_WONDERLAND_PDF )
+;	opbmFileDelete( $FILENAME_ALICE_IN_WONDERLAND_PDF )
 Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 Exit
@@ -95,77 +128,113 @@ Func InitializeAliceScript()
 	opbmFileDeleteIfExists( $FILENAME_ALICE_IN_WONDERLAND_PDF )
 EndFunc
 
-Func LaunchWord()
-	Local $filename
-	
-	; See which version we're running, either 64-bit (default) or 32-bit (fallback)
-	If FileExists($FILENAME_WORD_X64) Then
-		$filename = $FILENAME_WORD_X64
-	ElseIf FileExists( $FILENAME_WORD_I386 ) Then
-		$filename = $FILENAME_WORD_I386
-	Else
-		ErrorHandle("Launch: Word 2010 not found in " & $FILENAME_WORD_X64 & " or " & $FILENAME_WORD_I386 & ", unable to launch.")
-	EndIf
-	outputDebug( "Attempting to launch " & $filename)
-	
-	; Launch the process
-	TimerBegin()
-	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
-	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, $DOCUMENT1, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word. Unable to find Window." )
-	
-	; Note the time
-	TimerEnd( $LAUNCH_MICROSOFT_WORD )
-EndFunc
-
-Func CloseEmptyDocument()
-	outputDebug( "Closing empty document... " )
-	
-	TimerBegin()
-	Send("!fc")
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	
-	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word. Unable to find Window." )
-	TimerEnd("Close Empty Document")
-EndFunc
-
+; Opens in IE9 for later copy-and-paste into Word 2010
 Func OpenAliceInWonderLandHtml()
-	outputDebug( "Opening " & $FILENAME_ALICE_IN_WONDERLAND_HTML )
-	
-	TimerBegin()
-	; Open file dialog
-	Send("!fo")
-	opbmWinWaitActivate( $OPEN_DIALOG, $OPEN_DIALOG, $gTimeout, $ERROR_PREFIX & "WinWait: Open: Unable to find Window." )
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	
-	; Specify the AliceInWonderland.html filename
-	ControlSend( $OPEN_DIALOG, $OPEN_DIALOG, "Edit1", $FILENAME_ALICE_IN_WONDERLAND_HTML, 1)
-	Send("{ENTER}")
-	
-	; Wait for it to load
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	
-	; Page down a couple times
-	Send("{PGDN}")
-	Send("{PGUP}")
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	opbmWinWaitActivate( $WINDOW_ALICE_IN_WONDERLAND_HTML, $WINDOW_ALICE_IN_WONDERLAND_HTML, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_ALICE_IN_WONDERLAND_HTML & ": Unable to find Window." )
-	
-	TimerEnd( $OPEN_ALICE_IN_WONDERLAND )
+	opbmTypeURL( $FILENAME_ALICE_IN_WONDERLAND_HTML, $OPEN_ALICE_IN_WONDERLAND, "Opening " & $FILENAME_ALICE_IN_WONDERLAND_HTML, $WINDOW_IE9_ALICE_IN_WONDERLAND )
 EndFunc
 
-Func PageThroughDocument()
+Func PageDownNTimes()
 	Local $i
 	
-	outputDebug( "Paging through document " & $NBR_OF_PAGE_DOWN & " times." )
-	
+	outputDebug( $ALICE_PAGE_DOWN_N_TIMES_IN_IE9 )
 	TimerBegin()
-	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
-	for $i = 1 to $NBR_OF_PAGE_DOWN
+	; Page down a few times
+	For $i = 1 to $ALICE_NBR_PAGE_DOWNS
 		Send("{PGDN}")
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Next
+	; Wait until everything related to Windows is settled (because Internet Explorer is "very close to home" and accesses many Windows functions in unique "Microsoft ways")
+	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+	opbmWinWaitActivate( $WINDOW_IE9_ALICE_IN_WONDERLAND, "", $gTimeout, $ERROR_PREFIX & "WinWait: Internet Explorer 9: Unable to find Window." )
+	TimerEnd( $ALICE_PAGE_DOWN_N_TIMES_IN_IE9 )
+EndFunc
+
+Func CopyToClipboard()
+	outputDebug( "Copying HTML to clipboard" )
+	TimerBegin()
+	; Select everything that was loaded in preparation to copy-and-paste into Word
+	Send("^a")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, 250, 20000 )
 	
-	TimerEnd( $TIME_TO_PAGE_DOWN_N_TIMES )
+	; Copy it to the clipboard
+	Send("^c")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, 250, 20000 )
+	
+	; Pause until Windows settles down for one full second
+	opbmWaitUntilSystemIdle( $gPercent, 1000, 20000 )
+	TimerEnd( $ALICE_COPY_TO_CLIPBOARD )
+EndFunc
+
+Func PasteIntoDocument()
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	outputDebug( $ALICE_PASTE_INTO_DOCUMENT )
+	
+	TimerBegin()
+	; Paste into the document from the clipboard
+	Send("^v")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Send("^{Home}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	
+	; Pause until Windows settles down for two full seconds
+	opbmWaitUntilSystemIdle( $gPercent, 2000, 30000 )
+	
+	TimerEnd( $ALICE_PASTE_INTO_DOCUMENT )
+EndFunc
+
+Func PageThroughDocument( $description )
+	Local $i
+	
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	outputDebug( $description )
+	
+	TimerBegin()
+	for $i = 1 to $ALICE_NBR_PAGE_DOWNS
+		Send("{PGDN}")
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
+	Next
+		
+	; Go back to the beginning
+	Send("^{Home}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	TimerEnd( $description )
+EndFunc
+
+; Word 2010 has special font effects that can make for some beautiful typography.
+; This test enables those effects
+Func SetFontEffects()
+	TimerBegin()
+	; Select everything
+	Send("^a")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	
+	; Ctrl+D brings up the font dialog
+	Send("^d")
+	Sleep(250)
+	opbmWinWaitActivate( "Font", "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word Font Dialog: Unable to find Window." )
+	
+	; Alt+V selects the "advanced" tab
+	Send("!v")
+	Sleep(250)
+	; Alt+L selects the "Ligatures" combobox
+	Send("!l")
+	Sleep(250)
+	; Home, down, down selects "Standard and Contextual" ligatures, then enter accepts that combobox entry
+	Send("{home}{down}{down}{enter}")
+	Sleep(100)
+	
+	; This second enter key closes the dialog and accepts the options ("Okay" is the default option)
+	Send("{enter}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	
+	; Un-select everything
+	Send("{home}")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	TimerEnd( $ALICE_SET_FONT_LIGATURES )
+EndFunc
+
+Func MakeTextWrapTightAroundPictures()
+	; Cannot find keystrokes to make this work globally
 EndFunc
 
 Func SaveAsAliceInWonderLandPdf()
@@ -229,7 +298,7 @@ Func ManipulateInAcrobatReader()
 	Next
 	
 	; Move forward N pages, a page at a time
-	for $i = 1 to $NBR_OF_PAGE_DOWN
+	for $i = 1 to $ALICE_NBR_PAGE_DOWNS
 		Send("{PGDN}")
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Next
@@ -265,15 +334,4 @@ Func ManipulateInAcrobatReader()
 	; and for the system to settle down
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	TimerEnd( $MANIPULATE_IN_ACROBAT_READER )
-EndFunc
-
-Func CloseWord()
-	; Exit word
-	TimerBegin()
-	; File -> Exit
-	Send("!fx")
-	; "Save Changes?" No
-	Send("!n")	
-	
-	TimerEnd( $CLOSE_MICROSOFT_WORD )
 EndFunc

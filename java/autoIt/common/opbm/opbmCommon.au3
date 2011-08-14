@@ -55,8 +55,8 @@ Func InitializeGlobalVariables()
 	$gErrorTrap				= -9999
 	
 	; Initialize the time indices
-	For $i = 0 to $TIMER_MAX_INDEX_COUNT - 1
-		$gTimeIndex[$i] = ""
+	For $i = 1 to $TIMER_MAX_INDEX_COUNT
+		$gTimeIndex[$i - 1] = ""
 	Next
 	
 	; Load the opbm.dll plugin:
@@ -159,35 +159,6 @@ Func opbmWaitUntilSystemIdle( $aCpuUsageThreshold, $aPollPeriodMS, $aTimeoutMS )
 	return $result
 EndFunc
 
-;Func TakeTimer($Label)
-;	Local $Ratio
-;	$gTimerPoint = TimerDiff($gTimer)	
-;
-;	; Begin
-;	; Added for OPBM July, 2011
-;	; Compute the ratio in addition to the time, based on the baseline values encoded in the script
-;	; Each script should have code like this at the startup before any TakeTimer() functions are called:
-;	;	Dim $gBaselines[1][2]
-;	;	Dim $gBaselineSize
-;	;	$gBaselines[0][0] = "Description"		; The TakeTimer() $Label description goes here"
-;	;	$gBaselines[0][1] = 2.0					; The timing value goes here
-;	;	$gBaselineSize = 1						; Number of items in gBaselines[] goes here
-;	$Ratio = 0
-;	For $i = 0 to $gBaselineSize - 1
-;		If $gBaselines[$i][0] = $Label Then
-;			$Ratio = ( $gBaseLines[$i][1] / $gTimerPoint ) * 100000
-;			ExitLoop
-;		EndIf
-;	Next
-;	If $Ratio = 0 Then
-;		$gTimeIndex[$gIndex] = $Label & "," & ($gTimerPoint / 1000)
-;		;ConsoleWrite( "TakeTimer: " & $gTimeIndex[$gIndex] & @CRLF )
-;	Else
-;		$gTimeIndex[$gIndex] = $Label & "," & ($gTimerPoint / 1000) & "," & $Ratio
-;	EndIf
-;	outputTiming( $gTimeIndex[ $gIndex ] )
-;EndFunc
-
 Func TimerBegin()
 	$gTimer = TimerInit()
 EndFunc
@@ -247,7 +218,6 @@ EndFunc
 Func TimerWriteTimesToCSV( $CSVPath )
 	Local $lFileTimerCsv
 	Local $i
-	;Local $liArraySize
 	
 	$gTimerPoint = TimerDiff( $gScriptBeginTime )	
 	$gTimeIndex[ $gIndex ] = "Total Runtime," & ( $gTimerPoint / 1000 )
@@ -257,7 +227,6 @@ Func TimerWriteTimesToCSV( $CSVPath )
 		ErrorHandle($ERROR_PREFIX & "TimerFinish:FileOpen: . Unable to open file.")
 	EndIf
 	
-	;$liArraySize = UBound( $gTimeIndex )
 	For $i = 0 To $gIndex
 		$gErrorTrap = FileWriteLine($lFileTimerCsv, $gTimeIndex[$i])
 		If $gErrorTrap = 0 Then
@@ -312,7 +281,7 @@ Func ErrorHandle( $Text, $ShowMsgBox = False, $aExit = True )
 	FileWriteLine($lErrorFile, @MON & "/" & @MDAY & "/" & @YEAR & "  " & @HOUR & ":" & @MIN & ":" & @SEC)
 	FileWriteLine($lErrorFile, $Text)
 	FileClose($lErrorFile)
-; Disabled modal message box, and error is logged to the harness
+; Disabled modal message box because error is now logged to the harness
 ;	If $ShowMsgBox Then
 ;		MsgBox(16,"Script Error!", $Text)
 ;	EndIf
@@ -391,9 +360,8 @@ Func opbmFinalizeScript($name)
 EndFunc
 
 
-Func opbmTypeURL( $url, $timerText, $open )
-	Local $i
-	outputDebug( "Attempting to obtain Open File dialog window" )
+Func opbmTypeURL( $url, $timerText, $open = "Attempting to open URL", $waitForWindow = " ", $waitForText = "" )
+	outputDebug( $open )
 	
 	; Begin the timer before we press Ctrl+L for the address bar
 	TimerBegin()
@@ -402,9 +370,18 @@ Func opbmTypeURL( $url, $timerText, $open )
 	
 	; Convert any "\" character to a "/" character
 	; Send the URL and capture the end timer
-	Send( "file://" & StringReplace( $url, "\", "/" ) )
+	Send( "file://" & StringReplace( $url, "\", "/" ) & "{Enter}" )
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+
+	; See if we have to wait for a window to appear
+	If not StringIsSpace( $waitForWindow ) Then
+		; We have to wait for the window to appear
+		opbmWinWaitActivate( $waitForWindow, $waitForText, 30, "Unable to find " & $waitForWindow & " " & $waitForText )
+		; If we get here, then the window was found
+	EndIf
+	; Store our timing for this part
 	TimerEnd( $timerText )
-	; Don't sleep afterward because it sets up the next keystroke
+	; Don't sleep afterward because the caller will handle all of that
 EndFunc
 
 ; Rick C. Hodgin, August 12, 2011

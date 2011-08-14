@@ -6,9 +6,9 @@
 
 ; Defined in excelCommon.au3, but overridden here for "heat"-specific launch and close entries
 ;$gBaselines[0][0] = $LAUNCH_MICROSOFT_EXCEL
-$gBaselines[0][1] = $HEAT_LAUNCH_MICROSOFT_EXCEL
+$gBaselines[0][1] = $HEAT_LAUNCH_MICROSOFT_EXCEL_SCORE
 ;$gBaselines[1][0] = $CLOSE_MICROSOFT_EXCEL
-$gBaselines[1][1] = $HEAT_CLOSE_MICROSOFT_EXCEL
+$gBaselines[1][1] = $HEAT_CLOSE_MICROSOFT_EXCEL_SCORE
 
 ; Only defined in this AutoIt script
 $gBaselines[2][0] = $HEAT_CLOSE_EMPTY_WORKSHEET
