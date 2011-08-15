@@ -30,7 +30,7 @@ Const $STATUS_BAR						= "Status Bar"
 
 ; Setup references for timing items
 Dim $gBaselineSize
-$gBaselineSize = 10
+$gBaselineSize = 20
 Dim $gBaselines[ $gBaselineSize ][2]
 $gBaselines[0][0] = $LAUNCH_MICROSOFT_EXCEL
 $gBaselines[0][1] = $LAUNCH_MICROSOFT_EXCEL_SCORE

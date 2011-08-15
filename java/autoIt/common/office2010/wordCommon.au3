@@ -45,10 +45,14 @@ Const $ALICE_PAGE_DOWN_N_TIMES_IN_IE9			= "Page down " & $ALICE_NBR_PAGE_DOWNS &
 Const $ALICE_COPY_TO_CLIPBOARD					= "Copy " & $ALICEINWONDERLAND_HTML & " to clipboard"
 Const $ALICE_PASTE_INTO_DOCUMENT				= "Paste into document"
 Const $ALICE_SET_FONT_LIGATURES					= "Set font ligatures to Standard + Contextual"
+Const $WORD_HAS_FINISHED_SEARCHING_THE_DOCUMENT	= "Word has finished searching the document"
+Const $FIND_AND_REPLACE							= "Find and Replace"
+Const $ALICE_SET_FONT_EFFECTS					= "Setting font effects"
+Const $ALICE_UPDATING_IMAGE_TEXT_ALIGNMENT		= "Updating image's text alignment"
 
 ; Setup references for timing items
 Dim $gBaselineSize
-$gBaselineSize = 40
+$gBaselineSize = 20
 Dim $gBaselines[ $gBaselineSize ][2]
 $gBaselines[0][0] = $LAUNCH_MICROSOFT_WORD
 $gBaselines[0][1] = $LAUNCH_MICROSOFT_WORD_SCORE

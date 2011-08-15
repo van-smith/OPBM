@@ -114,6 +114,7 @@ Const $ALICE_CLOSE_IE_SCORE							= 2.0000000000000000	; No official score yet
 Const $ALICE_COPY_TO_CLIPBOARD_SCORE				= 2.0000000000000000	; No official score yet
 Const $ALICE_PASTE_INTO_DOCUMENT_SCORE				= 2.0000000000000000	; No official score yet
 Const $ALICE_SET_FONT_LIGATURES_SCORE				= 2.0000000000000000	; No official score yet
+Const $ALICE_UPDATING_IMAGE_TEXT_ALIGNMENT_SCORE	= 2.0000000000000000	; No official score yet
 
 ; operaCommon.au3
 Const $LAUNCH_OPERA_SCORE							= 1.21
