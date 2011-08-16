@@ -1018,12 +1018,12 @@ public class BenchmarksAtom
 							failure		= true;
 							for (i = 0; i < m_bp.m_errorArray.size(); i++)
 								xmlError.appendChild(Utils.processExecutableLine("error", m_bp.m_errorArray.get(i)));
+							m_bp.m_errorArray.clear();
 
 						} else {
 							// We succeeded
 							failure = false;
 						}
-						m_bp.m_errorArray.clear();
 
 						// For each line of output, save the entry
 						xmlOutput = new Xml("outputs");
@@ -1039,8 +1039,8 @@ public class BenchmarksAtom
 								}
 								xmlOutput.appendChild(Utils.processExecutableLine("output", m_bp.m_outputArray.get(i)));
 							}
+							m_bp.m_outputArray.clear();
 						}
-						m_bp.m_outputArray.clear();
 
 //////////
 // FAILURE TRIGGERED BY EXIT VALUE
@@ -1058,17 +1058,17 @@ public class BenchmarksAtom
 						}
 
 						// Now, based on the state of this run, we append its information to the appropriate place
-						if (failure)
-						{	// An error occurred, so we put this on the retry pipe
+						if (failure && (retryCount + 1) < m_bp.m_retryAttempts)
+						{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
 							xmlRun_RunFailure.appendChild(xmlType);
-							// Move the counter for the next retry
-							++retryCount;
 
 						} else {
 							// Just append like normal, they're not retrying, this failure will persist
 							xmlRun_RunSuccess.appendChild(xmlType);
 							// If we succeed, we make only one pass through the loop, no need to increment the retry count
 						}
+						// Move the counter for the next retry
+						++retryCount;
 
 						// Clean up any temporary files and what-not which the script may have left behind
 						m_bp.m_wui.cleanupAfterScriptExecution();

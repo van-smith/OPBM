@@ -335,7 +335,7 @@ public class Benchmarks
 
 		xmlRun_Failure	= new Xml("atom_failures");
 		xmlRun_Failure.appendAttribute(new Xml("name", atom.getAttribute("name")));
-		m_bp.m_xmlRun.appendChild(xmlRun_Success);
+		m_bp.m_xmlRun.appendChild(xmlRun_Failure);
 
 // REMEMBER In the future, will store data here containing run profile (information, notes, optimization settings, etc.)
 
@@ -363,10 +363,6 @@ public class Benchmarks
 				xmlIteration.appendAttribute("this", Integer.toString(i+1));
 				xmlIteration.appendAttribute("max", Integer.toString(iterations));
 				xmlRun_Success = xmlRun_Success.appendChild(xmlIteration);
-
-				// Append failure iteration information
-				xmlIteration.appendAttribute("this", Integer.toString(i+1));
-				xmlIteration.appendAttribute("max", Integer.toString(iterations));
 				xmlRun_Failure = xmlRun_Failure.appendChild(xmlIteration);
 
 				// Indicate where we are in the overall scheme

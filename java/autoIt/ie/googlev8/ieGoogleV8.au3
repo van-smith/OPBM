@@ -27,9 +27,6 @@ $gBaselines[3][1] = $IE_RUN_GOOGLEV8_SCORE
 
 outputDebug( "Starting up IE Google V8" )
 
-outputError( "Simulated failure" )
-Exit -1
-
 if $CmdLine[0] > 0 then 
 	$LoopLimit = $CmdLine[1] 
 Else 

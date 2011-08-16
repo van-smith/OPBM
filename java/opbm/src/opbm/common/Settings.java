@@ -22,7 +22,7 @@ import opbm.Opbm;
 
 public final class Settings
 {
-	public Settings()
+	public Settings(Opbm opbm)
 	{
 		String translucency, count;
 		double value;
@@ -42,21 +42,21 @@ public final class Settings
 		if (m_settings != null)
 		{	// We can, use the xml-based settings
 			System.out.println("Using " + m_settingsFilename);
-			m_debugMode			= m_settings.getChild("opbm.settings.benchmarks.debugger").equalsIgnoreCase("yes");
-			m_singleStepping	= m_settings.getChild("opbm.settings.benchmarks.singlestep").equalsIgnoreCase("yes");
-			m_hudVisible		= m_settings.getChild("opbm.settings.benchmarks.hud.visible").equalsIgnoreCase("yes");
-			translucency		= m_settings.getChild("opbm.settings.benchmarks.hud.translucency");
+			m_debugMode			= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.debugger")).equalsIgnoreCase("yes");
+			m_singleStepping	= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.singlestep")).equalsIgnoreCase("yes");
+			m_hudVisible		= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.hud.visible")).equalsIgnoreCase("yes");
+			translucency		= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.hud.translucency"));
 			value				= Double.valueOf(translucency);
 			if (value > 1.0f || value < 0.0f)
 				value = 0.67;
 			m_hudTranslucency	= value;
-			m_skin				= m_settings.getChild("opbm.settings.skin");
-			m_retry				= m_settings.getChild("opbm.settings.benchmarks.retry").equalsIgnoreCase("yes");
+			m_skin				= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.skin"));
+			m_retry				= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.retry")).equalsIgnoreCase("yes");
 			if (m_retry)
 			{	// Grab the count
 				try
 				{
-					count = m_settings.getAttributeOrChild("settings.benchmarks.retry.attempts");
+					count = opbm.getMacroMaster().parseMacros(m_settings.getAttributeOrChild("settings.benchmarks.retry.attempts"));
 					if (count.isEmpty())
 					{	// Nothing was specified, so we use the default
 						count = "3";
@@ -66,7 +66,7 @@ public final class Settings
 				} catch (NullPointerException ex) {
 				}
 			}
-			m_retryStops		= m_settings.getChild("opbm.settings.benchmarks.retry.#stopIfFailureOnretries").equalsIgnoreCase("yes");
+			m_retryStops		= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.retry.#stopIfFailureOnretries")).equalsIgnoreCase("yes");
 
 		} else {
 			// Use defaults

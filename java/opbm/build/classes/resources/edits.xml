@@ -58,27 +58,6 @@
 			<editbox zoom="main" field="variables"/>
 		</edit>
 
-		<edit name="customs">
-			<precommand p1="Edit Customs">leftpanel</precommand>
-			<listbox zoom="main">
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.scriptdata.customs.custom</source>
-				<foreach>custom</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label zoom="main" text="Custom Name:"/>
-			<textbox zoom="main" field="#name"/>
-			<label zoom="main" text="Tags:"/>
-			<textbox zoom="main" field="tags"/>
-			<vspacer zoom="main" height="10"/>
-			<label zoom="main" text="Custom Insert:"/>
-			<editbox zoom="main" height="max" field="insert"/>
-		</edit>
-
 		<edit name="abstracts">
 			<precommand p1="Edit Abstracts">leftpanel</precommand>
 			<listbox zoom="main">
@@ -125,10 +104,10 @@
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
-				<source relativeto="atom">[flow,custom,abstract]</source>
-				<foreach>[flow,custom,abstract]</foreach>
-				<relativeedits p1="flow=flows" p2="custom=customs" p3="abstract=abstracts"/>
-				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="custom=opbm.scriptdata.customs.custom" p3="abstract=opbm.scriptdata.abstracts.abstract"/>
+				<source relativeto="atom">[flow,abstract]</source>
+				<foreach>[flow,abstract]</foreach>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract"/>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
@@ -138,14 +117,6 @@
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.flows.flow</source>
 				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<label text="Custom Inserts:"/>
-			<lookupbox name="customs" autoupdate="no">
-				<add p1="atom" p2="elements" p3="customs">lookupbox_add</add>
-				<zoom p1="customs" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.customs.custom</source>
-				<foreach>custom</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<label text="Command Abstracts:"/>
@@ -181,8 +152,8 @@
 				<subtract>lookupbox_subtract</subtract>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
-				<source relativeto="molecule">[flow,custom,abstract,atom]</source>
-				<foreach>[flow,custom,abstract,atom]</foreach>
+				<source relativeto="molecule">[flow,abstract,atom]</source>
+				<foreach>[flow,abstract,atom]</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
@@ -192,14 +163,6 @@
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.flows.flow</source>
 				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<label text="Custom Inserts:"/>
-			<lookupbox name="customs" autoupdate="no">
-				<add p1="molecule" p2="elements" p3="customs">lookupbox_add</add>
-				<zoom p1="customs" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.customs.custom</source>
-				<foreach>custom</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<label text="Command Abstracts:"/>
@@ -243,8 +206,8 @@
 				<subtract>lookupbox_subtract</subtract>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
-				<source relativeto="scenario">[flow,custom,abstract,atom,molecule]</source>
-				<foreach>[flow,custom,abstract,atom,molecule]</foreach>
+				<source relativeto="scenario">[flow,abstract,atom,molecule]</source>
+				<foreach>[flow,abstract,atom,molecule]</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
@@ -254,14 +217,6 @@
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.flows.flow</source>
 				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<label text="Custom Inserts:"/>
-			<lookupbox name="customs" autoupdate="no">
-				<add p1="elements" p2="customs">lookupbox_add</add>
-				<zoom p1="customs" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.customs.custom</source>
-				<foreach>custom</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<label text="Command Abstracts:"/>
@@ -313,8 +268,8 @@
 				<subtract>lookupbox_subtract</subtract>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
-				<source relativeto="suite">[flow,custom,abstract,atom,molecule,scenario]</source>
-				<foreach>[flow,custom,abstract,atom,molecule,scenario]</foreach>
+				<source relativeto="suite">[flow,abstract,atom,molecule,scenario]</source>
+				<foreach>[flow,abstract,atom,molecule,scenario]</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
@@ -324,14 +279,6 @@
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.flows.flow</source>
 				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<label text="Custom Inserts:"/>
-			<lookupbox name="customs" autoupdate="no">
-				<add p1="elements" p2="customs">lookupbox_add</add>
-				<zoom p1="customs" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.customs.custom</source>
-				<foreach>custom</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<label text="Command Abstracts:"/>
@@ -1090,10 +1037,10 @@
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
-				<source relativeto="atom">[flow,custom,abstract]</source>
-				<foreach>[flow,custom,abstract]</foreach>
-				<relativeedits p1="flow=flows" p2="custom=customs" p3="abstract=abstracts"/>
-				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="custom=opbm.scriptdata.customs.custom" p3="abstract=opbm.scriptdata.abstracts.abstract"/>
+				<source relativeto="atom">[flow,abstract]</source>
+				<foreach>[flow,abstract]</foreach>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract"/>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>

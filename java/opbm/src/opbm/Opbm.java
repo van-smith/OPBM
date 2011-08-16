@@ -124,7 +124,7 @@ public final class Opbm extends	ModalApp
 		m_tuples					= new ArrayList<Tuple>(0);
 		m_macroMaster				= new Macros(this);
 		m_benchmarkMaster			= new Benchmarks();
-		m_settingsMaster			= new Settings();
+		m_settingsMaster			= new Settings(this);
 		m_commandMaster				= new Commands(this, m_macroMaster, m_settingsMaster);
 		m_executingFromCommandLine	= false;
 
@@ -1391,6 +1391,11 @@ public final class Opbm extends	ModalApp
 	public Settings getSettingsMaster()
 	{
 		return(m_settingsMaster);
+	}
+
+	public Macros getMacroMaster()
+	{
+		return(m_macroMaster);
 	}
 
 	public Benchmarks getBenchmarkMaster()

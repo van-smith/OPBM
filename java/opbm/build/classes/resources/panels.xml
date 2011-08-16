@@ -67,7 +67,7 @@
 			<menu>
 				<text>Script Definition</text>
 				<command p1="Edit Scripts">leftpanel</command>
-				<tooltip>Setup scripts, including flows, customs, abstracts, atoms, molecules, scenarios and suites.</tooltip>
+				<tooltip>Setup scripts, including flows, abstracts, atoms, molecules, scenarios and suites.</tooltip>
 			</menu>
 			<menu>
 				<text>Edit Devices</text>
@@ -132,11 +132,6 @@
 			<menu>
 				<text>Flow Control</text>
 				<command p1="flows">edit</command>
-				<tooltip></tooltip>
-			</menu>
-			<menu>
-				<text>Custom Inserts</text>
-				<command p1="customs">edit</command>
 				<tooltip></tooltip>
 			</menu>
 			<menu>
@@ -439,45 +434,6 @@
 			<text>Flow control directives handle</text>
 			<text>looping, conditional execution</text>
 			<text>of code, script commands, etc.</text>
-		</left>
-
-		<left name="Edit Customs">
-			<navigation>
-				<text>Back</text>
-				<command>edit_back</command>
-				<tooltip>Return to $previous_panel$</tooltip>
-			</navigation>
-			<navigation>
-				<text>Home</text>
-				<command>edit_home</command>
-				<tooltip>Return to $home_panel$</tooltip>
-			</navigation>
-			<spacer/>
-			<heading>
-				<text>Custom Inserts</text>
-			</heading>
-			<spacer/>
-			<menu>
-				<text>Save</text>
-				<command>edit_save</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
-			</menu>
-			<menu>
-				<text>Save and Close</text>
-				<command>edit_save_and_close</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
-			</menu>
-			<menu>
-				<text>Close</text>
-				<command>edit_close</command>
-				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
-			</menu>
-			<spacer/>
-			<spacer/>
-			<text>Custom Inserts handle special test</text>
-			<text>cases or blocks of code which are</text>
-			<text>not easily defined using standard</text>
-			<text>inputs.</text>
 		</left>
 
 		<left name="Edit Abstracts">
