@@ -237,6 +237,22 @@ public final class Opbm extends	ModalApp
 									System.exit(-1);
 								}
 
+							} else if (line.toLowerCase().startsWith("-trial")) {
+								// They want to run a trial benchmark run
+								m_benchmarkMaster.benchmarkTrialRun(m_opbm);
+
+							} else if (line.toLowerCase().startsWith("-official")) {
+								// They want to run an official benchmark run
+								m_benchmarkMaster.benchmarkOfficialRun(m_opbm);
+
+							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
+								// They want to launch the simple skinned window
+								showSimpleWindow();
+
+							} else if (line.toLowerCase().startsWith("-developer")) {
+								// They want to launch the developer window
+								showDeveloperWindow();
+
 							} else {
 								// Ignore the unknown option
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
