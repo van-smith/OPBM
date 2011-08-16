@@ -21,7 +21,7 @@
 package opbm.benchmarks.hud;
 
 import java.awt.event.MouseEvent;
-import opbm.common.DroppableFrame;
+import opbm.dialogs.DroppableFrame;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;

@@ -44,7 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextField;
 import opbm.benchmarks.BenchmarksParams;
-import opbm.common.DroppableFrame;
+import opbm.dialogs.DroppableFrame;
 import opbm.common.Xml;
 
 public final class Debugger extends DroppableFrame implements KeyListener, MouseListener, MouseMotionListener

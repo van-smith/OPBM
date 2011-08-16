@@ -19,10 +19,10 @@
 
 package opbm.resultsviewer;
 
-import opbm.common.JLabelHotTrack;
-import opbm.common.DroppableFrame;
+import opbm.graphics.JLabelHotTrack;
+import opbm.dialogs.DroppableFrame;
 import opbm.graphics.AlphaImage;
-import opbm.common.Tupel;
+import opbm.common.Tuple;
 import opbm.common.Utils;
 import java.awt.Color;
 import java.awt.Container;
@@ -45,7 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextField;
 import opbm.Opbm;
-import opbm.common.OpbmDialog;
+import opbm.dialogs.OpbmDialog;
 import opbm.common.Xml;
 
 public final class ResultsViewer implements KeyListener,
@@ -64,7 +64,7 @@ public final class ResultsViewer implements KeyListener,
 		m_height		= height;
 		m_actual_width	= width;
 		m_actual_height	= height;
-		m_filterTags	= new Tupel(opbm);
+		m_filterTags	= new Tuple(opbm);
 		m_graphThread	= null;
 		m_graphLine		= null;
 		createResultsViewer(visible);
@@ -292,7 +292,7 @@ img.grayscale();
 			if (label == null)
 			{
 				label = new JLabelHotTrack(this);
-				label.setTupelToUpdateByMouseActivity(m_filterTags, i);
+				label.setTupleToUpdateByMouseActivity(m_filterTags, i);
 
 				labelSelectedNeutral = new JLabel();
 				labelSelectedNeutral.setVisible(false);
@@ -1309,7 +1309,7 @@ m_imgRefSystemOver.grayscale();
 	}
 
 	public ResultsViewerLine getRootRVL()	{	return(m_rootRVL);		}
-	public Tupel getFilterTags()			{	return(m_filterTags);	}
+	public Tuple getFilterTags()			{	return(m_filterTags);	}
 
 	private Opbm						m_opbm;				// The parent
 	private DroppableFrame				m_frame;			// The physical window
@@ -1358,7 +1358,7 @@ m_imgRefSystemOver.grayscale();
 	private ResultsViewerLine			m_navLine;			// The selected navigation leg (if any) for rendering the graph
 	private ResultsViewerLine			m_rootRVL;			// The root results viewer line
 	private ResultsViewerLine			m_highlighted;		// Current highlight
-	private Tupel						m_filterTags;
+	private Tuple						m_filterTags;
 
 	private int							m_width;
 	private int							m_height;

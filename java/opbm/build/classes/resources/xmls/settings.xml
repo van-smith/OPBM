@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <opbm>
+<!-- End use for this file: To differentiate platforms -->
 	<settings>
 		<benchmarks>
 			<debugger>no</debugger>
@@ -9,10 +10,6 @@
 				<translucency>0.5</translucency>
 			</hud>d
 		</benchmarks>
-<!-- End use: Differentiate platforms -->
+		<skin>simple</skin>		<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both -->
 	</settings>
-	<skins>
-		<skin name="standard">
-		</skin>
-	</skins>
 </opbm>

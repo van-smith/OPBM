@@ -7,6 +7,11 @@
 				<command>quit</command>
 				<tooltip>Exit OPBM</tooltip>
 			</navigation>
+			<navigation>
+				<text>Skin</text>
+				<command>simple</command>
+				<tooltip>Switch to the simple skinned user interface</tooltip>
+			</navigation>
 			<spacer/>
 			<heading>
 				<text>Benchmarks:</text>

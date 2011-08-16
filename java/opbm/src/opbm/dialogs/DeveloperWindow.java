@@ -16,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import opbm.Opbm;
-import opbm.common.DroppableFrame;
 
 /**
  *

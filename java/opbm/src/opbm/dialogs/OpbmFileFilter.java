@@ -16,10 +16,11 @@
  *
  */
 
-package opbm.common;
+package opbm.dialogs;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+import opbm.common.Utils;
 
 public class OpbmFileFilter extends FileFilter
 {

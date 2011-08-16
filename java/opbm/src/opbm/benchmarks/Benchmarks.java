@@ -26,6 +26,7 @@ import opbm.benchmarks.debugger.Debugger;
 import java.util.ArrayList;
 import opbm.common.Macros;
 import opbm.Opbm;
+import opbm.dialogs.OpbmDialog;
 import opbm.common.Utils;
 import opbm.panels.PanelRightItem;
 import opbm.common.Settings;
@@ -33,6 +34,15 @@ import opbm.common.Xml;
 
 public class Benchmarks
 {
+	public void benchmarkTrialRun(Opbm opbm)
+	{
+		OpbmDialog od = new OpbmDialog(opbm, "Trial Run would start here", "Trial Run", OpbmDialog._OKAY_BUTTON, null);
+	}
+
+	public void benchmarkOfficialRun(Opbm opbm)
+	{
+		OpbmDialog od = new OpbmDialog(opbm, "Official Run would start here", "Official Run", OpbmDialog._OKAY_BUTTON, null);
+	}
 
 	public void benchmarkInitialize(Opbm			opbm,
 								    Macros			macroMaster,

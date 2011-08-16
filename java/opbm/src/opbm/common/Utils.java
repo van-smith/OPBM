@@ -20,6 +20,7 @@
 
 package opbm.common;
 
+import opbm.dialogs.OpbmFileFilter;
 import opbm.graphics.AlphaImage;
 import java.awt.Color;
 import java.io.BufferedReader;

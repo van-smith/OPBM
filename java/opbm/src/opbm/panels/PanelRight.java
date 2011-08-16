@@ -22,7 +22,7 @@
 
 package opbm.panels;
 
-import opbm.common.Tupel;
+import opbm.common.Tuple;
 import opbm.common.Utils;
 import java.awt.Color;
 import java.awt.Label;
@@ -954,7 +954,7 @@ public class PanelRight {
 	{
 		List<Xml>customs = new ArrayList<Xml>(0);
 		Xml xmlTo, xmlAfter, xmlFrom, xmlNew;
-		Tupel saveObjectList;
+		Tuple saveObjectList;
 
 		// Grab the references
 		xmlTo		= getListboxOrLookupboxNodeByName(whereTo);
@@ -968,7 +968,7 @@ public class PanelRight {
 
 		// If we get here, we have our data
 		// Build the edit to see if there are any custom edit variables to populate ahead of time
-		saveObjectList = new Tupel(m_opbm);
+		saveObjectList = new Tuple(m_opbm);
 		saveObjectList.add("xmlTo",		xmlTo);
 		saveObjectList.add("xmlAfter",		xmlAfter);
 		saveObjectList.add("xmlFrom",		xmlFrom);
@@ -1019,7 +1019,7 @@ public class PanelRight {
 	 * Saves the custom after the user clicks the save button.
 	 * @param tup
 	 */
-	public void saveCustomCommand(Tupel tup)
+	public void saveCustomCommand(Tuple tup)
 	{
 		int i;
 

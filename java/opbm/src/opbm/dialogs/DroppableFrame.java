@@ -19,7 +19,7 @@
  *
  */
 
-package opbm.common;
+package opbm.dialogs;
 
 import java.awt.*;
 import java.io.*;

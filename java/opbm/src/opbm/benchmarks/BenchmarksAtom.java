@@ -24,7 +24,7 @@ import opbm.benchmarks.hud.StreamGobbler;
 import opbm.benchmarks.waituntilidle.WaitUntilIdle;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
-import opbm.common.Tupel;
+import opbm.common.Tuple;
 import opbm.common.Utils;
 import java.util.ArrayList;
 import java.util.List;
@@ -1090,8 +1090,8 @@ public class BenchmarksAtom
 		List<String>	timings0;
 		List<String>	timingsN;
 		List<String>	groupItems;
-		Tupel			tupels		= new Tupel(m_bp.m_opbm);
-		Tupel			groups		= new Tupel(m_bp.m_opbm);
+		Tuple			tupels		= new Tuple(m_bp.m_opbm);
+		Tuple			groups		= new Tuple(m_bp.m_opbm);
 		String fileName, status0, statusN, line, command, qualifiedName;
 
 //////////

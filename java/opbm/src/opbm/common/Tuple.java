@@ -30,12 +30,12 @@ import opbm.Opbm;
 
 /**
  * Class globally storing two items, a string and an object.  The
- * <code>Tupel</code> can be referenced by its UUID, which is generated in the
+ * <code>Tuple</code> can be referenced by its UUID, which is generated in the
  * constructor.
  *
  * @author Rick C. Hodgin
  */
-public class Tupel
+public class Tuple
 {
 	/**
 	 * Constructor, creates a UUID for unique reference to the created tupel.
@@ -45,7 +45,7 @@ public class Tupel
 	 *
 	 * @param opbm
 	 */
-	public Tupel(Opbm opbm)
+	public Tuple(Opbm opbm)
 	{
 		m_uuid		= UUID.randomUUID();
 		m_names		= new ArrayList<String>(0);
@@ -459,7 +459,7 @@ public class Tupel
 	}
 
 	/**
-	 * For iterative functions, returns size of the <code>Tupel</code> list
+	 * For iterative functions, returns size of the <code>Tuple</code> list
 	 * @return size (count) of m_names in items (which will also be the same
 	 * size as m_objects and m_extra1, as these are all linked 1:1)
 	 */
@@ -476,7 +476,7 @@ public class Tupel
 	/**
 	 * Returns the explicit item within the list
 	 * @param iterator item number to access
-	 * @return first item (String) associated with the <code>Tupel</code> entry
+	 * @return first item (String) associated with the <code>Tuple</code> entry
 	 */
 	public String getFirst(int iterator)
 	{
@@ -495,7 +495,7 @@ public class Tupel
 	/**
 	 * Returns the explicit item within the list
 	 * @param iterator item number to access
-	 * @return second item (Object) associated with the <code>Tupel</code> entry
+	 * @return second item (Object) associated with the <code>Tuple</code> entry
 	 */
 	public Object getSecond(int iterator)
 	{
@@ -514,7 +514,7 @@ public class Tupel
 	/**
 	 * Returns the explicit item within the list
 	 * @param iterator item number to access
-	 * @return second item (Object) associated with the <code>Tupel</code> entry
+	 * @return second item (Object) associated with the <code>Tuple</code> entry
 	 */
 	public Object getExtra1(int iterator)
 	{

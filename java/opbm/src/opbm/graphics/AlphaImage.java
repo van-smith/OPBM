@@ -438,15 +438,17 @@ public final class AlphaImage
 	{
 		int y, x, argb1, argb2, argb3, minHeight, minWidth, loadX, loadY;
 
-		minHeight	= endY;
-		minWidth	= endX;
+		minWidth	= Math.min(endX, m_img.getWidth());
+		minHeight	= Math.min(endY, m_img.getHeight());
+
+		// Iterate through the selected area pixel by pixel
 		loadY		= 0;
-		for (y = startY; y <= minHeight; y++)
+		for (y = startY; y < minHeight; y++)
 		{
 			if (loadY < img.getHeight())
 			{
 				loadX = 0;
-				for (x = startX; x <= minWidth; x++)
+				for (x = startX; x < minWidth; x++)
 				{
 					if (loadX < img.getWidth())
 					{
@@ -1088,6 +1090,7 @@ public final class AlphaImage
 		int a3, r3, g3, b3;
 		double alp1, alp2;
 
+		// Compute our alpha values for the overlay
 		alp1	= (double)alpha / (double)255.0;
 		alp2	= 1.0 - alp1;			// Used for math, how much of the other-pixel's values are used
 
@@ -1117,6 +1120,109 @@ public final class AlphaImage
 
 				// Set the new color
 				m_img.setRGB(x, y, makeARGB((int)a2, r3, g3, b3));
+			}
+		}
+	}
+
+	public void overlayImageExcludeColor(AlphaImage		img,
+										 int			excludeColor)
+	{
+		overlayImageExcludeColor(img, 0, 0, img.getWidth(), img.getHeight(), 255, excludeColor);
+	}
+
+	public void overlayImageExcludeColor(AlphaImage		img,
+										 int			alpha,
+										 int			excludeColor)
+	{
+		overlayImageExcludeColor(img, 0, 0, img.getWidth(), img.getHeight(), alpha, excludeColor);
+	}
+
+	public void overlayImageExcludeColor(AlphaImage		img,
+										 Rectangle		rect,
+										 int			alpha,
+										 int			excludeColor)
+	{
+		overlayImageExcludeColor(img, rect.x, rect.y, rect.width, rect.height, alpha, excludeColor);
+	}
+
+	/**
+	 * Overlay the specified image on top of this one, but exclude the
+	 * excludeColor
+	 * @param img
+	 * @param offsetX
+	 * @param offsetY
+	 * @param alpha
+	 * @param excludeColor
+	 */
+	public void overlayImageExcludeColor(AlphaImage		img,
+										 int			offsetX,
+										 int			offsetY,
+										 int			alpha,
+										 int			excludeColor)
+	{
+		overlayImageExcludeColor(img, offsetX, offsetY, img.getWidth(), img.getHeight(), alpha, excludeColor);
+	}
+
+	/**
+	 * Overlay the specified image on top of this one
+	 * @param img
+	 * @param offsetX
+	 * @param offsetY
+	 * @param width
+	 * @param height
+	 * @param alpha
+	 */
+	public void overlayImageExcludeColor(AlphaImage		img,
+										 int			offsetX,
+										 int			offsetY,
+										 int			width,
+										 int			height,
+										 int			alpha,
+										 int			excludeColor)
+	{
+		int x, y, argb1, argb2;
+		double a1, r1, g1, b1;
+		double a2, r2, g2, b2;
+		int a3, r3, g3, b3, rgb;
+		double alp1, alp2;
+
+		// Grab the excludeColor without an alpha component
+		excludeColor = makeARGB(0, getRed(excludeColor), getGrn(excludeColor), getBlu(excludeColor));
+
+		// Compute our alpha values for the overlay
+		alp1	= (double)alpha / (double)255.0;
+		alp2	= 1.0 - alp1;			// Used for math, how much of the other-pixel's values are used
+
+		for (y = offsetY; y < m_img.getHeight() && y - offsetY < img.getHeight(); y++)
+		{
+			for (x = offsetX; x < m_img.getWidth() && x - offsetX < img.getWidth(); x++)
+			{
+				// Grab the overlay image pixel
+				argb1	= img.getARGB(x - offsetX, y - offsetY);
+				rgb		= makeARGB(0, getRed(argb1), getGrn(argb1), getBlu(argb1));
+				if (rgb != excludeColor)
+				{	// We are including this color
+					a1		= (double)getAlp(argb1);
+					r1		= (double)getRed(argb1);
+					g1		= (double)getGrn(argb1);
+					b1		= (double)getBlu(argb1);
+
+					// Extract the existing image pixel
+					argb2	= m_img.getRGB(x, y);
+					a2		= (double)getAlp(argb2);
+					r2		= (double)getRed(argb2);
+					g2		= (double)getGrn(argb2);
+					b2		= (double)getBlu(argb2);
+
+					// Create the merged colors
+					a3		= (int)((a1 * alp1) + (a2 * alp2));
+					r3		= (int)((r1 * alp1) + (r2 * alp2));
+					g3		= (int)((g1 * alp1) + (g2 * alp2));
+					b3		= (int)((b1 * alp1) + (b2 * alp2));
+
+					// Set the new color
+					m_img.setRGB(x, y, makeARGB((int)a2, r3, g3, b3));
+				}
 			}
 		}
 	}

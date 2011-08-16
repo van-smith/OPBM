@@ -17,7 +17,7 @@
  *
  */
 
-package opbm.common;
+package opbm.dialogs;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -34,7 +34,6 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import opbm.Opbm;
 import opbm.graphics.AlphaImage;
-import opbm.common.DroppableFrame;
 
 /**
  *
@@ -52,6 +51,10 @@ public final class OpbmDialog implements MouseListener
 		m_message		= message;
 		m_caption		= caption;
 		m_buttons		= buttons;
+		if (id == null)
+		{	// They didn't specify an ID, so use the generic one
+			id = "generic";
+		}
 		m_id			= id;
 		m_opbm.initializeDialogResponse(id);
 		createDialogWindow();

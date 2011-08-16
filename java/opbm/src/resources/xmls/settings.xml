@@ -10,6 +10,6 @@
 				<translucency>0.5</translucency>
 			</hud>d
 		</benchmarks>
-		<skin>simple</skin>		<!-- options are "simple" or "developer" -->
+		<skin>simple</skin>		<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both -->
 	</settings>
 </opbm>

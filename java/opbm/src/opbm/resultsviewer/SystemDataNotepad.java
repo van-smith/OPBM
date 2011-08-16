@@ -19,7 +19,7 @@
 
 package opbm.resultsviewer;
 
-import opbm.common.DroppableFrame;
+import opbm.dialogs.DroppableFrame;
 import opbm.graphics.AlphaImage;
 import java.awt.Color;
 import java.awt.Container;

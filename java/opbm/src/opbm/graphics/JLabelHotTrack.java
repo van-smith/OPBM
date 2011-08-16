@@ -1,8 +1,9 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class is the top-level class for benchmarking.  It executes scripts,
- * shows the heads-up display, displays the single-step debugger, etc.
+ * This class holds multiple images for a single control, allowing for visual
+ * hot-tracking as the user moves over, clicks, sets a persistent state, such
+ * as "on" or "off", etc.
  *
  * Last Updated:  Aug 01, 2011
  *
@@ -17,37 +18,44 @@
  *
  */
 
-package opbm.common;
+package opbm.graphics;
 
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JLabel;
+import opbm.common.Tuple;
+import opbm.dialogs.SimpleWindow;
 import opbm.resultsviewer.ResultsViewer;
 
-public class JLabelHotTrack implements MouseListener
+public final class JLabelHotTrack implements MouseListener
 {
 	public JLabelHotTrack()
 	{
 		super();
-		m_rv					= null;
-		m_selected				= false;
-		m_mouseOver				= false;
-		m_tupelToUpdate			= null;
-		m_tupelIndex			= 0;
-		m_rect					= new Rectangle();
-		m_lblSelectedNeutral	= null;
-		m_lblUnselectedNeutral	= null;
-		m_lblSelectedOver		= null;
-		m_lblUnselectedOver		= null;
-		m_type					= TOGGLE_STATE;
-		m_identifier			= "";
+		m_rv	= null;
+		m_sw	= null;
+		init();
 	}
 
 	public JLabelHotTrack(ResultsViewer rv)
 	{
 		super();
-		m_rv					= rv;
+		m_rv	= rv;
+		m_sw	= null;
+		init();
+	}
+
+	public JLabelHotTrack(SimpleWindow sw)
+	{
+		super();
+		m_rv	= null;
+		m_sw	= sw;
+		init();
+	}
+
+	public void init()
+	{
 		m_selected				= false;
 		m_mouseOver				= false;
 		m_tupelToUpdate			= null;
@@ -95,6 +103,20 @@ public class JLabelHotTrack implements MouseListener
 		m_lblUnselectedOver.addMouseListener(this);
 	}
 
+	// Used for click_action, has a more standard name for this event
+	public void setNeutral(JLabel label)
+	{
+		m_lblUnselectedNeutral = label;
+		m_lblUnselectedNeutral.addMouseListener(this);
+	}
+
+	// Used for click_action, has a more standard name for this event
+	public void setOver(JLabel label)
+	{
+		m_lblUnselectedOver = label;
+		m_lblUnselectedOver.addMouseListener(this);
+	}
+
 	public void setType(int type)
 	{
 		switch (type)
@@ -137,16 +159,30 @@ public class JLabelHotTrack implements MouseListener
 	public void setSelected(boolean selected)
 	{
 		m_selected = selected;
-		updateTupelIfSet();
+		updateTupleIfSet();
 	}
 
-	public void updateTupelIfSet()
+	// Added for click_action as a more standard name
+	public void setNeutral()
+	{
+		m_selected = true;	// A neutral image is a "selected" state
+		updateTupleIfSet();
+	}
+
+	// Added for click_action as a more standard name
+	public void setOver()
+	{
+		m_selected = false;	// An over image is an "unselected state"
+		updateTupleIfSet();
+	}
+
+	public void updateTupleIfSet()
 	{
 		if (m_tupelToUpdate	!= null)
 			m_tupelToUpdate.setSecond(m_tupelIndex, m_selected ? "Yes" : "No");
 	}
 
-	public void setTupelToUpdateByMouseActivity(Tupel		tupel,
+	public void setTupleToUpdateByMouseActivity(Tuple		tupel,
 												int			index)
 	{
 		m_tupelToUpdate		= tupel;
@@ -167,7 +203,7 @@ public class JLabelHotTrack implements MouseListener
 	public void mousePressed(MouseEvent e)
 	{
 		m_selected = !m_selected;
-		updateTupelIfSet();
+		updateTupleIfSet();
 		renderHotTrackChange();
 		switch (m_type)
 		{
@@ -184,6 +220,10 @@ public class JLabelHotTrack implements MouseListener
 				if (m_rv != null)
 				{
 					m_rv.clickActionCallback(this);
+				}
+				if (m_sw != null)
+				{
+					m_sw.clickActionCallback(this);
 				}
 		}
 	}
@@ -261,6 +301,7 @@ public class JLabelHotTrack implements MouseListener
 	public static final int		CLICK_ACTION = 1;
 
 	// Labels to display when the mouse is over the item, or away from it
+	public SimpleWindow		m_sw;
 	public ResultsViewer	m_rv;
 	public JLabel			m_lblSelectedNeutral;
 	public JLabel			m_lblSelectedOver;
@@ -272,6 +313,6 @@ public class JLabelHotTrack implements MouseListener
 	public int				m_type;
 	public String			m_identifier;
 
-	public Tupel			m_tupelToUpdate;
+	public Tuple			m_tupelToUpdate;
 	public int				m_tupelIndex;
 }

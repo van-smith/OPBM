@@ -30,9 +30,9 @@ import opbm.panels.PanelRightListbox;
 import opbm.panels.PanelLeft;
 import opbm.panels.PanelFactory;
 import opbm.panels.PanelRightItem;
-import opbm.common.DroppableFrame;
+import opbm.dialogs.DroppableFrame;
 import opbm.benchmarks.Benchmarks;
-import opbm.common.Tupel;
+import opbm.common.Tuple;
 import opbm.common.Utils;
 import java.io.*;
 import java.awt.*;
@@ -122,7 +122,7 @@ public final class Opbm extends	ModalApp
 		m_editPanels				= new ArrayList<PanelRight>(0);
 		m_rawEditPanels				= new ArrayList<PanelRight>(0);
 		m_zoomFrames				= new ArrayList<JFrame>(0);
-		m_tupels					= new ArrayList<Tupel>(0);
+		m_tupels					= new ArrayList<Tuple>(0);
 		m_macroMaster				= new Macros(this);
 		m_benchmarkMaster			= new Benchmarks();
 		m_settingsMaster			= new Settings();
@@ -336,6 +336,34 @@ public final class Opbm extends	ModalApp
 		m_frameDeveloper = new DeveloperWindow(this, false);
 	}
 
+	public void toggleDeveloperWindow()
+	{
+		if (m_frameDeveloper.isVisible())
+		{	// Turn it off
+			m_frameDeveloper.setVisible(false);
+
+		} else {
+			// Turn it on
+			m_frameDeveloper.setVisible(true);
+
+		}
+	}
+
+	public void showDeveloperWindow()
+	{
+		// Show the developer window
+		if (!m_frameDeveloper.isVisible())
+		{	// Turn it on
+			m_frameDeveloper.setVisible(true);
+		}
+
+		// Hide the simple window
+		if (m_frameSimple.isVisible())
+		{	// Turn it off
+			m_frameSimple.setVisible(false);
+		}
+	}
+
 	/**
 	 * Creates the simple skinned interface, which allows for "Trial Run" and
 	 * "Official Run", along with links to view previous entries
@@ -343,6 +371,34 @@ public final class Opbm extends	ModalApp
 	public void createSimpleWindow()
 	{
 		m_frameSimple = new SimpleWindow(this, false);
+	}
+
+	public void toggleSimpleWindow()
+	{
+		if (m_frameSimple.isVisible())
+		{	// Turn it off
+			m_frameSimple.setVisible(false);
+
+		} else {
+			// Turn it on
+			m_frameSimple.setVisible(true);
+
+		}
+	}
+
+	public void showSimpleWindow()
+	{
+		// Hide the developer window
+		if (m_frameDeveloper.isVisible())
+		{	// Turn it off
+			m_frameDeveloper.setVisible(false);
+		}
+
+		// Show the simple window
+		if (!m_frameSimple.isVisible())
+		{	// Turn it on
+			m_frameSimple.setVisible(true);
+		}
 	}
 
 	/** Self-explanatory.  Builds the GUI for OPBM using a four-panel design:
@@ -359,11 +415,13 @@ public final class Opbm extends	ModalApp
 
 		// See which one should be visible
 		if (m_settingsMaster.isSimpleSkin())
-		{	// We're only viewing the simple skin
+		{	// We're viewing the simple skin
 			m_frameSimple.setVisible(true);
 
-		} else {
-			// Viewing the developer window
+		}
+
+		if (m_settingsMaster.isDeveloperSkin())
+		{	// Viewing the developer window
 			m_frameDeveloper.setVisible(true);
 		}
 
@@ -793,7 +851,7 @@ public final class Opbm extends	ModalApp
 	 */
 	public static String locateFile(String fileName)
 	{
-		File f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12;
+		File f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13;
 		String path;
 
 		f1	= new File("./"								+ fileName);
@@ -808,6 +866,7 @@ public final class Opbm extends	ModalApp
 		f10	= new File("./src/resources/graphics/"		+ fileName);
 		f11	= new File("./resources/masks/"				+ fileName);
 		f12	= new File("./src/resources/masks/"			+ fileName);
+		f13	= new File("./src/resources/masks/simple/"	+ fileName);
 
 		do {
 			if (f1.exists()) {
@@ -856,6 +915,10 @@ public final class Opbm extends	ModalApp
 			}
 			if (f12.exists()) {
 				path = f12.getAbsolutePath();
+				break;
+			}
+			if (f13.exists()) {
+				path = f13.getAbsolutePath();
 				break;
 			}
 			// We didn't find the file.
@@ -1103,7 +1166,7 @@ public final class Opbm extends	ModalApp
 	{
 		JFrame fr;
 		PanelRight pr;
-		Tupel tup;
+		Tuple tup;
 
 		tup = findTupel(tupelUuid);
 		if (tup != null)
@@ -1122,7 +1185,7 @@ public final class Opbm extends	ModalApp
 	public void cancelCustomCommand(String tupelUuid)
 	{
 		JFrame fr;
-		Tupel tup;
+		Tuple tup;
 
 		tup = findTupel(tupelUuid);
 		if (tup != null)
@@ -1218,12 +1281,12 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
-	public void addTupel(Tupel t)
+	public void addTupel(Tuple t)
 	{
 		m_tupels.add(t);
 	}
 
-	public Tupel findTupel(String uuid)
+	public Tuple findTupel(String uuid)
 	{
 		int i;
 
@@ -1235,7 +1298,7 @@ public final class Opbm extends	ModalApp
 		return(null);
 	}
 
-	public Tupel deleteTupel(String uuid)
+	public Tuple deleteTupel(String uuid)
 	{
 		int i;
 
@@ -1286,7 +1349,7 @@ public final class Opbm extends	ModalApp
 		int i;
 
 		if (m_dialogTupel == null)
-			m_dialogTupel = new Tupel(this);
+			m_dialogTupel = new Tuple(this);
 
 		for (i = 0; i < m_dialogTupel.size(); i++)
 		{
@@ -1368,6 +1431,11 @@ public final class Opbm extends	ModalApp
 	public Benchmarks getBenchmarkMaster()
 	{
 		return(m_benchmarkMaster);
+	}
+
+	public Commands getCommandMaster()
+	{
+		return(m_commandMaster);
 	}
 
 	public void benchmarkRunAtom(Xml			atom,
@@ -1621,7 +1689,7 @@ public final class Opbm extends	ModalApp
 	/**
 	 * Master list of tupels used throughout the system, referenced by name
 	 */
-	private List<Tupel>				m_tupels;
+	private List<Tuple>				m_tupels;
 
 	/**
 	 * Holds current active edit <code>PanelRight</code> object being displayed.
@@ -1685,7 +1753,7 @@ public final class Opbm extends	ModalApp
 	private String					m_rvFilename;
 	private boolean					m_executingFromCommandLine;
 
-	private Tupel					m_dialogTupel;
+	private Tuple					m_dialogTupel;
 
 	// Essential services
 //import java.lang.Class;

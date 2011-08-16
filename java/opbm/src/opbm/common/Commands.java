@@ -292,6 +292,12 @@ public class Commands
 			if (!fileName.isEmpty())
 				m_opbm.createAndShowResultsViewer( fileName );
 
+//////////
+// SIMPLE WINDOW and DEVELOPER WINDOW
+		} else if (command.equals("simple")) {
+			m_opbm.showSimpleWindow();
+		} else if (command.equals("developer")) {
+			m_opbm.showDeveloperWindow();
 
 //////////
 // CLOSING BRACE

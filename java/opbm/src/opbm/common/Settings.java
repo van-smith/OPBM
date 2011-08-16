@@ -96,11 +96,11 @@ public final class Settings
 	{
 		if (m_skin != null)
 		{	// See if what was specified is valid
-			if (m_skin.equalsIgnoreCase("simple"))
+			if (m_skin.toLowerCase().contains("simple"))
 			{	// We're good
 				return;
 
-			} else if (m_skin.equalsIgnoreCase("developer")) {
+			} else if (m_skin.toLowerCase().contains("developer")) {
 				// We're good
 				return;
 			}
@@ -111,7 +111,7 @@ public final class Settings
 
 	public boolean isSimpleSkin()
 	{
-		if (m_skin != null && m_skin.equalsIgnoreCase("simple"))
+		if (m_skin != null && m_skin.toLowerCase().contains("simple"))
 		{	// Yuppers
 			return(true);
 		}
@@ -121,7 +121,7 @@ public final class Settings
 
 	public boolean isDeveloperSkin()
 	{
-		if (m_skin != null && m_skin.equalsIgnoreCase("developer"))
+		if (m_skin != null && m_skin.toLowerCase().contains("developer"))
 		{	// Yuppers
 			return(true);
 		}
@@ -129,7 +129,10 @@ public final class Settings
 		return(false);
 	}
 
-	public float	getHUDTranslucency()			{	return((float)m_hudTranslucency);		}
+	public float getHUDTranslucency()
+	{
+		return((float)m_hudTranslucency);
+	}
 
 	private Xml			m_settings;
 	private String		m_settingsFilename;

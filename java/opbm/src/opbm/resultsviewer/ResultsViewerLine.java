@@ -21,7 +21,7 @@ package opbm.resultsviewer;
 
 import opbm.graphics.AnimateImageTask;
 import opbm.graphics.AlphaImage;
-import opbm.common.Tupel;
+import opbm.common.Tuple;
 import opbm.common.Utils;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -1391,7 +1391,7 @@ public final class ResultsViewerLine implements MouseListener, MouseWheelListene
 	 * @param tags
 	 */
 	public void sumChildren(boolean			byTags,
-							Tupel			tags)
+							Tuple			tags)
 	{
 		double n, power;
 		ResultsViewerLine child;
@@ -1434,7 +1434,7 @@ public final class ResultsViewerLine implements MouseListener, MouseWheelListene
 //			m_node.appendAttribute(new Xml("score", Integer.toString((int)m_score)));
 	}
 
-	public boolean countIfTagMatch(Tupel tags)
+	public boolean countIfTagMatch(Tuple tags)
 	{
 		int i, j;
 		boolean foundOne;

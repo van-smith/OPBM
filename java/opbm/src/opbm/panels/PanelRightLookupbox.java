@@ -21,7 +21,7 @@
 
 package opbm.panels;
 
-import opbm.common.DroppableFrame;
+import opbm.dialogs.DroppableFrame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
