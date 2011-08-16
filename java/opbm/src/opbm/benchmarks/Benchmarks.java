@@ -71,7 +71,8 @@ public class Benchmarks
 			// Update the heads-up display
 			if (!m_bp.m_hud.isVisible())
 			{
-				m_bp.m_opbm.hideMainPanel();
+				m_bp.m_opbm.hideDeveloperWindow();
+				m_bp.m_opbm.hideSimpleWindow();
 				m_bp.m_hud.setVisible(true);
 			}
 		}
@@ -94,7 +95,7 @@ public class Benchmarks
 		if (m_bp.m_headsUpActive)
 		{
 			m_bp.m_hud.dispose();
-			m_bp.m_opbm.showMainPanel();
+			m_bp.m_opbm.showUserWindow();
 			m_bp.m_hud = null;
 		}
 

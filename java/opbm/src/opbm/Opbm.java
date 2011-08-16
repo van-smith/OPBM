@@ -239,10 +239,12 @@ public final class Opbm extends	ModalApp
 
 							} else if (line.toLowerCase().startsWith("-trial")) {
 								// They want to run a trial benchmark run
+								++runCount;
 								m_benchmarkMaster.benchmarkTrialRun(m_opbm);
 
 							} else if (line.toLowerCase().startsWith("-official")) {
 								// They want to run an official benchmark run
+								++runCount;
 								m_benchmarkMaster.benchmarkOfficialRun(m_opbm);
 
 							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
@@ -379,6 +381,15 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
+	public void hideDeveloperWindow()
+	{
+		// Show the developer window
+		if (m_frameDeveloper.isVisible())
+		{	// Turn it off
+			m_frameDeveloper.setVisible(false);
+		}
+	}
+
 	/**
 	 * Creates the simple skinned interface, which allows for "Trial Run" and
 	 * "Official Run", along with links to view previous entries
@@ -416,18 +427,17 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
-	/** Self-explanatory.  Builds the GUI for OPBM using a four-panel design:
-	 * 1)  Header
-	 * 2)  Left panel for navigation
-	 * 3)  Right panel for display and editing of controls
-	 * 4)  Status bar for displaying tooltips and general information
-	 *
-	 */
-    public void createAndShowGUI()
+	public void hideSimpleWindow()
 	{
-		createDeveloperWindow();		// For "developer" skin setting in settings.xml
-		createSimpleWindow();			// For "simple" skin setting in settings.xml
+		// Hide the simple window
+		if (m_frameSimple.isVisible())
+		{	// Turn it off
+			m_frameSimple.setVisible(false);
+		}
+	}
 
+	public void showUserWindow()
+	{
 		// See which one should be visible
 		if (m_settingsMaster.isSimpleSkin())
 		{	// We're viewing the simple skin
@@ -439,6 +449,20 @@ public final class Opbm extends	ModalApp
 		{	// Viewing the developer window
 			m_frameDeveloper.setVisible(true);
 		}
+	}
+
+	/** Self-explanatory.  Builds the GUI for OPBM using a four-panel design:
+	 * 1)  Header
+	 * 2)  Left panel for navigation
+	 * 3)  Right panel for display and editing of controls
+	 * 4)  Status bar for displaying tooltips and general information
+	 *
+	 */
+    public void createAndShowGUI()
+	{
+		createDeveloperWindow();		// For "developer" skin setting in settings.xml
+		createSimpleWindow();			// For "simple" skin setting in settings.xml
+		showUserWindow();				// Display whichever one should be displayed
 
 		// Load the XML panel content
 		if (loadPanelsXml()) {
@@ -1225,16 +1249,6 @@ public final class Opbm extends	ModalApp
 		c.setForeground(panelRef.getForeColor());
 
 		return(fr);
-	}
-
-	public void hideMainPanel()
-	{
-		m_frameDeveloper.setVisible(false);
-	}
-
-	public void showMainPanel()
-	{
-		m_frameDeveloper.setVisible(true);
 	}
 
 	public void addZoomWindow(JFrame fr)
