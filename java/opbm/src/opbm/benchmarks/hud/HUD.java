@@ -38,7 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import opbm.Opbm;
-import opbm.benchmarks.BenchmarksParams;
+import opbm.benchmarks.BenchmarkParams;
 import opbm.graphics.AlphaImage;
 import opbm.graphics.AnimateImageTask;
 
@@ -46,7 +46,7 @@ public final class HUD extends DroppableFrame
 					implements MouseListener
 {
 	public HUD(Opbm					opbm,
-			   BenchmarksParams		bp,
+			   BenchmarkParams		bp,
 			   boolean				isZoomWindow)
 	{
 		super(opbm, isZoomWindow);
@@ -364,7 +364,7 @@ public final class HUD extends DroppableFrame
 		{	// Pressed on the stop button
 			setupAnimateFlashingStopWarningTask();
 			Opbm.stopProcesses();
-			m_bp.m_debuggerOrHUDAction = BenchmarksParams._STOP;
+			m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP;
 		}
 	}
 
@@ -377,7 +377,7 @@ public final class HUD extends DroppableFrame
 	{
 		if (e.getComponent().equals(m_stop))
 		{	// Came on top of the stop button
-			if (m_bp.m_debuggerOrHUDAction != BenchmarksParams._STOP)
+			if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
 			{
 				killAnimatedTask();
 				setupAnimateStopTask();
@@ -390,14 +390,14 @@ public final class HUD extends DroppableFrame
 	{
 		if (e.getComponent().equals(m_stop))
 		{	// Left the stop button
-			if (m_bp.m_debuggerOrHUDAction != BenchmarksParams._STOP)
+			if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
 			{	// Reset it back to its neutral animation
 				setupAnimateNeutralTask();
 			}
 		}
 	}
 
-	private BenchmarksParams	m_bp;
+	private BenchmarkParams	m_bp;
 	private JLabel				m_background;
 	private JLabel				m_name;
 	private JLabel				m_status1;

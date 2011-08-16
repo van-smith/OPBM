@@ -274,13 +274,12 @@ public class PanelRight {
 	public void lookupboxAddCommand(PanelRightLookupbox		source,
 									String					whereTo,
 									String					after,
-									String					whereFrom,
-									boolean					allowCustoms)
+									String					whereFrom)
 	{
 		int i;
 
 		for (i = 0; i < m_items.size(); i++)
-			m_items.get(i).lookupboxAddCommand(source, whereTo, after, whereFrom, allowCustoms);
+			m_items.get(i).lookupboxAddCommand(source, whereTo, after, whereFrom);
 	}
 
 	public void lookupboxCommand(String					command,
@@ -943,16 +942,14 @@ public class PanelRight {
 	 * @param whereFrom name of the lookupbox control being added from
 	 * @param after
 	 * @param whereTo name of the listbox or lookupbox being added to
-	 * @param allowCustoms true or false if custom inputs are allowed at this level?
 	 */
 	public void lookupboxAddClicked(Xml			actionSource,
 									String		addName,
 									String		whereTo,
 									String		after,
-									String		whereFrom,
-									boolean		allowCustoms)
+									String		whereFrom)
 	{
-		List<Xml>customs = new ArrayList<Xml>(0);
+		List<Xml>customInputs = new ArrayList<Xml>(0);
 		Xml xmlTo, xmlAfter, xmlFrom, xmlNew;
 		Tuple saveObjectList;
 
@@ -976,13 +973,13 @@ public class PanelRight {
 		saveObjectList.add("whereTo",		whereTo);
 		saveObjectList.add("after",		after);
 		saveObjectList.add("whereFrom",	whereFrom);
-		PanelFactory.buildCustomInputsFromEdit(m_opbm, customs, whereFrom, xmlFrom, m_macroMaster, saveObjectList.getName());
-		if (!customs.isEmpty())
+		PanelFactory.buildCustomInputsFromEdit(m_opbm, customInputs, whereFrom, xmlFrom, m_macroMaster, saveObjectList.getName());
+		if (!customInputs.isEmpty())
 		{
 			// There is data that must be input before the record is added
 			// Create the edit
 			JFrame fr = m_opbm.createZoomWindow(this, "Populate " + Utils.toProper(whereTo) + ", after " + Utils.toProper(after) + ", from " + Utils.toProper(whereFrom) + ":" + Utils.toProper(xmlFrom.getName()));
-			PanelRight	pr = PanelFactory.createRightPanelFromXmlCustomsArray(customs, m_opbm, m_macroMaster, m_commandMaster, m_panel, fr);
+			PanelRight	pr = PanelFactory.createRightPanelFromXmlCustomInputsArray(customInputs, m_opbm, m_macroMaster, m_commandMaster, m_panel, fr);
 			saveObjectList.add("frame",		fr);
 			saveObjectList.add("PanelRight",	pr);
 
@@ -998,7 +995,7 @@ public class PanelRight {
 			// Add to our list of controlled windows (so they can be termined when the main frame exits as well)
 			m_opbm.addZoomWindow(fr);
 			// The add won't be conducted here.  But when the user clicks on the
-			// Save button, it will call "saveCustomCommand()" below, and it
+			// Save button, it will call "saveCustomInputCommand()" below, and it
 			// will be saved there with their variable parameters.
 
 		} else {
@@ -1016,14 +1013,14 @@ public class PanelRight {
 	}
 
 	/**
-	 * Saves the custom after the user clicks the save button.
+	 * Saves the custom input data after the user clicks the save button.
 	 * @param tup
 	 */
-	public void saveCustomCommand(Tuple tup)
+	public void saveCustomInputCommand(Tuple tup)
 	{
 		int i;
 
-		// Retrieve variables from the tupel
+		// Retrieve variables from the tuple
 		Xml			xmlTo		= (Xml)tup.getSecond("xmlTo");
 		Xml			xmlAfter	= (Xml)tup.getSecond("xmlAfter");
 		Xml			xmlFrom		= (Xml)tup.getSecond("xmlFrom");
@@ -1036,17 +1033,17 @@ public class PanelRight {
 
 		// Call the associated PanelRight to write its contents
 		if (pr != null)
-			pr.saveCustomCommand(fr, whereTo, after, addName, whereFrom, xmlTo, xmlAfter, xmlFrom);
+			pr.saveCustomInputCommand(fr, whereTo, after, addName, whereFrom, xmlTo, xmlAfter, xmlFrom);
 	}
 
-	public void saveCustomCommand(JFrame		fr,
-								  String		addName,
-								  String		whereTo,
-								  String		after,
-								  String		whereFrom,
-								  Xml			xmlTo,
-								  Xml			xmlAfter,
-								  Xml			xmlFrom)
+	public void saveCustomInputCommand(JFrame		fr,
+									   String		addName,
+									   String		whereTo,
+									   String		after,
+									   String		whereFrom,
+									   Xml			xmlTo,
+									   Xml			xmlAfter,
+									   Xml			xmlFrom)
 	{
 		int i;
 		Xml options, xmlNew, xmlAdd;

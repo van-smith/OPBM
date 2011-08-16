@@ -1480,16 +1480,14 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 	public void lookupboxAddCommand(PanelRightLookupbox		source,
 									String					whereTo,
 									String					after,
-									String					whereFrom,
-									boolean					allowCustoms)
+									String					whereFrom)
 	{
 		if (source == this)
 			m_parentPR.lookupboxAddClicked(m_xmlLookupboxMaster.get(m_lastIndex),
 										   m_lookupboxSourceRelativeTo,
 										   whereTo,
 										   after,
-										   whereFrom,
-										   allowCustoms);
+										   whereFrom);
 	}
 
 	/**

@@ -28,10 +28,11 @@ import opbm.benchmarks.debugger.Debugger;
 import java.util.List;
 import opbm.common.Macros;
 import opbm.Opbm;
+import opbm.benchmarks.waituntilidle.WaitUntilIdle;
 import opbm.common.Settings;
 import opbm.common.Xml;
 
-public class BenchmarksParams
+public class BenchmarkParams
 {
 
 	/**
@@ -91,9 +92,10 @@ public class BenchmarksParams
 
 	public Benchmarks			m_parent;
 	public BenchmarksAtom		m_bpAtom;
-	public BenchmarksMolecule	m_bpMolecule;
-	public BenchmarksScenario	m_bpScenario;
-	public BenchmarksSuite		m_bpSuite;
+	public WaitUntilIdle		m_wui;
+
+	public boolean				m_retry;
+	public int					m_retryAttempts;
 
 	public List<Xml>			m_benchmarkStack;
 	public boolean				m_headsUpActive;
@@ -147,5 +149,10 @@ public class BenchmarksParams
 	public final static int _NO_ACTION		= 0;
 	public final static int _SINGLE_STEP	= 1;
 	public final static int _RUN			= 2;
-	public final static int _STOP			= 3;
+
+	// The following constants are all used to test a stop condition, providing
+	// also an explanation as to why execution was stopped
+	public final static int _STOP									= 100;
+	public final static int _STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES	= 101;
+	public final static int _STOP_USER_CLICKED_STOP					= 102;
 }

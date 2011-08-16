@@ -41,7 +41,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import opbm.common.ModalApp;
@@ -122,7 +121,7 @@ public final class Opbm extends	ModalApp
 		m_editPanels				= new ArrayList<PanelRight>(0);
 		m_rawEditPanels				= new ArrayList<PanelRight>(0);
 		m_zoomFrames				= new ArrayList<JFrame>(0);
-		m_tupels					= new ArrayList<Tuple>(0);
+		m_tuples					= new ArrayList<Tuple>(0);
 		m_macroMaster				= new Macros(this);
 		m_benchmarkMaster			= new Benchmarks();
 		m_settingsMaster			= new Settings();
@@ -1131,11 +1130,10 @@ public final class Opbm extends	ModalApp
 	public void lookupboxAddCommand(PanelRightLookupbox source,
 									String				whereTo,
 									String				after,
-									String				whereFrom,
-									boolean				allowCustoms)
+									String				whereFrom)
 	{
 		if (m_editActive != null)
-			m_editActive.lookupboxAddCommand(source, whereTo, after, whereFrom, allowCustoms);
+			m_editActive.lookupboxAddCommand(source, whereTo, after, whereFrom);
 	}
 
 	public void lookupboxCommand(String					command,
@@ -1160,39 +1158,6 @@ public final class Opbm extends	ModalApp
 			return(m_editActive.getLookupboxSelectedItemByObject(source));
 		else
 			return(null);
-	}
-
-	public void saveCustomCommand(String tupelUuid)
-	{
-		JFrame fr;
-		PanelRight pr;
-		Tuple tup;
-
-		tup = findTupel(tupelUuid);
-		if (tup != null)
-		{
-			fr = (JFrame)tup.getSecond("frame");
-			pr = (PanelRight)tup.getSecond("panelright");
-			if (pr != null)
-			{
-				pr.saveCustomCommand(tup);
-				// Close the window
-				removeZoomWindow(fr);
-			}
-		}
-	}
-
-	public void cancelCustomCommand(String tupelUuid)
-	{
-		JFrame fr;
-		Tuple tup;
-
-		tup = findTupel(tupelUuid);
-		if (tup != null)
-		{
-			fr = (JFrame)tup.getSecond("frame");
-			removeZoomWindow(fr);
-		}
 	}
 
 	/**
@@ -1281,31 +1246,31 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
-	public void addTupel(Tuple t)
+	public void addTuple(Tuple t)
 	{
-		m_tupels.add(t);
+		m_tuples.add(t);
 	}
 
-	public Tuple findTupel(String uuid)
+	public Tuple findTuple(String uuid)
 	{
 		int i;
 
-		for (i = 0; i < m_tupels.size(); i++)
+		for (i = 0; i < m_tuples.size(); i++)
 		{
-			if (m_tupels.get(i).getName().equalsIgnoreCase(uuid))
-				return(m_tupels.get(i));
+			if (m_tuples.get(i).getName().equalsIgnoreCase(uuid))
+				return(m_tuples.get(i));
 		}
 		return(null);
 	}
 
-	public Tuple deleteTupel(String uuid)
+	public Tuple deleteTuple(String uuid)
 	{
 		int i;
 
-		for (i = 0; i < m_tupels.size(); i++)
+		for (i = 0; i < m_tuples.size(); i++)
 		{
-			if (m_tupels.get(i).getName().equalsIgnoreCase(uuid))
-				m_tupels.remove(i);
+			if (m_tuples.get(i).getName().equalsIgnoreCase(uuid))
+				m_tuples.remove(i);
 		}
 		return(null);
 	}
@@ -1348,19 +1313,19 @@ public final class Opbm extends	ModalApp
 	{
 		int i;
 
-		if (m_dialogTupel == null)
-			m_dialogTupel = new Tuple(this);
+		if (m_dialogTuple == null)
+			m_dialogTuple = new Tuple(this);
 
-		for (i = 0; i < m_dialogTupel.size(); i++)
+		for (i = 0; i < m_dialogTuple.size(); i++)
 		{
-			if (m_dialogTupel.getFirst(i).equalsIgnoreCase(id))
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
 			{	// Found it
-				m_dialogTupel.setSecond(i, "Unanswered");
+				m_dialogTuple.setSecond(i, "Unanswered");
 				return;
 			}
 		}
 		// If we get here, it wasn't found, add it
-		m_dialogTupel.add(id, "Unanswered");
+		m_dialogTuple.add(id, "Unanswered");
 	}
 
 	public void setDialogResponse(String	id,
@@ -1368,14 +1333,14 @@ public final class Opbm extends	ModalApp
 	{
 		int i;
 
-		if (m_dialogTupel == null)
+		if (m_dialogTuple == null)
 			initializeDialogResponse(id);
 
-		for (i = 0; i < m_dialogTupel.size(); i++)
+		for (i = 0; i < m_dialogTuple.size(); i++)
 		{
-			if (m_dialogTupel.getFirst(i).equalsIgnoreCase(id))
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
 			{	// Found it
-				m_dialogTupel.setSecond(i, userAction);
+				m_dialogTuple.setSecond(i, userAction);
 				return;
 			}
 		}
@@ -1687,9 +1652,9 @@ public final class Opbm extends	ModalApp
 	private List<PanelRight>		m_rawEditPanels;
 
 	/**
-	 * Master list of tupels used throughout the system, referenced by name
+	 * Master list of tuples used throughout the system, referenced by name
 	 */
-	private List<Tuple>				m_tupels;
+	private List<Tuple>				m_tuples;
 
 	/**
 	 * Holds current active edit <code>PanelRight</code> object being displayed.
@@ -1753,7 +1718,7 @@ public final class Opbm extends	ModalApp
 	private String					m_rvFilename;
 	private boolean					m_executingFromCommandLine;
 
-	private Tuple					m_dialogTupel;
+	private Tuple					m_dialogTuple;
 
 	// Essential services
 //import java.lang.Class;

@@ -791,7 +791,7 @@ public class PanelFactory {
 	}
 
 	/**
-	 * Adds context options specified in the CustomsArrays fieldNames and
+	 * Adds context options specified in the CustomInputsArrays fieldNames and
 	 * fieldPrompts,
 	 * @param pr PanelRight item we're adding to
 	 * @param parent Parent panel to add context options
@@ -806,18 +806,18 @@ public class PanelFactory {
 	 * @param startX starting X coordinate for added items
 	 * @param startY starting Y coordinate for added items
 	 */
-	public static void createRightPanelContextOptionsFromCustomsArrays(PanelRight				pr,
-																	   JPanel					parent,
-																	   Opbm						opbm,
-																	   Macros					macroMaster,
-																	   Commands					commandMaster,
-																	   List<PanelRightItem>		priMaster,
-																	   List<Xml>				xmlMaster,
-																	   List<String>				fieldNames,
-																	   List<String>				fieldPrompts,
-																	   Xml						xml,
-																	   int						startX,
-																	   int						startY)
+	public static void createRightPanelContextOptionsFromCustomInputsArrays(PanelRight				pr,
+																			JPanel					parent,
+																			Opbm					opbm,
+																			Macros					macroMaster,
+																			Commands				commandMaster,
+																			List<PanelRightItem>	priMaster,
+																			List<Xml>				xmlMaster,
+																			List<String>			fieldNames,
+																			List<String>			fieldPrompts,
+																			Xml						xml,
+																			int						startX,
+																			int						startY)
 	{
 		int i, left, top, refWidth, refHeight;
 		PanelRightItem pri;
@@ -869,12 +869,12 @@ public class PanelFactory {
 		}
 	}
 
-	public static PanelRight createRightPanelFromXmlCustomsArray(List<Xml>		customs,
-																 Opbm			opbm,
-																 Macros			macroMaster,
-																 Commands		commandMaster,
-																 JPanel			refPanel,
-																 JFrame			frame)
+	public static PanelRight createRightPanelFromXmlCustomInputsArray(List<Xml>		customInputs,
+																	  Opbm			opbm,
+																	  Macros		macroMaster,
+																	  Commands		commandMaster,
+																	  JPanel		refPanel,
+																	  JFrame		frame)
 	{
 		int i, left, top, refWidth, refHeight;
 		String sheight;
@@ -903,9 +903,9 @@ public class PanelFactory {
 		refHeight	= refPanel.getHeight();
 
 		// Iterate through every edit child, parsing each one as we go
-		for (i = 0; i < customs.size(); i++)
+		for (i = 0; i < customInputs.size(); i++)
 		{
-			child = customs.get(i);
+			child = customInputs.get(i);
 
 ///////////
 // LABEL
@@ -1004,7 +1004,7 @@ public class PanelFactory {
 	 * take the syntax:  {:field_name, Prompt to use on-screen for input:}
 	 *
 	 * @param opbm
-	 * @param customs <code>ArrayList</code> to populate
+	 * @param customInputs <code>ArrayList</code> to populate
 	 * @param name edit name
 	 * @param xmlData <code>Xml</code> record holding the data to search (the
 	 * entry the user had highlighted when they clicked the add button)
@@ -1012,7 +1012,7 @@ public class PanelFactory {
 	 * @param saveObjectList unique identifier to the saved object <code>List</code>
 	 */
 	public static void buildCustomInputsFromEdit(Opbm		opbm,
-												 List<Xml>	customs,
+												 List<Xml>	customInputs,
 												 String		name,
 												 Xml		xmlData,
 												 Macros		macroMaster,
@@ -1056,7 +1056,7 @@ public class PanelFactory {
 								value = macroMaster.parseMacros(value);
 								fieldNames.clear();
 								prompts.clear();
-								Utils.extractCustomFields(fieldNames, prompts, value);
+								Utils.extractCustomInputFields(fieldNames, prompts, value);
 								if (!fieldNames.isEmpty()) {
 									// We will create edit entries for this/these one(s)
 									for (i = 0; i < fieldNames.size(); i++)
@@ -1064,13 +1064,13 @@ public class PanelFactory {
 										// Label
 										label = new Xml("label");
 										label.setFirstAttribute(new Xml("text", prompts.get(i)));
-										customs.add(label);
+										customInputs.add(label);
 
 										// Textbox
 										textbox = new Xml("textbox");
 										textbox.setFirstAttribute(new Xml("field", fieldNames.get(i)));
 										textbox.addAttribute(new Xml("indent", "1"));
-										customs.add(textbox);
+										customInputs.add(textbox);
 									}
 								}
 							}
@@ -1081,24 +1081,24 @@ public class PanelFactory {
 					child = child.getNext();
 				}
 				// Finished
-				if (!customs.isEmpty())
+				if (!customInputs.isEmpty())
 				{
 					// Add the save and cancel buttons after a vertical spacer
-					customs.add(new Xml("vspacer"));
+					customInputs.add(new Xml("vspacer"));
 
 					button = new Xml("button");
 					button.setFirstAttribute(new Xml("text", "Save"));
 					command = new Xml("command", "save_custom");
 					command.setFirstAttribute(new Xml("p1", saveObjectList));
 					button.addChild(command);
-					customs.add(button);
+					customInputs.add(button);
 
 					button = new Xml("button");
 					button.setFirstAttribute(new Xml("text", "Cancel"));
 					command = new Xml("command", "cancel_custom");
 					command.setFirstAttribute(new Xml("p1", saveObjectList));
 					button.addChild(command);
-					customs.add(button);
+					customInputs.add(button);
 				}
 				break;
 			}

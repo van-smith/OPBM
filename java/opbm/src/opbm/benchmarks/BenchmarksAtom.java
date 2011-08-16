@@ -2,8 +2,8 @@
  * OPBM - Office Productivity Benchmark
  *
  * This class is the top-level class for atom benchmarking.  It executes atoms,
- * including all abstracts, flow controls and customs, one-by-one, through the
- * entire sequence provided for by the source Xml, called "atom" here.
+ * including all abstracts, flow controls one-by-one, through the entire
+ * sequence provided for by the source Xml, called "atom" here.
  *
  * Last Updated:  Aug 01, 2011
  *
@@ -21,7 +21,6 @@
 package opbm.benchmarks;
 
 import opbm.benchmarks.hud.StreamGobbler;
-import opbm.benchmarks.waituntilidle.WaitUntilIdle;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
 import opbm.common.Tuple;
@@ -33,7 +32,7 @@ import opbm.common.Xml;
 
 public class BenchmarksAtom
 {
-	public BenchmarksAtom(BenchmarksParams bp)
+	public BenchmarksAtom(BenchmarkParams bp)
 	{
 		// Store our benchmark parameters
 		m_bp		= bp;
@@ -43,36 +42,31 @@ public class BenchmarksAtom
 	 * Called to execute the current command pointed to
 	 * @param thisCommand command to process
 	 * @param atom parent atom source of thisCommand
-	 * @param xmlRunAppendTo xml to append tags to for this portion of the run
+	 * @param xmlRun_Success xml to append tags to for this portion of the run when it succeeds
+	 * @param xmlRun_Failure xml to append tags to for this portion of the run if there are failures
 	 * @return next command to execute (if any)
 	 */
 	public Xml processCommand(Xml	thisCommand,
 							  Xml	atom,
-							  Xml	xmlRunAppendTo)
+							  Xml	xmlRun_Success,
+							  Xml	xmlRun_Failure)
 	{
 //////////
 // FLOW
 		if (thisCommand.getName().equalsIgnoreCase("flow")) {
 			// It's a flow-control directive
-			return(processFlow_Atom(thisCommand, atom, xmlRunAppendTo));
-
-//////////
-// CUSTOM
-//		} else if (thisCommand.getName().equalsIgnoreCase("custom")) {
-//			// It's a custom bit of code
-//			return(processCustom_Atom(thisCommand, atom));
-
+			return(processFlow_Atom(thisCommand, atom, xmlRun_Success, xmlRun_Failure));
 
 //////////
 // ABSTRACT
 		} else if (thisCommand.getName().equalsIgnoreCase("abstract")) {
 			// It's an abstract command
-			return(processAbstract_Atom(thisCommand, atom, xmlRunAppendTo));
+			return(processAbstract_Atom(thisCommand, atom, xmlRun_Success, xmlRun_Failure));
 
 		}
 		// If we get here, we found something invalid.
 		// Ignore it and its invalidity, but log the entry for future reference
-		xmlRunAppendTo.appendChild(new Xml("error", thisCommand.getName(), "type", "Unrecognized keyword for atom, expected flow, custom or abstract"));
+		xmlRun_Success.appendChild(new Xml("error", thisCommand.getName(), "type", "Unrecognized keyword for atom, expected flow or abstract"));
 		return(thisCommand.getNext());
 	}
 
@@ -80,12 +74,14 @@ public class BenchmarksAtom
 	 * Processes a flow-control directive specified by thisCommand
 	 * @param thisCommand command to process
 	 * @param atom parent atom source of thisCommand
-	 * @param xmlRunAppendTo xml to append tags to for this portion of the run
+	 * @param xmlRun_Success xml to append tags to for this portion of the run when it succeeds
+	 * @param xmlRun_Failure xml to append tags to for this portion of the run if there are failures
 	 * @return
 	 */
 	public Xml processFlow_Atom(Xml		thisCommand,
 								Xml		atom,
-								Xml		xmlRunAppendTo)
+								Xml		xmlRun_Success,
+								Xml		xmlRun_Failure)
 	{
 		String name1, value1, value2, value3, sourceName, left, comparator, right, variable, start, finish, step;
 		Variables var1, var2;
@@ -94,7 +90,7 @@ public class BenchmarksAtom
 
 		options		= thisCommand.getChildNode("options");
 		sourceName	= m_bp.m_macroMaster.parseMacros(thisCommand.getAttributeOrChild("sourcename"));
-		xmlFlow		= xmlRunAppendTo.appendChild(Utils.processExecutableLine("flow",     /* = */ Utils.getTimestamp(),
+		xmlFlow		= xmlRun_Success.appendChild(Utils.processExecutableLine("flow",     /* = */ Utils.getTimestamp(),
 																			 "command",  /* = */ sourceName,
 																			 "name",     /* = */ thisCommand.getAttribute("name")));
 
@@ -706,7 +702,7 @@ public class BenchmarksAtom
 		} else if (sourceName.equalsIgnoreCase("log")) {
 			// log
 			value1	= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("message"));
-			xmlRunAppendTo.appendChild(new Xml("log", value1));
+			xmlRun_Success.appendChild(new Xml("log", value1));
 			return(thisCommand.getNext());
 
 
@@ -715,7 +711,7 @@ public class BenchmarksAtom
 		} else if (sourceName.equalsIgnoreCase("warning")) {
 			// warning
 			value1	= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("message"));
-			xmlRunAppendTo.appendChild(new Xml("warning", value1));
+			xmlRun_Success.appendChild(new Xml("warning", value1));
 			return(thisCommand.getNext());
 
 
@@ -894,130 +890,221 @@ public class BenchmarksAtom
 		return(null);
 	}
 
-	public Xml processCustom_Atom(Xml		thisCommand,
-								  Xml		root)
-	{
-		// Customs are not currently supported, so they are deal breakers
-		return(null);
-	}
-
+	/**
+	 * @param thisCommand xml to the atom of this command
+	 * @param root xml to the atom's root entry, containing
+	 * @param xmlRun_Success xml to append tags to for this portion of the run when it succeeds
+	 * @param xmlRun_Failure xml to append tags to for this portion of the run if there are failures
+	 */
 	public Xml processAbstract_Atom(Xml		thisCommand,
 									Xml		root,
-									Xml		xmlRunAppendTo)
+									Xml		xmlRun_RunSuccess,
+									Xml		xmlRun_RunFailure)
 	{
-		int i;
+		int i, retryCount;
 		Xml options, xmlType, xmlError;
 		Xml xmlOutput;
 		Process process;
-		String exception, exception2, name, curDir;
+		String exception, exception2, name, curDir, counter;
 		String command = "";
+		boolean failure;
 
+		// See what our command is
 		if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("execute"))
 		{
+			// Initially set the failure condition to true, flag is lowered at the end if we're okay
+			failure		= true;
+			retryCount	= 0;
+
 			// Executing with no parameters
 			options = thisCommand.getChildNode("options");
 			if (options != null)
-			{
-				command = m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("executable"));
-				if (!command.isEmpty())
-				{
-					// Increase our counter
-					++m_executeCounter;
+			{	// It appears to be a properly formatted atom command, so we'll run it
 
-					// Update the hud
-					if (m_bp.m_thisIteration == 0)
-						m_bp.m_hud.updateCounter(Integer.toString(m_executeCounter) + " " + Utils.singularOrPlural(m_executeCounter, "Script", "Scripts") + " Executed");
-					else
-						m_bp.m_hud.updateCounter("Iteration " + Integer.toString(m_bp.m_thisIteration) + " of " + Integer.toString(m_bp.m_maxIterations) + ";  " + Integer.toString(m_executeCounter) + " " + Utils.singularOrPlural(m_executeCounter, "Script", "Scripts") + " Executed");
+				while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount < m_bp.m_retryAttempts)
+				{	// Process repepatedly until we have a success, or our on-failure retry count is reached, or the user forces a stop
+					// Prepare for this run
+					m_bp.m_wui.prepareBeforeScriptExecution();
 
-					// Change the current directory to the directory of the executable
-					curDir = Utils.makeCurrentDirectoryThatOfExecutable(command);
-
-					// Add the type of run made
-					xmlType = new Xml("abstract");
-					name = m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
-					xmlType.appendAttribute("name", name);
-					xmlType.appendAttribute("sourcename", thisCommand.getAttribute("sourcename"));
-
-					xmlType.appendChild(Utils.processExecutableLine("start", Utils.getTimestamp()));
-					xmlType.appendChild(new Xml("command", command));
-					xmlRunAppendTo.appendChild(xmlType);
-
-					try {
-						// Start the process
-						process	= Runtime.getRuntime().exec( command );
-
-						// Grab the output
-						m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
-						m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
-						m_bp.m_errorGobbler.start();
-						m_bp.m_outputGobbler.start();
-
-						// Wait for the process to finish
-						process.waitFor();
-
-						// Identify the termination time
-						xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", process.exitValue() == 0 ? "success" : "fail"));
-
-						// Make sure we finish reading before continuing
-						m_bp.m_errorGobbler.join();
-						m_bp.m_outputGobbler.join();
-
-						// Grab the exit value1
-						xmlType.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
-
-					} catch (Throwable t) {
-						// Make sure we finish reading before continuing
-						exception2 = "";
-						try {
-							if (m_bp.m_errorGobbler != null)
-								m_bp.m_errorGobbler.join();
-							if (m_bp.m_outputGobbler != null)
-								m_bp.m_outputGobbler.join();
-
-						} catch (Throwable t2) {
-							exception2 = ": (Second exception caught: " + t2.getMessage() + ")";
-						}
-						xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", "exception"));
-						exception = Utils.getTimestamp() + ": Threw an exception: " + t.getMessage() + exception2;
-						xmlType.appendChild(Utils.processExecutableLine("process", exception));
-						m_bp.m_outputArray.add(exception);
-
-					}
-
-					// Reset the directory
-					Utils.setCurrentDirectory(curDir);
-
-					// For each error, save the entry
-					if (!m_bp.m_errorArray.isEmpty())
+					// See what we're doing
+					command = m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("executable"));
+					if (!command.isEmpty())
 					{
+						// Update the hud with executed scripts, plus failures
+						counter = Integer.toString(m_executeCounter) + " " + Utils.singularOrPlural(m_executeCounter, "Script", "Scripts") + " Executed";
+						if (m_failureCounter != 0)
+							counter += ", " + Integer.toString(m_failureCounter) + Utils.singularOrPlural(m_failureCounter, "Failure", "Failures");
+
+						if (m_bp.m_thisIteration != 0)
+						{	// Update the iteration information
+							counter = Integer.toString(m_bp.m_thisIteration) + " of " + Integer.toString(m_bp.m_maxIterations) + "; " + counter;
+						}
+						m_bp.m_hud.updateCounter(counter);
+
+						// Change the current directory to the directory of the executable
+						curDir = Utils.makeTheCurrentDirectoryThatOfThisExecutable(command);
+
+						// Add the type of run made
+						xmlType = new Xml("abstract");
+						name = m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
+						xmlType.appendAttribute("name", name);
+						xmlType.appendAttribute("sourcename", thisCommand.getAttribute("sourcename"));
+
+						// Indicate our beginning, and the command to execute
+						xmlType.appendChild(Utils.processExecutableLine("start", Utils.getTimestamp()));
+						xmlType.appendChild(new Xml("command", command));
+
+						// Add space for any errors
 						xmlError = new Xml("errors");
 						xmlType.appendChild(xmlError);
-						for (i = 0; i < m_bp.m_errorArray.size(); i++)
-							xmlError.appendChild(Utils.processExecutableLine("error", m_bp.m_errorArray.get(i)));
-					}
-					m_bp.m_errorArray.clear();
 
-					// For each line of output, save the entry
-					xmlOutput = new Xml("outputs");
-					xmlType.appendChild(xmlOutput);
-					if (!m_bp.m_outputArray.isEmpty())
-					{
-						for (i = 0; i < m_bp.m_outputArray.size(); i++)
-							xmlOutput.appendChild(Utils.processExecutableLine("output", m_bp.m_outputArray.get(i)));
+						// Clear off any previous "process" that may be hanging on out there for garbage collection
+						process = null;
+						try {
+							// Start the process
+							process	= Runtime.getRuntime().exec( command );
+
+							// Grab the output
+							m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
+							m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
+							m_bp.m_errorGobbler.start();
+							m_bp.m_outputGobbler.start();
+
+							// Wait for the process to finish
+							process.waitFor();
+							// Returns 0 if everything succeeded normally without error
+
+							// Identify the termination time
+							xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", process.exitValue() == 0 ? "success" : "fail"));
+
+							// Make sure we finish reading before continuing
+							m_bp.m_errorGobbler.join();
+							m_bp.m_outputGobbler.join();
+
+							// Grab the exit value1
+							xmlType.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
+
+							// If we get here, then everything proceeded normally
+							failure	= false;
+
+						} catch (Throwable t) {
+							// Make sure we finish reading before continuing
+							exception2 = "";
+							try {
+								if (m_bp.m_errorGobbler != null)
+									m_bp.m_errorGobbler.join();
+
+								if (m_bp.m_outputGobbler != null)
+									m_bp.m_outputGobbler.join();
+
+							} catch (Throwable t2) {
+								exception2 = ": (Second exception caught: " + t2.getMessage() + ")";
+							}
+							xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", "exception"));
+							exception = Utils.getTimestamp() + ": Threw an exception: " + t.getMessage() + exception2;
+							xmlType.appendChild(Utils.processExecutableLine("process", exception));
+							m_bp.m_outputArray.add(exception);
+
+						}
+
+						// Reset the directory
+						Utils.setCurrentDirectory(curDir);
+
+//////////
+// FAILURE TRIGGERED BY REPORTED ERROR
+						// For each line of errors, save the entry
+						if (!m_bp.m_errorArray.isEmpty())
+						{	// We had at least one error, which marks this as a failure
+							failure		= true;
+							for (i = 0; i < m_bp.m_errorArray.size(); i++)
+								xmlError.appendChild(Utils.processExecutableLine("error", m_bp.m_errorArray.get(i)));
+
+						} else {
+							// We succeeded
+							failure = false;
+						}
+						m_bp.m_errorArray.clear();
+
+						// For each line of output, save the entry
+						xmlOutput = new Xml("outputs");
+						xmlType.appendChild(xmlOutput);
+						if (!m_bp.m_outputArray.isEmpty())
+						{	// There were lines intercepted from the script
+							for (i = 0; i < m_bp.m_outputArray.size(); i++)
+							{	// If the script wrote any "error," entries to stdout (instead of stderr)
+								// we still need to catch those and interpret their directive as a failure on this pass
+								if (!failure && m_bp.m_outputArray.get(i).toLowerCase().contains(" error,"))
+								{	// This was an error, we have a failure
+									failure = true;
+								}
+								xmlOutput.appendChild(Utils.processExecutableLine("output", m_bp.m_outputArray.get(i)));
+							}
+						}
+						m_bp.m_outputArray.clear();
+
+//////////
+// FAILURE TRIGGERED BY EXIT VALUE
+						// The only condition that will signal a failure outside of an error code,
+						// is if the process terminated with a non-zero value
+						if (!failure && process != null && process.exitValue() != 0)
+						{	// A failure was noted by its exit value, but nothing was logged in the error queue
+							failure = true;
+							xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
+						}
+
+						if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+						{	// User force-terminated the execution
+							xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": User force-terminated benchmark via stop button in HUD"));
+						}
+
+						// Now, based on the state of this run, we append its information to the appropriate place
+						if (failure)
+						{	// An error occurred, so we put this on the retry pipe
+							xmlRun_RunFailure.appendChild(xmlType);
+							// Move the counter for the next retry
+							++retryCount;
+
+						} else {
+							// Just append like normal, they're not retrying, this failure will persist
+							xmlRun_RunSuccess.appendChild(xmlType);
+							// If we succeed, we make only one pass through the loop, no need to increment the retry count
+						}
+
+						// Clean up any temporary files and what-not which the script may have left behind
+						m_bp.m_wui.cleanupAfterScriptExecution();
 					}
-					m_bp.m_outputArray.clear();
 				}
 			}
+			// Increase our counter
+			if (failure)
+			{
+				++m_failureCounter;
+				if (m_bp.m_settingsMaster.benchmarkStopsIfRetriesFail())
+				{	// We have to force the stop now
+					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
+				}
+
+			} else {
+				++m_executeCounter;
+
+			}
+
 			// After the execute is finished, wait for the CPU to settle down
 			if (!(m_bp.m_debuggerActive && m_bp.m_singleStepping))
-				WaitUntilIdle.afterScriptExecution();
+				m_bp.m_wui.pauseAfterScriptExecution();
+
 			// For this statement, we simply proceed on to the next
 			return(thisCommand.getNext());
 
 		} else if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("executeParams")) {
 			// Executing with parameters
 			return(thisCommand.getNext());
+
+		} else if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("reboot")) {
+			// Rebooting, and terminating the benchmark test
+
+		} else if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("rebootWithContinue")) {
+			// Rebooting, and restarting, continuing back from the next atom from where we are now
 
 		}
 		// An error if we get here, but just silently ignore it for now
@@ -1079,7 +1166,13 @@ public class BenchmarksAtom
 			return(false);
 	}
 
-	public void generateSummaryCSVs(Xml xmlRunAppendTo)
+	/**
+	 * Sums up the "timing" entries from the script output, and prepares them
+	 * in a form which can be used to generate output CSV files for each pass,
+	 * and in total
+	 * @param xmlRun_Success
+	 */
+	public void generateSummaryCSVs(Xml xmlRun_Success)
 	{
 		int i, j, k, timing0Iterator, timingNIterator, count, iterationThis, iterationMax, thisElement;
 		double timing, ofBaseline, power;
@@ -1090,14 +1183,14 @@ public class BenchmarksAtom
 		List<String>	timings0;
 		List<String>	timingsN;
 		List<String>	groupItems;
-		Tuple			tupels		= new Tuple(m_bp.m_opbm);
+		Tuple			tuples		= new Tuple(m_bp.m_opbm);
 		Tuple			groups		= new Tuple(m_bp.m_opbm);
 		String fileName, status0, statusN, line, command, qualifiedName;
 
 //////////
 // Grab only the timing info
 		iterationThis = 0;
-		child = xmlRunAppendTo.getFirstChild();
+		child = xmlRun_Success.getFirstChild();
 		while (child != null)
 		{
 			// For iterations, we need to go another level deep
@@ -1107,14 +1200,14 @@ public class BenchmarksAtom
 				iterationThis	= Integer.valueOf(child.getAttribute("this"));
 				iterationMax	= Integer.valueOf(child.getAttribute("max"));
 				// Build the qualified name, such as (name of atom).(name of step)
-				qualifiedName = xmlRunAppendTo.getAttributeOrChild("name") + "." + useChild.getAttributeOrChild("name") + "." + child.getAttribute("this");
+				qualifiedName = xmlRun_Success.getAttributeOrChild("name") + "." + useChild.getAttributeOrChild("name") + "." + child.getAttribute("this");
 
 			} else {
 				useChild		= child;
 				iterationThis	= 0;
 				iterationMax	= 0;
 				// Build the qualified name, such as (name of atom).(name of step)
-				qualifiedName = xmlRunAppendTo.getAttributeOrChild("name") + "." + useChild.getAttributeOrChild("name");
+				qualifiedName = xmlRun_Success.getAttributeOrChild("name") + "." + useChild.getAttributeOrChild("name");
 			}
 
 			if (useChild.getAttributeOrChild("sourcename").equalsIgnoreCase("execute"))
@@ -1136,7 +1229,7 @@ public class BenchmarksAtom
 				command = useChild.getChildNode("command").getText();
 				if (iterationThis != 0)
 					command = Utils.forceExtension(command, "(" + Utils.rightJustify(Integer.toString(iterationThis), 4, "0") + "of" + Utils.rightJustify(Integer.toString(iterationMax), 4, "0") + ")" + Utils.getExtension(command));
-				tupels.add(command, timings, qualifiedName);
+				tuples.add(command, timings, qualifiedName);
 				timings = null;
 			}
 
@@ -1144,28 +1237,28 @@ public class BenchmarksAtom
 			child = child.getNext();
 		}
 		// When we get here we have all summary timing data extracted
-		// Next, we need to process through the tupels and summarize multiple
+		// Next, we need to process through the tuples and summarize multiple
 		// run averages per command
 
 //////////
 // Group it into command-groupings for summary
-		for (i = 0; i < tupels.size(); i++)
+		for (i = 0; i < tuples.size(); i++)
 		{
-			if (!tupels.getFirst(i).equalsIgnoreCase("<!-- Processed -->"))
+			if (!tuples.getFirst(i).equalsIgnoreCase("<!-- Processed -->"))
 			{
 				groupItems = new ArrayList<String>(0);
 				groupItems.add(Integer.toString(i));
-				for (j = i + 1; j < tupels.size(); j++)
+				for (j = i + 1; j < tuples.size(); j++)
 				{
-					if (tupels.getFirst(i).equalsIgnoreCase(tupels.getFirst(j)))
+					if (tuples.getFirst(i).equalsIgnoreCase(tuples.getFirst(j)))
 					{
-						tupels.setFirst(j, "<!-- Processed -->");
+						tuples.setFirst(j, "<!-- Processed -->");
 						groupItems.add(Integer.toString(j));
 						// These two are a match
 					}
 				}
 				// When we get here, add this group
-				groups.add(tupels.getFirst(i), groupItems, tupels.getExtra1(i));
+				groups.add(tuples.getFirst(i), groupItems, tuples.getExtra1(i));
 			}
 		}
 		// When we get here, the groups are identified and we can pull their
@@ -1183,7 +1276,7 @@ public class BenchmarksAtom
 				{
 					// There's more than one run in this command, we must average first, then write the results
 					// Iterate through the items in this group, storing the average in the 0th position, which serves as our "foundation" or "bedrock" entry
-					timings0 = (List<String>)tupels.getSecond(Integer.valueOf(groupItems.get(0)));
+					timings0 = (List<String>)tuples.getSecond(Integer.valueOf(groupItems.get(0)));
 
 					// For this bedrock line, average everything that's found, and storing the average back in the first entry's position after each summation
 					if (timings0 != null)
@@ -1201,7 +1294,7 @@ public class BenchmarksAtom
 							for (j = 1; j < groupItems.size(); j++)
 							{
 								// Compare this N-item listing's entries to the selected one from the 0-item listing's entries
-								timingsN = (List<String>)tupels.getSecond(Integer.valueOf(groupItems.get(j)));
+								timingsN = (List<String>)tuples.getSecond(Integer.valueOf(groupItems.get(j)));
 
 								// See if we find a matching name withing this list
 								if (timingsN != null)
@@ -1235,8 +1328,8 @@ public class BenchmarksAtom
 
 				// Add the totals/summary line to the end of the group's entries
 				thisElement		= Integer.valueOf(groupItems.get(0));
-				timings			= (List<String>)tupels.getSecond(thisElement);
-				qualifiedName	= (String)tupels.getExtra1(thisElement);
+				timings			= (List<String>)tuples.getSecond(thisElement);
+				qualifiedName	= (String)tuples.getExtra1(thisElement);
 				timing			= 0.0;
 				ofBaseline		= 0.0;
 				results			= new Xml("results", "", "name", qualifiedName);
@@ -1280,7 +1373,8 @@ public class BenchmarksAtom
 	}
 
 
-	private BenchmarksParams	m_bp;
+	private BenchmarkParams	m_bp;
+	public	int					m_failureCounter;
 	public	int					m_executeCounter;
 	public	List<Xml>			m_timingEvents;
 	public	int					m_returnValue;

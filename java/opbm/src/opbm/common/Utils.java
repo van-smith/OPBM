@@ -209,18 +209,17 @@ public class Utils
 	/**
 	 * Search the candidate for {:fieldName, Prompt:} and extract the field
 	 * names and fieldPrompts for any found.
-	 * @param fieldNames 1:1 ratio with fieldPrompts, holds the field name for the
-	 * input
+	 * @param fieldNames 1:1 ratio with fieldPrompts, holds the field name for the input
 	 * @param fieldPrompts 1:1 ratio with fieldNames, holds the prompt found (if any)
 	 * or a generic "Specify fieldName" prompt
 	 * @param candidate string to search for {: :} formatted entries
 	 */
-	public static void extractCustomFields(List<String>		fieldNames,
+	public static void extractCustomInputFields(List<String>		fieldNames,
 										   List<String>		fieldPrompts,
 										   String			candidate)
 	{
 		int lnFirst, lnSecond, lnComma;
-		String value, custom, prompt, part1, part2;
+		String value, customInput, prompt, part1, part2;
 
 		// Remove all () parenthesis portions
 		value = candidate;
@@ -232,25 +231,25 @@ public class Utils
 			if (lnFirst == -1 || lnSecond == -1 || lnSecond < lnFirst)
 				break;	// We're done, missing entry or invalid syntax
 
-			custom = value.substring(lnFirst + 2, lnSecond);
-			lnComma	= custom.indexOf(",");
+			customInput = value.substring(lnFirst + 2, lnSecond);
+			lnComma	= customInput.indexOf(",");
 			if (lnComma != -1)
 			{
 				// They specified a custom prompt
-				part1	= custom.substring(0, lnComma);
-				prompt	= custom.substring(lnComma + 1, custom.length()).trim();
-				custom	= part1;
+				part1	= customInput.substring(0, lnComma);
+				prompt	= customInput.substring(lnComma + 1, customInput.length()).trim();
+				customInput	= part1;
 
 				if (!prompt.endsWith(":") && !prompt.endsWith("?"))
 					prompt += ":";
 
 			} else {
 				// Just add a generic "Specify field name" prompt
-				prompt = "Specify " + Utils.toProper(custom) + ":";
+				prompt = "Specify " + Utils.toProper(customInput) + ":";
 
 			}
 
-			fieldNames.add(custom);
+			fieldNames.add(customInput);
 			fieldPrompts.add(prompt);
 			value = value.substring(0, lnFirst) + value.substring(lnSecond + 2, value.length());
 		}
@@ -748,7 +747,7 @@ public class Utils
 	 * not just "file.exe"
 	 * @return previous directory
 	 */
-	public static String makeCurrentDirectoryThatOfExecutable(String executable)
+	public static String makeTheCurrentDirectoryThatOfThisExecutable(String executable)
 	{
 		String curDir, newDir;
 

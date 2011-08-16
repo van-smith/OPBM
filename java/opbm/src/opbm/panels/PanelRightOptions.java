@@ -138,7 +138,7 @@ public class PanelRightOptions
 					// Extract this field's entries (if any)
 					candidate = m_macroMaster.parseMacros(child.getText());
 					if (!candidate.isEmpty())
-						Utils.extractCustomFields(m_fieldNames, m_fieldPrompts, candidate);
+						Utils.extractCustomInputFields(m_fieldNames, m_fieldPrompts, candidate);
 
 					// Move to next entry
 					child = child.getNext();
@@ -150,18 +150,18 @@ public class PanelRightOptions
 				// If we get here, there are entries to add
 
 				// Add those variable entries to the form (if any)
-				PanelFactory.createRightPanelContextOptionsFromCustomsArrays(m_parentPR,
-																			 m_parentPanel,
-																			 m_opbm,
-																			 m_macroMaster,
-																			 m_commandMaster,
-																			 m_priOptionsMaster,
-																			 m_xmlOptionsMaster,
-																			 m_fieldNames,
-																			 m_fieldPrompts,
-																			 xml.getChildNode("options"),
-																			 m_parentPRI.getX(),
-																			 m_parentPRI.getY());
+				PanelFactory.createRightPanelContextOptionsFromCustomInputsArrays(m_parentPR,
+																				  m_parentPanel,
+																				  m_opbm,
+																				  m_macroMaster,
+																				  m_commandMaster,
+																				  m_priOptionsMaster,
+																				  m_xmlOptionsMaster,
+																				  m_fieldNames,
+																				  m_fieldPrompts,
+																				  xml.getChildNode("options"),
+																				  m_parentPRI.getX(),
+																				  m_parentPRI.getY());
 				// All done!
 				return;
 			}

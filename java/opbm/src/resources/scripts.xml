@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <opbm>
 	<scriptdata>
-		<comment>Flows are flow control operations usable in scripting molecules, scenarios or suites</comment>
-		<comment>Customs are bits of raw code to insert in scripting molecules, scenarios or suites</comment>
-		<comment>Abstracts are definitions between our internal set of commands, and the underlying scripting engine</comment>
+		<comment>Flows are flow control operations usable in scripting atoms, molecules, scenarios or suites</comment>
+		<comment>Abstracts are definitions between our internal set of commands, and the underlying harness (and ultimately a scripting engine)</comment>
 		<comment>Atoms are the smallest autonomous item, do a single thing</comment>
 		<comment>Molecules are smallest group of autonomous item, does a sequence of things</comment>
 		<comment>Scenarios are smallest group of sequences, does multiple sequences of things</comment>
@@ -112,12 +111,6 @@
 				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace) (leftbrace)(colon)value, VALUE(colon)(rightbrace)</variables>
 			</flow>
 		</flows>
-		<customs>
-			<custom name="unused">
-				<tags></tags>
-				<insert></insert>
-			</custom>
-		</customs>
 		<abstracts>
 			<abstract name="execute">
 				<engine>autoit</engine>

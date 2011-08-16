@@ -194,8 +194,7 @@ public class Commands
 			// p1 = whereTo
 			// p2 = after
 			// p3 = whereFrom
-			// p4 = allow customs?
-			m_opbm.lookupboxAddCommand((PanelRightLookupbox)source, p1, p2, p3, Utils.interpretBooleanAsYesNo(p4, true).equalsIgnoreCase("yes"));
+			m_opbm.lookupboxAddCommand((PanelRightLookupbox)source, p1, p2, p3);
 
 		} else if (command.equals("lookupbox_subtract")) {
 			// User clicked on the "subtract" listbox button
@@ -248,16 +247,6 @@ public class Commands
 				else
 					JOptionPane.showMessageDialog(null, "No p1 or edits was found for lookupbox_zoom(" + p2 +") \"" + ((PanelRightLookupbox)source).getName() + "\"");
 			}
-
-		} else if (command.equals("save_custom")) {
-			// User clicked on the "zoom" listbox button on the flow control input
-			// p1 = uuid of tupel containing everything to update
-			m_opbm.saveCustomCommand(p1);
-
-		} else if (command.equals("cancel_custom")) {
-			// User clicked on the "zoom" listbox button on the flow control input
-			// p1 = uuid of tupel containing everything to update
-			m_opbm.cancelCustomCommand(p1);
 
 
 //////////

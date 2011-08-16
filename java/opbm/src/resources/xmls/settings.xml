@@ -8,8 +8,9 @@
 			<hud>
 				<visible>yes</visible>
 				<translucency>0.5</translucency>
-			</hud>d
+			</hud>
+			<retry attempts="3" stopIfFailureOnRetries="no">yes</retry>
 		</benchmarks>
-		<skin>simple</skin>		<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both -->
+		<skin>simple</skin>		<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both screens launch -->
 	</settings>
 </opbm>

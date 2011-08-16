@@ -43,13 +43,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextField;
-import opbm.benchmarks.BenchmarksParams;
+import opbm.benchmarks.BenchmarkParams;
 import opbm.dialogs.DroppableFrame;
 import opbm.common.Xml;
 
 public final class Debugger extends DroppableFrame implements KeyListener, MouseListener, MouseMotionListener
 {
-	public Debugger(BenchmarksParams bp)
+	public Debugger(BenchmarkParams bp)
 	{
 		super(bp.m_opbm, false);
 
@@ -331,7 +331,7 @@ public final class Debugger extends DroppableFrame implements KeyListener, Mouse
 		}
 
 		// Populate the last item
-		if (m_bp.m_debugLastAction == BenchmarksParams._SINGLE_STEP)
+		if (m_bp.m_debugLastAction == BenchmarkParams._SINGLE_STEP)
 			m_outputs.get(0).setText("Single step to " + m_thisDebuggerStepName);
 		else
 			m_outputs.get(0).setText("Break at " + m_thisDebuggerStepName);
@@ -339,7 +339,7 @@ public final class Debugger extends DroppableFrame implements KeyListener, Mouse
 		m_outputs.get(0).repaint();
 	}
 
-	public void updateAtomVariables(BenchmarksParams bp)
+	public void updateAtomVariables(BenchmarkParams bp)
 	{
 		int i;
 
@@ -495,26 +495,26 @@ public final class Debugger extends DroppableFrame implements KeyListener, Mouse
 
 	public void debuggerRun()
 	{
-		m_bp.m_debuggerOrHUDAction = BenchmarksParams._RUN;
+		m_bp.m_debuggerOrHUDAction = BenchmarkParams._RUN;
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug("Resuming at " + m_thisDebuggerStepName);
 	}
 
 	public void debuggerSingleStep()
 	{
-		m_bp.m_debuggerOrHUDAction = BenchmarksParams._SINGLE_STEP;
+		m_bp.m_debuggerOrHUDAction = BenchmarkParams._SINGLE_STEP;
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug("Single stepping through " + m_thisDebuggerStepName);
 	}
 
 	public void debuggerStop()
 	{
-		m_bp.m_debuggerOrHUDAction = BenchmarksParams._STOP;
+		m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_USER_CLICKED_STOP;
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug("Stopped at " + m_thisDebuggerStepName);
 	}
 
-	private BenchmarksParams	m_bp;
+	private BenchmarkParams	m_bp;
 
 	private JLabel				m_background;
 	private List<JLabel>		m_prefixers;

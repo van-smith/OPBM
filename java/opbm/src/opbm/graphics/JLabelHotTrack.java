@@ -58,8 +58,8 @@ public final class JLabelHotTrack implements MouseListener
 	{
 		m_selected				= false;
 		m_mouseOver				= false;
-		m_tupelToUpdate			= null;
-		m_tupelIndex			= 0;
+		m_tupleToUpdate			= null;
+		m_tupleIndex			= 0;
 		m_rect					= new Rectangle();
 		m_lblSelectedNeutral	= null;
 		m_lblUnselectedNeutral	= null;
@@ -178,15 +178,15 @@ public final class JLabelHotTrack implements MouseListener
 
 	public void updateTupleIfSet()
 	{
-		if (m_tupelToUpdate	!= null)
-			m_tupelToUpdate.setSecond(m_tupelIndex, m_selected ? "Yes" : "No");
+		if (m_tupleToUpdate	!= null)
+			m_tupleToUpdate.setSecond(m_tupleIndex, m_selected ? "Yes" : "No");
 	}
 
-	public void setTupleToUpdateByMouseActivity(Tuple		tupel,
+	public void setTupleToUpdateByMouseActivity(Tuple		tuple,
 												int			index)
 	{
-		m_tupelToUpdate		= tupel;
-		m_tupelIndex		= index;
+		m_tupleToUpdate		= tuple;
+		m_tupleIndex		= index;
 	}
 
 	public void setBounds(int	startX,
@@ -313,6 +313,6 @@ public final class JLabelHotTrack implements MouseListener
 	public int				m_type;
 	public String			m_identifier;
 
-	public Tuple			m_tupelToUpdate;
-	public int				m_tupelIndex;
+	public Tuple			m_tupleToUpdate;
+	public int				m_tupleIndex;
 }

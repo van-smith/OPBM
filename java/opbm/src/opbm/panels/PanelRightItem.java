@@ -694,11 +694,10 @@ public class PanelRightItem
 	public void lookupboxAddCommand(PanelRightLookupbox		source,
 									String					whereTo,
 									String					after,
-									String					whereFrom,
-									boolean					allowCustoms)
+									String					whereFrom)
 	{
 		if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null)
-			m_lookupbox.lookupboxAddCommand(source, whereTo, after, whereFrom, allowCustoms);
+			m_lookupbox.lookupboxAddCommand(source, whereTo, after, whereFrom);
 	}
 
 	/**

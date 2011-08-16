@@ -19,18 +19,19 @@
 
 package opbm.benchmarks;
 
+import opbm.Opbm;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
 import opbm.benchmarks.hud.HUD;
 import opbm.benchmarks.debugger.Debugger;
-import java.util.ArrayList;
 import opbm.common.Macros;
-import opbm.Opbm;
-import opbm.dialogs.OpbmDialog;
 import opbm.common.Utils;
-import opbm.panels.PanelRightItem;
 import opbm.common.Settings;
 import opbm.common.Xml;
+import opbm.dialogs.OpbmDialog;
+import opbm.panels.PanelRightItem;
+import java.util.ArrayList;
+import opbm.benchmarks.waituntilidle.WaitUntilIdle;
 
 public class Benchmarks
 {
@@ -50,17 +51,11 @@ public class Benchmarks
 
 	{
 		if (m_bp == null)
-			m_bp = new BenchmarksParams();
+			m_bp = new BenchmarkParams();
 
 		m_bp.m_parent = this;
 		if (m_bp.m_bpAtom == null)
 			m_bp.m_bpAtom = new BenchmarksAtom(m_bp);
-		if (m_bp.m_bpMolecule == null)
-			m_bp.m_bpMolecule = new BenchmarksMolecule(m_bp);
-		if (m_bp.m_bpScenario == null)
-			m_bp.m_bpScenario = new BenchmarksScenario(m_bp);
-		if (m_bp.m_bpSuite == null)
-			m_bp.m_bpSuite = new BenchmarksSuite(m_bp);
 
 		// Store our passed parameters
 		m_bp.m_opbm				= opbm;
@@ -119,17 +114,19 @@ public class Benchmarks
 		m_bp.m_opbm.createAndShowResultsViewer(fileName);
 	}
 
-	public void benchmarkInitializeExecutionEnvironment(BenchmarksParams bp)
+	public void benchmarkInitializeExecutionEnvironment(BenchmarkParams bp)
 	{
 		// Take a snapshot of the system as it exists right now before we run the benchmarks
 		Opbm.snapshotProcesses();
 
 		// Initialize our relative items
 		bp.m_bpAtom.m_executeCounter	= 0;
+		bp.m_bpAtom.m_failureCounter	= 0;
 		bp.m_atomVariables				= new ArrayList<Variables>(0);
 		bp.m_atomStack					= new ArrayList<Stack>(0);
 		bp.m_bpAtom.m_timingEvents		= new ArrayList<Xml>(0);
 		bp.m_bpAtom.m_returnValue		= 0;
+		bp.m_wui						= new WaitUntilIdle();
 
 		bp.m_benchmarkStack				= new ArrayList<Xml>(0);
 
@@ -142,7 +139,7 @@ public class Benchmarks
 			// Not displayted (typical condition)
 			bp.m_deb					= null;
 		}
-		bp.m_debuggerOrHUDAction		= BenchmarksParams._NO_ACTION;
+		bp.m_debuggerOrHUDAction		= BenchmarkParams._NO_ACTION;
 
 		bp.m_headsUpActive				= bp.m_settingsMaster.isHUDVisible();
 		if (bp.m_headsUpActive)
@@ -152,6 +149,9 @@ public class Benchmarks
 			// Not displayed (typical condition)
 			bp.m_hud					= null;
 		}
+
+		bp.m_retry						= bp.m_settingsMaster.isBenchmarkToRetryOnErrors();
+		bp.m_retryAttempts				= bp.m_settingsMaster.benchmarkRetryOnErrorCount();
 
 		// Initialize our captures and gobblers
 		bp.m_errorArray					= new ArrayList<String>(0);
@@ -323,18 +323,29 @@ public class Benchmarks
 								 int	iterations)
 	{
 		int i;
-		Xml child, xml, xmlIteration, xmlRunAppendTo;
+		Xml child, xmlSuccess, xmlFailure, xmlIteration, xmlRun_Success, xmlRun_Failure;
 
 		// Indicate the atom we're going into for the stack
 		m_bp.m_benchmarkStack.add(atom);
 
 		// Append the atom's entry to the output/results xml file
-		xmlRunAppendTo	= new Xml("atom");
-		xmlRunAppendTo.appendAttribute(new Xml("name", atom.getAttribute("name")));
-		m_bp.m_xmlRun.appendChild(xmlRunAppendTo);
+		xmlRun_Success	= new Xml("atom");
+		xmlRun_Success.appendAttribute(new Xml("name", atom.getAttribute("name")));
+		m_bp.m_xmlRun.appendChild(xmlRun_Success);
 
-		// REMEMBER In the future, will store data here containing run profile (information, notes, optimization settings, etc.)
-		xml = null;
+		xmlRun_Failure	= new Xml("atom_failures");
+		xmlRun_Failure.appendAttribute(new Xml("name", atom.getAttribute("name")));
+		m_bp.m_xmlRun.appendChild(xmlRun_Success);
+
+// REMEMBER In the future, will store data here containing run profile (information, notes, optimization settings, etc.)
+
+		// Initialize everything
+		xmlSuccess	= null;
+		xmlFailure	= null;
+
+		// We are processing as many iterations of this atom as were specified by the caller
+		// Note:  These iterations are different than retry counts, but are passed parameters
+		//        (typically from the command) line which indicate a repeating set of data
 		m_bp.m_maxIterations = iterations;
 		for (i = 0; i < iterations; i++)
 		{
@@ -344,13 +355,24 @@ public class Benchmarks
 
 			if (iterations != 1)
 			{
-				xml = xmlRunAppendTo;
-				xmlIteration = new Xml("iteration");
+				xmlSuccess		= xmlRun_Success;
+				xmlFailure		= xmlRun_Failure;
+				xmlIteration	= new Xml("iteration");
+
+				// Append success iteration information
 				xmlIteration.appendAttribute("this", Integer.toString(i+1));
 				xmlIteration.appendAttribute("max", Integer.toString(iterations));
-				xmlRunAppendTo = xmlRunAppendTo.appendChild(xmlIteration);
-				m_bp.m_thisIteration			= i+1;
+				xmlRun_Success = xmlRun_Success.appendChild(xmlIteration);
+
+				// Append failure iteration information
+				xmlIteration.appendAttribute("this", Integer.toString(i+1));
+				xmlIteration.appendAttribute("max", Integer.toString(iterations));
+				xmlRun_Failure = xmlRun_Failure.appendChild(xmlIteration);
+
+				// Indicate where we are in the overall scheme
+				m_bp.m_thisIteration			= i + 1;
 				m_bp.m_bpAtom.m_executeCounter	= 0;
+				m_bp.m_bpAtom.m_failureCounter	= 0;
 
 			} else {
 				m_bp.m_thisIteration = 0;
@@ -364,7 +386,7 @@ public class Benchmarks
 				{
 					// Update the debugger display
 					m_bp.m_debugLastAction	= m_bp.m_debuggerOrHUDAction;
-					m_bp.m_debuggerOrHUDAction	= BenchmarksParams._NO_ACTION;
+					m_bp.m_debuggerOrHUDAction	= BenchmarkParams._NO_ACTION;
 					m_bp.m_debugParent		= atom;
 					m_bp.m_debugChild		= child;
 					// Put focus in the window
@@ -379,10 +401,17 @@ public class Benchmarks
 						// Wait for user input and respond to the command
 						try {
 							do {
-								Thread.sleep(10);
+								// The warning which appears here can be ignored because we're
+								// waiting for the debugger's window to set a value here in
+								// m_bp.m_debuggerOrHUDAction.  Once populated, the break
+								// will be executed below.
+								// It may be worth in the future creation some atomic variable
+								// that can be set and released by the debugger.  For now,
+								// this works.
+								Thread.sleep(50);
 
 								// Did they select something while they were running?
-								if (m_bp.m_debuggerOrHUDAction != BenchmarksParams._NO_ACTION)
+								if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION)
 									break;
 
 							} while (true);
@@ -392,14 +421,14 @@ public class Benchmarks
 						m_bp.m_deb.setVisible(false);
 
 						// See what option they chose
-						if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._RUN) {
+						if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._RUN) {
 							// Lower the single-stepping flag
 							m_bp.m_singleStepping = false;
 
-						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._SINGLE_STEP) {
+						} else if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._SINGLE_STEP) {
 							// Do nothing, except continue on
 
-						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP) {
+						} else if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP) {
 							// We're finished
 							break;
 						}
@@ -407,129 +436,33 @@ public class Benchmarks
 				}
 
 				// Process the next command
-				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRunAppendTo);
-				if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
+				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRun_Success, xmlRun_Failure);
+				if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 					break;
 			}
-
-			if (iterations != 1 && xml != null)
-				xmlRunAppendTo = xml;
-
-			if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
-				break;
-		}
-		// When we get here, we are finished with the run, now generate the outputs
-		m_bp.m_bpAtom.generateSummaryCSVs(xmlRunAppendTo);
-		appendResultsDataForResultsViewer(xmlRunAppendTo);
-
-		// Indicate the atom is done
-		m_bp.m_benchmarkStack.remove(m_bp.m_benchmarkStack.size() - 1);		// Remove the last item
-	}
-
-	/**
-	 * Called to physically execute the specified atom (pointed to by "atom")
-	 * @param molecule
-	 * @param iterations
-	 */
-	public void benchmarkRunMolecule(Xml	molecule,
-									 int	iterations)
-	{
-		int i;
-		Xml child, xml, xmlIteration, xmlRunAppendTo;
-
-		// Indicate the molecule we're going into for the stack
-		m_bp.m_benchmarkStack.add(molecule);
-
-		// Append the molecule's entry to the output/results xml file
-		xmlRunAppendTo	= new Xml("molecule");
-		xmlRunAppendTo.appendAttribute(new Xml("name", molecule.getAttribute("name")));
-		m_bp.m_xmlRun.appendChild(xmlRunAppendTo);
-
-		// REMEMBER In the future, will store data here containing run profile (information, notes, optimization settings, etc.)
-		xml = null;
-		m_bp.m_maxIterations = iterations;
-		for (i = 0; i < iterations; i++)
-		{
-			// Process through the entire atom, based on its logic
-			child = molecule.getFirstChild();
-			Stack.enterNewBlock(Stack._STACK_ROOT, child, m_bp.m_moleculeStack);
 
 			if (iterations != 1)
-			{
-				xml = xmlRunAppendTo;
-				xmlIteration = new Xml("iteration");
-				xmlIteration.appendAttribute("this", Integer.toString(i+1));
-				xmlIteration.appendAttribute("max", Integer.toString(iterations));
-				xmlRunAppendTo = xmlRunAppendTo.appendChild(xmlIteration);
-				m_bp.m_thisIteration				= i+1;
-				m_bp.m_bpMolecule.m_executeCounter	= 0;
+			{	// For each iteration we created (above) a child of the actual
+				// xmlRun_Success and xmlRun_Failure entries.
+				// So now we have to restore them back to their parent values,
+				// for the next iteration, or for the completion of the run.
+				if (xmlSuccess != null)
+					xmlRun_Success = xmlSuccess;
 
-			} else {
-				m_bp.m_thisIteration = 0;
-
+				if (xmlFailure != null)
+					xmlRun_Failure = xmlFailure;
 			}
 
-			// Process all molecule commands one-by-one
-			while (child != null)
-			{
-				if (m_bp.m_debuggerActive)
-				{
-					// Update the debugger display
-					m_bp.m_debugLastAction		= m_bp.m_debuggerOrHUDAction;
-					m_bp.m_debuggerOrHUDAction	= BenchmarksParams._NO_ACTION;
-					m_bp.m_debugParent			= molecule;
-					m_bp.m_debugChild			= child;
-					// Put focus in the window
-					m_bp.m_deb.forceWindowToHaveFocus();
-					m_bp.m_deb.update();
-
-					if (m_bp.m_singleStepping)
-					{
-						// Position the cursor
-						m_bp.m_deb.getCareTextbox().requestFocusInWindow();
-
-						// Wait for user input and respond to the command
-						try {
-							do {
-								Thread.sleep(10);
-
-								// Did they select something while they were running?
-								if (m_bp.m_debuggerOrHUDAction != BenchmarksParams._NO_ACTION)
-									break;
-
-							} while (true);
-
-						} catch (InterruptedException ex) {
-						}
-						m_bp.m_deb.setVisible(false);
-
-						// See what option they chose
-						if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._RUN) {
-							// Lower the single-stepping flag
-							m_bp.m_singleStepping = false;
-
-						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._SINGLE_STEP) {
-							// Do nothing, except continue on
-
-						} else if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP) {
-							// We're finished
-							break;
-						}
-					}
-				}
-
-				// Process the next command
-				child = m_bp.m_bpMolecule.processCommand(child, molecule, xmlRunAppendTo);
-				if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
-					break;
-			}
-
-			if (iterations != 1 && xml != null)
-				xmlRunAppendTo = xml;
-
-			if (m_bp.m_debuggerOrHUDAction == BenchmarksParams._STOP)
+			// If the user is telling us to stop, we stop
+			if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 				break;
 		}
+
+		// When we get here, we are finished with the run, generate the outputs to the success branch
+		m_bp.m_bpAtom.generateSummaryCSVs(xmlRun_Success);
+		appendResultsDataForResultsViewer(xmlRun_Success);
+		// Note:  The failure branch is not post-processed here, but remains in the file for later (manual?) examination
+
 		// Indicate the atom is done
 		m_bp.m_benchmarkStack.remove(m_bp.m_benchmarkStack.size() - 1);		// Remove the last item
 	}
@@ -593,5 +526,5 @@ public class Benchmarks
 		}
 	}
 
-	private BenchmarksParams		m_bp;
+	private BenchmarkParams		m_bp;
 }

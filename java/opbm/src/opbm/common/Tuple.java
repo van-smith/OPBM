@@ -38,8 +38,8 @@ import opbm.Opbm;
 public class Tuple
 {
 	/**
-	 * Constructor, creates a UUID for unique reference to the created tupel.
-	 * This is necessary for an external <code>List<Tupel></code> to maintain
+	 * Constructor, creates a UUID for unique reference to the created tuple.
+	 * This is necessary for an external <code>List<Tuple></code> to maintain
 	 * the global state, hence the callback to the Opbm class, and its
 	 * <code>add</code> function.
 	 *
@@ -55,7 +55,7 @@ public class Tuple
 		m_extra3	= new ArrayList<Object>(0);
 		m_extra4	= new ArrayList<Object>(0);
 		m_extra5	= new ArrayList<Object>(0);
-		opbm.addTupel(this);
+		opbm.addTuple(this);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class Tuple
 	}
 
 	/**
-	 * Adds a new entry to the tupel, which could be a duplicate.
+	 * Adds a new entry to the tuple, which could be a duplicate.
 	 *
 	 * @param name <code>String</code> to identify the object
 	 * @param o object to add
@@ -85,7 +85,7 @@ public class Tuple
 	}
 
 	/**
-	 * Adds a new entry to the tupel, which could be a duplicate.
+	 * Adds a new entry to the tuple, which could be a duplicate.
 	 *
 	 * @param name <code>String</code> to identify the object
 	 * @param o object to add
@@ -99,7 +99,7 @@ public class Tuple
 	}
 
 	/**
-	 * Searches the tupels by its second (the object) and returns the
+	 * Searches the tuples by its second (the object) and returns the
 	 * associated string if found.
 	 *
 	 * @param o object to search
@@ -120,7 +120,7 @@ public class Tuple
 	}
 
 	/**
-	 * Searches the tupels by its first (the String) and returns the associated
+	 * Searches the tuples by its first (the String) and returns the associated
 	 * object if found.
 	 *
 	 * @param name String to search
@@ -141,7 +141,7 @@ public class Tuple
 	}
 
 	/**
-	 * Searches the tupels by its first (the String) and returns the associated
+	 * Searches the tuples by its first (the String) and returns the associated
 	 * extra object if found.
 	 *
 	 * @param name String to search
@@ -160,7 +160,7 @@ public class Tuple
 	}
 
 	/**
-	 * Searches the tupels by its first (the String) and returns the associated
+	 * Searches the tuples by its first (the String) and returns the associated
 	 * extra object if found.
 	 *
 	 * @param name String to search
@@ -179,7 +179,7 @@ public class Tuple
 	}
 
 	/**
-	 * Searches the tupels by its first (the String) and returns the associated
+	 * Searches the tuples by its first (the String) and returns the associated
 	 * extra object if found.
 	 *
 	 * @param name String to search
@@ -198,7 +198,7 @@ public class Tuple
 	}
 
 	/**
-	 * Searches the tupels by its first (the String) and returns the associated
+	 * Searches the tuples by its first (the String) and returns the associated
 	 * extra object if found.
 	 *
 	 * @param name String to search
@@ -217,7 +217,7 @@ public class Tuple
 	}
 
 	/**
-	 * Searches the tupels by its first (the String) and returns the associated
+	 * Searches the tuples by its first (the String) and returns the associated
 	 * extra object if found.
 	 *
 	 * @param name String to search
@@ -236,7 +236,7 @@ public class Tuple
 	}
 
 	/**
-	 * Sets the first property (the String) of the specified tupel, as searched
+	 * Sets the first property (the String) of the specified tuple, as searched
 	 * by its second property (the object), and updates the String.
 	 *
 	 * @param o object to search
@@ -261,7 +261,7 @@ public class Tuple
 	}
 
 	/**
-	 * Sets the second property (the object) of the specified tupel, as searched
+	 * Sets the second property (the object) of the specified tuple, as searched
 	 * by its first property (the String), and updates the String.
 	 *
 	 * @param name String to search
@@ -286,7 +286,7 @@ public class Tuple
 	}
 
 	/**
-	 * Sets the second property (the object) of the specified tupel, as searched
+	 * Sets the second property (the object) of the specified tuple, as searched
 	 * by its first property (the String), and updates the extra object.
 	 *
 	 * @param name String to search
@@ -311,7 +311,7 @@ public class Tuple
 	}
 
 	/**
-	 * Sets the second property (the object) of the specified tupel, as searched
+	 * Sets the second property (the object) of the specified tuple, as searched
 	 * by its first property (the String), and updates the extra object.
 	 *
 	 * @param name String to search
@@ -336,7 +336,7 @@ public class Tuple
 	}
 
 	/**
-	 * Sets the second property (the object) of the specified tupel, as searched
+	 * Sets the second property (the object) of the specified tuple, as searched
 	 * by its first property (the String), and updates the extra object.
 	 *
 	 * @param name String to search
@@ -361,7 +361,7 @@ public class Tuple
 	}
 
 	/**
-	 * Sets the second property (the object) of the specified tupel, as searched
+	 * Sets the second property (the object) of the specified tuple, as searched
 	 * by its first property (the String), and updates the extra object.
 	 *
 	 * @param name String to search
@@ -386,7 +386,7 @@ public class Tuple
 	}
 
 	/**
-	 * Sets the second property (the object) of the specified tupel, as searched
+	 * Sets the second property (the object) of the specified tuple, as searched
 	 * by its first property (the String), and updates the extra object.
 	 *
 	 * @param name String to search
@@ -411,7 +411,7 @@ public class Tuple
 	}
 
 	/**
-	 * Deletes the specfied tupel by searching its first property (the String).
+	 * Deletes the specfied tuple by searching its first property (the String).
 	 * Deletes if found. Ignores otherwise.
 	 *
 	 * @param name String name to delete
@@ -433,7 +433,7 @@ public class Tuple
 	}
 
 	/**
-	 * Deletes the specified tupel by searching its second property (the object).
+	 * Deletes the specified tuple by searching its second property (the object).
 	 * Deletes if found. Ignores otherwise.
 	 *
 	 * @param o Object to delete
@@ -592,19 +592,19 @@ public class Tuple
 	private UUID			m_uuid;
 
 	/**
-	 * Holds list of String items for the tupel.  Has a 1:1 relationship with
+	 * Holds list of String items for the tuple.  Has a 1:1 relationship with
 	 * the entries in m_objects.
 	 */
 	private List<String>	m_names;
 
 	/**
-	 * Holds list of Object items for the tupel.  Has a 1:1 relationship with
+	 * Holds list of Object items for the tuple.  Has a 1:1 relationship with
 	 * the entries in m_names.
 	 */
 	private List<Object>	m_objects;
 
 	/**
-	 * Holds list of extra Object items for the tupel.  Has a 1:1 relationship
+	 * Holds list of extra Object items for the tuple.  Has a 1:1 relationship
 	 * with the entries in m_names.
 	 */
 	private List<Object>	m_extra1;

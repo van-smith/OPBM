@@ -285,8 +285,8 @@ public class Xml
 		if (root != null)
 		{
 			Xml xmlThis;
-			String search;
 			List<String> theseTags = null;
+			String search;
 			boolean lLookingForMoreLevels = false;
 
 			// Find out what we're searching for, a single tag or multiple theseTags deep
@@ -678,22 +678,61 @@ public class Xml
 	 * empty string otherwise
 	 *
 	 * @param root parent of
-	 * @param tag tag to search for
+	 * @param searchMaster tag to search for
 	 * @return string of tag if found, empty string otherwise
 	 */
 	public static String getAttributeOrChild(Xml		root,
-											 String		tag)
+											 String		searchMaster)
 	{
-		String s;
-		Xml x;
+		Xml xml;
+		String search;
+		boolean lLookingForMoreLevels = false;
 
-		x = root.getChildNode(tag);
-		if (x != null) {
+		// Find out what we're searching for
+		// Either a single tag or multiple levels deep from the root node
+		if (searchMaster.contains("."))
+		{	// Looking for "something.like.this" or "something.like.#this" for an attribute named "this" of root.something.like
+			search = searchMaster.substring(0, searchMaster.indexOf("."));
+			searchMaster = searchMaster.substring(search.length() + 1, searchMaster.length()).trim();
+			if (search.startsWith("#"))
+			{	// Looking for an explicit attribute now
+				return(getAttribute(root, search.substring(1)));
+
+			} else {
+				// May be looking for a child or an attribute
+				xml = root.getChildNode(search);
+				if (xml != null)
+				{	// We found it in the child
+					if (searchMaster.isEmpty())
+						return(xml.getText());
+					// Continue looking at lower levels
+					return(getAttributeOrChild(xml, searchMaster));
+				}
+				// Was not found as a child, try an attribute
+				xml = root.getAttributeNode(search);
+				if (xml != null)
+				{	// We found it in the attribute
+					if (searchMaster.isEmpty())
+						return(xml.getText());
+					// They want to continue looking at lower levels beyond this attribute, which we can't
+					// It's a syntax error
+					return("");
+				}
+			}
+
+		} else {								// Looking for something like "this" (one tag only)
+			search = searchMaster;
+
+		}
+
+		// Process this tag
+		xml = root.getChildNode(search);
+		if (xml != null) {
 			// We found it in the child
-			return(x.getText());
+			return(xml.getText());
 		}
 		// Was not found as a child, try an attribute
-		return(getAttribute(root, tag));
+		return(getAttribute(root, search));
 	}
 
 	/** Returns the node of the attribute or child tag specified (if found)
