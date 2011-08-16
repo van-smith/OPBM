@@ -45,6 +45,8 @@ import javax.imageio.ImageIO;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import opbm.common.ModalApp;
+import opbm.dialogs.DeveloperWindow;
+import opbm.dialogs.SimpleWindow;
 import org.xml.sax.SAXException;
 
 
@@ -325,6 +327,24 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
+	/**
+	 * Creates the developer window to allow editing of scripts.xml and other
+	 * xml files
+	 */
+	public void createDeveloperWindow()
+	{
+		m_frameDeveloper = new DeveloperWindow(this, false);
+	}
+
+	/**
+	 * Creates the simple skinned interface, which allows for "Trial Run" and
+	 * "Official Run", along with links to view previous entries
+	 */
+	public void createSimpleWindow()
+	{
+		m_frameSimple = new SimpleWindow(this, false);
+	}
+
 	/** Self-explanatory.  Builds the GUI for OPBM using a four-panel design:
 	 * 1)  Header
 	 * 2)  Left panel for navigation
@@ -334,136 +354,23 @@ public final class Opbm extends	ModalApp
 	 */
     public void createAndShowGUI()
 	{
-		Dimension prefSize;
+		createDeveloperWindow();		// For "developer" skin setting in settings.xml
+		createSimpleWindow();			// For "simple" skin setting in settings.xml
 
-		m_width = 1300;
-		m_height = 700 + /* statusBar.getHeight() is not yet assigned */ 16;
-        frame = new DroppableFrame(this, false);
-		frame.setTitle( m_title );
+		// See which one should be visible
+		if (m_settingsMaster.isSimpleSkin())
+		{	// We're only viewing the simple skin
+			m_frameSimple.setVisible(true);
 
-		// Compute the actual size we need for our window, so it's properly centered
-		frame.pack();
-        Insets fi		= frame.getInsets();
-		m_actual_width	= m_width  + fi.left + fi.right;
-		m_actual_height	= m_height + fi.top  + fi.bottom;
-        frame.setSize(m_width  + fi.left + fi.right,
-					  m_height + fi.top  + fi.bottom);
-
-        prefSize = new Dimension(m_width  + fi.left + fi.right,
-								 m_height + fi.top  + fi.bottom);
-        frame.setMinimumSize(prefSize);
-        frame.setPreferredSize(prefSize);
-
-        prefSize = new Dimension(m_width  + fi.left + fi.right,
-								 m_height + fi.top  + fi.bottom);
-        frame.setMinimumSize(prefSize);
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(m_width, m_height);
-        frame.setLocationRelativeTo(null);  // Center window
-        frame.setLayout(null);				// We handle all redraws
-		Container c = frame.getContentPane();
-        c.setBackground(new Color(120, 120, 120));
-		c.setForeground(Color.WHITE);
-
-        createStatusBar();
-		statusBar.setVisible(true);
-		frame.setStatusBar(statusBar);
-		frame.addKeyListener(this);
-		frame.addMouseWheelListener(this);
-		frame.addComponentListener(this);
-
-        frame.add(statusBar);
-        frame.setVisible(true);
-
-		// Create the header image
-		lblHeader = new JLabel();
-		try {
-			lblHeader.setIcon(new ImageIcon(ImageIO.read(new File(locateFile("header.png")))));
-
-		} catch (IOException ex) {
-			// Nothing to do really, indicates an improper installation
-			m_lastError = ex.getMessage();
-			lblHeader.setText("OPBM - Office Productivity Benchmark");
+		} else {
+			// Viewing the developer window
+			m_frameDeveloper.setVisible(true);
 		}
-		lblHeader.setBackground(Color.BLACK);
-		lblHeader.setForeground(Color.WHITE);
-		lblHeader.setOpaque(true);
-		lblHeader.setBounds(0, 0, m_width, 50);
-		lblHeader.setHorizontalAlignment(JLabel.LEFT);
-		lblHeader.setVisible(true);
-		frame.add(lblHeader);
-
-		// Create the left panel (displayed only if panels.xml doesn'tup load properly)
-		panLeft = new JPanel();
-		panLeft.setOpaque(true);
-		panLeft.setBackground(new Color(130,130,130));
-		panLeft.setForeground(Color.WHITE);
-		panLeft.setLayout(null);
-		panLeft.setVisible(false);
-		panLeft.setBounds(0, lblHeader.getHeight(), 250, m_height - lblHeader.getHeight() - statusBar.getHeight());
-
-		// Add default objects for when the loading the panel
-		Font f;
-		if (isFontOverride())
-			f	= new Font("Arial", Font.PLAIN, 16);
-		else
-			f	= new Font("Calibri", Font.PLAIN, 18);
-
-		JLabel l1 = new JLabel("Error loading panels.xml");
-		l1.setBounds(5, 5, 240, 25);
-		l1.setForeground(new Color(255,255,128));
-		l1.setFont(f);
-		l1.setHorizontalAlignment(JLabel.LEFT);
-		l1.setVisible(true);
-
-		JLabel l2 = new JLabel("Please correct");
-		l2.setBounds(5, 30, 240, 25);
-		l2.setForeground(new Color(255,255,128));
-		l2.setFont(f);
-		l2.setHorizontalAlignment(JLabel.LEFT);
-		l2.setVisible(true);
-
-		panLeft.add(l1);
-		panLeft.add(l2);
-		frame.add(panLeft);
-
-		// Create the right panel
-		panRight = new JPanel();
-		panRight.setOpaque(true);
-		panRight.setBackground(new Color(209,200,172));
-		panRight.setForeground(new Color(97,93,80));
-		panRight.setBounds(251, lblHeader.getHeight(), m_width - panLeft.getWidth(), m_height - lblHeader.getHeight() - statusBar.getHeight());
-		panRight.setLayout(null);
-		panRight.setVisible(true);
-
-
-//////////
-// OPBM
-//   by Cana Labs,
-//      Cossatot Analytics Laboratories, LLC.
-//
-// (c) 2011.
-//
-// Written by:
-//   Van Smith, Rick C. Hodgin
-/////
-		l1 = new JLabel("<html><font size=\"+2\"><b>OPBM</b></font><br><i><font size=\"-1\">&nbsp;&nbsp;&nbsp;by Cana Labs,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cossatot Analytics Laboratories, LLC.<br><br>&nbsp;&nbsp;&nbsp;<i>(c) 2011.<br><br></i></font><b>Written by:</b><font size=\"-1\"><i><br>&nbsp;&nbsp;&nbsp;Van Smith, Rick C. Hodgin<br><br><br><br><br>&nbsp</i></font>");
-		l1.setBounds(0, 0, panRight.getWidth(), panRight.getHeight());
-		l1.setBackground(panRight.getBackground());
-		l1.setForeground(panRight.getForeground());
-		l1.setFont(f);
-		l1.setHorizontalAlignment(JLabel.CENTER);
-		l1.setVerticalAlignment(JLabel.CENTER);
-		l1.setVisible(true);
-		panRight.add(l1);
-
-		frame.add(panRight);
 
 		// Load the XML panel content
 		if (loadPanelsXml()) {
 			// Once the Xml panel content is loaded, create all of the physical panels based on its instruction
-			if (PanelFactory.createLeftPanelObjects(this, m_macroMaster, lblHeader, statusBar, panLeft, frame)) {
+			if (PanelFactory.createLeftPanelObjects(this, m_macroMaster, m_frameDeveloper.lblHeader, m_frameDeveloper.statusBar, m_frameDeveloper.panLeft, m_frameDeveloper)) {
 				// All default panels are created, render the top-level item
 				if (navigateToLeftPanel("main")) {
 					// If we get here, the main navigation panel is displayed and we're still good
@@ -472,18 +379,18 @@ public final class Opbm extends	ModalApp
 						if (loadScriptsXml()) {
 							// We have our scripts loaded, we're totally good
 							// Normal system flow should reach this point
-							statusBar.setText("Loaded panels.xml, edits.xml and scrips.xml okay.");
+							m_frameDeveloper.statusBar.setText("Loaded panels.xml, edits.xml and scrips.xml okay.");
 
 						} else {
 							// Not found or not loaded properly, navigate to the raw editing options
-							statusBar.setText("Error loading scripts.xml.  Please repair file manually. " + m_lastError);
+							m_frameDeveloper.statusBar.setText("Error loading scripts.xml.  Please repair file manually. " + m_frameDeveloper.m_lastError);
 							navigateToLeftPanel("XML File Maintenance");
 
 						}
 
 					} else {
 						// Not found or not loaded properly, navigate to the raw editing options
-						statusBar.setText("Error loading edits.xml.  Please repair file manually. " + m_lastError);
+						m_frameDeveloper.statusBar.setText("Error loading edits.xml.  Please repair file manually. " + m_frameDeveloper.m_lastError);
 						navigateToLeftPanel("XML File Maintenance");
 
 					}
@@ -491,20 +398,20 @@ public final class Opbm extends	ModalApp
 				} else {
 					// If we get here, the "main" panel wasn'tup found
 					// Display our default panel, which indicates the error condition
-					panLeft.setVisible(true);
+					m_frameDeveloper.panLeft.setVisible(true);
 				}
 
 			} else {
 				// If we get here, the "main" panel wasn'tup found
 				// Display our default panel, which indicates the error condition
-				panLeft.setVisible(true);
+				m_frameDeveloper.panLeft.setVisible(true);
 			}
 
 		} else {
 			// If we get here, the "main" panel wasn'tup found
 			// Display our default panel, which indicates the error condition
-			statusBar.setText("Error loading panels.xml.  Please exit application and repair file manually. " + m_lastError);
-			panLeft.setVisible(true);
+			m_frameDeveloper.statusBar.setText("Error loading panels.xml.  Please exit application and repair file manually. " + m_frameDeveloper.m_lastError);
+			m_frameDeveloper.panLeft.setVisible(true);
 		}
     }
 
@@ -610,7 +517,7 @@ public final class Opbm extends	ModalApp
 					m_editPanels.remove(i);
 					m_editActive = null;
 				}
-				panRight.setVisible(true);
+				m_frameDeveloper.panRight.setVisible(true);
 				return(true);
 			}
 		}
@@ -660,7 +567,7 @@ public final class Opbm extends	ModalApp
 					m_rawEditPanels.remove(i);
 					m_rawEditActive = null;
 				}
-				panRight.setVisible(true);
+				m_frameDeveloper.panRight.setVisible(true);
 				return(true);
 			}
 		}
@@ -681,7 +588,7 @@ public final class Opbm extends	ModalApp
 		for (i = 0; i < m_editPanels.size(); i++) {
 			pr = m_editPanels.get(i);
 			if (pr.getName().equalsIgnoreCase(name)) {
-				panRight.setVisible(false);
+				m_frameDeveloper.panRight.setVisible(false);
 				pr.setVisible(true);
 				pr.navigateTo();
 				m_editActive = pr;
@@ -705,7 +612,7 @@ public final class Opbm extends	ModalApp
 		for (i = 0; i < m_rawEditPanels.size(); i++) {
 			pr = m_rawEditPanels.get(i);
 			if (pr.getName().equalsIgnoreCase(name)) {
-				panRight.setVisible(false);
+				m_frameDeveloper.panRight.setVisible(false);
 				pr.setVisible(true);
 				pr.navigateTo();
 				m_rawEditActive = pr;
@@ -865,13 +772,13 @@ public final class Opbm extends	ModalApp
 			root			= Xml.processW3cNodesIntoXml(null, docPanelsXml.getChildNodes());
 
 		} catch (ParserConfigurationException ex) {
-			m_lastError = ex.getMessage();
+			m_lastStaticError = ex.getMessage();
 
 		} catch (SAXException ex) {
-			m_lastError = ex.getMessage();
+			m_lastStaticError = ex.getMessage();
 
 		} catch (IOException ex) {
-			m_lastError = ex.getMessage();
+			m_lastStaticError = ex.getMessage();
 
 		}
 		return(root);	// success if root was defined
@@ -970,9 +877,9 @@ public final class Opbm extends	ModalApp
 	 */
 	public boolean edit(String name)
 	{
-		PanelRight panel = PanelFactory.createRightPanelFromEdit(name, this, m_macroMaster, m_commandMaster, lblHeader, statusBar, panRight, frame, "", "");
+		PanelRight panel = PanelFactory.createRightPanelFromEdit(name, this, m_macroMaster, m_commandMaster, m_frameDeveloper.lblHeader, m_frameDeveloper.statusBar, m_frameDeveloper.panRight, m_frameDeveloper, "", "");
 		if (panel == null) {
-			statusBar.setText("Error: Unable to edit " + name + ".");
+			m_frameDeveloper.statusBar.setText("Error: Unable to edit " + name + ".");
 			return(false);
 
 		} else {
@@ -994,9 +901,9 @@ public final class Opbm extends	ModalApp
 	 */
 	public boolean rawedit(String fileName)
 	{
-		PanelRight panel = PanelFactory.createRightPanelFromRawEdit(fileName, this, m_macroMaster, m_commandMaster, lblHeader, statusBar, panRight, frame);
+		PanelRight panel = PanelFactory.createRightPanelFromRawEdit(fileName, this, m_macroMaster, m_commandMaster, m_frameDeveloper.lblHeader, m_frameDeveloper.statusBar, m_frameDeveloper.panRight, m_frameDeveloper);
 		if (panel == null) {
-			statusBar.setText("Error: Unable to load " + fileName + " for editing.");
+			m_frameDeveloper.statusBar.setText("Error: Unable to load " + fileName + " for editing.");
 			return(false);
 
 		} else {
@@ -1012,25 +919,6 @@ public final class Opbm extends	ModalApp
 		return(true);
 	}
 
-	/**
-	 * Creates the statusBar, which appears at the bottom of the screen.
-	 *
-	 */
-    private void createStatusBar()
-	{
-        statusBar = new Label();
-        statusBar.setBackground(Color.LIGHT_GRAY);
-        statusBar.setForeground(Color.BLACK);
-        Dimension d = new Dimension(frame.getWidth(), 16);
-        statusBar.setMinimumSize(d);
-        statusBar.setMaximumSize(d);
-        statusBar.setPreferredSize(d);
-		statusBar.setSize(d);
-		statusBar.setLocation(0, frame.getHeight() - 16);
-		statusBar.addKeyListener(this);
-		statusBar.addMouseWheelListener(this);
-    }
-
 	/** Called to resize everything when the user resizes the window.
 	 *
 	 */
@@ -1038,36 +926,25 @@ public final class Opbm extends	ModalApp
 	{
 		int i;
 
-		// Reposition/size the statusBar
-		statusBar.setLocation(0, m_height - statusBar.getHeight());
-		statusBar.setSize(m_width, statusBar.getHeight());
-		statusBar.repaint();
-
-		// Reposition/size the scrollBarV
-		lblHeader.setSize(m_width, lblHeader.getHeight());
-		lblHeader.repaint();
-
-		// Resize the right panel
-		panRight.setSize(m_width - panRight.getX(),
-						 m_height - panRight.getY() - statusBar.getHeight());
+		m_frameDeveloper.resizeEverything();
 
 		// Resize the navigation panels
 		for (i = 0; i < m_leftPanels.size(); i++) {
-			m_leftPanels.get(i).afterWindowResize(panRight.getX() - 1,
-												  panRight.getHeight());
+			m_leftPanels.get(i).afterWindowResize(m_frameDeveloper.panRight.getX() - 1,
+												  m_frameDeveloper.panRight.getHeight());
 		}
 
 		// Resize the active edits (if any)
 		if (m_rawEditActive != null) {
-			m_rawEditActive.afterWindowResize(panRight.getWidth(),
-											  panRight.getHeight());
+			m_rawEditActive.afterWindowResize(m_frameDeveloper.panRight.getWidth(),
+											  m_frameDeveloper.panRight.getHeight());
 		}
 
 		if (m_editActive != null) {
-			m_editActive.afterWindowResize(panRight.getWidth(),
-										   panRight.getHeight());
+			m_editActive.afterWindowResize(m_frameDeveloper.panRight.getWidth(),
+										   m_frameDeveloper.panRight.getHeight());
 		}
-		frame.repaint();
+		m_frameDeveloper.repaint();
 	}
 
 	/** Called when the scrollbar position moves.
@@ -1106,12 +983,7 @@ public final class Opbm extends	ModalApp
 	public void componentResized(ComponentEvent evt)
 	{
 	// Called when the newFrame (window) is resized
-		Dimension newSize = ((Component)evt.getSource()).getSize();
-		Insets fi = frame.getInsets();
-		m_actual_width	= (int)newSize.getWidth();
-		m_actual_height	= (int)newSize.getHeight();
-		m_width			= m_actual_width  - fi.left - fi.right;
-		m_height		= m_actual_height - fi.top  - fi.bottom;
+		m_frameDeveloper.componentResized(evt);
 		resizeEverything();
 	}
 
@@ -1313,12 +1185,12 @@ public final class Opbm extends	ModalApp
 
 	public void hideMainPanel()
 	{
-		frame.setVisible(false);
+		m_frameDeveloper.setVisible(false);
 	}
 
 	public void showMainPanel()
 	{
-		frame.setVisible(true);
+		m_frameDeveloper.setVisible(true);
 	}
 
 	public void addZoomWindow(JFrame fr)
@@ -1688,7 +1560,7 @@ public final class Opbm extends	ModalApp
 	 */
 	public DroppableFrame getGUIFrame()
 	{
-		return(frame);
+		return(m_frameDeveloper);
 	}
 
 	/** Main app entry point.
@@ -1787,33 +1659,6 @@ public final class Opbm extends	ModalApp
 	private Commands				m_commandMaster;
 
 	/**
-	 * When an error occurs, holds the text caused by the exception
-	 */
-	private static String			m_lastError;
-
-	/**
-	 * Width of client area only (does not include size of window borders,
-	 * header, etc.)
-	 */
-	private int						m_width;
-
-	/**
-	 * Height of client area only (does not include size of window borders,
-	 * header, etc.)
-	 */
-	private int						m_height;
-
-	/**
-	 * Total width, including OS's handling of window borders.
-	 */
-	private int						m_actual_width;
-
-	/**
-	 * Total height, including OS's handling of window borders.
-	 */
-	private int						m_actual_height;
-
-	/**
 	 * Command line switch "-font" can be used to indiate not running in
 	 * Windows.  Used to switch default font from Calibri to Arial.
 	 */
@@ -1832,31 +1677,8 @@ public final class Opbm extends	ModalApp
 	 * These elements are always present, though they change through the real-
 	 * time use of the system by users.
 	 */
-    private DroppableFrame			frame;
-
-	/**
-	 * Holds the status bar display of tooltip texts, system messages, etc.
-	 */
-    private Label					statusBar;
-
-	/**
-	 * Holds the OPBM logo at the top in the header area.
-	 */
-	private JLabel					lblHeader;
-
-	/**
-	 * Holds the default left-panel object, indicating the reference size,
-	 * position and color for all "cloned" child left-panel objects built by
-	 * <code>PanelFactory.createLeftPanelObjects()</code>.
-	 */
-	private JPanel					panLeft;
-
-	/**
-	 * Holds the default right-panel object, indicating the reference size,
-	 * position and color for all "cloned" child right-panel objects built by
-	 * <code>PanelFactory.createRightPanelFromEdit()</code>.
-	 */
-	private JPanel					panRight;
+    private DeveloperWindow			m_frameDeveloper;
+	private SimpleWindow			m_frameSimple;
 
 	private List<JFrame>			m_zoomFrames;
 	private ResultsViewer			m_rv;
@@ -1880,6 +1702,7 @@ public final class Opbm extends	ModalApp
 	/**
 	 * An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not
 	 */
-	private static boolean			m_breakpointsEnabled;
-	private static String			m_title = "OPBM - Office Productivity Benchmark";
+	public static boolean			m_breakpointsEnabled;
+	public static String			m_title					= "OPBM - Office Productivity Benchmark";
+	public static String			m_lastStaticError;
 }
