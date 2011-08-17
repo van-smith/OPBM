@@ -250,6 +250,56 @@
 
 //////////
 //
+// dir = getCSIDLDirectory()
+//
+// Called to return the CSIDL location of the specified directory.
+//
+/////
+	// getCSIDLDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getCSIDLDirectory(JNIEnv* env, jclass cls, jstring str)
+	{
+		char		dirname[ MAX_PATH ];
+		const char* ccptr;
+		char*		cptr;
+		jboolean	isCopy;
+		jstring		directory;
+		int			length;
+
+		// Initialize the variable
+		memset(dirname, 0, sizeof(dirname));
+
+		// Allocate the variable
+		length	= env->GetStringLength(str);
+		if (length != 0)
+		{
+			ccptr = env->GetStringUTFChars(str, &isCopy);		// returns const char*
+			if (ccptr != NULL)
+			{
+				cptr = (char*)malloc(length);					// returns char*
+				if (cptr != NULL)
+				{
+					memcpy(cptr, ccptr, length);
+
+					// Allocate the variable
+					GetCSIDLDirectory(dirname, sizeof(dirname), cptr);
+
+					// Release the non-const memory
+					free(cptr);
+				}
+				env->ReleaseStringUTFChars(str, ccptr);
+			}
+		}
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+		return(directory);
+	}
+
+
+
+
+//////////
+//
 // snapshotProcesses()
 //
 // Called to take a snapshot of all running processes as of the time of this call.

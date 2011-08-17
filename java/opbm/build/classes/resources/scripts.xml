@@ -113,17 +113,30 @@
 		</flows>
 		<abstracts>
 			<abstract name="execute">
-				<engine>autoit</engine>
 				<logical>execute</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace)</real>
 			</abstract>
 			<abstract name="executeParams">
-				<engine>autoit</engine>
 				<logical>execute_params</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace) (leftbrace)(colon)p1, First parameter(colon)(rightbrace) (leftbrace)(colon)p2, Second parameter(colon)(rightbrace) (leftbrace)(colon)p3, Third parameter(colon)(rightbrace) (leftbrace)(colon)p4, Fourth parameter(colon)(rightbrace) (leftbrace)(colon)p5, Fifth parameter(colon)(rightbrace) (leftbrace)(colon)p6, Sixth parameter(colon)(rightbrace) (leftbrace)(colon)p7, Seventh parameter(colon)(rightbrace) (leftbrace)(colon)p8, Eighth parameter(colon)(rightbrace) (leftbrace)(colon)p9, Ninth parameter(colon)(rightbrace) (leftbrace)(colon)p10, Tenth parameter(colon)(rightbrace)</real>
 			</abstract>
+			<abstract name="rebootAndTerminate">
+				<logical>reboot_and_terminate</logical>
+				<real></real>
+			</abstract>
+			<abstract name="rebootAndContinue">
+				<logical>reboot_and_continue</logical>
+				<real></real>
+			</abstract>
+			<abstract name="rebootAndRestart">
+				<logical>reboot_and_restart</logical>
+				<real></real>
+			</abstract>
 		</abstracts>
 		<atoms>
+			<atom name="Reboot And Terminate">
+				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
+			</atom>
 			<atom name="All Tests">
 				<abstract name="Excel World Heat" sourcename="execute">
 					<options>

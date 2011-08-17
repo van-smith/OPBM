@@ -65,6 +65,14 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_getSettingsDirectory
 
 /*
  * Class:     opbm_Opbm
+ * Method:    getCSIDLDirectory
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_getCSIDLDirectory
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     opbm_Opbm
  * Method:    snapshotProcesses
  * Signature: ()V
  */

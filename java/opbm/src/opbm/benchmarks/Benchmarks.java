@@ -88,10 +88,6 @@ public class Benchmarks
 		}
 		// Execute the trial run benchmark
 		OpbmDialog od = new OpbmDialog(m_opbm, "Trial Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException ex) {
-		}
 	}
 
 	/**
@@ -133,10 +129,155 @@ public class Benchmarks
 		}
 		// Execute the official run benchmark
 		OpbmDialog od = new OpbmDialog(m_opbm, "Official Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException ex) {
+	}
+
+	/**
+	 * Called to physically execute the specified atom (pointed to by "atom")
+	 * @param atom
+	 * @param iterations
+	 */
+	public void benchmarkRunAtom(Xml	atom,
+								 int	iterations)
+	{
+		int i;
+		Xml child, xmlSuccess, xmlFailure, xmlIteration, xmlRun_Success, xmlRun_Failure;
+
+		// Indicate the atom we're going into for the stack
+		m_bp.m_benchmarkStack.add(atom);
+
+		// Append the atom's entry to the output/results xml file
+		xmlRun_Success	= new Xml("atom");
+		xmlRun_Success.appendAttribute(new Xml("name", atom.getAttribute("name")));
+		m_bp.m_xmlRun.appendChild(xmlRun_Success);
+
+		xmlRun_Failure	= new Xml("failures");
+		xmlRun_Failure.appendAttribute(new Xml("name", atom.getAttribute("name")));
+		m_bp.m_xmlRun.appendChild(xmlRun_Failure);
+
+// REMEMBER In the future, will store data here containing run profile (information, notes, optimization settings, etc.)
+
+		// Initialize everything
+		xmlSuccess	= null;
+		xmlFailure	= null;
+
+		// We are processing as many iterations of this atom as were specified by the caller
+		// Note:  These iterations are different than retry counts, but are passed parameters
+		//        (typically from the command) line which indicate a repeating set of data
+		m_bp.m_maxIterations = iterations;
+		for (i = 0; i < iterations; i++)
+		{
+			// Process through the entire atom, based on its logic
+			child = atom.getFirstChild();
+			Stack.enterNewBlock(Stack._STACK_ROOT, child, m_bp.m_atomStack);
+
+			if (iterations != 1)
+			{
+				xmlSuccess		= xmlRun_Success;
+				xmlFailure		= xmlRun_Failure;
+				xmlIteration	= new Xml("iteration");
+
+				// Append success iteration information
+				xmlIteration.appendAttribute("this", Integer.toString(i+1));
+				xmlIteration.appendAttribute("max", Integer.toString(iterations));
+				xmlRun_Success = xmlRun_Success.appendChild(xmlIteration);
+				xmlRun_Failure = xmlRun_Failure.appendChild(xmlIteration);
+
+				// Indicate where we are in the overall scheme
+				m_bp.m_thisIteration			= i + 1;
+				m_bp.m_bpAtom.m_executeCounter	= 0;
+				m_bp.m_bpAtom.m_failureCounter	= 0;
+
+			} else {
+				m_bp.m_thisIteration = 0;
+
+			}
+
+			// Process all atom commands one-by-one until finished, or until the user presses the stop button
+			while (child != null)
+			{
+				if (m_bp.m_debuggerActive)
+				{
+					// Update the debugger display
+					m_bp.m_debugLastAction	= m_bp.m_debuggerOrHUDAction;
+					m_bp.m_debuggerOrHUDAction	= BenchmarkParams._NO_ACTION;
+					m_bp.m_debugParent		= atom;
+					m_bp.m_debugChild		= child;
+					// Put focus in the window
+					m_bp.m_deb.forceWindowToHaveFocus();
+					m_bp.m_deb.update();
+
+					if (m_bp.m_singleStepping)
+					{
+						// Position the cursor
+						m_bp.m_deb.getCareTextbox().requestFocusInWindow();
+
+						// Wait for user input and respond to the command
+						try {
+							do {
+								// The warning which appears here can be ignored because we're
+								// waiting for the debugger's window to set a value here in
+								// m_bp.m_debuggerOrHUDAction.  Once populated, the break
+								// will be executed below.
+								// It may be worth in the future creation some atomic variable
+								// that can be set and released by the debugger.  For now,
+								// this works.
+								Thread.sleep(50);
+
+								// Did they select something while they were running?
+								if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION)
+									break;
+
+							} while (true);
+
+						} catch (InterruptedException ex) {
+						}
+						m_bp.m_deb.setVisible(false);
+
+						// See what option they chose
+						if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._RUN) {
+							// Lower the single-stepping flag
+							m_bp.m_singleStepping = false;
+
+						} else if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._SINGLE_STEP) {
+							// Do nothing, except continue on
+
+						} else if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP) {
+							// We're finished
+							break;
+						}
+					}
+				}
+
+				// Process the next command
+				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRun_Success, xmlRun_Failure);
+				if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+					break;
+			}
+
+			if (iterations != 1)
+			{	// For each iteration we created (above) a child of the actual
+				// xmlRun_Success and xmlRun_Failure entries.
+				// So now we have to restore them back to their parent values,
+				// for the next iteration, or for the completion of the run.
+				if (xmlSuccess != null)
+					xmlRun_Success = xmlSuccess;
+
+				if (xmlFailure != null)
+					xmlRun_Failure = xmlFailure;
+			}
+
+			// If the user is telling us to stop, we stop
+			if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+				break;
 		}
+
+		// When we get here, we are finished with the run, generate the outputs to the success branch
+		m_bp.m_bpAtom.generateSummaryCSVs(xmlRun_Success);
+		appendResultsDataForResultsViewer(xmlRun_Success);
+		// Note:  The failure branch is not post-processed here, but remains in the file for later (manual?) examination
+
+		// Indicate the atom is done
+		m_bp.m_benchmarkStack.remove(m_bp.m_benchmarkStack.size() - 1);		// Remove the last item
 	}
 
 	/**
@@ -444,155 +585,6 @@ public class Benchmarks
 	{
 		// Grab the selected Atom node from the listbox
 		return(pri.getParentPR().getListboxOrLookupboxNodeByName(p1));
-	}
-
-	/**
-	 * Called to physically execute the specified atom (pointed to by "atom")
-	 * @param atom
-	 * @param iterations
-	 */
-	public void benchmarkRunAtom(Xml	atom,
-								 int	iterations)
-	{
-		int i;
-		Xml child, xmlSuccess, xmlFailure, xmlIteration, xmlRun_Success, xmlRun_Failure;
-
-		// Indicate the atom we're going into for the stack
-		m_bp.m_benchmarkStack.add(atom);
-
-		// Append the atom's entry to the output/results xml file
-		xmlRun_Success	= new Xml("atom");
-		xmlRun_Success.appendAttribute(new Xml("name", atom.getAttribute("name")));
-		m_bp.m_xmlRun.appendChild(xmlRun_Success);
-
-		xmlRun_Failure	= new Xml("failures");
-		xmlRun_Failure.appendAttribute(new Xml("name", atom.getAttribute("name")));
-		m_bp.m_xmlRun.appendChild(xmlRun_Failure);
-
-// REMEMBER In the future, will store data here containing run profile (information, notes, optimization settings, etc.)
-
-		// Initialize everything
-		xmlSuccess	= null;
-		xmlFailure	= null;
-
-		// We are processing as many iterations of this atom as were specified by the caller
-		// Note:  These iterations are different than retry counts, but are passed parameters
-		//        (typically from the command) line which indicate a repeating set of data
-		m_bp.m_maxIterations = iterations;
-		for (i = 0; i < iterations; i++)
-		{
-			// Process through the entire atom, based on its logic
-			child = atom.getFirstChild();
-			Stack.enterNewBlock(Stack._STACK_ROOT, child, m_bp.m_atomStack);
-
-			if (iterations != 1)
-			{
-				xmlSuccess		= xmlRun_Success;
-				xmlFailure		= xmlRun_Failure;
-				xmlIteration	= new Xml("iteration");
-
-				// Append success iteration information
-				xmlIteration.appendAttribute("this", Integer.toString(i+1));
-				xmlIteration.appendAttribute("max", Integer.toString(iterations));
-				xmlRun_Success = xmlRun_Success.appendChild(xmlIteration);
-				xmlRun_Failure = xmlRun_Failure.appendChild(xmlIteration);
-
-				// Indicate where we are in the overall scheme
-				m_bp.m_thisIteration			= i + 1;
-				m_bp.m_bpAtom.m_executeCounter	= 0;
-				m_bp.m_bpAtom.m_failureCounter	= 0;
-
-			} else {
-				m_bp.m_thisIteration = 0;
-
-			}
-
-			// Process all atom commands one-by-one until finished, or until the user presses the stop button
-			while (child != null)
-			{
-				if (m_bp.m_debuggerActive)
-				{
-					// Update the debugger display
-					m_bp.m_debugLastAction	= m_bp.m_debuggerOrHUDAction;
-					m_bp.m_debuggerOrHUDAction	= BenchmarkParams._NO_ACTION;
-					m_bp.m_debugParent		= atom;
-					m_bp.m_debugChild		= child;
-					// Put focus in the window
-					m_bp.m_deb.forceWindowToHaveFocus();
-					m_bp.m_deb.update();
-
-					if (m_bp.m_singleStepping)
-					{
-						// Position the cursor
-						m_bp.m_deb.getCareTextbox().requestFocusInWindow();
-
-						// Wait for user input and respond to the command
-						try {
-							do {
-								// The warning which appears here can be ignored because we're
-								// waiting for the debugger's window to set a value here in
-								// m_bp.m_debuggerOrHUDAction.  Once populated, the break
-								// will be executed below.
-								// It may be worth in the future creation some atomic variable
-								// that can be set and released by the debugger.  For now,
-								// this works.
-								Thread.sleep(50);
-
-								// Did they select something while they were running?
-								if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION)
-									break;
-
-							} while (true);
-
-						} catch (InterruptedException ex) {
-						}
-						m_bp.m_deb.setVisible(false);
-
-						// See what option they chose
-						if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._RUN) {
-							// Lower the single-stepping flag
-							m_bp.m_singleStepping = false;
-
-						} else if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._SINGLE_STEP) {
-							// Do nothing, except continue on
-
-						} else if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP) {
-							// We're finished
-							break;
-						}
-					}
-				}
-
-				// Process the next command
-				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRun_Success, xmlRun_Failure);
-				if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
-					break;
-			}
-
-			if (iterations != 1)
-			{	// For each iteration we created (above) a child of the actual
-				// xmlRun_Success and xmlRun_Failure entries.
-				// So now we have to restore them back to their parent values,
-				// for the next iteration, or for the completion of the run.
-				if (xmlSuccess != null)
-					xmlRun_Success = xmlSuccess;
-
-				if (xmlFailure != null)
-					xmlRun_Failure = xmlFailure;
-			}
-
-			// If the user is telling us to stop, we stop
-			if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
-				break;
-		}
-
-		// When we get here, we are finished with the run, generate the outputs to the success branch
-		m_bp.m_bpAtom.generateSummaryCSVs(xmlRun_Success);
-		appendResultsDataForResultsViewer(xmlRun_Success);
-		// Note:  The failure branch is not post-processed here, but remains in the file for later (manual?) examination
-
-		// Indicate the atom is done
-		m_bp.m_benchmarkStack.remove(m_bp.m_benchmarkStack.size() - 1);		// Remove the last item
 	}
 
 	/**

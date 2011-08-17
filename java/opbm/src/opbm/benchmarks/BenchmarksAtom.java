@@ -890,228 +890,6 @@ public class BenchmarksAtom
 		return(null);
 	}
 
-	/**
-	 * @param thisCommand xml to the atom of this command
-	 * @param root xml to the atom's root entry, containing
-	 * @param xmlRun_Success xml to append tags to for this portion of the run when it succeeds
-	 * @param xmlRun_Failure xml to append tags to for this portion of the run if there are failures
-	 */
-	public Xml processAbstract_Atom(Xml		thisCommand,
-									Xml		root,
-									Xml		xmlRun_RunSuccess,
-									Xml		xmlRun_RunFailure)
-	{
-		int i, retryCount;
-		Xml options, xmlType, xmlError;
-		Xml xmlOutput;
-		Process process;
-		String exception, exception2, name, curDir, counter;
-		String command = "";
-		boolean failure;
-
-		// See what our command is
-		if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("execute"))
-		{
-			// Initially set the failure condition to true, flag is lowered at the end if we're okay
-			failure		= true;
-			retryCount	= 0;
-
-			// Executing with no parameters
-			options = thisCommand.getChildNode("options");
-			if (options != null)
-			{	// It appears to be a properly formatted atom command, so we'll run it
-
-				while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount < m_bp.m_retryAttempts)
-				{	// Process repepatedly until we have a success, or our on-failure retry count is reached, or the user forces a stop
-					// Prepare for this run
-					m_bp.m_wui.prepareBeforeScriptExecution();
-
-					// See what we're doing
-					command = m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("executable"));
-					if (!command.isEmpty())
-					{
-						// Update the hud with executed scripts, plus failures
-						counter = Integer.toString(m_executeCounter) + " " + Utils.singularOrPlural(m_executeCounter, "Script", "Scripts") + " Executed";
-						if (m_failureCounter != 0)
-							counter += ", " + Integer.toString(m_failureCounter) + Utils.singularOrPlural(m_failureCounter, "Failure", "Failures");
-
-						if (m_bp.m_thisIteration != 0)
-						{	// Update the iteration information
-							counter = Integer.toString(m_bp.m_thisIteration) + " of " + Integer.toString(m_bp.m_maxIterations) + "; " + counter;
-						}
-						m_bp.m_hud.updateCounter(counter);
-
-						// Change the current directory to the directory of the executable
-						curDir = Utils.makeTheCurrentDirectoryThatOfThisExecutable(command);
-
-						// Add the type of run made
-						xmlType = new Xml("abstract");
-						name = m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
-						xmlType.appendAttribute("name", name);
-						xmlType.appendAttribute("sourcename", thisCommand.getAttribute("sourcename"));
-
-						// Indicate our beginning, and the command to execute
-						xmlType.appendChild(Utils.processExecutableLine("start", Utils.getTimestamp()));
-						xmlType.appendChild(new Xml("command", command));
-
-						// Add space for any errors
-						xmlError = new Xml("errors");
-						xmlType.appendChild(xmlError);
-
-						// Clear off any previous "process" that may be hanging on out there for garbage collection
-						process = null;
-						try {
-							// Start the process
-							process	= Runtime.getRuntime().exec( command );
-
-							// Grab the output
-							m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
-							m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
-							m_bp.m_errorGobbler.start();
-							m_bp.m_outputGobbler.start();
-
-							// Wait for the process to finish
-							process.waitFor();
-							// Returns 0 if everything succeeded normally without error
-
-							// Identify the termination time
-							xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", process.exitValue() == 0 ? "success" : "fail"));
-
-							// Make sure we finish reading before continuing
-							m_bp.m_errorGobbler.join();
-							m_bp.m_outputGobbler.join();
-
-							// Grab the exit value1
-							xmlType.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
-
-							// If we get here, then everything proceeded normally
-							failure	= false;
-
-						} catch (Throwable t) {
-							// Make sure we finish reading before continuing
-							exception2 = "";
-							try {
-								if (m_bp.m_errorGobbler != null)
-									m_bp.m_errorGobbler.join();
-
-								if (m_bp.m_outputGobbler != null)
-									m_bp.m_outputGobbler.join();
-
-							} catch (Throwable t2) {
-								exception2 = ": (Second exception caught: " + t2.getMessage() + ")";
-							}
-							xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", "exception"));
-							exception = Utils.getTimestamp() + ": Threw an exception: " + t.getMessage() + exception2;
-							xmlType.appendChild(Utils.processExecutableLine("process", exception));
-							m_bp.m_outputArray.add(exception);
-
-						}
-
-						// Reset the directory
-						Utils.setCurrentDirectory(curDir);
-
-//////////
-// FAILURE TRIGGERED BY REPORTED ERROR
-						// For each line of errors, save the entry
-						if (!m_bp.m_errorArray.isEmpty())
-						{	// We had at least one error, which marks this as a failure
-							failure		= true;
-							for (i = 0; i < m_bp.m_errorArray.size(); i++)
-								xmlError.appendChild(Utils.processExecutableLine("error", m_bp.m_errorArray.get(i)));
-							m_bp.m_errorArray.clear();
-
-						} else {
-							// We succeeded
-							failure = false;
-						}
-
-						// For each line of output, save the entry
-						xmlOutput = new Xml("outputs");
-						xmlType.appendChild(xmlOutput);
-						if (!m_bp.m_outputArray.isEmpty())
-						{	// There were lines intercepted from the script
-							for (i = 0; i < m_bp.m_outputArray.size(); i++)
-							{	// If the script wrote any "error," entries to stdout (instead of stderr)
-								// we still need to catch those and interpret their directive as a failure on this pass
-								if (!failure && m_bp.m_outputArray.get(i).toLowerCase().contains(" error,"))
-								{	// This was an error, we have a failure
-									failure = true;
-								}
-								xmlOutput.appendChild(Utils.processExecutableLine("output", m_bp.m_outputArray.get(i)));
-							}
-							m_bp.m_outputArray.clear();
-						}
-
-//////////
-// FAILURE TRIGGERED BY EXIT VALUE
-						// The only condition that will signal a failure outside of an error code,
-						// is if the process terminated with a non-zero value
-						if (!failure && process != null && process.exitValue() != 0)
-						{	// A failure was noted by its exit value, but nothing was logged in the error queue
-							failure = true;
-							xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
-						}
-
-						if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
-						{	// User force-terminated the execution
-							xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": User force-terminated benchmark via stop button in HUD"));
-						}
-
-						// Now, based on the state of this run, we append its information to the appropriate place
-						if (failure && (retryCount + 1) < m_bp.m_retryAttempts)
-						{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
-							xmlRun_RunFailure.appendChild(xmlType);
-
-						} else {
-							// Just append like normal, they're not retrying, this failure will persist
-							xmlRun_RunSuccess.appendChild(xmlType);
-							// If we succeed, we make only one pass through the loop, no need to increment the retry count
-						}
-						// Move the counter for the next retry
-						++retryCount;
-
-						// Clean up any temporary files and what-not which the script may have left behind
-						m_bp.m_wui.cleanupAfterScriptExecution();
-					}
-				}
-			}
-			// Increase our counter
-			if (failure)
-			{
-				++m_failureCounter;
-				if (m_bp.m_settingsMaster.benchmarkStopsIfRetriesFail())
-				{	// We have to force the stop now
-					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
-				}
-
-			} else {
-				++m_executeCounter;
-
-			}
-
-			// After the execute is finished, wait for the CPU to settle down
-			if (!(m_bp.m_debuggerActive && m_bp.m_singleStepping))
-				m_bp.m_wui.pauseAfterScriptExecution();
-
-			// For this statement, we simply proceed on to the next
-			return(thisCommand.getNext());
-
-		} else if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("executeParams")) {
-			// Executing with parameters
-			return(thisCommand.getNext());
-
-		} else if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("reboot")) {
-			// Rebooting, and terminating the benchmark test
-
-		} else if (thisCommand.getAttributeOrChild("sourcename").equalsIgnoreCase("rebootWithContinue")) {
-			// Rebooting, and restarting, continuing back from the next atom from where we are now
-
-		}
-		// An error if we get here, but just silently ignore it for now
-// REMEMBER  need to process this error in the future
-		return(thisCommand.getNext());
-	}
-
 	public boolean processFlow_IsValidLogicCondition(String comparator)
 	{
 		if (comparator.equals("=="))			// Equal to
@@ -1372,6 +1150,284 @@ public class BenchmarksAtom
 		}
 	}
 
+	/**
+	 * @param thisCommand xml to the atom of this command
+	 * @param root xml to the atom's root entry, containing
+	 * @param xmlRun_Success xml to append tags to for this portion of the run when it succeeds
+	 * @param xmlRun_Failure xml to append tags to for this portion of the run if there are failures
+	 */
+	public Xml processAbstract_Atom(Xml		thisCommand,
+									Xml		root,
+									Xml		xmlRun_RunSuccess,
+									Xml		xmlRun_RunFailure)
+	{
+		int i, retryCount;
+		Xml options, xmlType, xmlError;
+		Xml xmlOutput;
+		Process process;
+		ProcessBuilder builder;
+		String exception, exception2, name, curDir, counter, sourcename;
+		String command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
+		List<String> commandsAndParameters = new ArrayList<String>(0);
+		boolean failure;
+
+		// See what our command is
+		sourcename = thisCommand.getAttributeOrChild("sourcename");
+		if (sourcename != null)
+		{
+			if (sourcename.equalsIgnoreCase("execute") || sourcename.equalsIgnoreCase("executeParams"))
+			{
+				// Initially set the failure condition to true, flag is lowered at the end if we're okay
+				failure		= true;
+				retryCount	= 0;
+
+				// Executing with no parameters
+				options = thisCommand.getChildNode("options");
+				if (options != null)
+				{	// It appears to be a properly formatted atom command, so we'll run it
+
+					while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount < m_bp.m_retryAttempts)
+					{	// Process repepatedly until we have a success, or our on-failure retry count is reached, or the user forces a stop
+						// Prepare for this run
+						m_bp.m_wui.prepareBeforeScriptExecution();
+
+						// See what we're doing
+						command = m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("executable"));
+						p1		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p1"));
+						p2		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p2"));
+						p3		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p3"));
+						p4		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p4"));
+						p5		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p5"));
+						p6		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p6"));
+						p7		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p7"));
+						p8		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p8"));
+						p9		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p9"));
+						p10		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p10"));
+						if (command != null && !command.isEmpty())
+						{
+							commandsAndParameters.add(command);
+							if (p1  != null && !p1.isEmpty())	commandsAndParameters.add(p1);
+							if (p2  != null && !p1.isEmpty())	commandsAndParameters.add(p2);
+							if (p3  != null && !p1.isEmpty())	commandsAndParameters.add(p3);
+							if (p4  != null && !p1.isEmpty())	commandsAndParameters.add(p4);
+							if (p5  != null && !p1.isEmpty())	commandsAndParameters.add(p5);
+							if (p6  != null && !p1.isEmpty())	commandsAndParameters.add(p6);
+							if (p7  != null && !p1.isEmpty())	commandsAndParameters.add(p7);
+							if (p8  != null && !p1.isEmpty())	commandsAndParameters.add(p8);
+							if (p9  != null && !p1.isEmpty())	commandsAndParameters.add(p9);
+							if (p10 != null && !p1.isEmpty())	commandsAndParameters.add(p10);
+
+							// Update the hud with executed scripts, plus failures
+							counter = Integer.toString(m_executeCounter) + " " + Utils.singularOrPlural(m_executeCounter, "Script", "Scripts") + " Executed";
+							if (m_failureCounter != 0)
+								counter += ", " + Integer.toString(m_failureCounter) + Utils.singularOrPlural(m_failureCounter, "Failure", "Failures");
+
+							if (m_bp.m_thisIteration != 0)
+							{	// Update the iteration information
+								counter = Integer.toString(m_bp.m_thisIteration) + " of " + Integer.toString(m_bp.m_maxIterations) + "; " + counter;
+							}
+							m_bp.m_hud.updateCounter(counter);
+
+							// Change the current directory to the directory of the executable
+							curDir = Utils.makeTheCurrentDirectoryThatOfThisExecutable(command);
+
+							// Add the type of run made
+							xmlType = new Xml("abstract");
+							name = m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
+							xmlType.appendAttribute("name", name);
+							xmlType.appendAttribute("sourcename", thisCommand.getAttribute("sourcename"));
+
+							// Indicate our beginning, and the command to execute
+							xmlType.appendChild(Utils.processExecutableLine("start", Utils.getTimestamp()));
+							xmlType.appendChild(new Xml("command", command));
+
+							// Add space for any errors
+							xmlError = new Xml("errors");
+							xmlType.appendChild(xmlError);
+
+							// Clear off any previous "process" that may be hanging on out there for garbage collection
+							process = null;
+							try {
+								// Start the process (with its optional list of parameters)
+								builder = new ProcessBuilder(commandsAndParameters);
+								process = builder.start();
+
+								// Grab the output
+								m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
+								m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
+								m_bp.m_errorGobbler.start();
+								m_bp.m_outputGobbler.start();
+
+								// Wait for the process to finish
+								process.waitFor();
+								// Returns 0 if everything succeeded normally without error
+
+								// Identify the termination time
+								xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", process.exitValue() == 0 ? "success" : "fail"));
+
+								// Make sure we finish reading before continuing
+								m_bp.m_errorGobbler.join();
+								m_bp.m_outputGobbler.join();
+
+								// Grab the exit value1
+								xmlType.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
+
+								// If we get here, then everything proceeded normally
+								failure	= false;
+
+							} catch (Throwable t) {
+								// Make sure we finish reading before continuing
+								exception2 = "";
+								try {
+									if (m_bp.m_errorGobbler != null)
+										m_bp.m_errorGobbler.join();
+
+									if (m_bp.m_outputGobbler != null)
+										m_bp.m_outputGobbler.join();
+
+								} catch (Throwable t2) {
+									exception2 = ": (Second exception caught: " + t2.getMessage() + ")";
+								}
+								xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", "exception"));
+								exception = Utils.getTimestamp() + ": Threw an exception: " + t.getMessage() + exception2;
+								xmlType.appendChild(Utils.processExecutableLine("process", exception));
+								m_bp.m_outputArray.add(exception);
+
+							}
+
+							// Reset the directory
+							Utils.setCurrentDirectory(curDir);
+
+//////////
+// FAILURE TRIGGERED BY A REPORTED ERROR FROM/BY THE SCRIPT
+							// For each line of errors, save the entry
+							if (!m_bp.m_errorArray.isEmpty())
+							{	// We had at least one error, which marks this as a failure
+								failure		= true;
+								for (i = 0; i < m_bp.m_errorArray.size(); i++)
+									xmlError.appendChild(Utils.processExecutableLine("error", m_bp.m_errorArray.get(i)));
+								m_bp.m_errorArray.clear();
+
+							} else {
+								// We succeeded
+								failure = false;
+							}
+
+							// For each line of output, save the entry
+							xmlOutput = new Xml("outputs");
+							xmlType.appendChild(xmlOutput);
+							if (!m_bp.m_outputArray.isEmpty())
+							{	// There were lines intercepted from the script
+								for (i = 0; i < m_bp.m_outputArray.size(); i++)
+								{	// If the script wrote any "error," entries to stdout (instead of stderr)
+									// we still need to catch those and interpret their directive as a failure on this pass
+									if (!failure && m_bp.m_outputArray.get(i).toLowerCase().contains(" error,"))
+									{	// This was an error, we have a failure
+										failure = true;
+									}
+									xmlOutput.appendChild(Utils.processExecutableLine("output", m_bp.m_outputArray.get(i)));
+								}
+								m_bp.m_outputArray.clear();
+							}
+
+//////////
+// FAILURE TRIGGERED BY THE EXIT/RETURN VALUE
+							// The only condition that will signal a failure outside of an error code,
+							// is if the process terminated with a non-zero value
+							if (!failure && process != null && process.exitValue() != 0)
+							{	// A failure was noted by its exit value, but nothing was logged in the error queue
+								failure = true;
+								xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
+							}
+
+							if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+							{	// User force-terminated the execution
+								xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": User force-terminated benchmark via stop button in HUD"));
+							}
+
+							// Now, based on the state of this run, we append its information to the appropriate place
+							if (failure && (retryCount + 1) < m_bp.m_retryAttempts)
+							{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
+								xmlRun_RunFailure.appendChild(xmlType);
+
+							} else {
+								// Just append like normal, they're not retrying, this failure will persist
+								xmlRun_RunSuccess.appendChild(xmlType);
+								// If we succeed, we make only one pass through the loop, no need to increment the retry count
+							}
+							// Move the counter for the next retry
+							++retryCount;
+
+							// Clean up any temporary files and what-not which the script may have left behind
+							m_bp.m_wui.cleanupAfterScriptExecution();
+						}
+					}
+				}
+				// Increase our counter
+				if (failure)
+				{
+					++m_failureCounter;
+					if (m_bp.m_settingsMaster.benchmarkStopsIfRetriesFail())
+					{	// We have to force the stop now
+						m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
+					}
+
+				} else {
+					++m_executeCounter;
+
+				}
+
+				// After the execute is finished, wait for the CPU to settle down
+				if (!(m_bp.m_debuggerActive && m_bp.m_singleStepping))
+					m_bp.m_wui.pauseAfterScriptExecution();
+
+				// For this statement, we simply proceed on to the next
+				return(thisCommand.getNext());
+
+			} else if (sourcename.equalsIgnoreCase("rebootAndTerminate")) {
+				// Rebooting, and terminating the benchmark test (will restart the system and leave it in its natural state)
+				m_bp.m_hud.updateStatus("Rebooting and terminating benchmark...");
+				m_bp.m_hud.updateDebug("Rebooting and terminating benchmark...");
+
+				name = m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
+				try {
+					process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /t 2 /r");
+
+					// Grab the output
+					m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
+					m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
+					m_bp.m_errorGobbler.start();
+					m_bp.m_outputGobbler.start();
+
+					// Wait for the process to finish
+					process.waitFor();
+
+					// Display the messages given
+					for (i = 0; i < m_bp.m_errorArray.size(); i++)
+						System.out.println(m_bp.m_errorArray.get(i));
+
+					for (i = 0; i < m_bp.m_outputArray.size(); i++)
+						System.out.println(m_bp.m_outputArray.get(i));
+
+				} catch (Throwable t) {
+				}
+				// Exit the system
+				System.exit(0);
+
+			} else if (sourcename.equalsIgnoreCase("rebootAndContinue")) {
+				// Rebooting, and continuing back from the next atom after the one we're on now
+
+			} else if (sourcename.equalsIgnoreCase("rebootAndRestart")) {
+				// Rebooting, and restarting the benchmark from the beginning
+
+			}
+		}
+		// An error if we get here
+		System.out.println("Error: An unrecognized command was found, ignored: " + thisCommand.getName());
+		System.err.println("Error: An unrecognized command was found, ignored: " + thisCommand.getName());
+// REMEMBER  need to process this error in the future
+		return(thisCommand.getNext());
+	}
 
 	private BenchmarkParams	m_bp;
 	public	int					m_failureCounter;

@@ -72,14 +72,12 @@
 			</listbox>
 			<label zoom="main" text="Abstraction Name / Description:"/>
 			<textbox zoom="main" field="#name"/>
-			<label zoom="main" text="for Scripting Engine:"/>
-			<textbox zoom="main" default="autoit" field="engine"/>
 			<vspacer zoom="main" height="10"/>
 			<label zoom="main" text="OPBM Command:"/>
 			<textbox zoom="main" width="350" field="logical"/>
 			<vspacer zoom="main" height="10"/>
-			<label zoom="main" text="Scripting Engine Command:"/>
-			<editbox height="400" zoom="main" field="real"/>
+			<label zoom="main" text="OPBM Variable Fields:"/>
+			<editbox zoom="main" height="max" field="real"/>
 		</edit>
 
 		<edit name="atoms">

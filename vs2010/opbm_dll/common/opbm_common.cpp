@@ -268,11 +268,11 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 		csid = CSIDL_COMMON_APPDATA;
 	
 	} else if (_stricmp(csidl_name, "WINDOWS") == 0) {
-		// GetWindowsDirectory()
+		// GetWindowsDirectory(), typically "c:\windows\"
 		csid = CSIDL_WINDOWS;
 	
 	} else if (_stricmp(csidl_name, "SYSTEM") == 0) {
-		// GetSystemDirectory()
+		// GetSystemDirectory(), typically "c:\windows\system32\"
 		csid = CSIDL_SYSTEM;
 	
 	} else if (_stricmp(csidl_name, "PROGRAM_FILES") == 0) {
