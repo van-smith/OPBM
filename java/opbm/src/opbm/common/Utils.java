@@ -255,6 +255,11 @@ public class Utils
 		}
 	}
 
+	/**
+	 * Returns time in the format Tue Aug 16 16:39:51 CDT 2011 1313530812950
+	 *                            Day Mmm DD HH MM SS TZ- YYYY Millisecond--
+	 * @return time
+	 */
 	public static String getTimestamp()
 	{
 		Calendar cal = Calendar.getInstance();
@@ -627,7 +632,7 @@ public class Utils
 		return(argb);
 	}
 
-	public static String convertToLettersAndNumbersOnly(String fileName)
+	public static String convertFilenameToLettersAndNumbersOnly(String fileName)
 	{
 		int i;
 		char thisChar;
@@ -677,7 +682,53 @@ public class Utils
 	}
 
 	/**
-	 * Jul 04, 2011 at 11:56am
+	 * Converts the text to letters and numbers only
+	 * @param text input text
+	 * @return converted text
+	 */
+	public static String convertToLettersAndNumbersOnly(String text)
+	{
+		return(convertToLettersAndNumbersOnly(text, ""));
+	}
+
+	/**
+	 * Converts the input string to letters and numbers only, allowing characters
+	 * in the optionalCharactersToLeave string to remain as well
+	 *
+	 * @param text the input text to parse/convert
+	 * @param optionalCharactersToLeave a string of characters to leave in the string
+	 * @return the parsed/converted string
+	 */
+	public static String convertToLettersAndNumbersOnly(String	text,
+														String	optionalCharactersToLeave)
+	{
+		int i;
+		char thisChar;
+		String ch, outText;
+
+		outText = "";
+		for (i = 0; i < text.length(); i++)
+		{
+			ch = text.substring(i, i+1);
+			thisChar = ch.charAt(0);
+			if ((thisChar >= 'A' && thisChar <= 'Z') || (thisChar >= 'a' && thisChar <= 'z') || (thisChar >= '0' && thisChar <= '9'))
+			{	// It's a letter or number
+				// Leave it as it is
+				// ch = ch;
+
+			} else {
+				if (!optionalCharactersToLeave.contains(ch))
+				{	// Replace it with an underscore
+					ch = "_";
+				}
+			}
+			outText += ch;
+		}
+		return(outText);
+	}
+
+	/**
+	 * Jul 04, 2011 at 11:56pm
 	 */
 	public static String getDateTimeAs_Mmm_DD__YYYY_at_HH_MMampm()
 	{
@@ -685,6 +736,10 @@ public class Utils
 		return(sdf.format(new Date()));
 	}
 
+	/**
+	 * Military time Jul 04, 2011 at 23:56
+	 * @return
+	 */
 	public static String getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy 'at' kk:mm:ss");

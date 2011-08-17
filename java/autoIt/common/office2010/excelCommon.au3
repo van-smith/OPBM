@@ -81,7 +81,7 @@ Func LaunchExcel()
 	TimerBegin()
 	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
 	opbmWinWaitActivate( $MICROSOFT_EXCEL, $BOOK1, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
-	TimerEnd( $HEAT_LAUNCH_MICROSOFT_EXCEL )
+	TimerEnd( $LAUNCH_MICROSOFT_EXCEL )
 EndFunc
 
 Func CloseExcel()
@@ -89,7 +89,7 @@ Func CloseExcel()
 	Send("!fx")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )
-	TimerEnd( $HEAT_CLOSE_MICROSOFT_EXCEL )
+	TimerEnd( $CLOSE_MICROSOFT_EXCEL )
 	
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
 	Office2010RestoreRegistryKeys()

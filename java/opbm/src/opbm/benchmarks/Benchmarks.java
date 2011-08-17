@@ -38,11 +38,13 @@ public class Benchmarks
 	public void benchmarkTrialRun(Opbm opbm)
 	{
 		OpbmDialog od = new OpbmDialog(opbm, "Trial Run would start here", "Trial Run", OpbmDialog._OKAY_BUTTON, null);
+		opbm.setTrialRun();
 	}
 
 	public void benchmarkOfficialRun(Opbm opbm)
 	{
 		OpbmDialog od = new OpbmDialog(opbm, "Official Run would start here", "Official Run", OpbmDialog._OKAY_BUTTON, null);
+		opbm.setOfficialRun();
 	}
 
 	public void benchmarkInitialize(Opbm			opbm,
@@ -106,19 +108,34 @@ public class Benchmarks
 		}
 
 		// Create a unique filename for this operation, based on the date and time
-		fileName = Opbm.getHarnessXMLDirectory() + "results_" + Utils.convertToLettersAndNumbersOnly(Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
+		fileName = Opbm.getHarnessXMLDirectory() + "results_" + Utils.convertFilenameToLettersAndNumbersOnly(Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
 
 		// Save the output
 		m_bp.m_xmlRoot.saveNode(fileName);
+
+		// Close the benchmark run
+		m_bp.m_opbm.setRunFinished();
 
 		// Launch the results viewer
 		m_bp.m_opbm.createAndShowResultsViewer(fileName);
 	}
 
+	/**
+	 * Parameter is passed to this function because it may be utilized to
+	 * initialize an independent BenchmarkParams entry
+	 * @param bp
+	 */
 	public void benchmarkInitializeExecutionEnvironment(BenchmarkParams bp)
 	{
-		// Take a snapshot of the system as it exists right now before we run the benchmarks
-		Opbm.snapshotProcesses();
+		if (m_bp == bp)
+		{	// We are initializing the current entry, so we can take a snapshot
+			// of the system as it exists right now before the benchmark is run
+			Opbm.snapshotProcesses();
+			// Saves all processes currently running, and all windows currently
+			// open.  Opbm.stopProcesses() is used during the benchmark to
+			// restore everything to its original state (cleaning up in that way
+			// after the benchmark terminates)
+		}
 
 		// Initialize our relative items
 		bp.m_bpAtom.m_executeCounter	= 0;
@@ -134,7 +151,7 @@ public class Benchmarks
 		bp.m_debuggerActive				= bp.m_settingsMaster.isInDebugMode();
 		bp.m_singleStepping				= bp.m_settingsMaster.isSingleStepping();
 		if (bp.m_debuggerActive)
-		{	// The debugger is displayed, but that doesn't mean that the user is single-stepping
+		{	// The debugger is displayed, but that doesn't mean the user is single-stepping
 			bp.m_deb					= new Debugger(bp);
 		} else {
 			// Not displayted (typical condition)
@@ -163,19 +180,30 @@ public class Benchmarks
 
 		// Begin the logging
 		// Run data goes to opbm.rawdata.run
-		Xml root						= new Xml("opbm");
-		Xml rawdata						= new Xml("rawdata");
-		Xml run							= new Xml("run");
-		root.appendChild(rawdata);							// Create opbm.rawdata
-		rawdata.appendChild(run);							// Create opbm.rawdata.run
+		Xml root						= new Xml("opbm");				// Creae opbm
+		Xml rawdata						= new Xml("rawdata");			// Create opbm.rawdata
+		root.appendChild(rawdata);
+		Xml run							= new Xml("run");				// Create opbm.rawdata.run
+		rawdata.appendChild(run);
 
 		// Post-processed results goes to opbm.resultdata.result
 		Xml resultsdata					= new Xml("resultsdata");		// Create opbm.resultdata
 		Xml result						= new Xml("result");			// Create opbm.resultsdata.result
 		addStandardResultAttributes(result);
-
-		root.appendChild(resultsdata);
 		resultsdata.appendChild(result);
+		root.appendChild(resultsdata);
+
+		// Information about the run goes to opbm.rundata
+		Xml runinfo						= new Xml("runinfo");
+		Xml runtype						= new Xml("type", bp.m_opbm.getRunType());
+		Xml start						= new Xml("start", Utils.getTimestamp());
+		Xml name						= new Xml("name", Utils.convertToLettersAndNumbersOnly(bp.m_opbm.getRunName()));
+		runinfo.appendChild(runtype);
+		runinfo.appendChild(start);
+		runinfo.appendChild(name);
+		root.appendChild(runinfo);
+
+// REMEMBER CPUID information will be recorded here
 
 		// Populate the global variables
 		bp.m_xmlRoot					= root;
@@ -334,7 +362,7 @@ public class Benchmarks
 		xmlRun_Success.appendAttribute(new Xml("name", atom.getAttribute("name")));
 		m_bp.m_xmlRun.appendChild(xmlRun_Success);
 
-		xmlRun_Failure	= new Xml("atom_failures");
+		xmlRun_Failure	= new Xml("failures");
 		xmlRun_Failure.appendAttribute(new Xml("name", atom.getAttribute("name")));
 		m_bp.m_xmlRun.appendChild(xmlRun_Failure);
 

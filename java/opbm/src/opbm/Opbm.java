@@ -71,6 +71,7 @@ public final class Opbm extends	ModalApp
 		{	// 32-bit JVM
 			System.loadLibrary("opbm32");
 			System.out.println("Running 32-bit JVM");
+
 		} else {
 			// 64-bit JVM
 			System.loadLibrary("opbm64");
@@ -108,8 +109,9 @@ public final class Opbm extends	ModalApp
 */
 
 		// Make sure we're the only app running
-		if (!isModalApp( "opbm.dat", m_title ))
+		if (!isModalApp( getHarnessTempDirectory() + "opbm.dat", m_title ))
 		{	// Already another app instance running
+			System.out.println("Another process is running, bringing it to foreground.");
 			sendWindowToForeground(m_title);
 			System.exit(-1);
 		}
@@ -127,10 +129,9 @@ public final class Opbm extends	ModalApp
 		m_settingsMaster			= new Settings(this);
 		m_commandMaster				= new Commands(this, m_macroMaster, m_settingsMaster);
 		m_executingFromCommandLine	= false;
-
-		// Make sure we have a results\ directory from wherever we are
-		Utils.verifyDirectoryExists(new File("results\\.").getAbsolutePath());
-
+		m_executingTrialRun			= false;
+		m_executingOfficialRun		= false;
+		m_executingBenchmarkRunName	= "";
 
 		// If -font option is on command line, use slightly smaller fonts
 		// REMEMBER I desire to change this later to use settings.xml file
@@ -254,6 +255,11 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-developer")) {
 								// They want to launch the developer window
 								showDeveloperWindow();
+
+							} else if (line.toLowerCase().startsWith("-name:")) {
+								// They are specifying a name for the run
+								m_executingBenchmarkRunName = line.substring(6);
+								System.out.println("Benchmark given '" + m_executingBenchmarkRunName + "' name.");
 
 							} else {
 								// Ignore the unknown option
@@ -1379,6 +1385,51 @@ public final class Opbm extends	ModalApp
 		setDialogResponse(id, userAction);
 	}
 
+	public void setTrialRun()
+	{
+		m_executingTrialRun		= true;
+		m_executingOfficialRun	= false;
+	}
+
+	public void setOfficialRun()
+	{
+		m_executingTrialRun		= false;
+		m_executingOfficialRun	= true;
+	}
+
+	public void setRunFinished()
+	{
+		m_executingTrialRun		= false;
+		m_executingOfficialRun	= false;
+	}
+
+	public String getRunType()
+	{
+		if (m_executingOfficialRun)
+			return("official");
+
+		else if (m_executingTrialRun)
+			return("trial");
+
+		else
+			return("manual");
+	}
+
+	public String getRunName()
+	{
+		return(m_executingBenchmarkRunName);
+	}
+
+	public boolean isExecutingTrialRun()
+	{
+		return(m_executingTrialRun);
+	}
+
+	public boolean isExecutionOfficialRun()
+	{
+		return(m_executingOfficialRun);
+	}
+
 	/**
 	 * Open a web browser with the specified parameters
 	 *
@@ -1752,6 +1803,9 @@ public final class Opbm extends	ModalApp
 	private ResultsViewer			m_rv;
 	private String					m_rvFilename;
 	private boolean					m_executingFromCommandLine;
+	private boolean					m_executingTrialRun;
+	private boolean					m_executingOfficialRun;
+	private String					m_executingBenchmarkRunName;
 
 	private Tuple					m_dialogTuple;
 

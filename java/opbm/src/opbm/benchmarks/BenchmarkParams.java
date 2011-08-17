@@ -144,8 +144,10 @@ public class BenchmarkParams
 	public double				m_timingInSeconds;
 	public double				m_timingOfBaseline;
 
+// REMEMBER Data derived from CPUID library will go here
 
-	// Constants
+//////////
+// Constants
 	public final static int _NO_ACTION		= 0;
 	public final static int _SINGLE_STEP	= 1;
 	public final static int _RUN			= 2;
