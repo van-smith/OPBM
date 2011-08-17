@@ -973,7 +973,7 @@ public class PanelRight {
 		saveObjectList.add("whereTo",		whereTo);
 		saveObjectList.add("after",		after);
 		saveObjectList.add("whereFrom",	whereFrom);
-		PanelFactory.buildCustomInputsFromEdit(m_opbm, customInputs, whereFrom, xmlFrom, m_macroMaster, saveObjectList.getName());
+		PanelFactory.buildCustomInputsFromEdit(m_opbm, customInputs, whereFrom, xmlFrom, m_macroMaster, saveObjectList.getUUID());
 		if (!customInputs.isEmpty())
 		{
 			// There is data that must be input before the record is added

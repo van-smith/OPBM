@@ -29,9 +29,26 @@ import java.util.UUID;
 import opbm.Opbm;
 
 /**
- * Class globally storing two items, a string and an object.  The
- * <code>Tuple</code> can be referenced by its UUID, which is generated in the
- * constructor.
+ * Class globally storing two items, a string and an object.  This class was
+ * later to expanded to include far more items.  However, the principle is
+ * the same.  The first item is the id/name associated with searching for items
+ * contained within.  The other items are data items.  However, all items can
+ * also be data items by using an explicit index and then referencing the first,
+ * second, third, fourth, fifth, sixth, seventh... items individually.
+ *
+ * The <code>Tuple</code> generates its own UUID in the constructor.  This item
+ * is said to be "crytographically strong" and in practice should be completely
+ * unique throughout the duration of an instance of a running JVM.
+ *
+ * It's functionality is governed by:  http://www.ietf.org/rfc/rfc4122.txt
+ *
+ * A trigger command has also been added, so that when an item is updated, if
+ * there is a trigger it will execute that command.  This is useful for other-
+ * thread updates, which may happen far later than the code was established.
+ * Rather than executing a continuous loop looking for that other code to
+ * complete at some point, assuming it was spawned in another thread, it can
+ * go ahead and continue processing the rest of its operation by setting up a
+ * command in the Commands class, and allowing it to proceed.
  *
  * @author Rick C. Hodgin
  */
@@ -45,16 +62,22 @@ public class Tuple
 	 *
 	 * @param opbm
 	 */
+	@SuppressWarnings("LeakingThisInConstructor")
 	public Tuple(Opbm opbm)
 	{
-		m_uuid		= UUID.randomUUID();
-		m_names		= new ArrayList<String>(0);
-		m_objects	= new ArrayList<Object>(0);
-		m_extra1	= new ArrayList<Object>(0);
-		m_extra2	= new ArrayList<Object>(0);
-		m_extra3	= new ArrayList<Object>(0);
-		m_extra4	= new ArrayList<Object>(0);
-		m_extra5	= new ArrayList<Object>(0);
+		int i;
+
+		m_opbm				= opbm;
+		m_uuid				= UUID.randomUUID();
+		m_first				= new ArrayList<String>(0);
+		m_second			= new ArrayList<Object>(0);
+		m_third				= new ArrayList<Object>(0);
+		m_fourth			= new ArrayList<Object>(0);
+		m_fifth				= new ArrayList<Object>(0);
+		m_sixth				= new ArrayList<Object>(0);
+		m_seventh			= new ArrayList<Object>(0);
+		m_triggerCommand	= new ArrayList<String>(0);
+		m_triggerFilters	= new ArrayList<String>(0);
 		opbm.addTuple(this);
 	}
 
@@ -62,7 +85,7 @@ public class Tuple
 	 * UUID in <code>String</code> form.
 	 * @return UUID as a <code>String</code>
 	 */
-	public String getName()
+	public String getUUID()
 	{
 		return(m_uuid.toString());
 	}
@@ -73,15 +96,18 @@ public class Tuple
 	 * @param name <code>String</code> to identify the object
 	 * @param o object to add
 	 */
-	public void add(String name, Object o)
+	public int add(String name, Object o)
 	{
-		m_names.add(name);
-		m_objects.add(o);
-		m_extra1.add(null);
-		m_extra2.add(null);
-		m_extra3.add(null);
-		m_extra4.add(null);
-		m_extra5.add(null);
+		m_first.add(name);
+		m_second.add(o);
+		m_third.add(null);
+		m_fourth.add(null);
+		m_fifth.add(null);
+		m_sixth.add(null);
+		m_seventh.add(null);
+		m_triggerCommand.add(null);
+		m_triggerFilters.add(null);
+		return(size() - 1);
 	}
 
 	/**
@@ -89,13 +115,20 @@ public class Tuple
 	 *
 	 * @param name <code>String</code> to identify the object
 	 * @param o object to add
-	 * @param extra1 extra object to add
+	 * @param third extra object to add
 	 */
-	public void add(String name, Object o, Object extra1)
+	public int add(String name, Object o, Object third)
 	{
-		m_names.add(name);
-		m_objects.add(o);
-		m_extra1.add(extra1);
+		m_first.add(name);
+		m_second.add(o);
+		m_third.add(third);
+		m_fourth.add(null);
+		m_fifth.add(null);
+		m_sixth.add(null);
+		m_seventh.add(null);
+		m_triggerCommand.add(null);
+		m_triggerFilters.add(null);
+		return(size() - 1);
 	}
 
 	/**
@@ -109,11 +142,11 @@ public class Tuple
 	{
 		int i;
 
-		for (i = 0; i < m_objects.size(); i++)
+		for (i = 0; i < m_second.size(); i++)
 		{
-			if (m_objects.get(i).equals(o))
+			if (m_second.get(i).equals(o))
 			{
-				return(m_names.get(i));
+				return(m_first.get(i));
 			}
 		}
 		return("");
@@ -130,11 +163,11 @@ public class Tuple
 	{
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				return(m_objects.get(i));
+				return(m_second.get(i));
 			}
 		}
 		return(null);
@@ -147,14 +180,14 @@ public class Tuple
 	 * @param name String to search
 	 * @return extra object if name found, null otherwise
 	 */
-	public Object getExtra1(String name)
+	public Object getThird(String name)
 	{
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
-				return(m_extra1.get(i));
+			if (m_first.get(i).equalsIgnoreCase(name))
+				return(m_third.get(i));
 		}
 		return(null);
 	}
@@ -166,14 +199,14 @@ public class Tuple
 	 * @param name String to search
 	 * @return extra object if name found, null otherwise
 	 */
-	public Object getExtra2(String name)
+	public Object getFourth(String name)
 	{
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
-				return(m_extra2.get(i));
+			if (m_first.get(i).equalsIgnoreCase(name))
+				return(m_fourth.get(i));
 		}
 		return(null);
 	}
@@ -185,14 +218,14 @@ public class Tuple
 	 * @param name String to search
 	 * @return extra object if name found, null otherwise
 	 */
-	public Object getExtra3(String name)
+	public Object getFifth(String name)
 	{
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
-				return(m_extra3.get(i));
+			if (m_first.get(i).equalsIgnoreCase(name))
+				return(m_fifth.get(i));
 		}
 		return(null);
 	}
@@ -204,14 +237,14 @@ public class Tuple
 	 * @param name String to search
 	 * @return extra object if name found, null otherwise
 	 */
-	public Object getExtra4(String name)
+	public Object getSixth(String name)
 	{
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
-				return(m_extra4.get(i));
+			if (m_first.get(i).equalsIgnoreCase(name))
+				return(m_sixth.get(i));
 		}
 		return(null);
 	}
@@ -223,16 +256,23 @@ public class Tuple
 	 * @param name String to search
 	 * @return extra object if name found, null otherwise
 	 */
-	public Object getExtra5(String name)
+	public Object getSeventh(String name)
 	{
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
-				return(m_extra5.get(i));
+			if (m_first.get(i).equalsIgnoreCase(name))
+				return(m_seventh.get(i));
 		}
 		return(null);
+	}
+
+	public String getTriggerCommand(int item)
+	{
+		if (item < 7)
+			return(m_triggerCommand.get(item));
+		return("");
 	}
 
 	/**
@@ -248,12 +288,13 @@ public class Tuple
 		String returnValue = "";
 		int i;
 
-		for (i = 0; i < m_objects.size(); i++)
+		for (i = 0; i < m_second.size(); i++)
 		{
-			if (m_objects.get(i).equals(o))
+			if (m_second.get(i).equals(o))
 			{
-				returnValue = m_names.get(i);
-				m_names.set(i, newValue);
+				returnValue = m_first.get(i);
+				m_first.set(i, newValue);
+				checkTrigger(i, "1");
 				break;
 			}
 		}
@@ -273,12 +314,13 @@ public class Tuple
 		Object returnObject = null;
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				returnObject = m_objects.get(i);
-				m_objects.set(i, newObject);
+				returnObject = m_second.get(i);
+				m_second.set(i, newObject);
+				checkTrigger(i, "2");
 				break;
 			}
 		}
@@ -293,17 +335,18 @@ public class Tuple
 	 * @param newObject new object to set
 	 * @return old object value
 	 */
-	public Object setExtra1(String name, Object newObject)
+	public Object setThird(String name, Object newObject)
 	{
 		Object returnObject = null;
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				returnObject = m_extra1.get(i);
-				m_extra1.set(i, newObject);
+				returnObject = m_third.get(i);
+				m_third.set(i, newObject);
+				checkTrigger(i, "3");
 				break;
 			}
 		}
@@ -318,17 +361,18 @@ public class Tuple
 	 * @param newObject new object to set
 	 * @return old object value
 	 */
-	public Object setExtra2(String name, Object newObject)
+	public Object setFourth(String name, Object newObject)
 	{
 		Object returnObject = null;
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				returnObject = m_extra2.get(i);
-				m_extra2.set(i, newObject);
+				returnObject = m_fourth.get(i);
+				m_fourth.set(i, newObject);
+				checkTrigger(i, "4");
 				break;
 			}
 		}
@@ -343,17 +387,18 @@ public class Tuple
 	 * @param newObject new object to set
 	 * @return old object value
 	 */
-	public Object setExtra3(String name, Object newObject)
+	public Object setFifth(String name, Object newObject)
 	{
 		Object returnObject = null;
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				returnObject = m_extra3.get(i);
-				m_extra3.set(i, newObject);
+				returnObject = m_fifth.get(i);
+				m_fifth.set(i, newObject);
+				checkTrigger(i, "5");
 				break;
 			}
 		}
@@ -368,17 +413,18 @@ public class Tuple
 	 * @param newObject new object to set
 	 * @return old object value
 	 */
-	public Object setExtra4(String name, Object newObject)
+	public Object setSixth(String name, Object newObject)
 	{
 		Object returnObject = null;
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				returnObject = m_extra4.get(i);
-				m_extra4.set(i, newObject);
+				returnObject = m_sixth.get(i);
+				m_sixth.set(i, newObject);
+				checkTrigger(i, "6");
 				break;
 			}
 		}
@@ -393,17 +439,18 @@ public class Tuple
 	 * @param newObject new object to set
 	 * @return old object value
 	 */
-	public Object setExtra5(String name, Object newObject)
+	public Object setSeventh(String name, Object newObject)
 	{
 		Object returnObject = null;
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				returnObject = m_extra5.get(i);
-				m_extra5.set(i, newObject);
+				returnObject = m_seventh.get(i);
+				m_seventh.set(i, newObject);
+				checkTrigger(i, "7");
 				break;
 			}
 		}
@@ -420,13 +467,19 @@ public class Tuple
 	{
 		int i;
 
-		for (i = 0; i < m_names.size(); i++)
+		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_names.get(i).equalsIgnoreCase(name))
+			if (m_first.get(i).equalsIgnoreCase(name))
 			{
-				m_names.remove(i);
-				m_objects.remove(i);
-				m_extra1.remove(i);
+				m_first.remove(i);
+				m_second.remove(i);
+				m_third.remove(i);
+				m_fourth.remove(i);
+				m_fifth.remove(i);
+				m_sixth.remove(i);
+				m_seventh.remove(i);
+				m_triggerCommand.remove(i);
+				m_triggerFilters.remove(i);
 				break;
 			}
 		}
@@ -442,17 +495,19 @@ public class Tuple
 	{
 		int i;
 
-		for (i = 0; i < m_objects.size(); i++)
+		for (i = 0; i < m_second.size(); i++)
 		{
-			if (m_objects.get(i).equals(o))
+			if (m_second.get(i).equals(o))
 			{
-				m_names.remove(i);
-				m_objects.remove(i);
-				m_extra1.remove(i);
-				m_extra2.remove(i);
-				m_extra3.remove(i);
-				m_extra4.remove(i);
-				m_extra5.remove(i);
+				m_first.remove(i);
+				m_second.remove(i);
+				m_third.remove(i);
+				m_fourth.remove(i);
+				m_fifth.remove(i);
+				m_sixth.remove(i);
+				m_seventh.remove(i);
+				m_triggerCommand.remove(i);
+				m_triggerFilters.remove(i);
 				break;
 			}
 		}
@@ -465,151 +520,271 @@ public class Tuple
 	 */
 	public int size()
 	{
-		return(m_names.size());
+		return(m_first.size());
 	}
 
 	public boolean isEmpty()
 	{
-		return(m_names.isEmpty());
+		return(m_first.isEmpty());
 	}
 
 	/**
 	 * Returns the explicit item within the list
-	 * @param iterator item number to access
+	 * @param item item number to access
 	 * @return first item (String) associated with the <code>Tuple</code> entry
 	 */
-	public String getFirst(int iterator)
+	public String getFirst(int item)
 	{
-		if (iterator < m_names.size())
-			return(m_names.get(iterator));
+		if (item < m_first.size())
+			return(m_first.get(item));
 		return("");
 	}
 
-	public void setFirst(int		iterator,
+	/**
+	 * Returns the explicit item within the list
+	 * @param item item number to access
+	 * @return second item (Object) associated with the <code>Tuple</code> entry
+	 */
+	public Object getSecond(int item)
+	{
+		if (item < m_second.size())
+			return(m_second.get(item));
+		return(null);
+	}
+
+	/**
+	 * Returns the explicit item within the list
+	 * @param item item number to access
+	 * @return second item (Object) associated with the <code>Tuple</code> entry
+	 */
+	public Object getThird(int item)
+	{
+		if (item < m_third.size())
+			return(m_third.get(item));
+		return(null);
+	}
+
+	public Object getFourth(int item)
+	{
+		if (item < m_fourth.size())
+			return(m_fourth.get(item));
+		return(null);
+	}
+
+	public Object getFifth(int item)
+	{
+		if (item < m_fifth.size())
+			return(m_fifth.get(item));
+		return(null);
+	}
+
+	public Object getSixth(int item)
+	{
+		if (item < m_sixth.size())
+			return(m_sixth.get(item));
+		return(null);
+	}
+
+	public Object getSeventh(int item)
+	{
+		if (item < m_seventh.size())
+			return(m_seventh.get(item));
+		return(null);
+	}
+
+	public void setFirst(int		item,
 						 String		name)
 	{
-		if (iterator < m_objects.size())
-			m_names.set(iterator, name);
+		if (item < m_second.size())
+		{
+			m_first.set(item, name);
+			checkTrigger(item, "1");
+		}
+	}
+
+	public void setSecond(int		item,
+						  Object	object)
+	{
+		if (item < m_second.size())
+		{
+			m_second.set(item, object);
+			checkTrigger(item, "2");
+		}
+	}
+
+	public void setThird(int		item,
+						 Object		object)
+	{
+		if (item < m_third.size())
+		{
+			m_third.set(item, object);
+			checkTrigger(item, "3");
+		}
+	}
+
+	public void setFourth(int		item,
+						  Object	object)
+	{
+		if (item < m_fourth.size())
+		{
+			m_fourth.set(item, object);
+			checkTrigger(item, "4");
+		}
+	}
+
+	public void setFifth(int		item,
+						 Object		object)
+	{
+		if (item < m_fifth.size())
+		{
+			m_fifth.set(item, object);
+			checkTrigger(item, "5");
+		}
+	}
+
+	public void setSixth(int		item,
+						 Object		object)
+	{
+		if (item < m_sixth.size())
+		{
+			m_sixth.set(item, object);
+			checkTrigger(item, "6");
+		}
+	}
+
+	public void setSeventh(int		item,
+						   Object	object)
+	{
+		if (item < m_seventh.size())
+		{
+			m_seventh.set(item, object);
+			checkTrigger(item, "7");
+		}
 	}
 
 	/**
-	 * Returns the explicit item within the list
-	 * @param iterator item number to access
-	 * @return second item (Object) associated with the <code>Tuple</code> entry
+	 * This command will be triggered.  If a trigger filter is in place, it
+	 * will only be triggered when the specified item(s) updates.
+	 * @param item
+	 * @param triggerCommand
 	 */
-	public Object getSecond(int iterator)
+	public void setTriggerCommand(int		item,
+								  String	triggerCommand)
 	{
-		if (iterator < m_objects.size())
-			return(m_objects.get(iterator));
-		return(null);
-	}
-
-	public void setSecond(int		iterator,
-						  Object	object)
-	{
-		if (iterator < m_objects.size())
-			m_objects.set(iterator, object);
+		if (item < m_triggerCommand.size())
+			m_triggerCommand.set(item, triggerCommand);
 	}
 
 	/**
-	 * Returns the explicit item within the list
-	 * @param iterator item number to access
-	 * @return second item (Object) associated with the <code>Tuple</code> entry
+	 * Allows a string like "127" to indicate that the associated command
+	 * should only be updated when the first, second or seventh items are
+	 * updated.  If this parameter is not specified, any time any of the
+	 * seven items are updated, it will be triggered.
+	 * Note:  A blocking set of filters can be setup, because the value that
+	 *        will be checked for the filter condition being true is the
+	 *        number of the item updated, as in "1" through "7".  If a word
+	 *        or some invalid number is input (like "8") then the filter will
+	 *        always fail.  This can be useful to have a trigger "encoded" into
+	 *        the tuple, but to have it ONLY execute when an explicit call to
+	 *        executeTrigger() is made.
+	 * @param item
+	 * @param triggerFilters
 	 */
-	public Object getExtra1(int iterator)
+	public void setTriggerFilters(int		item,
+								  String	triggerFilters)
 	{
-		if (iterator < m_extra1.size())
-			return(m_extra1.get(iterator));
-		return(null);
+		if (item < m_triggerFilters.size())
+			m_triggerFilters.set(item, triggerFilters);
 	}
 
-	public Object getExtra2(int iterator)
+	/**
+	 * Checks to see if a trigger command is associated with the
+	 * @param item the entry in the
+	 * @param itemFilter
+	 */
+	public void checkTrigger(int		item,
+							 String		itemFilter)
 	{
-		if (iterator < m_extra2.size())
-			return(m_extra2.get(iterator));
-		return(null);
+		String triggerCommand, triggerFilters;
+
+		if (item < m_triggerCommand.size())
+		{
+			triggerCommand = m_triggerCommand.get(item);
+			if (triggerCommand != null && !triggerCommand.isEmpty())
+			{	// There is a command
+				// See if there are filters
+				triggerFilters = m_triggerFilters.get(item);
+				if (!triggerFilters.isEmpty())
+				{	// There are filters, see if we're okay
+					if (!triggerFilters.contains(itemFilter))
+					{	// Nope
+						return;
+					}
+					// If we get here, it matched the filter, execute
+				}
+				// Execute this entry, because it passes our tests
+				executeTrigger(item);
+			}
+		}
 	}
 
-	public Object getExtra3(int iterator)
+	/**
+	 * Called internally, and by users, to ALWAYS execute the trigger
+	 * command regardless of the filter conditions
+	 * @param item
+	 */
+	public void executeTrigger(int item)
 	{
-		if (iterator < m_extra3.size())
-			return(m_extra3.get(iterator));
-		return(null);
+		String triggerCommand;
+
+		if (item < m_triggerCommand.size())
+		{
+			triggerCommand = m_triggerCommand.get(item);
+			if (triggerCommand != null && !triggerCommand.isEmpty())
+			{	// There is a command
+				m_opbm.getCommandMaster().processCommand(m_uuid,
+														 triggerCommand,
+														 m_first.get(item),
+														 m_second.get(item),
+														 m_third.get(item),
+														 m_fourth.get(item),
+														 m_fifth.get(item),
+														 m_sixth.get(item),
+														 m_seventh.get(item),
+														 Integer.toString(item),	/* item user asked to trigger the command */
+														 "--forced--",				/* indicate execution was forced */
+														 "--forced--");				/* indicate execution was forced */
+			}
+		}
 	}
 
-	public Object getExtra4(int iterator)
-	{
-		if (iterator < m_extra4.size())
-			return(m_extra4.get(iterator));
-		return(null);
-	}
-
-	public Object getExtra5(int iterator)
-	{
-		if (iterator < m_extra5.size())
-			return(m_extra5.get(iterator));
-		return(null);
-	}
-
-	public void setExtra1(int		iterator,
-						  Object	object)
-	{
-		if (iterator < m_extra1.size())
-			m_extra1.set(iterator, object);
-	}
-
-	public void setExtra2(int		iterator,
-						  Object	object)
-	{
-		if (iterator < m_extra2.size())
-			m_extra2.set(iterator, object);
-	}
-
-	public void setExtra3(int		iterator,
-						  Object	object)
-	{
-		if (iterator < m_extra3.size())
-			m_extra3.set(iterator, object);
-	}
-
-	public void setExtra4(int		iterator,
-						  Object	object)
-	{
-		if (iterator < m_extra4.size())
-			m_extra4.set(iterator, object);
-	}
-
-	public void setExtra5(int		iterator,
-						  Object	object)
-	{
-		if (iterator < m_extra5.size())
-			m_extra5.set(iterator, object);
-	}
+	/**
+	 * The master parent for this tuple's callbacks
+	 */
+	private Opbm					m_opbm;
 
 	/**
 	 * When the class is created, a UUID is assigned.
 	 */
-	private UUID			m_uuid;
+	private UUID					m_uuid;
 
 	/**
 	 * Holds list of String items for the tuple.  Has a 1:1 relationship with
 	 * the entries in m_objects.
 	 */
-	private List<String>	m_names;
+	private volatile List<String>	m_first;
 
 	/**
-	 * Holds list of Object items for the tuple.  Has a 1:1 relationship with
-	 * the entries in m_names.
+	 * Holds list of Object items for the named tuple.  Each line has a 1:1
+	 * relationship with the entries in m_names.
 	 */
-	private List<Object>	m_objects;
-
-	/**
-	 * Holds list of extra Object items for the tuple.  Has a 1:1 relationship
-	 * with the entries in m_names.
-	 */
-	private List<Object>	m_extra1;
-	private List<Object>	m_extra2;
-	private List<Object>	m_extra3;
-	private List<Object>	m_extra4;
-	private List<Object>	m_extra5;
+	private volatile List<Object>	m_second;
+	private volatile List<Object>	m_third;
+	private volatile List<Object>	m_fourth;
+	private volatile List<Object>	m_fifth;
+	private volatile List<Object>	m_sixth;
+	private volatile List<Object>	m_seventh;
+	// The name of a command to trigger when this value is updated:
+	private volatile List<String>	m_triggerCommand;	// Commands to execute when each item is updated
+	private volatile List<String>	m_triggerFilters;	// Filters, to indicate when commands are executed
 }

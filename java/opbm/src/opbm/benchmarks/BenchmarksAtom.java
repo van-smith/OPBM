@@ -1258,7 +1258,7 @@ public class BenchmarksAtom
 					}
 				}
 				// When we get here, add this group
-				groups.add(tuples.getFirst(i), groupItems, tuples.getExtra1(i));
+				groups.add(tuples.getFirst(i), groupItems, tuples.getThird(i));
 			}
 		}
 		// When we get here, the groups are identified and we can pull their
@@ -1329,7 +1329,7 @@ public class BenchmarksAtom
 				// Add the totals/summary line to the end of the group's entries
 				thisElement		= Integer.valueOf(groupItems.get(0));
 				timings			= (List<String>)tuples.getSecond(thisElement);
-				qualifiedName	= (String)tuples.getExtra1(thisElement);
+				qualifiedName	= (String)tuples.getThird(thisElement);
 				timing			= 0.0;
 				ofBaseline		= 0.0;
 				results			= new Xml("results", "", "name", qualifiedName);

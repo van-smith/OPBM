@@ -4,7 +4,7 @@
  * This class is the top-level class for benchmarking.  It executes scripts,
  * shows the heads-up display, displays the single-step debugger, etc.
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Aug 17, 2011
  *
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -28,27 +28,115 @@ import opbm.common.Macros;
 import opbm.common.Utils;
 import opbm.common.Settings;
 import opbm.common.Xml;
-import opbm.dialogs.OpbmDialog;
 import opbm.panels.PanelRightItem;
 import java.util.ArrayList;
 import opbm.benchmarks.waituntilidle.WaitUntilIdle;
+import opbm.dialogs.OpbmDialog;
+import opbm.dialogs.OpbmInput;
 
+/**
+ *
+ * @author rick
+ */
 public class Benchmarks
 {
-	public void benchmarkTrialRun(Opbm opbm)
+	/**
+	 * Constructor
+	 * @param opbm Opbm master instance creating this class
+	 */
+	public Benchmarks(Opbm opbm)
 	{
-		OpbmDialog od = new OpbmDialog(opbm, "Trial Run would start here", "Trial Run", OpbmDialog._OKAY_BUTTON, null);
-		opbm.setTrialRun();
+		m_opbm = opbm;
 	}
 
-	public void benchmarkOfficialRun(Opbm opbm)
+	/**
+	 * Called to initiate the process of starting a trial run benchmark
+	 * @param automated
+	 */
+	public void benchmarkTrialRun(boolean automated)
 	{
-		OpbmDialog od = new OpbmDialog(opbm, "Official Run would start here", "Official Run", OpbmDialog._OKAY_BUTTON, null);
-		opbm.setOfficialRun();
+		m_opbm.setTrialRun();
+		if (!automated)
+		{	// User is manually keying the benchmark, so give them the dialog option
+			OpbmInput oi = new OpbmInput(m_opbm, "Trial Run", "Assign a name to this Trial Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "trial", "", "", "Go", "", "launch_trial_run");
+
+		} else {
+			// For automated processes, we go right to it
+			benchmarkLaunchTrialRun(true);
+
+		}
 	}
 
-	public void benchmarkInitialize(Opbm			opbm,
-								    Macros			macroMaster,
+	/**
+	 * Called to physically execute the trial run benchmark
+	 * @param automated
+	 */
+	public void benchmarkLaunchTrialRun(boolean automated)
+	{
+		String result;
+
+		if (!automated)
+		{	// We have to check the user response
+			result = m_opbm.getDialogResponse("trial");
+			if (!result.equalsIgnoreCase("go"))
+			{	// User cancelled
+				return;
+			}
+			// If we get here, they're continuing
+			m_opbm.setRunName(m_opbm.getDialogResponseData("trial").trim());
+			m_opbm.clearDialogResponse("trial");
+		}
+		// Execute the trial run benchmark
+		OpbmDialog od = new OpbmDialog(m_opbm, "Trial Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
+	}
+
+	/**
+	 * Called to initiate the process of starting an official run benchmark
+	 * @param automated
+	 */
+	public void benchmarkOfficialRun(boolean automated)
+	{
+		m_opbm.setOfficialRun();
+		if (!automated)
+		{	// User is manually keying the benchmark, so give them the dialog option
+			OpbmInput oi = new OpbmInput(m_opbm, "Official Run", "Assign a name to this Official Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "official", "", "", "Go", "", "launch_official_run");
+
+		} else {
+			// For automated processes, we go right to it
+			benchmarkLaunchOfficialRun(true);
+
+		}
+	}
+
+	/**
+	 * Called to physically execute the official run benchmark
+	 * @param automated
+	 */
+	public void benchmarkLaunchOfficialRun(boolean automated)
+	{
+		String result;
+
+		if (!automated)
+		{	// We have to check the user response
+			result = m_opbm.getDialogResponse("official");
+			if (!result.equalsIgnoreCase("go"))
+			{	// User cancelled
+				return;
+			}
+			// If we get here, they're continuing
+			m_opbm.setRunName(m_opbm.getDialogResponseData("official").trim());
+			m_opbm.clearDialogResponse("official");
+		}
+		// Execute the official run benchmark
+		OpbmDialog od = new OpbmDialog(m_opbm, "Official Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
+	}
+
+	/**
+	 * Called to initialize the harness state for the execution of a benchmark.
+	 * @param macroMaster the Macros class to use for this instance
+	 * @param settingsMaster the Settings class to use for this instance
+	 */
+	public void benchmarkInitialize(Macros			macroMaster,
 								    Settings		settingsMaster)
 
 	{
@@ -60,7 +148,7 @@ public class Benchmarks
 			m_bp.m_bpAtom = new BenchmarksAtom(m_bp);
 
 		// Store our passed parameters
-		m_bp.m_opbm				= opbm;
+		m_bp.m_opbm				= m_opbm;
 		m_bp.m_macroMaster		= macroMaster;
 		m_bp.m_settingsMaster	= settingsMaster;
 
@@ -88,6 +176,9 @@ public class Benchmarks
 		}
 	}
 
+	/**
+	 * When the benchmark is complete, this method is called
+	 */
 	public void benchmarkShutdown()
 	{
 		String fileName;
@@ -121,9 +212,13 @@ public class Benchmarks
 	}
 
 	/**
-	 * Parameter is passed to this function because it may be utilized to
-	 * initialize an independent BenchmarkParams entry
-	 * @param bp
+	 * Initialize all of the BenchmarkParams variables for this instance.  If
+	 * the passed parameter is the same as this one, then it is assumed a
+	 * benchmark will be running soon, so we also take a snapshot of the
+	 * currently running processes and open windows, so that everything can be
+	 * restored to a known state between runs.
+	 *
+	 * @param bp BenchmarkParams item to update
 	 */
 	public void benchmarkInitializeExecutionEnvironment(BenchmarkParams bp)
 	{
@@ -551,5 +646,6 @@ public class Benchmarks
 		}
 	}
 
+	private Opbm				m_opbm;
 	private BenchmarkParams		m_bp;
 }

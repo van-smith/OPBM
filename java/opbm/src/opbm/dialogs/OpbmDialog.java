@@ -26,6 +26,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,13 +41,16 @@ import opbm.graphics.AlphaImage;
  *
  * @author rick
  */
-public final class OpbmDialog implements MouseListener
+public final class OpbmDialog
+					implements MouseListener,
+							   WindowListener
 {
 	public OpbmDialog(Opbm		opbm,
 					  String	message,
 					  String	caption,
 					  int		buttons,
-					  String	id)
+					  String	id,
+					  String	triggerCommand)
 	{
 		m_opbm			= opbm;
 		m_message		= message;
@@ -53,10 +58,10 @@ public final class OpbmDialog implements MouseListener
 		m_buttons		= buttons;
 		if (id == null)
 		{	// They didn't specify an ID, so use the generic one
-			id = "generic";
+			id = "dialog";
 		}
 		m_id			= id;
-		m_opbm.initializeDialogResponse(id);
+		m_opbm.initializeDialogResponse(id, triggerCommand);
 		createDialogWindow();
 	}
 
@@ -264,6 +269,36 @@ public final class OpbmDialog implements MouseListener
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e)
+	{	// User cancelled
+		m_opbm.setDialogResponse(m_id, "cancel");
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 	}
 
 	public static final int	_OKAY_BUTTON	= 1;

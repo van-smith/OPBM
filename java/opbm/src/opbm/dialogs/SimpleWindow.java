@@ -351,11 +351,11 @@ public class SimpleWindow extends DroppableFrame
 
 		} else if (jlht.getIdentifier().equalsIgnoreCase("sw_trial")) {
 			// Trial Run is clicked
-			m_opbm.getBenchmarkMaster().benchmarkTrialRun(m_opbm);
+			m_opbm.getBenchmarkMaster().benchmarkTrialRun(false);
 
 		} else if (jlht.getIdentifier().equalsIgnoreCase("sw_official")) {
 			// Official Run is clicked
-			m_opbm.getBenchmarkMaster().benchmarkOfficialRun(m_opbm);
+			m_opbm.getBenchmarkMaster().benchmarkOfficialRun(false);
 
 		} else if (jlht.getIdentifier().equalsIgnoreCase("sw_previous")) {
 			// View Previous Results is clicked

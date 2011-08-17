@@ -45,6 +45,33 @@ public class Commands
 		m_settingsMaster	= settingsMaster;
 	}
 
+	// Called when the parameters cannot be strings, and assigns them to class variables
+	public void processCommand(Object	source,
+							   String	commandOriginal,
+							   Object	p1,
+							   Object	p2,
+							   Object	p3,
+							   Object	p4,
+							   Object	p5,
+							   Object	p6,
+							   Object	p7,
+							   Object	p8,
+							   Object	p9,
+							   Object	p10)
+	{
+		m_op1 = p1;
+		m_op2 = p2;
+		m_op3 = p3;
+		m_op4 = p4;
+		m_op5 = p5;
+		m_op6 = p6;
+		m_op7 = p7;
+		m_op8 = p8;
+		m_op9 = p9;
+		m_op10 = p10;
+		processCommand(source, commandOriginal, "", "", "", "", "", "", "", "", "", "");
+	}
+
 	/** Parses commands from panels.xml or in any other string.
 	 * Up to six optional parameters are always included (even if only as
 	 * empty strings), and are used for some commands.
@@ -267,6 +294,14 @@ public class Commands
 // BENCHMARKS
 		} else if (command.equals("run_atom_benchmark")) {
 			m_opbm.benchmarkRunAtom(null, 1, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		} else if (command.equals("launch_trial_run")) {
+			m_opbm.benchmarkLaunchTrialRun(/*not automated*/false);
+		} else if (command.equals("launch_official_run")) {
+			m_opbm.benchmarkLaunchOfficialRun(/*not automated*/false);
+		} else if (command.equals("launch_trial_run_automated")) {
+			m_opbm.benchmarkLaunchTrialRun(/*automated*/true);
+		} else if (command.equals("launch_official_run_automated")) {
+			m_opbm.benchmarkLaunchOfficialRun(/*automated*/true);
 
 //////////
 // RESULTS VIEWER
@@ -298,4 +333,16 @@ public class Commands
 	public Opbm			m_opbm;
 	public Macros		m_macroMaster;
 	public Settings		m_settingsMaster;
+
+	// Used to hold the parameters passed as objects
+	public Object		m_op1;
+	public Object		m_op2;
+	public Object		m_op3;
+	public Object		m_op4;
+	public Object		m_op5;
+	public Object		m_op6;
+	public Object		m_op7;
+	public Object		m_op8;
+	public Object		m_op9;
+	public Object		m_op10;
 }

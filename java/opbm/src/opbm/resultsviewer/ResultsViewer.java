@@ -80,7 +80,7 @@ public final class ResultsViewer implements KeyListener,
 
 		} else {
 			// Error, tell the user
-			OpbmDialog od = new OpbmDialog(m_opbm, "There was an error processing the file<br>" + filename, "OPBM - Results Viewer Error", OpbmDialog._OKAY_BUTTON, "ResultsViewer");
+			OpbmDialog od = new OpbmDialog(m_opbm, "There was an error processing the file<br>" + filename, "OPBM - Results Viewer Error", OpbmDialog._OKAY_BUTTON, "ResultsViewer", "");
 			return(false);
 
 		}
@@ -288,7 +288,7 @@ img.grayscale();
 
 			// Grab the controls for the button
 			selected	= ((String)m_filterTags.getSecond(i)).equalsIgnoreCase("Yes");
-			label		= (JLabelHotTrack)m_filterTags.getExtra1(i);
+			label		= (JLabelHotTrack)m_filterTags.getThird(i);
 			if (label == null)
 			{
 				label = new JLabelHotTrack(this);
@@ -333,7 +333,7 @@ img.grayscale();
 				labelUnselectedOver.setIcon(new ImageIcon(button.getBufferedImage()));
 
 				// Add the hot track label
-				m_filterTags.setExtra1(i, label);
+				m_filterTags.setThird(i, label);
 
 			} else {
 				labelSelectedNeutral	= label.getSelectedNeutral();

@@ -45,6 +45,7 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import opbm.common.ModalApp;
 import opbm.dialogs.DeveloperWindow;
+import opbm.dialogs.OpbmInput;
 import opbm.dialogs.SimpleWindow;
 import org.xml.sax.SAXException;
 
@@ -94,10 +95,20 @@ public final class Opbm extends	ModalApp
 	/** Constructor creates ArrayList for m_leftPanels and m_navHistory, master
 	 * Macros and Commands class objects.
 	 *
-	 * @param args Allows one switch, -font to change the default fonts
+	 * @param args Allows several switches:
+	 *			-font			-- to change the default fonts
+	 *			-atom:			-- Execute an atom
+	 *			-atom(N):		-- Execute an atom N times
+	 *			-trial			-- Execute a Trial Run of the entire benchmark suite
+	 *			-official		-- Execute an Official Run of the entire benchmark suite
+	 *			-skin			-- Load the simple, Skinned GUI
+	 *			-simple			-- Load the Simple, skinned GUI
+	 *			-developer		-- Load the Developer GUI
 	 */
+	@SuppressWarnings("LeakingThisInConstructor")
     public Opbm(String[] args)
 	{
+		m_opbm = this;
 /*
  * Used for debugging, or reference.  This data comes from the opbm64.dll or opbm32.dll functions:
 		System.out.println(" Harness CSV Directory: " + getHarnessCSVDirectory());
@@ -125,13 +136,14 @@ public final class Opbm extends	ModalApp
 		m_zoomFrames				= new ArrayList<JFrame>(0);
 		m_tuples					= new ArrayList<Tuple>(0);
 		m_macroMaster				= new Macros(this);
-		m_benchmarkMaster			= new Benchmarks();
+		m_benchmarkMaster			= new Benchmarks(this);
 		m_settingsMaster			= new Settings(this);
 		m_commandMaster				= new Commands(this, m_macroMaster, m_settingsMaster);
 		m_executingFromCommandLine	= false;
 		m_executingTrialRun			= false;
 		m_executingOfficialRun		= false;
 		m_executingBenchmarkRunName	= "";
+
 
 		// If -font option is on command line, use slightly smaller fonts
 		// REMEMBER I desire to change this later to use settings.xml file
@@ -241,12 +253,12 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-trial")) {
 								// They want to run a trial benchmark run
 								++runCount;
-								m_benchmarkMaster.benchmarkTrialRun(m_opbm);
+								m_benchmarkMaster.benchmarkTrialRun(true);
 
 							} else if (line.toLowerCase().startsWith("-official")) {
 								// They want to run an official benchmark run
 								++runCount;
-								m_benchmarkMaster.benchmarkOfficialRun(m_opbm);
+								m_benchmarkMaster.benchmarkOfficialRun(true);
 
 							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
 								// They want to launch the simple skinned window
@@ -1293,7 +1305,7 @@ public final class Opbm extends	ModalApp
 
 		for (i = 0; i < m_tuples.size(); i++)
 		{
-			if (m_tuples.get(i).getName().equalsIgnoreCase(uuid))
+			if (m_tuples.get(i).getUUID().equalsIgnoreCase(uuid))
 				return(m_tuples.get(i));
 		}
 		return(null);
@@ -1305,7 +1317,7 @@ public final class Opbm extends	ModalApp
 
 		for (i = 0; i < m_tuples.size(); i++)
 		{
-			if (m_tuples.get(i).getName().equalsIgnoreCase(uuid))
+			if (m_tuples.get(i).getUUID().equalsIgnoreCase(uuid))
 				m_tuples.remove(i);
 		}
 		return(null);
@@ -1345,7 +1357,15 @@ public final class Opbm extends	ModalApp
 		m_commandMaster.processCommand(this, commandOriginal, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 	}
 
-	public void initializeDialogResponse(String id)
+	/**
+	 * Initializes the response entry in the dialog tuple, so it can be accessed
+	 * by the readDialog() code, or for other purposes
+	 * @param id identifier to associate with this dialog input
+	 * @param triggerCommand triggers the command specified once the
+	 * OpbmInput dialog sets something
+	 */
+	public void initializeDialogResponse(String		id,
+										 String		triggerCommand)
 	{
 		int i;
 
@@ -1357,20 +1377,30 @@ public final class Opbm extends	ModalApp
 			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
 			{	// Found it
 				m_dialogTuple.setSecond(i, "Unanswered");
+				m_dialogTuple.setThird(i, "");
+				m_dialogTuple.setTriggerCommand(i, triggerCommand);
 				return;
 			}
 		}
 		// If we get here, it wasn't found, add it
-		m_dialogTuple.add(id, "Unanswered");
+		i = m_dialogTuple.add(id, "Unanswered", "");
+		m_dialogTuple.setTriggerCommand(i, triggerCommand);	// command to execute
+		m_dialogTuple.setTriggerFilters(i, "3");			// when 3rd item is updated
 	}
 
+	/**
+	 * When the dialog box closes, it sets the userAction (which button was
+	 * pressed)
+	 * @param id identifier associated with the dialog
+	 * @param userAction user action (text on the button, generally speaking)
+	 */
 	public void setDialogResponse(String	id,
 								  String	userAction)
 	{
 		int i;
 
 		if (m_dialogTuple == null)
-			initializeDialogResponse(id);
+			initializeDialogResponse(id, "");
 
 		for (i = 0; i < m_dialogTuple.size(); i++)
 		{
@@ -1381,8 +1411,101 @@ public final class Opbm extends	ModalApp
 			}
 		}
 		// If we get here, it wasn't found, add it, and try again
-		initializeDialogResponse(id);
+		initializeDialogResponse(id, "");
 		setDialogResponse(id, userAction);
+	}
+
+	/**
+	 * When the input box closes, it sets the user action (which button was
+	 * pressed) and the data that was in the input box when it was pressed
+	 * @param id identifier associated with this input
+	 * @param userAction user action (text on the button, generally speaking)
+	 * @param data whatever the user had input in the input box when the button
+	 * was pressed
+	 */
+	public void setDialogResponse(String	id,
+								  String	userAction,
+								  String	data)
+	{
+		int i;
+
+		if (m_dialogTuple == null)
+			initializeDialogResponse(id, "");
+
+		for (i = 0; i < m_dialogTuple.size(); i++)
+		{
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+			{	// Found it
+				m_dialogTuple.setSecond(i, userAction);
+				m_dialogTuple.setThird(i, data);
+				return;
+			}
+		}
+		// If we get here, it wasn't found, add it, and try again
+		initializeDialogResponse(id, "");
+		setDialogResponse(id, userAction, data);
+	}
+
+	/**
+	 * Returns the user's response (which button they pressed)
+	 * @param id
+	 * @return
+	 */
+	public String getDialogResponse(String id)
+	{
+		String result;
+		int i;
+
+		for (i = 0; i < m_dialogTuple.size(); i++)
+		{
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+			{	// Found it
+				result = (String)m_dialogTuple.getSecond(i);
+				return(result == null ? "" : result);
+			}
+		}
+		// Not found
+		return("--not found--");
+	}
+
+	/**
+	 * Returns the user's response (which button they pressed)
+	 * @param id
+	 * @return
+	 */
+	public void clearDialogResponse(String id)
+	{
+		int i;
+
+		for (i = 0; i < m_dialogTuple.size(); i++)
+		{
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+			{	// Found it
+				m_dialogTuple.remove(i);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Returns the data item (input box) text that was recorded when the user
+	 * pressed the button
+	 * @param id
+	 * @return
+	 */
+	public String getDialogResponseData(String id)
+	{
+		int i;
+
+		for (i = 0; i < m_dialogTuple.size(); i++)
+		{
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+			{	// Found it
+				return((String)m_dialogTuple.getThird(i));
+			}
+		}
+		// Not found
+		return("--not found--");
 	}
 
 	public void setTrialRun()
@@ -1413,6 +1536,11 @@ public final class Opbm extends	ModalApp
 
 		else
 			return("manual");
+	}
+
+	public void setRunName(String name)
+	{
+		m_executingBenchmarkRunName = name;
 	}
 
 	public String getRunName()
@@ -1489,6 +1617,16 @@ public final class Opbm extends	ModalApp
 		return(m_commandMaster);
 	}
 
+	public void benchmarkLaunchTrialRun(boolean automated)
+	{
+		m_benchmarkMaster.benchmarkLaunchTrialRun(automated);
+	}
+
+	public void benchmarkLaunchOfficialRun(boolean automated)
+	{
+		m_benchmarkMaster.benchmarkLaunchOfficialRun(automated);
+	}
+
 	public void benchmarkRunAtom(Xml			atom,
 								 int			iterations,
 								 boolean		openInNewThread,
@@ -1545,8 +1683,7 @@ public final class Opbm extends	ModalApp
 
 	public void runAtom()
 	{
-		m_benchmarkMaster.benchmarkInitialize(m_bm_opbm,
-											  m_bm_macroMaster,
+		m_benchmarkMaster.benchmarkInitialize(m_bm_macroMaster,
 											  m_bm_settingsMaster);
 
 		if (m_bm_atom == null && m_bm_pri != null)
@@ -1689,13 +1826,13 @@ public final class Opbm extends	ModalApp
     public static void main(String[] args)
 	{
 		// Launch the system
-        m_opbm = new Opbm(args);
+        Opbm o = new Opbm(args);
     }
 
 	/**
 	 * Master instance created in main()
 	 */
-	private static Opbm				m_opbm;
+	private Opbm					m_opbm;
 
 	/**
 	 * Holds the command line arguments for processing after the invokeLater() runnable
