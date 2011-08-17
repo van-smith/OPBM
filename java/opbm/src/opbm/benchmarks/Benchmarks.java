@@ -88,6 +88,10 @@ public class Benchmarks
 		}
 		// Execute the trial run benchmark
 		OpbmDialog od = new OpbmDialog(m_opbm, "Trial Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException ex) {
+		}
 	}
 
 	/**
@@ -129,6 +133,10 @@ public class Benchmarks
 		}
 		// Execute the official run benchmark
 		OpbmDialog od = new OpbmDialog(m_opbm, "Official Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException ex) {
+		}
 	}
 
 	/**
