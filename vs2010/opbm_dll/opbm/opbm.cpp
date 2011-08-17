@@ -42,13 +42,6 @@ extern HMODULE ghModule;
 	int				wcstrncmp						(wchar_t* left, wchar_t* right, int max);
 	int				wcstrnicmp						(wchar_t* left, wchar_t* right, int max);
 	char*			GetOffsetToResource				(int number, LPWSTR type, int* size);
-	char*			GetRegistryKeyValue				(char* key);
-	int				caseNocaseCompare				(char* left, char* right, int length);
-	int				caseNocaseContains				(char* needle, char* haystack);
-	int				SetRegistryKeyValueAsString		(char* key, char* value);
-	int				SetRegistryKeyValueAsDword		(char* key, int value);
-	int				SetRegistryKeyValueAsBinary		(char* key, char* value, int length);
-	char*			breakoutHkeyComponents			(char* key, HKEY& hk, int& skip);
 	BOOL			isRunningUnderWOW64				(void);
 
 

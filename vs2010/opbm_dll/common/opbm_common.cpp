@@ -432,3 +432,319 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 		return TRUE;
 	}
 	// :End
+
+
+
+
+//////////
+//
+// The key is of the form:  ROOT\name\name\name\name\key,
+//
+// Where ROOT is one of the following:
+//		HKCR	- HKEY_CLASSES_ROOT
+//		HKCU	- HKEY_CURRENT_USER
+//		HKLM	- HKEY_LOCAL_MACHINE
+//		HKU		- HKEY_USERS
+//
+// This function attempts to read the key level, obtaining its value
+//
+/////
+	char* GetRegistryKeyValue(char* key)
+	{
+		int skip;
+		HKEY hk, hkout;
+		DWORD type, length;
+		BYTE* intermediate;
+		char* keyName;
+		char* converted;
+
+		// Break out our HKEY root, and keyname components
+		keyName = breakoutHkeyComponents(key, hk, skip);
+		if (RegOpenKeyExA( hk, key + skip, 0, KEY_READ, &hkout ) == ERROR_SUCCESS)
+		{	// Success, we can read the key value
+			if (RegQueryValueExA( hkout, keyName, 0, &type, NULL, &length ) == ERROR_SUCCESS)
+			{
+				// Allocate a buffer to read the value
+				intermediate = (BYTE*)malloc(length);
+				RegQueryValueExA( hkout, keyName, 0, &type, intermediate, &length );
+				RegCloseKey(hkout);
+				switch (type)
+				{
+					case REG_BINARY:
+					case REG_EXPAND_SZ:
+					case REG_MULTI_SZ:
+					case REG_SZ:
+						// The intermediate buffer is the wholeness of the string
+						return((char*)intermediate);
+
+					case REG_DWORD:
+						// Convert the dword value to its string form
+						converted = (char*)malloc(length);
+						if (converted != NULL)
+						{
+							sprintf_s(converted, length, "%u", *(DWORD*)intermediate);
+						}
+						free(intermediate);
+						return(converted);
+
+					case REG_QWORD:
+						// Convert the qword value to its string form
+						converted = (char*)malloc(length);
+						if (converted != NULL)
+						{
+							sprintf_s(converted, length, "%I64u", *(__int64*)intermediate);
+						}
+						free(intermediate);
+						return(converted);
+
+					default:
+						// Unhandled type
+						free(intermediate);
+						return(NULL);
+				}
+
+			} else {
+				// Error, return NULL
+				return(NULL);
+			}
+
+		} else {
+			// Failure, return a NULL
+			return(NULL);
+
+		}
+	}
+
+
+
+
+//////////
+//
+// Does a double-compare, one with case, one without case.
+//
+// Returns:
+//		0	- no match
+//		1	- exact match
+//		2	- case-insensitive match
+//
+/////
+	int caseNocaseCompare(char* left, char* right, int length)
+	{
+		int i;
+		char l, r;
+		bool matchNoCase = true;
+		bool matchCase = true;
+
+		for (i = 0; i < length && (matchNoCase || matchCase); i++)
+		{
+			l = tolower(left[i]);
+			r = tolower(right[i]);
+
+			if (matchNoCase && left[i] != right[i])
+				matchNoCase = false;
+
+			if (matchCase && l != r)
+				matchCase = false;
+		}
+		if (matchNoCase)
+			return(1);	// Exact match
+		else if (matchCase)
+			return(2);	// Case-insensitive match
+		else
+			return(0);	// No match
+	}
+
+
+
+
+//////////
+//
+// Does a double-compare, one with case, one without case, looking throughout
+// the entire haystack to see if the needle matches.
+//
+// Returns:
+//		0	- no match
+//		1	- exact match
+//		2	- case-insensitive match
+//
+/////
+	int caseNocaseContains(char* needle, char* haystack)
+	{
+		int i, nlength, hlength, result;
+		bool matchNoCase = false;
+
+		nlength	= (int)strlen(needle);
+		hlength	= (int)strlen(haystack);
+		for (i = 0; i + nlength <= hlength; i++)
+		{
+			result = caseNocaseCompare(needle, haystack + i, nlength);
+			if (result == 1)
+			{	// We found an exact match, we're done
+				return(1);
+			} else if (result == 2) {
+				matchNoCase = true;
+			}
+		}
+		if (matchNoCase)
+			return(2);	// We found at least one instance where it matched with no case
+		else
+			return(0);	// We did not find one instance
+	}
+
+
+
+
+//////////
+//
+// Sets the registry value to the specified string
+//
+// Returns:
+//
+//		0 - failure
+//		1 - success
+//
+/////
+	int SetRegistryKeyValueAsString(char* key, char* value)
+	{
+		int skip;
+		HKEY hk, hkout;
+		char* keyName;
+
+		// Break out our HKEY root, and keyname components
+		keyName = breakoutHkeyComponents(key, hk, skip);
+		if (RegCreateKeyExA( hk, key + skip, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, NULL, &hkout, NULL ) == ERROR_SUCCESS)
+		{	// Success, we can write the key value
+			if (RegSetKeyValueA( hkout, 0, keyName, REG_SZ, value, (DWORD)strlen(value) ) == ERROR_SUCCESS)
+			{	// Success
+				RegCloseKey( hkout );
+				return(1);
+			}
+			// Failure
+			RegCloseKey( hkout );
+		}
+		// Failure, return a zero
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Sets the registry value to the specified dword value
+//
+// Returns:
+//
+//		0 - failure
+//		1 - success
+//
+/////
+	int SetRegistryKeyValueAsDword(char* key, int value)
+	{
+		int skip;
+		HKEY hk, hkout;
+		char* keyName;
+
+		// Break out our HKEY root, and keyname components
+		keyName = breakoutHkeyComponents(key, hk, skip);
+		if (RegCreateKeyExA( hk, key + skip, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, NULL, &hkout, NULL ) == ERROR_SUCCESS)
+		{	// Success, we can write the key value
+			if (RegSetKeyValueA( hkout, 0, keyName, REG_DWORD, &value, 4 ) == ERROR_SUCCESS)
+			{	// Success
+				RegCloseKey( hkout );
+				return(1);
+			}
+			// Failure
+			RegCloseKey( hkout );
+		}
+		// Failure, return a zero
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Sets the registry value to the specified binary value
+//
+// Returns:
+//
+//		0 - failure
+//		1 - success
+//
+/////
+	int SetRegistryKeyValueAsBinary(char* key, char* value, int length)
+	{
+		int skip;
+		HKEY hk, hkout;
+		char* keyName;
+
+		// Break out our HKEY root, and keyname components
+		keyName = breakoutHkeyComponents(key, hk, skip);
+		if (RegCreateKeyExA( hk, key + skip, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, NULL, &hkout, NULL ) == ERROR_SUCCESS)
+		{	// Success, we can write the key value
+			if (RegSetKeyValueA( hkout, 0, keyName, REG_BINARY, &value, length ) == ERROR_SUCCESS)
+			{	// Success
+				RegCloseKey( hkout );
+				return(1);
+			}
+			// Failure
+			RegCloseKey( hkout );
+		}
+		// Failure, return a zero
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Called as a helper function, to breakout the registry key format:
+//		hklm\some\path\to\the\key\and\its\name
+//
+// returns pointer to "name", and NULL-terminates "hklm\some\path\to\the\key\and\its[NULL]"
+// Also sets the skip value, of how many characters to skip past "hklm" or its other ROOT HKEY
+//
+/////
+	char* breakoutHkeyComponents(char* key, HKEY& hk, int& skip)
+	{
+		char* keyName;
+
+		if (_strnicmp(key, "hkcr\\", 5) == 0) {
+			hk = HKEY_CLASSES_ROOT;
+			skip = 5;
+		} else if (_strnicmp(key, "hkcu\\", 5) == 0) {
+			hk = HKEY_CURRENT_USER;
+			skip = 5;
+		} else if (_strnicmp(key, "hklm\\", 5) == 0) {
+			hk = HKEY_LOCAL_MACHINE;
+			skip = 5;
+		} else if (_strnicmp(key, "hku\\", 4) == 0) {
+			hk = HKEY_USERS;
+			skip = 4;
+		} else {
+			// Unknown key root, cannot be accessed
+			return(NULL);
+		}
+
+		// Backup to the previous level and put a NULL and mark that location for the key name
+		keyName = key + strlen(key) - 1;
+		while (keyName > key + skip)
+		{
+			if (*keyName == '\\')
+			{	// Found it
+				*keyName = 0;
+				++keyName;
+				break;
+			}
+			--keyName;
+		}
+
+		// If there is no key name, then leave it NULL
+		if (keyName == key)
+			keyName = NULL;
+
+		return(keyName);
+	}

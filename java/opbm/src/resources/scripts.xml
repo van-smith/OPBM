@@ -134,6 +134,9 @@
 			</abstract>
 		</abstracts>
 		<atoms>
+			<atom name="Reboot And Restart">
+				<abstract name="Reboot And Restart" sourcename="rebootAndRestart"></abstract>
+			</atom>
 			<atom name="Reboot And Terminate">
 				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
 			</atom>

@@ -87,6 +87,46 @@ JNIEXPORT void JNICALL Java_opbm_Opbm_snapshotProcesses
 JNIEXPORT void JNICALL Java_opbm_Opbm_stopProcesses
   (JNIEnv *, jclass);
 
+/*
+ * Class:     opbm_Opbm
+ * Method:    GetRegistryKeyValue
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_GetRegistryKeyValue
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    SetRegistryKeyValueAsString
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_SetRegistryKeyValueAsString
+  (JNIEnv *, jclass, jstring, jstring);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    SetRegistryKeyValueAsDword
+ * Signature: (Ljava/lang/String;I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_SetRegistryKeyValueAsDword
+  (JNIEnv *, jclass, jstring, jint);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    SetRegistryKeyValueAsBinary
+ * Signature: (Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_SetRegistryKeyValueAsBinary
+  (JNIEnv *, jclass, jstring, jstring, jint);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    waitUntilSystemIdle
+ * Signature: (III)F
+ */
+JNIEXPORT jfloat JNICALL Java_opbm_Opbm_waitUntilSystemIdle
+  (JNIEnv *, jclass, jint, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

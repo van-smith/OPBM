@@ -286,6 +286,7 @@
 					// Release the non-const memory
 					free(cptr);
 				}
+				// free(ccptr) is what the next line does:
 				env->ReleaseStringUTFChars(str, ccptr);
 			}
 		}
@@ -385,4 +386,190 @@
 				}
 			}
 		}
+	}
+
+
+
+
+//////////
+//
+// GetRegistryKeyValue()
+//
+// Return the registry value specified (up to 2048 characters).
+//
+/////
+	// GetRegistryKeyValue()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_GetRegistryKeyValue(JNIEnv* env, jclass cls, jstring key)
+	{
+		char		keyValue[ 2048 ];
+		const char* ckptr;
+		char*		kptr;
+		char*		keyValuePtr;
+		jboolean	isCopy;
+		jstring		value;
+		int			length;
+
+		// Initialize the variable
+		memset(keyValue, 0, sizeof(keyValue));
+
+		length	= env->GetStringLength(key);
+		if (length != 0)
+		{
+			// Allocate the variable
+			ckptr = env->GetStringUTFChars(key, &isCopy);		// returns const char*
+			if (ckptr != NULL)
+			{	// Grab the registry key
+				kptr = (char*)malloc(length);					// returns char*
+				if (kptr != NULL)
+				{
+					memcpy(kptr, ckptr, length);
+					keyValuePtr = GetRegistryKeyValue(kptr);
+					free(kptr);
+					if (keyValuePtr != NULL)
+					{	// Copy the returned key to our block
+						memcpy(keyValue, keyValuePtr, min(strlen(keyValuePtr), sizeof(keyValue)));
+						free(keyValuePtr);
+					}
+					// When we get here, we either have the key or not, but keyValue reflects what we'll be returning
+				}
+				// free(ccptr) is what the next line does:
+				env->ReleaseStringUTFChars(key, ckptr);
+			}
+		}
+
+		// Create the return variable
+		value = env->NewStringUTF( keyValue );
+		return(value);
+	}
+
+
+
+
+//////////
+//
+// SetRegistryKeyValueAsString()
+//
+// Sets or creates the specified registry key to its REG_SZ string value.
+//
+/////
+	// SetRegistryKeyValueAsString()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_SetRegistryKeyValueAsString(JNIEnv* env, jclass cls, jstring key, jstring value)
+	{
+		const char* ckptr;
+		const char* cvptr;
+		char*		kptr;
+		char*		vptr;
+		const char*	rptr;			// Result pointer
+		jboolean	isCopyKey;
+		jboolean	isCopyValue;
+		jstring		result;
+		int			lengthKey;
+		int			lengthValue;
+
+		// Initialize the return value
+		rptr = "failure";
+
+		// Grab our lengths
+		lengthKey	= env->GetStringLength(key);
+		lengthValue	= env->GetStringLength(value);
+		if (lengthKey != 0)
+		{	// Allocate our key
+			ckptr = env->GetStringUTFChars(key, &isCopyKey);	// returns const char*
+			if (ckptr != NULL)
+			{	// Allocate our value
+				cvptr = env->GetStringUTFChars(value, &isCopyValue);
+				if (cvptr != NULL)
+				{
+					// Grab the registry key
+					kptr = (char*)malloc(lengthKey + 1);		// returns char*
+					if (kptr != NULL)
+					{
+						memset(kptr, 0, lengthKey + 1);
+						vptr = (char*)malloc(lengthValue + 1);
+						if (vptr != NULL)
+						{
+							memset(vptr, 0, lengthValue + 1);
+							memcpy(kptr, ckptr, lengthKey);
+							memcpy(vptr, cvptr, lengthValue);
+							rptr = SetRegistryKeyValueAsString(kptr, vptr) == 1 ? "success" : "failure";
+							free(kptr);
+							free(vptr);
+
+						} else {
+							// Failure
+							free(kptr);
+						}
+						// When we get here, we have either set the key or not, but rptr reflects what we'll be returning
+					}
+					// free(cvptr) is what the next line does:
+					env->ReleaseStringUTFChars(key, cvptr);
+				}
+				// free(ckptr) is what the next line does:
+				env->ReleaseStringUTFChars(key, ckptr);
+			}
+		}
+
+		// Create the return variable
+		result = env->NewStringUTF( rptr );
+		return(result);
+	}
+
+
+
+
+//////////
+//
+// SetRegistryKeyValueAsDword()
+//
+// Sets or creates the specified registry key to its REG_DWORD value.
+//
+/////
+	// SetRegistryKeyValueAsDword()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_SetRegistryKeyValueAsDword(JNIEnv* env, jclass cls, jstring key, jint value)
+	{
+		jstring result;
+		result = env->NewStringUTF( "not yet implemented" );
+		return(result);
+	}
+
+
+
+
+//////////
+//
+// SetRegistryKeyValueAsBinary()
+//
+// Sets or creates the specified registry key to its REG_BINARY value.
+//
+/////
+	// SetRegistryKeyValueAsBinary()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_SetRegistryKeyValueAsBinary(JNIEnv* env, jclass cls, jstring key, jstring binary, jint length)
+	{
+		jstring result;
+		result = env->NewStringUTF( "not yet implemented" );
+		return(result);
+	}
+
+
+
+
+//////////
+//
+// waitUntilSystemIdle()
+//
+// Waits until the system overall utilization drops down below the
+// specified percent threshhold for durationMS (milliseconds), with
+// a timeout of timeoutMS (milliseconds).
+//
+// Example usage:
+//		// Wait until CPU use drops below 10% for 0.2 seconds, timeout in 5 seconds
+//		waitUntilSystemIdle(10, 200, 5000)
+//
+/////
+	// waitUntilSystemIdle()
+	JNIEXPORT jfloat JNICALL Java_opbm_Opbm_waitUntilSystemIdle(JNIEnv* env, jclass cls, jint percent, jint durationMS, jint timeoutMS)
+	{
+		jfloat utilization;
+		utilization = 0.0;
+		return(utilization);
 	}

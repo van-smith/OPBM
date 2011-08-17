@@ -20,5 +20,12 @@
 	void			GetScriptCSVDirectory			(char* dirname, int dirnameLength);
 	void			GetScriptTempDirectory			(char* dirname, int dirnameLength);
 	void			GetCSIDLDirectory				(char* dirname, int dirnameLength, char* csidl_name);
+	char*			GetRegistryKeyValue				(char* key);
+	int				caseNocaseCompare				(char* left, char* right, int length);
+	int				caseNocaseContains				(char* needle, char* haystack);
+	int				SetRegistryKeyValueAsString		(char* key, char* value);
+	int				SetRegistryKeyValueAsDword		(char* key, int value);
+	int				SetRegistryKeyValueAsBinary		(char* key, char* value, int length);
+	char*			breakoutHkeyComponents			(char* key, HKEY& hk, int& skip);
 	BOOL CALLBACK	EnumWindowsCallbackProc			(HWND hwnd, LPARAM lParam);
 	BOOL CALLBACK	ComparativeWindowsCallbackProc	(HWND hwnd, LPARAM lParam);

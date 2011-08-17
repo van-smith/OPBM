@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import opbm.Opbm;
 import opbm.common.Xml;
+import opbm.dialogs.OpbmDialog;
 
 public class BenchmarksAtom
 {
@@ -1166,7 +1167,7 @@ public class BenchmarksAtom
 		Xml xmlOutput;
 		Process process;
 		ProcessBuilder builder;
-		String exception, exception2, name, curDir, counter, sourcename;
+		String exception, exception2, name, curDir, counter, sourcename, result;
 		String command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
 		List<String> commandsAndParameters = new ArrayList<String>(0);
 		boolean failure;
@@ -1388,37 +1389,28 @@ public class BenchmarksAtom
 				// Rebooting, and terminating the benchmark test (will restart the system and leave it in its natural state)
 				m_bp.m_hud.updateStatus("Rebooting and terminating benchmark...");
 				m_bp.m_hud.updateDebug("Rebooting and terminating benchmark...");
-
-				name = m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
-				try {
-					process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /t 2 /r");
-
-					// Grab the output
-					m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
-					m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
-					m_bp.m_errorGobbler.start();
-					m_bp.m_outputGobbler.start();
-
-					// Wait for the process to finish
-					process.waitFor();
-
-					// Display the messages given
-					for (i = 0; i < m_bp.m_errorArray.size(); i++)
-						System.out.println(m_bp.m_errorArray.get(i));
-
-					for (i = 0; i < m_bp.m_outputArray.size(); i++)
-						System.out.println(m_bp.m_outputArray.get(i));
-
-				} catch (Throwable t) {
-				}
-				// Exit the system
-				System.exit(0);
+				reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), false);
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndContinue")) {
 				// Rebooting, and continuing back from the next atom after the one we're on now
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndRestart")) {
 				// Rebooting, and restarting the benchmark from the beginning
+				m_bp.m_hud.updateDebug("Setting registry key for current user startup");
+				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\opbm", Opbm.m_jvmHome + " " + Utils.getCurrentDirectory() + "\\dist\\opbm.jar -restart");
+				m_bp.m_hud.updateDebug(result);
+				if (result.equalsIgnoreCase("success"))
+				{
+					m_bp.m_hud.updateStatus("Reboot and restart benchmark from beginning...");
+					m_bp.m_hud.updateDebug("Reboot and restart benchmark from beginning...");
+					reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), true);
+
+				} else {
+					// Failure creating the registry key, it won't work
+					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY;
+					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_restart", "");
+				}
+				return(null);
 
 			}
 		}
@@ -1427,6 +1419,54 @@ public class BenchmarksAtom
 		System.err.println("Error: An unrecognized command was found, ignored: " + thisCommand.getName());
 // REMEMBER  need to process this error in the future
 		return(thisCommand.getNext());
+	}
+
+// REMEMBER this needs to be moved to the BenchmarkShutdown() logic, so it can
+// be a full post-process (write out CSV, XML files) activity, and not something
+// literally done in the middle of a benchmark.  In that way, it will shutdown
+// (and potentially restart) nicely.
+
+	/**
+	 * Handles the reboot operation
+	 * @param name identifier used for this item (the atom)
+	 * @param saveStateBeforeReboot should this method save the complete
+	 * benchmark state before a reboot (allowing a restart)
+	 */
+	public void reboot(String		name,
+					   boolean		saveStateBeforeReboot)
+	{
+		int i;
+		Process process;
+
+		if (saveStateBeforeReboot)
+		{
+			Opbm.stopProcesses();
+// REMEMBER to save everything here if we need to
+		}
+
+		try {
+			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /t 2 /r");
+
+			// Grab the output
+			m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
+			m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
+			m_bp.m_errorGobbler.start();
+			m_bp.m_outputGobbler.start();
+
+			// Wait for the process to finish
+			process.waitFor();
+
+			// Display the messages given
+			for (i = 0; i < m_bp.m_errorArray.size(); i++)
+				System.out.println(m_bp.m_errorArray.get(i));
+
+			for (i = 0; i < m_bp.m_outputArray.size(); i++)
+				System.out.println(m_bp.m_outputArray.get(i));
+
+		} catch (Throwable t) {
+		}
+		// Exit the system
+		System.exit(0);
 	}
 
 	private BenchmarkParams	m_bp;

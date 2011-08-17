@@ -45,7 +45,6 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import opbm.common.ModalApp;
 import opbm.dialogs.DeveloperWindow;
-import opbm.dialogs.OpbmInput;
 import opbm.dialogs.SimpleWindow;
 import org.xml.sax.SAXException;
 
@@ -80,17 +79,20 @@ public final class Opbm extends	ModalApp
 		}
 	}
 	public native static void	sendWindowToForeground(String title);
-	public native static String	getHarnessCSVDirectory();			// Returns c:\\users\\user\\documents\\obbm\\results\\csv\\
-	public native static String	getHarnessXMLDirectory();			// Returns c:\\users\\user\\documents\\opbm\\results\\xml\
-	public native static String	getHarnessTempDirectory();			// Returns c:\\users\\user\\documents\\opbm\\temp\\
-	public native static String	getScriptCSVDirectory();			// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\
-	public native static String	getScriptTempDirectory();			// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\temp\\
-	public native static String	getSettingsDirectory();				// Returns c:\\users\\user\\documents\\opbm\\settings\\
-	public native static String	getCSIDLDirectory(String name);		// Returns directory specified by the CSIDL option
-	public native static void	snapshotProcesses();				// Takes a snapshot of the currently running processes
-	public native static void	stopProcesses();					// Stops all processes that were not running when the snapshot was taken
-//	public native static float waitUntilSystemIdle(int percent, int durationMS, int timeoutMS);	// Waits up to timeoutMS for a period durationMS long of percent-or-lower total system activity
-//	public native static void reboot();								// Reboots the system
+	public native static String	getHarnessCSVDirectory();					// Returns c:\\users\\user\\documents\\obbm\\results\\csv\\
+	public native static String	getHarnessXMLDirectory();					// Returns c:\\users\\user\\documents\\opbm\\results\\xml\
+	public native static String	getHarnessTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\temp\\
+	public native static String	getScriptCSVDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\
+	public native static String	getScriptTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\temp\\
+	public native static String	getSettingsDirectory();						// Returns c:\\users\\user\\documents\\opbm\\settings\\
+	public native static String	getCSIDLDirectory(String name);				// Returns directory specified by the CSIDL option
+	public native static void	snapshotProcesses();						// Takes a snapshot of the currently running processes
+	public native static void	stopProcesses();							// Stops all processes that were not running when the snapshot was taken
+	public native static String	GetRegistryKeyValue(String key);			// Requests the registry key value
+	public native static String	SetRegistryKeyValueAsString(String key, String value);				// Writes the registry key and value as a REG_SZ
+	public native static String	SetRegistryKeyValueAsDword(String key, int value);					// Writes the registry key and value as a REG_DWORD
+	public native static String	SetRegistryKeyValueAsBinary(String key, String value, int length);	// Writes the registry key and value as a REG_BINARY
+	public native static float	waitUntilSystemIdle(int percent, int durationMS, int timeoutMS);	// Waits up to timeoutMS for a period durationMS long of percent-or-lower total system activity
 
 
 
@@ -112,6 +114,8 @@ public final class Opbm extends	ModalApp
     public Opbm(String[] args)
 	{
 		m_opbm = this;
+		System.out.println(m_jvmHome);
+
 /*
  * Used for debugging, or reference.  This data comes from the opbm64.dll or opbm32.dll functions:
 		System.out.println(" Harness CSV Directory: " + getHarnessCSVDirectory());
@@ -122,6 +126,7 @@ public final class Opbm extends	ModalApp
 		System.out.println("    Settings Directory: " + getSettingsDirectory());
 		System.out.println("    System32 Directory: " + getCSIDLDirectory("SYSTEM"));
  */
+
 		// Make sure we're the only app running
 		if (!isModalApp( getHarnessTempDirectory() + "opbm.dat", m_title ))
 		{	// Already another app instance running
@@ -1967,4 +1972,5 @@ public final class Opbm extends	ModalApp
 	public static boolean			m_breakpointsEnabled;
 	public static String			m_title					= "OPBM - Office Productivity Benchmark";
 	public static String			m_lastStaticError;
+	public static String			m_jvmHome				= System.getProperty("java.home") + "\\bin\\java.exe";
 }

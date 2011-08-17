@@ -157,4 +157,5 @@ public class BenchmarkParams
 	public final static int _STOP									= 100;
 	public final static int _STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES	= 101;
 	public final static int _STOP_USER_CLICKED_STOP					= 102;
+	public final static int _STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY	= 103;
 }
