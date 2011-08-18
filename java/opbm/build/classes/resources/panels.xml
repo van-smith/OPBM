@@ -1,0 +1,1316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+	<panels>
+		<left name="Main">
+			<navigation>
+				<text>Quit</text>
+				<command>quit</command>
+				<tooltip>Exit OPBM</tooltip>
+			</navigation>
+			<navigation>
+				<text>Skin</text>
+				<command>simple</command>
+				<tooltip>Switch to the simple skinned user interface</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Benchmarks:</text>
+			</heading>
+			<menu>
+				<text>Atoms</text>
+				<command p1="Execute Atoms">edit</command>
+				<tooltip>Record a benchmark run for an Atom.</tooltip>
+			</menu>
+			<menu>
+				<text>Molecules</text>
+				<command p1="Execute Molecules">edit</command>
+				<tooltip>Record a benchmark run for a Molecule.</tooltip>
+			</menu>
+			<menu>
+				<text>Scenarios</text>
+				<command p1="Execute Scenarios">edit</command>
+				<tooltip>Record a benchmark run for a Scenario.</tooltip>
+			</menu>
+			<menu>
+				<text>Suites</text>
+				<command p1="Execute Suites">edit</command>
+				<tooltip>Record a benchmark run for a Suite.</tooltip>
+			</menu>
+			<spacer/>
+			<heading>
+				<text>Options:</text>
+			</heading>
+			<menu>
+				<text fgcolor="$debug_mode_color$">Debug mode: $debug_mode$</text>
+				<command>toggle_debug_mode</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="$heads_up_color$">Heads-up: $heads_up$</text>
+				<command>toggle_heads_up</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text>View Log...</text>
+				<command p1="view_log">leftpanel</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text>Machine Info...</text>
+				<command p1="machine_info">leftpanel</command>
+				<tooltip></tooltip>
+			</menu>
+			<spacer/>
+			<heading>
+				<text>Maintenance:</text>
+			</heading>
+			<menu>
+				<text>Script Definition</text>
+				<command p1="Edit Scripts">leftpanel</command>
+				<tooltip>Setup scripts, including flows, abstracts, atoms, molecules, scenarios and suites.</tooltip>
+			</menu>
+			<menu>
+				<text>Edit Devices</text>
+				<command p1="Edit Devices">leftpanel</command>
+				<tooltip>Edit manufacturers, cpus, chipsets, memory, os, video, audio, network, drives, monitors, keyboards, mice, etc.</tooltip>
+			</menu>
+			<menu>
+				<text>Edit Machines</text>
+				<command p1="machines">edit</command>
+				<tooltip>Setup machine configurations used for testing, and identifiable in running benchmarks.</tooltip>
+			</menu>
+			<menu>
+				<text>Edit Keywords</text>
+				<command p1="keywords">edit</command>
+				<tooltip>Edit keywords to be tagged for individual benchmarks.</tooltip>
+			</menu>
+			<spacer/>
+			<text>Click on the links above to access</text>
+			<text>sub-menus, functions and OPBM.</text>
+			<text>components.</text>
+		</left>
+
+		<left name="Edit Scripts">
+			<navigation>
+				<text>Back</text>
+				<command>back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Worklets:</text>
+			</heading>
+			<menu>
+				<text>Atoms</text>
+				<command p1="atoms">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text>Molecules</text>
+				<command p1="molecules">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text>Scenarios</text>
+				<command p1="scenarios">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text>Suites</text>
+				<command p1="suites">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<spacer/>
+			<heading>
+				<text>Definitions:</text>
+			</heading>
+			<menu>
+				<text>Flow Control</text>
+				<command p1="flows">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text>Command Abstracts</text>
+				<command p1="abstracts">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<spacer/>
+			<heading>
+				<text>Maintenance:</text>
+			</heading>
+			<menu>
+				<text>View or Edit raw XML files</text>
+				<command p1="XML File Viewing">leftpanel</command>
+				<tooltip></tooltip>
+			</menu>
+			<spacer/>
+			<text>The Scripting Engine components</text>
+			<text>provide an abstraction layer</text>
+			<text>between OPBM and the underlying</text>
+			<text>tool (AutoIT in Windows, Mago</text>
+			<text> in Linux).</text>
+		</left>
+
+		<left name="Edit Devices">
+			<navigation>
+				<text>Back</text>
+				<command>back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Devices:</text>
+			</heading>
+			<menu>
+				<text>Manufacturers</text>
+				<command p1="manufacturers">edit</command>
+			</menu>
+			<menu>
+				<text>CPUs</text>
+				<command p1="cpus">edit</command>
+			</menu>
+			<menu>
+				<text>Chipsets</text>
+				<command p1="chipsets">edit</command>
+			</menu>
+			<menu>
+				<text>Memory</text>
+				<command p1="memorys">edit</command>
+			</menu>
+			<menu>
+				<text>Operating System</text>
+				<command p1="oses">edit</command>
+			</menu>
+			<menu>
+				<text>Video Cards</text>
+				<command p1="videos">edit</command>
+			</menu>
+			<menu>
+				<text>Audio Devices</text>
+				<command p1="audios">edit</command>
+			</menu>
+			<menu>
+				<text>Network Cards</text>
+				<command p1="networkadapters">edit</command>
+			</menu>
+			<menu>
+				<text>Hard Drives</text>
+				<command p1="harddrives">edit</command>
+			</menu>
+			<menu>
+				<text>CD Drives</text>
+				<command p1="cddrives">edit</command>
+			</menu>
+			<menu>
+				<text>DVD Drives</text>
+				<command p1="dvddrives">edit</command>
+			</menu>
+			<menu>
+				<text>Floppy Drives</text>
+				<command p1="floppydrives">edit</command>
+			</menu>
+			<menu>
+				<text>MMC</text>
+				<command p1="mmcs">edit</command>
+			</menu>
+			<menu>
+				<text>Monitors</text>
+				<command p1="monitors">edit</command>
+			</menu>
+			<menu>
+				<text>USB</text>
+				<command p1="usbs">edit</command>
+			</menu>
+			<menu>
+				<text>Mice</text>
+				<command p1="mice">edit</command>
+			</menu>
+			<menu>
+				<text>Keyboards</text>
+				<command p1="keyboards">edit</command>
+			</menu>
+			<menu>
+				<text>Other</text>
+				<command p1="others">edit</command>
+			</menu>
+		</left>
+
+		<left name="XML File Viewing">
+			<navigation>
+				<text>Back</text>
+				<command>back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>View Raw Files:</text>
+			</heading>
+			<menu>
+				<text>View Panels.xml</text>
+				<command p1="ro:panels.xml">rawedit</command>
+				<tooltip>View raw contents of panels.xml file, used to control menu navigation.</tooltip>
+			</menu>
+			<menu>
+				<text>View Edits.xml</text>
+				<command p1="ro:edits.xml">rawedit</command>
+				<tooltip>View raw contents of edits.xml file, used to control data input.</tooltip>
+			</menu>
+			<menu>
+				<text>View Scripts.xml</text>
+				<command p1="ro:scripts.xml">rawedit</command>
+				<tooltip>View raw contents of scripts.xml file, used to store all scripts and related data.</tooltip>
+			</menu>
+			<spacer/>
+			<menu>
+				<text>Switch to Edit Mode</text>
+				<command p1="XML File Maintenance">leftpanel</command>
+				<tooltip>Switch to XML File Editing</tooltip>
+			</menu>
+		</left>
+
+		<left name="XML File Maintenance" bgcolor="ff0000">
+			<navigation>
+				<text fgcolor="ffff7f">Back</text>
+				<command>back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text fgcolor="ffff7f">Home</text>
+				<command>home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text fgcolor="000000">Warning!</text>
+			</heading>
+			<heading>
+				<text fgcolor="000000">Choose Raw File:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text fgcolor="ffffff">Edit Panels.xml</text>
+				<command p1="panels.xml">rawedit</command>
+				<tooltip>WARNING! Editing panels.xml in raw mode may cause damage to the file. Use normal OPBM edits instead.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="ffffff">Edit Edits.xml</text>
+				<command p1="edits.xml">rawedit</command>
+				<tooltip>WARNING! Editing edits.xml in raw mode may cause damage to the file. Use normal OPBM edits instead.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="ffffff">Edit Scripts.xml</text>
+				<command p1="scripts.xml">rawedit</command>
+				<tooltip>WARNING! Editing scripts.xml in raw mode may cause damage to the file. Use normal OPBM edits instead.</tooltip>
+			</menu>
+			<spacer/>
+			<menu>
+				<text fgcolor="ffff7f">Back to View Mode</text>
+				<command>back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text fgcolor="#4f0000">Editing raw files is dangerous.</text>
+			<text fgcolor="#4f0000">$u$$b$Please$/b$$/u$ make a backup before</text>
+			<text fgcolor="#4f0000">continuing.</text>
+		</left>
+
+		<left name="Raw Edit" bgcolor="ffff00">
+			<navigation>
+				<text fgcolor="0000ff">Back</text>
+				<command>rawedit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text fgcolor="0000ff">Home</text>
+				<command>rawedit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text fgcolor="000000">Warning!</text>
+			</heading>
+			<heading>
+				<text fgcolor="000000">Editing a Raw File!</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text fgcolor="0000ff">Save</text>
+				<command>rawedit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="0000ff">Save and Close</text>
+				<command>rawedit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="0000ff">Close</text>
+				<command>rawedit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="0000ff">Reload</text>
+				<command>rawedit_reload</command>
+				<tooltip>Reload disk file, abandoning any changes made to active file in memory.</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text fgcolor="#4f4f00">Editing raw files is dangerous.</text>
+			<text fgcolor="#4f4f00">$u$$b$Please$/b$$/u$ make a backup before</text>
+			<text fgcolor="#4f4f00">saving changes.</text>
+		</left>
+
+		<left name="Raw View">
+			<navigation>
+				<text>Back</text>
+				<command>rawedit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>rawedit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Viewing Raw File</text>
+			</heading>
+			<menu>
+				<text>Close</text>
+				<command>rawedit_close</command>
+				<tooltip>Close the view, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Flows">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Flow Control</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text>Flow control directives handle</text>
+			<text>looping, conditional execution</text>
+			<text>of code, script commands, etc.</text>
+		</left>
+
+		<left name="Edit Abstracts">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Abstracts</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text>Abstracts provide an in-between</text>
+			<text>programming layer, addressing a</text>
+			<text>functional need coupled to the</text>
+			<text>underlying commands to carry out</text>
+			<text>the work.</text>
+		</left>
+
+		<left name="Edit Atoms">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Atoms</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text>Atoms are single operations. They</text>
+			<text>conduct a single task, and capture</text>
+			<text>results at that level.</text>
+		</left>
+
+		<left name="Edit Molecules">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Molecules</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text>Molecules are groups of related</text>
+			<text>operations, conducting a larger</text>
+			<text>capture of results.</text>
+		</left>
+
+		<left name="Edit Scenarios">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Scenarios</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text>Scenarios are groups of related</text>
+			<text>tests, conducting a large, data</text>
+			<text>set captured across a type of</text>
+			<text>workload.</text>
+		</left>
+
+		<left name="Edit Suites">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Suites</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+			<spacer/>
+			<spacer/>
+			<text>Suites are groups of tests used</text>
+			<text>to accomplish a particular goal,</text>
+			<text>such as testing a type of workload,</text>
+			<text>or a range of workloads.</text>
+		</left>
+
+		<left name="Edit Manufacturers">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Manufacturers:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit CPUs">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>CPUs:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Chipsets">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Chipsets:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Memorys">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Memory:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Oses">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>OS Models:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Videos">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Video Cards:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Audios">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Audio Systems:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Network Adapters">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Network Cards:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Hard Drives">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Hard Drives:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit CD Drives">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>CD Drives:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit DVD Drives">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>DVD Drives:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Floppy Drives">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Floppy Drives:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit MMCs">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>MMCs:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Monitors">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Monitors:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit USBs">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>USB Ports:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Mice">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Mice Devices:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Keyboards">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Keyboards:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Others">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Other Devices:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Machines">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Machines:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Edit Keywords">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>edit_home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Keywords:</text>
+			</heading>
+			<spacer/>
+			<menu>
+				<text>Save</text>
+				<command>edit_save</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
+			</menu>
+			<menu>
+				<text>Save and Close</text>
+				<command>edit_save_and_close</command>
+				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
+			</menu>
+			<menu>
+				<text>Close</text>
+				<command>edit_close</command>
+				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Execute Atoms">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text>Atoms:</text>
+			</heading>
+			<menu>
+				<text>Run Sequence</text>
+				<command p1="atoms">run_execute</command>
+				<tooltip>FOR TESTING ONLY:  Executes all "execute" commands in this grouping.</tooltip>
+			</menu>
+		</left>
+
+	</panels>
+</opbm>

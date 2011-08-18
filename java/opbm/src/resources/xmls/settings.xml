@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+<!-- End use for this file: To differentiate platforms -->
+	<settings>
+		<benchmarks>
+			<debugger>no</debugger>
+			<singlestep>no</singlestep>
+			<hud>
+				<visible>yes</visible>
+				<translucency>0.5</translucency>
+			</hud>
+			<retry attempts="3" stopIfFailureOnRetries="no">yes</retry>
+		</benchmarks>
+		<skin>developer</skin>	<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both screens launch -->
+	</settings>
+</opbm>

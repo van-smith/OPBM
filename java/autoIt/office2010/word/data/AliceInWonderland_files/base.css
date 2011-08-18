@@ -1,0 +1,324 @@
+/* Style Sheet for eBooks@Adelaide web books
+ * This work is licensed under the Creative Commons
+ * Attribution-NonCommercial-ShareAlike 2.5 Australia Licence
+ * (available at http://creativecommons.org/licenses/by-nc-sa/2.5/au/)
+ * Author: Steve Thomas <stephen.thomas@adelaide.edu.au>
+ * Last update: Fri May 23 12:34:05 CST 2008
+ * */
+
+/* base.css
+ * base styles applicable to all media
+ * */
+
+body { color:#000; background-color:#fff; font-family:Georgia, serif; max-width:33em; margin:auto; }
+
+p { text-align:justify; line-height:140%; margin-top:0; margin-bottom:0; }
+p+p { text-indent:2em; }
+
+h1,h2,h3,h4,h5,h6 { text-align:center; margin-top:1em; margin-bottom:1em; }
+h1,h2,h3,h4 { font-weight:bold; }
+h3,h4,h5 { font-variant:small-caps; }
+h1 { font-size:1.6em; }
+h2 { font-size:1.4em; }
+h3 { font-size:1.2em; }
+h4 { font-size:1em; }
+h5 { font-size:1em; font-weight:normal; }
+h6 { font-size:1em; font-weight:normal; font-style:italic; }
+
+.titlepage { text-align:center!important; font-weight:bold; border:2px solid green; padding:2em 1em; }
+.titlepage h1 { margin-top:0em; margin-bottom:1em; }
+.titlepage h2 { margin-top:0em; margin-bottom:1em; }
+.titlepage h3 { margin-top:0em; margin-bottom:1em; font-variant:normal; }
+.titlepage h4 { margin-top:0em; margin-bottom:1em; font-variant:normal; }
+.titlepage p  { margin-top:0em; margin-bottom:1em; text-indent:0; text-align:center!important; }
+.titlepage > p.imprint { text-align:center!important; font-style:italic; color:green; margin-top:3em; }
+
+.titleverso { font-family:Verdana, sans-serif; font-size:.8em; color:#666; text-align:center!important; width:90%; margin:auto; }
+.titleverso p { text-align:center!important; text-indent:0; margin-bottom:1em; }
+.titleverso p a { font-family:Verdana, sans-serif; color:#666; text-decoration:none; }
+.titleverso p a:visited { font-family:Verdana, sans-serif; color:#666; text-decoration:none; }
+.titleverso p a:hover { font-family:Verdana, sans-serif; color:#f00; text-decoration:underline; }
+
+.halftitle { padding-top:100px; height:500px; font-size:2em; line-height:2em; }
+
+.contents h4 { text-align:left!important; font-weight:normal; font-variant:normal; }
+.contents h5 { text-align:left!important; margin-left:1em; font-weight:normal; font-variant:normal; }
+.contents h6 { text-align:left!important; margin-left:1em; font-weight:normal; }
+.contents li { font-weight:normal; }
+.contents p { text-indent:0!important; margin-left:1em; margin-bottom:1em; font-variant:small-caps; font-size:.9em; }
+
+.colophon p { font-family:Verdana, sans-serif; font-size:.9em; color:#666; text-align:center!important; }
+
+.section { margin-bottom:3em; }
+
+div.glossary p,
+div.index p { font-size:0.8em; font-family:Verdana, sans-serif; text-indent:-2em; padding-left:2em;  }
+
+div.footnotes { margin:1em; border-top:1pt solid gray; padding:2pt; font-family:Verdana, sans-serif;
+}
+div.footnotes p,
+div.footnotes li,
+div.footnotes td { margin:1em; font-family:Verdana, sans-serif; font-size:0.8em; text-indent:0; }
+p.footnote { margin:1em; font-family:Verdana, sans-serif; font-size:0.8em; text-indent:0; }
+div.note p,
+p.note { margin:1em!important; font-family:Verdana, sans-serif!important; font-size:.8em!important; text-indent:0; }
+span.note { font-family:Verdana, sans-serif; font-size:.8em; }
+span.inline-note { font-family:Verdana, sans-serif; font-size:.8em;
+}
+.sidenote, .sn { clear:left; float:left; width:20%; margin:0.5em 1em 0 0;
+	text-align:left;text-indent:0; font-style:italic; font-size:.8em; line-height:100%; }
+div.sidenote p { text-align:left;text-indent:0;font-style:italic;font-size:.8em;line-height:100%; }
+
+.mn, .marginal-note { clear:right; float:right; width:20%; margin:0.5em 0 0 1em; }
+.mn, span.marginal-note,
+div.marginal-note p { text-align:right;text-indent:0; font-variant:normal; font-style:italic; font-size:.8em; line-height:100% }
+
+span.popup-note, abbr, acronym { border:1px dotted gray; cursor:help; }
+div.quote, blockquote { margin:1em!important; }
+div.inscription p,
+p.inscription,
+div.epitaph p,
+p.epitaph {
+	margin:1em; text-align:center!important; text-indent:0; font-variant:small-caps; }
+div.notice { margin:1em auto; border:1px solid; padding:1em; }
+div.notice p { text-align:center!important; text-indent:0; font-weight:bold; }
+div.headline p { text-align:center!important; text-indent:0; font-weight:bold; }
+div.dedication p,
+p.dedication { text-align:center!important; text-indent:0; }
+
+div.rubric p,
+p.rubric { margin:1em 2em; text-align:center!important; text-indent:0; font-style:italic; }
+
+div.abstract p,
+p.abstract { margin:0 1em 1em 1em; font-style:italic; font-size:.9em; text-indent:0; }
+
+div.precis p,
+p.precis { margin:0 1em 1em 1em; text-align:center!important; text-indent:0; font-variant:small-caps; font-size:.9em; }
+
+div.epigraph { width:65%; margin:1em auto; }
+div.epigraph p { font-style:italic; font-size:.9em; text-align:left; text-indent:-2em!important; margin:0 0 0 2em!important; }
+
+p.epigraph { width:60%; margin:1em auto; font-style:italic; font-size:.9em; text-align:left; text-indent:0; }
+
+div.epigraph p em { font-variant:small-caps; font-style:normal; }
+div.epigraph p.cite,
+div.epigraph cite { font-variant:small-caps; font-style:normal; text-align:right; }
+div.epigraph p.cite:before { content:"–"; }
+
+.letter-typed { font-family:monospace; font-style:normal; margin-left:1em; margin-right:1em; }
+.letter-written { font-style:italic; margin-left:1em; margin-right:1em; }
+div.letter-written p { text-align:left; }
+.typed { font-family:monospace; }
+div.written p { font-style:italic; }
+div.written p em { font-style:normal; }
+.telegram { font-family:Courier, monospace; font-variant:small-caps; }
+
+div.act p { text-indent:0; margin-top:0; margin-left:1em; margin-bottom:.5em; }
+div.scene { margin-bottom:3em; }
+div.act p.speaker { text-indent:0; margin-left:0; margin-bottom:0; }
+div.act p span.speaker { margin-left:-1em; }
+.speaker { font-variant:small-caps; }
+
+li span.speaker, div.act p.stage span.speaker, p span.stage span.speaker { margin-left:0; }
+
+p.speech { margin-left:1em; }
+p.speech span.speaker { margin-left:-1em; }
+
+div.stage p, p.stage, span.stage { text-indent:0; font-style:italic; }
+
+li span.speaker,
+span.name,
+.stage span.speaker,
+span.stage em { font-style:normal; font-variant:small-caps; }
+
+div.song { margin:1em 0 1em 3em; font-style:normal; }
+div.song p { text-align:left; text-indent:0; line-height:140%; margin-bottom:1em; }
+
+/*
+div.poem { margin:auto; font-style:normal; }
+div.poem p { text-indent:0; line-height:140%; margin-left:3em; margin-bottom:1em; }
+div.poem pre { font-family:serif; text-align:left; line-height:140%; }
+*/
+
+div.canto p { text-indent:0; line-height:140%; }
+
+div.stanza { margin:1em 15%; }
+div.stanza p { text-align:left; text-indent:-2em!important; margin:0 0 0 2em!important; }
+div.stanza p.dropcap:first-letter { float:none; text-align:left; margin-left:0; text-indent:0; }
+
+span.first-word { font-variant:small-caps; }
+
+div.verse { text-align:left; text-indent:0; max-width:75%; margin:1em auto; }
+div.verse p { text-indent:0; text-align:left; margin:0; }
+
+div.ln, span.ln { float:right; text-align:right; text-indent:0; font-style:italic; font-size:.8em; color:gray; margin:0 0 0 1em; }
+
+p.verse,
+p.stanza,
+.couplet { text-align:left; text-indent:0; max-width:75%; margin:1em auto; }
+/* { text-align:left; text-indent:0; margin-top:1em; margin-left:3em; margin-right:auto; margin-bottom:1em; } */
+
+.chorus { margin-left:4em; font-style:italic; }
+.refrain { margin-left:4em; font-style:italic; }
+
+/* verse line number */
+span.vln { position:relative; top:auto; right:-4em; text-align:right; font-size:.8em; color:gray; }
+
+div.dochead { margin:0 0 1em 0!important; text-align:center!important; }
+div.dochead h1 {
+        font-weight:normal; font-style:normal; font-size:1em; font-family:Helvetica, Verdana, sans-serif;
+        color:gray; margin:0!important;
+}
+div.dochead h2 {
+        font-weight:normal; font-style:normal; font-size:1em; font-family:Helvetica, Verdana, sans-serif;
+        color:gray;
+}
+div.dochead hr { display:none; } /* fix for older pages */
+
+div.navigation {
+        font-size:.9em; font-family:Verdana, sans-serif;
+        text-align:center!important; text-indent:0;
+        margin-top:2em; padding-bottom:2em; border-bottom:1px dotted gray;
+}
+div.navigation p { font-size:.9em; text-align:center!important; text-indent:0; }
+div.navigation a,
+div.navigation a:visited {
+        font-size:.9em; font-family:Verdana, sans-serif;
+        border-right:2px solid gray; border-bottom:2px solid gray;
+        color:#333; background-color:#ddd;
+        text-decoration:none;
+        padding:3px;
+}
+
+div.docinfo { font-size:.9em; font-family:Verdana, sans-serif; color:#666; text-align:center!important; }
+div.docinfo p { text-align:center!important; text-indent:0; }
+div.docinfo p a { font-family:Verdana, sans-serif; text-decoration:underline; }
+div.docinfo p a:visited { font-family:Verdana, sans-serif; color:#666; text-decoration:underline; }
+div.docinfo p a:hover { font-family:Verdana, sans-serif; color:#f00; text-decoration:underline; }
+
+hr { color:#ddd; }
+
+a, a:link, a:visited { color:black; text-decoration:none; border-bottom:1px dotted gray; }
+a:active, a:hover { color:red; }
+
+a.bm, a.bm:link, a.bm:visited { color:black; text-decoration:none; }
+a.bm:active, a.bm:hover { color:red; }
+
+img { border:none; }
+
+.figure { margin:1em auto; max-width:100%; text-align:center!important; }
+.figure img { border:none; }
+.figure p { text-align:center!important;text-indent:0; font-size:.9em; font-variant:small-caps; max-width:100%; margin:auto; }
+div.plate { margin:auto; width:100%; text-align:center!important; }
+div.plate p {
+	text-align:center!important;
+	text-indent:0!important; 
+	font-size:.9em; font-variant:small-caps;
+	max-width:100%;
+	margin:auto;
+}
+div.ornament { margin:1em auto; }
+div.ornament img { border:none; }
+div.headpiece { margin:auto; text-align:center!important; max-width:100%; }
+div.headpiece img { border:none; max-width:100%; }
+div.tailpiece { margin:1em auto; width:66%; }
+div.tailpiece img { border:none; width:66%; }
+div.frontispiece { margin:1em auto; max-width:100%; text-align:center!important; }
+div.frontispiece img { border:none; }
+div.map { margin:1em auto; }
+div.map img { border:none; }
+div.illustration { margin:1em auto; }
+div.illustration img { border:none; }
+div.frontispiece p,
+div.map p,
+div.illustration p,
+p.illustration,
+span.illustration {
+	text-align:center!important;
+	text-indent:0!important; 
+	font-size:.9em; font-variant:small-caps;
+	max-width:100%;
+	margin:auto;
+}
+.figleft {
+	text-align:center!important;
+	text-indent:0!important; 
+	font-size:.9em; font-variant:small-caps;
+	float:left;
+	margin:0;
+	padding:0 1em 0 0;
+	width:50%;
+}
+.figright { text-align:center!important; text-indent:0!important; font-size:.9em; font-variant:small-caps;
+	margin:0; padding:0 0 0 1em; float:right; width:50%; }
+
+.i2 { padding-left:2em; }
+.left { float:left; padding-right:1em; }
+.right { float:right; padding-left:1em; }
+.center, .center p { text-align:center!important; }
+.clear { clear:both; }
+.border { border:1px solid; padding:1em; }
+.underlined { text-decoration:underline; }
+.sc { font-variant:small-caps; }
+.ls { letter-spacing:1em; }
+cite, .cite { font-variant:small-caps; font-style:normal; }
+li { margin-top:.5em; }
+sup { font-size:.7em; line-height:80%;}
+.transition { margin:1em 0; text-align:center!important; }
+.transition:before { content:"~";text-align:center!important;font-weight:bold;font-size:2em; }
+.pre, pre { font-family:monospace; text-align:left; text-indent:0; white-space:pre; }
+/* span[lang] { font-size:larger; }
+span[lang=grc] { font-family:Symbol; } */
+span[lang=la] { font-variant:small-caps; }
+
+div.signed p, p.signed, div.dateline p, p.dateline { text-transform:capitalize; text-align:right; font-style:italic; }
+
+table { margin:1em auto; }
+/*
+table { border:1px solid gray; width:90%; margin:1em auto; }
+table tr td { border:1px dotted gray; }
+table tr th { border:1px dotted gray; text-align:left; }
+table tr td { border:1px dotted gray; text-align:right; padding:0 1em; }
+
+table.noborder { border:none; width:100%; margin:1em auto; }
+table.noborder tr th { border:none; text-align:left; }
+table.noborder tr td { border:none; text-align:left; }
+*/
+
+ol p { text-align:justify; text-indent:0; margin-bottom:1em; }
+ol.nv { color:#999; font-style:italic; font-family:Verdana, sans-serif; }
+ol.nv p { color:#000; text-align:left; font-style:normal; font-family:Georgia, serif; }
+ol.upper-roman { list-style-type:upper-roman; }
+ol.lower-roman { list-style-type:lower-roman; }
+ol.upper-alpha { list-style-type:upper-alpha; }
+ol.lower-alpha { list-style-type:lower-alpha; }
+ul.nobullet { list-style-type:none; padding-left:2em; }
+ul.nobullet li { padding-left:2em; text-indent:-2em; }
+ul.nobullet li ul { padding-left:0; text-indent:-2em; }
+
+ul.nb { list-style-type:none; padding-left:2em; }
+ul.nb li { padding-left:2em; text-indent:-2em!important; }
+ul.nb li ul { padding-left:0; text-indent:-2em; }
+.nb span.sn { padding-left:-4em; }
+/*
+ul.nobullet li p:first-child { margin-left:3em; text-indent:-3em; }
+ul.nobullet p+p { text-indent:0; }
+*/
+
+p.dropcap { text-indent:0; }
+p.dropcap:first-letter {
+	float:left;
+	font-size:3em;
+	line-height:90%;
+	padding-right:2px;
+}
+div#copyright { margin:1em 0 50em;padding:1em;border:1px solid red; }
+div#copyright p { text-indent:0; margin-bottom:1em; }
+
+div.preface:after,
+div.prologue:after,
+div.introduction:after,
+div.canto:after,
+div.chapter:after {
+	content:"❦"; display:block; margin-top:1em; font-size:2em; text-align:center; font-family:Georgia, "DejaVu Sans";
+}
