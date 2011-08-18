@@ -10,6 +10,7 @@ Const $EXE_DIRECTORY					= @ScriptDir & "\exe"
 
 ; Source directories for data
 Const $DIRECTORY_ALICE_IN_WONDERLAND_HTML		= @ScriptDir & "\data"
+Dim $DIRECTORY_ALICE_IN_WONDERLAND_PDF			; Used in this script, but must be set after initialization because they use opbm.dll plugin functions
 
 ; Directories to access 32-bit and 64-bit versions of the app
 Const $DIRECTORY_WORD_I386						= "C:\Program Files (x86)\Microsoft Office\OFFICE14"
@@ -21,9 +22,10 @@ Const $WINDOW_ALICE_IN_WONDERLAND_HTML			= "AliceInWonderland"
 Const $ALICEINWONDERLAND_HTML					= $WINDOW_ALICE_IN_WONDERLAND_HTML & ".html"
 Const $ALICEINWONDERLAND_PDF					= $WINDOW_ALICE_IN_WONDERLAND_HTML & ".pdf"
 Const $FILENAME_ALICE_IN_WONDERLAND_HTML		= $DIRECTORY_ALICE_IN_WONDERLAND_HTML & "\" & $ALICEINWONDERLAND_HTML
-Const $FILENAME_ALICE_IN_WONDERLAND_PDF			= $DIRECTORY_ALICE_IN_WONDERLAND_HTML & "\" & $ALICEINWONDERLAND_PDF
+Dim $FILENAME_ALICE_IN_WONDERLAND_PDF			; Used in this script, but must be set after initialization because they use opbm.dll plugin functions
 Const $FILENAME_WORD_I386						= $DIRECTORY_WORD_I386 & "\WinWord.exe"
 Const $FILENAME_WORD_X64						= $DIRECTORY_WORD_X64 & "\WinWord.exe"
+
 
 Const $ALICE_NBR_PAGE_DOWNS						= 60
 

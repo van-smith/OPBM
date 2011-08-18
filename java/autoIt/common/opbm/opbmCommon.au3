@@ -37,7 +37,7 @@ Global $gTimeoutMS								= 1000
 
 ; Parameters used for registry key saving / restoration
 Const $RESTORING_OFFICE_2010_REGISTRY_KEYS			= "Restoring Office 2010 registry keys"
-Const $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS	= "Saving & Setting Office 2010 registry keys"
+Const $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS	= "Saving and Setting Office 2010 registry keys"
 
 Func InitializeGlobalVariables()
 	Local $i
@@ -85,6 +85,7 @@ Func InitializeGlobalVariables()
 	;		SetRegistryKeyString( $key, $stringValue )
 	;		SetRegistryKeyDword( $key, $dwordValue )
 	;		GetRegistryKey( $key )
+	;		; The following DO include the trailing backslash
 	;		GetScriptCSVDirectory()					; Returns c:\users\user\documents\opbm\scriptOutput\
 	;		GetScriptTempDirectory()				; Returns c:\users\user\documents\opbm\scriptOutput\temp\
 	;		GetHarnessXmlDirectory()				; Returns c:\users\user\documents\opbm\results\xml\

@@ -110,6 +110,8 @@ For $CurrentLoop = 1 to $LoopLimit
 
 		; Once generated, manipulate it significantly in Acrobat Reader
 		ManipulateInAcrobatReader()
+		; Delete our temp file
+		opbmFileDeleteIfExists( $FILENAME_ALICE_IN_WONDERLAND_PDF )
 	EndIf
 	
 	outputDebug( "CloseWord()" )
@@ -140,6 +142,8 @@ Func InitializeAliceScript()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	
 	; Delete the PDF in case it wasn't deleted last time
+	$DIRECTORY_ALICE_IN_WONDERLAND_PDF	= GetScriptTempDirectory()
+	$FILENAME_ALICE_IN_WONDERLAND_PDF		= $DIRECTORY_ALICE_IN_WONDERLAND_PDF & $ALICEINWONDERLAND_PDF
 	opbmFileDeleteIfExists( $FILENAME_ALICE_IN_WONDERLAND_PDF )
 EndFunc
 
@@ -394,6 +398,10 @@ Func SaveAsAliceInWonderLandPdf()
 	Send("!fa")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitActivate( $SAVE_AS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word Save As: Unable to find Window." )
+	
+	; Send its full pathname
+	Send( $FILENAME_ALICE_IN_WONDERLAND_PDF )
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	
 	; as pdf
 	; Alt+t to choose type, p to choose "PDF"
