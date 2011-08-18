@@ -9,8 +9,12 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	printf("OPBM Spinup Placeholder Executable\n");
+	printf("Spinning up...\n");
+
+	// Placeholder pause for now, 10 seconds
 	Sleep(10000);
+
+	// Indicate "success"
 	return 0;
 }
 

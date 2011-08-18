@@ -1670,7 +1670,7 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 				// We don't do anything when the user clicks down on here, except
 				// see how long it's been since the last down click.  If it's less
 				// than .4 second, we execute the dblClick command
-				now = Utils.getHighResolutionTimer();
+				now = Utils.getMillisecondTimer();
 				if (now - m_lastMillisecond <= 400)
 				{	// It's less than .4 second, so we issue the double click
 					m_commandMaster.processCommand(m_parentPRI,

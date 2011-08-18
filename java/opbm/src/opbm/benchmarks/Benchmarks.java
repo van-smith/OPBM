@@ -388,7 +388,7 @@ public class Benchmarks
 		bp.m_atomStack					= new ArrayList<Stack>(0);
 		bp.m_bpAtom.m_timingEvents		= new ArrayList<Xml>(0);
 		bp.m_bpAtom.m_returnValue		= 0;
-		bp.m_wui						= new WaitUntilIdle();
+		bp.m_wui						= new WaitUntilIdle(bp);
 
 		bp.m_benchmarkStack				= new ArrayList<Xml>(0);
 

@@ -11,6 +11,6 @@
 			</hud>
 			<retry attempts="3" stopIfFailureOnRetries="no">yes</retry>
 		</benchmarks>
-		<skin>simple</skin>		<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both screens launch -->
+		<skin>developer</skin>	<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both screens launch -->
 	</settings>
 </opbm>

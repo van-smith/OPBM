@@ -183,12 +183,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\cpu\CPU.cpp" />
     <ClCompile Include="dllMain.cpp" />
     <ClCompile Include="opbm64.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\java\opbm\jni\opbm64_jni.h" />
     <ClInclude Include="..\common\opbm_common.h" />
+    <ClInclude Include="..\cpu\CPU.h" />
     <ClInclude Include="opbm64.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

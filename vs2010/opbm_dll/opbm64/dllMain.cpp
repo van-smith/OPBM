@@ -18,6 +18,7 @@
 	#include "windows.h"
 	#include "winbase.h"
 	#include "opbm64.h"
+	#include "..\cpu\CPU.h"
 
 
 
@@ -593,7 +594,26 @@
 	// waitUntilSystemIdle()
 	JNIEXPORT jfloat JNICALL Java_opbm_Opbm_waitUntilSystemIdle(JNIEnv* env, jclass cls, jint percent, jint durationMS, jint timeoutMS)
 	{
+		CPU cpu;
 		jfloat utilization;
-		utilization = 0.0;
+
+		// Verify parameters
+		if (percent > 100)
+			percent = 100;
+
+		if (percent < 0)
+			percent = 0;
+
+		// Does not seem to work well below a 50ms threshhold, with 200ms being far more usable
+		if (durationMS < 50)
+			durationMS = 50;
+
+		// Process using the parameters
+		utilization = cpu.WaitUntilSystemIdle((float)percent, durationMS, timeoutMS);
+
+		// Tell the caller what happened
+		// Utilization is the % usage observed over the time period.  If the utilization is
+		// at or below percent, it was idle, if it is above percent, then it was not idle and
+		// timed out.
 		return(utilization);
 	}

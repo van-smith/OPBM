@@ -882,7 +882,7 @@ public class Utils
 	 * Returns the millisecond as of the call
 	 * @return
 	 */
-	public static long getHighResolutionTimer()
+	public static long getMillisecondTimer()
 	{
 		Calendar cal = Calendar.getInstance();
 		return(cal.getTimeInMillis());
