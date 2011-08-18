@@ -370,6 +370,43 @@ public class Utils
 			return(true);
 	}
 
+	/**
+	 * Verifies the path ends in a backslash (c:\some\dir becomes c:\some\dir\)
+	 * @param path input path to test
+	 * @return path always ending in backslash
+	 */
+	public static String verifyPathEndsInBackslash(String path)
+	{
+		String backslashPath;
+		File d = new File(new File(path).getParent());
+
+		backslashPath = d.getAbsolutePath();
+		if (backslashPath.endsWith("\\"))
+		{	// We're good
+
+		} else {
+			// Needs a little help
+			backslashPath += "\\";
+		}
+		return(backslashPath);
+	}
+
+	/**
+	 * Makes sure there are no instances where a c:\some\dir\ was joined with
+	 * \bin\file.exe to create c:\some\dir\\bin\file.exe, and thereby causing
+	 * it to fail.
+	 * @param pathName input pathname to test
+	 * @return all instances of \\ are replaced with \
+	 *
+	 * Note:  For paths prefixed with \\whatever\, do not use this function
+	 *        unless the leading part is not included!
+	 */
+	public static String verifyNoDoubleBackslashesInPathName(String pathName)
+	{
+		// Replace all instances of c:\some\path\\ with c:\some\path\
+		return(pathName.replace("\\\\", "\\"));
+	}
+
 	public static String rightJustify(String	source,
 									  int		length,
 									  String	padChar)

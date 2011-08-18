@@ -79,13 +79,16 @@ public final class Opbm extends	ModalApp
 		}
 	}
 	public native static void	sendWindowToForeground(String title);
+	// Note:  All of these get__Directory() functions ALWAYS return a path ending in a backslash
 	public native static String	getHarnessCSVDirectory();					// Returns c:\\users\\user\\documents\\obbm\\results\\csv\\
 	public native static String	getHarnessXMLDirectory();					// Returns c:\\users\\user\\documents\\opbm\\results\\xml\
 	public native static String	getHarnessTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\temp\\
 	public native static String	getScriptCSVDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\
 	public native static String	getScriptTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\temp\\
 	public native static String	getSettingsDirectory();						// Returns c:\\users\\user\\documents\\opbm\\settings\\
+	public native static String	getRunningDirectory();						// Returns c:\\users\\user\\documents\\opbm\\running\\
 	public native static String	getCSIDLDirectory(String name);				// Returns directory specified by the CSIDL option
+	// End Note
 	public native static void	snapshotProcesses();						// Takes a snapshot of the currently running processes
 	public native static void	stopProcesses();							// Stops all processes that were not running when the snapshot was taken
 	public native static String	GetRegistryKeyValue(String key);			// Requests the registry key value
@@ -123,6 +126,7 @@ public final class Opbm extends	ModalApp
 		System.out.println("Harness Temp Directory: " + getHarnessTempDirectory());
 		System.out.println("  Script CSV Directory: " + getScriptCSVDirectory());
 		System.out.println(" Script Temp Directory: " + getScriptTempDirectory());
+		System.out.println("     Running Directory: " + getRunningDirectory());
 		System.out.println("    Settings Directory: " + getSettingsDirectory());
 		System.out.println("    System32 Directory: " + getCSIDLDirectory("SYSTEM"));
  */
@@ -1972,5 +1976,8 @@ public final class Opbm extends	ModalApp
 	public static boolean			m_breakpointsEnabled;
 	public static String			m_title					= "OPBM - Office Productivity Benchmark";
 	public static String			m_lastStaticError;
-	public static String			m_jvmHome				= System.getProperty("java.home") + "\\bin\\java.exe";
+
+// REMEMBER for non-Windows based java runtimes, this logic will need to be changed
+// REMEMBER there's also a registry key for this item which may need to be used instead (for custom installations of Java), though for the standard installations from Oracle, this should always work:
+	public static String			m_jvmHome				= Utils.verifyNoDoubleBackslashesInPathName(Utils.verifyPathEndsInBackslash(System.getProperty("java.home") + "\\") + "bin\\java.exe");
 }

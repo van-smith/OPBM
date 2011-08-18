@@ -139,9 +139,9 @@
 		</abstracts>
 		<atoms>
 			<atom name="Reboot And Continue">
-				<abstract name="Excel World Heat" sourcename="execute">
+				<abstract name="IE Google V8" sourcename="execute">
 					<options>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
 					</options>
 				</abstract>
 				<abstract name="Reboot And Continue" sourcename="rebootAndContinue"></abstract>
@@ -161,6 +161,13 @@
 			</atom>
 			<atom name="Reboot And Terminate">
 				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
+			</atom>
+			<atom name="SpinUp">
+				<abstract name="Spinup Placeholder" sourcename="spinUp">
+					<options>
+						<executable>..(backslash)autoIT(backslash)common(backslash)opbm(backslash)exe(backslash)spinup.exe</executable>
+					</options>
+				</abstract>
 			</atom>
 			<atom name="All Tests">
 				<abstract name="Excel World Heat" sourcename="execute">

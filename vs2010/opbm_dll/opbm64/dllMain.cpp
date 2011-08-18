@@ -237,13 +237,37 @@
 		jstring		directory;
 
 		// Allocate the variable
-		GetCSIDLDirectory(dirname, sizeof(dirname), "MYDOCUMENTS");
-		memcpy(&dirname[0] + strlen(dirname), "opbm\\settings\\", 14);
+		GetSettingsDirectory(dirname, sizeof(dirname));
 
 		// Create the return variable
 		directory = env->NewStringUTF( dirname );
 		return(directory);
 	}
+
+
+
+
+//////////
+//
+// dir = GetRunningDirectory()
+//
+// Called to return the CSIDL location of the harness's running directory.
+//
+/////
+	// GetRunningDirectory()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getRunningDirectory(JNIEnv* env, jclass cls)
+	{
+		char		dirname[ MAX_PATH ];
+		jstring		directory;
+
+		// Allocate the variable
+		GetRunningDirectory(dirname, sizeof(dirname));
+
+		// Create the return variable
+		directory = env->NewStringUTF( dirname );
+		return(directory);
+	}
+
 
 
 

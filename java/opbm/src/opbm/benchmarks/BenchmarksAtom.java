@@ -1170,14 +1170,31 @@ public class BenchmarksAtom
 		String exception, exception2, name, curDir, counter, sourcename, result;
 		String command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
 		List<String> commandsAndParameters = new ArrayList<String>(0);
-		boolean failure;
+		boolean record, failure;
 
 		// See what our command is
 		sourcename = thisCommand.getAttributeOrChild("sourcename");
 		if (sourcename != null)
 		{
-			if (sourcename.equalsIgnoreCase("execute") || sourcename.equalsIgnoreCase("executeParams"))
+			if (sourcename.equalsIgnoreCase("execute") ||
+				sourcename.equalsIgnoreCase("executeParams") ||
+				sourcename.equalsIgnoreCase("spinUp"))
 			{
+				// See if we're executing a non-recording script, one that doesn't record its score (spinUp)
+				if (sourcename.equalsIgnoreCase("spinUp"))
+				{	// We are executing a non-recording script
+					// Executes a spinup script that doesn't record a score, but allows
+					// everything to be spun back up (used at first benchmark run, or
+					// after a reboot to re-load all the DLLs, cache everything, etc.
+					record = false;		// Should logs be recorded?
+// REMEMBER need to add a place later to record these items that, today, are not being recorded
+//          needs to be another place in the results.xml file that is not part of the standard
+//          atom/molecule/scenario/suite processing.
+
+				} else {
+					record = true;		// Should logs be recorded?
+				}
+
 				// Initially set the failure condition to true, flag is lowered at the end if we're okay
 				failure		= true;
 				retryCount	= 0;
@@ -1229,22 +1246,29 @@ public class BenchmarksAtom
 							}
 							m_bp.m_hud.updateCounter(counter);
 
-							// Change the current directory to the directory of the executable
-							curDir = Utils.makeTheCurrentDirectoryThatOfThisExecutable(command);
+							// Change the current directory to the directory of the executable, and get this command's user-readable name
+							curDir	= Utils.makeTheCurrentDirectoryThatOfThisExecutable(command);
+							name	= m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
+							if (record)
+							{	// We are recording logs for this one
+								// Add the type of run made
+								xmlType = new Xml("abstract");
+								xmlType.appendAttribute("name", name);
+								xmlType.appendAttribute("sourcename", thisCommand.getAttribute("sourcename"));
 
-							// Add the type of run made
-							xmlType = new Xml("abstract");
-							name = m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
-							xmlType.appendAttribute("name", name);
-							xmlType.appendAttribute("sourcename", thisCommand.getAttribute("sourcename"));
+								// Indicate our beginning, and the command to execute
+								xmlType.appendChild(Utils.processExecutableLine("start", Utils.getTimestamp()));
+								xmlType.appendChild(new Xml("command", command));
 
-							// Indicate our beginning, and the command to execute
-							xmlType.appendChild(Utils.processExecutableLine("start", Utils.getTimestamp()));
-							xmlType.appendChild(new Xml("command", command));
+								// Add space for any errors
+								xmlError = new Xml("errors");
+								xmlType.appendChild(xmlError);
 
-							// Add space for any errors
-							xmlError = new Xml("errors");
-							xmlType.appendChild(xmlError);
+							} else {
+								xmlError	= null;
+								xmlType		= null;
+
+							}
 
 							// Clear off any previous "process" that may be hanging on out there for garbage collection
 							process = null;
@@ -1263,15 +1287,21 @@ public class BenchmarksAtom
 								process.waitFor();
 								// Returns 0 if everything succeeded normally without error
 
-								// Identify the termination time
-								xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", process.exitValue() == 0 ? "success" : "fail"));
+								if (record)
+								{
+									// Identify the termination time
+									xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", process.exitValue() == 0 ? "success" : "fail"));
+								}
 
 								// Make sure we finish reading before continuing
 								m_bp.m_errorGobbler.join();
 								m_bp.m_outputGobbler.join();
 
-								// Grab the exit value1
-								xmlType.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
+								if (record)
+								{
+									// Grab the exit value1
+									xmlType.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
+								}
 
 								// If we get here, then everything proceeded normally
 								failure	= false;
@@ -1289,9 +1319,12 @@ public class BenchmarksAtom
 								} catch (Throwable t2) {
 									exception2 = ": (Second exception caught: " + t2.getMessage() + ")";
 								}
-								xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", "exception"));
 								exception = Utils.getTimestamp() + ": Threw an exception: " + t.getMessage() + exception2;
-								xmlType.appendChild(Utils.processExecutableLine("process", exception));
+								if (record)
+								{
+									xmlType.appendChild(Utils.processExecutableLine("finish", Utils.getTimestamp(), "result", "exception"));
+									xmlType.appendChild(Utils.processExecutableLine("process", exception));
+								}
 								m_bp.m_outputArray.add(exception);
 
 							}
@@ -1305,7 +1338,7 @@ public class BenchmarksAtom
 							if (!m_bp.m_errorArray.isEmpty())
 							{	// We had at least one error, which marks this as a failure
 								failure		= true;
-								for (i = 0; i < m_bp.m_errorArray.size(); i++)
+								for (i = 0; record && i < m_bp.m_errorArray.size(); i++)
 									xmlError.appendChild(Utils.processExecutableLine("error", m_bp.m_errorArray.get(i)));
 								m_bp.m_errorArray.clear();
 
@@ -1315,11 +1348,17 @@ public class BenchmarksAtom
 							}
 
 							// For each line of output, save the entry
-							xmlOutput = new Xml("outputs");
-							xmlType.appendChild(xmlOutput);
+							if (record)
+							{
+								xmlOutput = new Xml("outputs");
+								xmlType.appendChild(xmlOutput);
+
+							} else {
+								xmlOutput = null;
+							}
 							if (!m_bp.m_outputArray.isEmpty())
 							{	// There were lines intercepted from the script
-								for (i = 0; i < m_bp.m_outputArray.size(); i++)
+								for (i = 0; record && i < m_bp.m_outputArray.size(); i++)
 								{	// If the script wrote any "error," entries to stdout (instead of stderr)
 									// we still need to catch those and interpret their directive as a failure on this pass
 									if (!failure && m_bp.m_outputArray.get(i).toLowerCase().contains(" error,"))
@@ -1338,26 +1377,34 @@ public class BenchmarksAtom
 							if (!failure && process != null && process.exitValue() != 0)
 							{	// A failure was noted by its exit value, but nothing was logged in the error queue
 								failure = true;
-								xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
+								if (record)
+									xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": Terminated with code " + Integer.toString(process.exitValue())));
 							}
 
 							if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 							{	// User force-terminated the execution
-								xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": User force-terminated benchmark via stop button in HUD"));
+								if (record)
+									xmlError.appendChild(Utils.processExecutableLine("process", Utils.getTimestamp() + ": User force-terminated benchmark via stop button in HUD"));
 							}
 
 							// Now, based on the state of this run, we append its information to the appropriate place
 							if (failure && (retryCount + 1) < m_bp.m_retryAttempts)
 							{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
-								xmlRun_RunFailure.appendChild(xmlType);
+								if (record)
+									xmlRun_RunFailure.appendChild(xmlType);
 
 							} else {
 								// Just append like normal, they're not retrying, this failure will persist
-								xmlRun_RunSuccess.appendChild(xmlType);
+								if (record)
+									xmlRun_RunSuccess.appendChild(xmlType);
 								// If we succeed, we make only one pass through the loop, no need to increment the retry count
 							}
 							// Move the counter for the next retry
 							++retryCount;
+
+							// Note:  For non-recording events, even though they weren't recorded into the results.xml,
+							//        they still go through the normal error checking and handling, and will retry if
+							//        there's a failure
 
 							// Clean up any temporary files and what-not which the script may have left behind
 							m_bp.m_wui.cleanupAfterScriptExecution();
@@ -1413,12 +1460,6 @@ public class BenchmarksAtom
 					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_restart", "");
 					return(null);
 				}
-
-			} else if (sourcename.equalsIgnoreCase("spinup")) {
-				// Executes a spinup script that doesn't record a score, but allows
-				// everything to be spun back up (used at first benchmark run, or
-				// after a reboot to re-load all the DLLs, cache everything, etc.
-				return(thisCommand.getNext());
 
 			}
 		}

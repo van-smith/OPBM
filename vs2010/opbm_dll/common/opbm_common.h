@@ -19,6 +19,8 @@
 	void			GetHarnessTempDirectory			(char* dirname, int dirnameLength);
 	void			GetScriptCSVDirectory			(char* dirname, int dirnameLength);
 	void			GetScriptTempDirectory			(char* dirname, int dirnameLength);
+	void			GetSettingsDirectory			(char* dirname, int dirnameLength);
+	void			GetRunningDirectory				(char* dirname, int dirnameLength);
 	void			GetCSIDLDirectory				(char* dirname, int dirnameLength, char* csidl_name);
 	char*			GetRegistryKeyValue				(char* key);
 	int				caseNocaseCompare				(char* left, char* right, int length);

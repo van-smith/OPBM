@@ -19,6 +19,8 @@
 
 package opbm.benchmarks.waituntilidle;
 
+import opbm.Opbm;
+
 /**
  * WaitUntilIdle interface with Windows DLL for monitoring total system CPU
  * activity, allows the system to be "calmed down" between benchmark runs.
@@ -37,17 +39,8 @@ public class WaitUntilIdle
 	 * will timeout after 30 seconds if such a threshold isn't reached.
 	 */
 	public void pauseAfterScriptExecution()
-	{
-//		// Wait for 5% or lower system activity over a period of 5 seconds, timeout after 30 seconds
-//		WaitUntilIdleParams	info	= new WaitUntilIdleParams( 5, 5000, 30000 );
-//		WaitUntilIdle		wui		= new WaitUntilIdle();
-//
-//		wui.WaitUntilSystemIdle(info);
-		try {
-			// Sleep for 2 seconds here before continuing
-			Thread.sleep(2000);
-		} catch (InterruptedException ex) {
-		}
+	{	// Wait for up to 20 seconds for a 2-second interval of 10% or less CPU usage system-wide
+		Opbm.waitUntilSystemIdle(10, 2000, 20000);
 	}
 
 	public void prepareBeforeScriptExecution()
