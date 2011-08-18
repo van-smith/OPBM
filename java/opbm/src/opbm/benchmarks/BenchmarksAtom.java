@@ -1393,6 +1393,7 @@ public class BenchmarksAtom
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndContinue")) {
 				// Rebooting, and continuing back from the next atom after the one we're on now
+				return(thisCommand.getNext());
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndRestart")) {
 				// Rebooting, and restarting the benchmark from the beginning
@@ -1410,8 +1411,14 @@ public class BenchmarksAtom
 					// Failure creating the registry key, it won't work
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY;
 					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_restart", "");
+					return(null);
 				}
-				return(null);
+
+			} else if (sourcename.equalsIgnoreCase("spinup")) {
+				// Executes a spinup script that doesn't record a score, but allows
+				// everything to be spun back up (used at first benchmark run, or
+				// after a reboot to re-load all the DLLs, cache everything, etc.
+				return(thisCommand.getNext());
 
 			}
 		}
@@ -1442,11 +1449,17 @@ public class BenchmarksAtom
 		if (saveStateBeforeReboot)
 		{
 			Opbm.stopProcesses();
-// REMEMBER to save everything here if we need to
+//////////
+//
+// REMEMBER to save everything here we need to
+//          the data we save is the current results.xml, the state of the
+//          benchmark manifest (the entire benchmark we're running, where we
+//          are in it, and everything in BenchmarkParams
+//////////
 		}
 
 		try {
-			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /t 2 /r");
+			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /t 1 /r");
 
 			// Grab the output
 			m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);

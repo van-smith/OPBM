@@ -11,12 +11,12 @@
 //
 //		1) path to start in (c:\cana\java\obpm\)
 //		2) pathname of JVM (c:\program files\java\jdk1.7.0\jre\bin\java.exe)
-//		3) relative path (to 1) to jar (dist\opbm.jar)
+//		3) jar (opbm.jar)
 //
 // This application assembles those pieces into an executable command
 // line like this, after first changing to the specified directory:
 //
-//		c:\program files\java\jdk1.7.0\jre\bin\java.exe -jar dist\opbm.jar
+//		c:\program files\java\jdk1.7.0\jre\bin\java.exe -jar opbm.jar
 //
 //
 
@@ -42,7 +42,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	TCHAR tcommand[ MAX_PATH * 2 ];
 	TCHAR tparams[ MAX_PATH * 2 ];
 	TCHAR tdir[ MAX_PATH * 2 ];
-	TCHAR tenv[ 2048 ];
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	BOOL result;
@@ -64,7 +63,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	ZeroMemory(params, MAX_PATH);
 	ZeroMemory(tcommand, MAX_PATH * 2);
 	ZeroMemory(tparams, MAX_PATH * 2);
-	ZeroMemory(tenv, 2048);
 
 	// Assemble the command
 	memcpy(command, T2A(argv[2]), strlen(T2A(argv[2])));
@@ -72,8 +70,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// Assemble the params
 	memcpy(params, jarPrefix, strlen(jarPrefix));								// append -jar
-	memcpy(params + strlen(params), T2A(argv[3]), strlen(T2A(argv[3])));		// append dist\opbm.jar
-	// Right now, the parameters looks like "-jar dist\opbm.jar"
+	memcpy(params + strlen(params), T2A(argv[3]), strlen(T2A(argv[3])));		// append opbm.jar
+	// Right now, the parameters looks like " -jar opbm.jar"
 
 	// Change to the specified directory
 	if (!SetCurrentDirectory(argv[1]))

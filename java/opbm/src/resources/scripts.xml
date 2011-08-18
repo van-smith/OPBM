@@ -132,8 +132,30 @@
 				<logical>reboot_and_restart</logical>
 				<real></real>
 			</abstract>
+			<abstract name="spinUp">
+				<logical>spinup</logical>
+				<real></real>
+			</abstract>
 		</abstracts>
 		<atoms>
+			<atom name="Reboot And Continue">
+				<abstract name="Excel World Heat" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="Reboot And Continue" sourcename="rebootAndContinue"></abstract>
+				<abstract name="Spinup After Restart" sourcename="spinUp">
+					<options>
+						<executable>..(backslash)autoIT(backslash)common(backslash)opbm(backslash)exe(backslash)spinup.exe</executable>
+					</options>
+				</abstract>
+				<abstract name="IE Google V8" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Reboot And Restart">
 				<abstract name="Reboot And Restart" sourcename="rebootAndRestart"></abstract>
 			</atom>
