@@ -1397,7 +1397,8 @@ public class BenchmarksAtom
 			} else if (sourcename.equalsIgnoreCase("rebootAndRestart")) {
 				// Rebooting, and restarting the benchmark from the beginning
 				m_bp.m_hud.updateDebug("Setting registry key for current user startup");
-				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\opbm", Opbm.m_jvmHome + " " + Utils.getCurrentDirectory() + "\\dist\\opbm.jar -restart");
+				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
+				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
 				m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))
 				{
