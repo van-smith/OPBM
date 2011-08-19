@@ -1,34 +1,41 @@
-// GetCPU.cpp : Defines the entry point for the console application.
+// GetCPU.cpp : This app is used only as a test app, primarily to test
+//              functions in the opbm_common.cpp/.h files, and modifications
+//              made to the CPU class.
 //
-#include "stdafx.h"
-#include <stdio.h>
-#include "psapi.h"
-#include "windows.h"
-#include "winbase.h"
-#include "wchar.h"
 #include "cpu.h"
+#include "..\common\opbm_common.h"
+#include "..\common\opbm_common_extern.h"
+#include "atlconv.h"
+#include "shlobj.h"
+#include "psapi.h"
 
-void spawnWorkerThreads(void);
-DWORD WINAPI computePi(LPVOID param);
-unsigned long QueryPerformanceCounterInMilliseconds( void );
+void			spawnWorkerThreads(void);
+DWORD WINAPI	computePi(LPVOID param);
+unsigned long	QueryPerformanceCounterInMilliseconds( void );
+
+char key[] = "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\EnableLUA";
+
+#include "..\common\opbm_common.cpp"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	CPU cpu;
-	HANDLE hProcess;
-    float system;
 
-	hProcess = (HANDLE)GetCurrentProcessId();
-
-	spawnWorkerThreads();
-
-	for( ; ; )
-	{
-		system	= cpu.WaitUntilIdle( hProcess, 5, 250, 2000 );
-		wprintf( L"System: %.3f\n", system );
-	}
-
-    return 0;
+	//CPU cpu;
+	//HANDLE hProcess;
+	//float system;
+	//
+	//hProcess = (HANDLE)GetCurrentProcessId();
+	//
+	//spawnWorkerThreads();
+	//
+	//for( ; ; )
+	//{
+	//	system	= cpu.WaitUntilIdle( hProcess, 5, 250, 2000 );
+	//	wprintf( L"System: %.3f\n", system );
+	//}
+	char* tptr = GetRegistryKeyValue(key);
+	
+	return 0;
 }
 
 

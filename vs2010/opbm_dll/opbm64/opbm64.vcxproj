@@ -190,6 +190,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\java\opbm\jni\opbm64_jni.h" />
     <ClInclude Include="..\common\opbm_common.h" />
+    <ClInclude Include="..\common\opbm_common_extern.h" />
     <ClInclude Include="..\cpu\CPU.h" />
     <ClInclude Include="opbm64.h" />
   </ItemGroup>

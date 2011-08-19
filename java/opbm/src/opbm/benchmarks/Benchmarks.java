@@ -46,7 +46,9 @@ public class Benchmarks
 	 */
 	public Benchmarks(Opbm opbm)
 	{
-		m_opbm = opbm;
+		m_opbm						= opbm;
+		m_bp						= null;
+		m_userNotYetWarnedAboutUAC	= true;
 	}
 
 	/**
@@ -141,6 +143,23 @@ public class Benchmarks
 	{
 		int i;
 		Xml child, xmlSuccess, xmlFailure, xmlIteration, xmlRun_Success, xmlRun_Failure;
+
+
+		// Warn user if User Account Control is not diabled
+		if (m_userNotYetWarnedAboutUAC && Opbm.isUACEnabled())
+		{	// It is enabled, tell the user it will not work this way
+			m_userNotYetWarnedAboutUAC = false;
+			OpbmDialog od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM will not run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "", "");
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException ex) {
+			}
+			return;
+
+		} else if (!m_userNotYetWarnedAboutUAC && Opbm.isUACEnabled()) {
+			// User has been warned, and it is enabled, cancel the test
+			return;
+		}
 
 		// Indicate the atom we're going into for the stack
 		m_bp.m_benchmarkStack.add(atom);
@@ -647,5 +666,6 @@ public class Benchmarks
 	}
 
 	private Opbm				m_opbm;
+	private boolean				m_userNotYetWarnedAboutUAC;
 	private BenchmarkParams		m_bp;
 }

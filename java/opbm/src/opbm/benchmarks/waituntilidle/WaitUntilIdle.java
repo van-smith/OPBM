@@ -21,7 +21,6 @@
 package opbm.benchmarks.waituntilidle;
 
 import java.text.NumberFormat;
-import java.util.Calendar;
 import opbm.Opbm;
 import opbm.benchmarks.BenchmarkParams;
 import opbm.common.Utils;
@@ -74,7 +73,7 @@ public class WaitUntilIdle
 
 		// See where we are
 		if (m_bp != null & m_bp.m_hud != null)
-		{
+		{	// We only display the pause information if the hud is up
 			if (utilization <= 10)
 			{	// It was able to settle down
 				m_bp.m_hud.updateStatus("Settled down to " + nf.format((double)utilization) + "% in " + nf.format((double)seconds) + " seconds");

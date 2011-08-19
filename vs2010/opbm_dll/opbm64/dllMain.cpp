@@ -18,6 +18,7 @@
 	#include "windows.h"
 	#include "winbase.h"
 	#include "opbm64.h"
+	#include "..\common\opbm_common_extern.h"
 	#include "..\cpu\CPU.h"
 
 
@@ -33,9 +34,6 @@
 	// Used for snapshotProcesses() and stopProcesses()
 	DWORD	gProcIDs[2048];
 	DWORD	gProcIDsSize = 0;
-	HWND	enumeratedWindows[_MAX_HWND_COUNT];
-	int		hwndMaxCount	= 0;
-	int		hwndsClosed		= 0;
 
 
 
@@ -300,9 +298,10 @@
 			ccptr = env->GetStringUTFChars(str, &isCopy);		// returns const char*
 			if (ccptr != NULL)
 			{
-				cptr = (char*)malloc(length);					// returns char*
+				cptr = (char*)malloc(length + 1);				// returns char*
 				if (cptr != NULL)
 				{
+					memset(cptr, 0, length + 1);
 					memcpy(cptr, ccptr, length);
 
 					// Allocate the variable
@@ -444,9 +443,10 @@
 			ckptr = env->GetStringUTFChars(key, &isCopy);		// returns const char*
 			if (ckptr != NULL)
 			{	// Grab the registry key
-				kptr = (char*)malloc(length);					// returns char*
+				kptr = (char*)malloc(length + 1);				// returns char*
 				if (kptr != NULL)
 				{
+					memset(kptr, 0, length + 1);
 					memcpy(kptr, ckptr, length);
 					keyValuePtr = GetRegistryKeyValue(kptr);
 					free(kptr);
