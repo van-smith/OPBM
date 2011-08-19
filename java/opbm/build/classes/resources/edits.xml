@@ -1026,6 +1026,7 @@
 			<listbox name="atom">
 				<onselect p1="elements">lookupbox_update</onselect>
 				<dblclick p1="atom">run_atom_benchmark</dblclick>
+				<enter p1="atom">run_atom_benchmark</enter>
 				<source>opbm.scriptdata.atoms.atom</source>
 				<foreach>atom</foreach>
 				<listby p1="#name"/>

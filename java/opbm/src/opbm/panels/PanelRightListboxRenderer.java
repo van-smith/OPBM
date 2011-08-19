@@ -36,7 +36,7 @@ import opbm.common.Macros;
 import opbm.common.Xml;
 
 public class PanelRightListboxRenderer
-		implements ListCellRenderer
+								implements ListCellRenderer
 {
 	public PanelRightListboxRenderer(String listBy1,
 									 String	listBy2,

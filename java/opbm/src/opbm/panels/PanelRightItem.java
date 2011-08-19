@@ -31,11 +31,9 @@ import java.awt.Label;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -59,8 +57,7 @@ import opbm.common.Xml;
  */
 public class PanelRightItem
 		implements MouseListener,
-				   FocusListener,
-				   KeyListener
+				   FocusListener
 {
 	/** Constructor creates default size, <code>JLabel</code> object (and
 	 * links object to panelParent), stores variables related to panelParent.
@@ -1298,6 +1295,43 @@ public class PanelRightItem
 	}
 
 	/**
+	 * Setter sets the associated <code>_TYPE_LISTBOX</code> and
+	 * <code>_TYPE_LOOKUPBOX</code> listing parameters.  Populated from
+	 * PanelFactory, or dynamically as list filters change.  The list is
+	 * populated dynamically when called to update its list contents.
+	 *
+	 * @param command command to execute
+	 * @param p1 first list-by parameter
+	 * @param p2 second list-by parameter
+	 * @param p3 third list-by parameter
+	 * @param p4 fourth list-by parameter
+	 * @param p5 fifth list-by parameter
+	 * @param p6 sixth list-by parameter
+	 * @param p7 seventh list-by parameter
+	 * @param p8 eighth list-by parameter
+	 * @param p9 ninth list-by parameter
+	 * @param p10 tenth list-by parameter
+	 */
+	public void setEnter(String command,
+						 String p1,
+						 String p2,
+						 String p3,
+						 String p4,
+						 String p5,
+						 String p6,
+						 String p7,
+						 String p8,
+						 String p9,
+						 String p10)
+	{
+		if (m_type == _TYPE_LISTBOX)
+			m_listbox.setEnter(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+
+		else if (m_type == _TYPE_LOOKUPBOX)
+			m_lookupbox.setEnter(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+	}
+
+	/**
 	 * Specifies the add button is allowed on the <code>_TYPE_LISTBOX</code>
 	 * control, or on the <code>_TYPE_LOOKUPBOX</code>.
 	 *
@@ -2358,18 +2392,6 @@ public class PanelRightItem
 				m_parentPR.repaintListBox();
 			}
 		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
 	}
 
 	// Types supported for this class, each PanelRightItem can take on one of these identities at a time:

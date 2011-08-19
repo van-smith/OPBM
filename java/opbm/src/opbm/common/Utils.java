@@ -23,6 +23,7 @@ package opbm.common;
 import opbm.dialogs.OpbmFileFilter;
 import opbm.graphics.AlphaImage;
 import java.awt.Color;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import opbm.Opbm;
 
@@ -911,6 +913,17 @@ public class Utils
 		}
 		f = fc.getSelectedFile();		// File they chose
 		return(f.getAbsolutePath());
+	}
+
+	public static void removeAllKeyListeners(JComponent c)
+	{
+		int i;
+		KeyListener[] kl = c.getKeyListeners();
+
+		for (i = 0; i < kl.length; i++)
+		{	// Remove this vermin!
+			c.removeKeyListener(kl[i]);
+		}
 	}
 
 	private static final String		errMsg = "Error attempting to launch web browser";

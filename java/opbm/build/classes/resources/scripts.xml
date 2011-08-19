@@ -185,7 +185,7 @@
 						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
 					</options>
 				</abstract>
-				<abstract name="Opear Kraken" sourcename="execute">
+				<abstract name="Opera Kraken" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
 					</options>
@@ -287,7 +287,7 @@
 						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
 					</options>
 				</abstract>
-				<abstract name="Opear Kraken" sourcename="execute">
+				<abstract name="Opera Kraken" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
 					</options>

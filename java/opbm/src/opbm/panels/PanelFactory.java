@@ -1137,11 +1137,12 @@ public class PanelFactory {
 //		<buttons>+ - clone</buttons>
 //		<filename>$scripts.xml$</filename>
 //		<dblclick p1="atom">command</dblclick>
+//		<enter p1="atom">command</enter>
 //		<source>opbm.scriptdata.flows</source>
 //		<foreach>flow</foreach>
 //		<listby p1="engine" p2="#name"/>
 		String command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
-		Xml listBy, dblClick;
+		Xml listBy, dblClick, enter;
 
 		listBy = Xml.getChildNode(root, "listby");
 		if (listBy == null) {
@@ -1176,6 +1177,23 @@ public class PanelFactory {
 			p9		= macroMaster.parseMacros(Xml.getAttributeOrChild(dblClick, "p9"));
 			p10		= macroMaster.parseMacros(Xml.getAttributeOrChild(dblClick, "p10"));
 			pri.setDblClick(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		}
+
+		enter = Xml.getChildNode(root, "enter");
+		if (enter != null)
+		{
+			command	= macroMaster.parseMacros(enter.getText());
+			p1		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p1"));
+			p2		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p2"));
+			p3		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p3"));
+			p4		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p4"));
+			p5		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p5"));
+			p6		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p6"));
+			p7		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p7"));
+			p8		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p8"));
+			p9		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p9"));
+			p10		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p10"));
+			pri.setEnter(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 		}
 
 		setListboxButtons(root, pri, macroMaster);
@@ -1300,7 +1318,7 @@ public class PanelFactory {
 												 Macros				macroMaster)
 	{
 		String command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
-		Xml listBy, dblClick;
+		Xml listBy, dblClick, enter;
 
 		listBy = Xml.getChildNode(root, "listby");
 		if (listBy == null) {
@@ -1340,6 +1358,23 @@ public class PanelFactory {
 			p9		= macroMaster.parseMacros(Xml.getAttributeOrChild(dblClick, "p9"));
 			p10		= macroMaster.parseMacros(Xml.getAttributeOrChild(dblClick, "p10"));
 			pri.setDblClick(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		}
+
+		enter = Xml.getChildNode(root, "enter");
+		if (enter != null)
+		{
+			command	= macroMaster.parseMacros(enter.getText());
+			p1		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p1"));
+			p2		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p2"));
+			p3		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p3"));
+			p4		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p4"));
+			p5		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p5"));
+			p6		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p6"));
+			p7		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p7"));
+			p8		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p8"));
+			p9		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p9"));
+			p10		= macroMaster.parseMacros(Xml.getAttributeOrChild(enter, "p10"));
+			pri.setEnter(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 		}
 
 		setLookupboxButtons(root, pri, macroMaster);

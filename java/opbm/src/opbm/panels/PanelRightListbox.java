@@ -30,6 +30,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -53,7 +55,10 @@ import opbm.common.Xml;
  * functions here and on the parent should be straight-forward, typically with
  * identical names.
  */
-public class PanelRightListbox implements ListSelectionListener, MouseListener
+public class PanelRightListbox
+					implements	ListSelectionListener,
+								MouseListener,
+								KeyListener
 {
 	/**
 	 * Constructor initializes the class, stores parent items for the panel,
@@ -107,6 +112,7 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 		m_listByP8			= "";
 		m_listByP9			= "";
 		m_listByP10			= "";
+
 		m_dblClickCommand	= "";
 		m_dblClickP1		= "";
 		m_dblClickP2		= "";
@@ -118,6 +124,19 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 		m_dblClickP8		= "";
 		m_dblClickP9		= "";
 		m_dblClickP10		= "";
+
+		m_enterCommand	= "";
+		m_enterP1		= "";
+		m_enterP2		= "";
+		m_enterP3		= "";
+		m_enterP4		= "";
+		m_enterP5		= "";
+		m_enterP6		= "";
+		m_enterP7		= "";
+		m_enterP8		= "";
+		m_enterP9		= "";
+		m_enterP10		= "";
+
 		m_onSelectCommand	= "";
 		m_onSelectP1		= "";
 		m_onSelectP2		= "";
@@ -234,6 +253,48 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 		m_dblClickP8		= p8;
 		m_dblClickP9		= p9;
 		m_dblClickP10		= p10;
+	}
+
+	/**
+	 * Setter sets the associated <code>_TYPE_LISTBOX</code> listing parameters
+	 * Populated from PanelFactory, or dynamically as list filters change.
+	 * The list is populated dynamically when called to update its list contents.
+	 *
+	 * @param command command to execute
+	 * @param p1 first list-by parameter
+	 * @param p2 second list-by parameter
+	 * @param p3 third list-by parameter
+	 * @param p4 fourth list-by parameter
+	 * @param p5 fifth list-by parameter
+	 * @param p6 sixth list-by parameter
+	 * @param p7 seventh list-by parameter
+	 * @param p8 eighth list-by parameter
+	 * @param p9 ninth list-by parameter
+	 * @param p10 tenth list-by parameter
+	 */
+	public void setEnter(String command,
+						 String p1,
+						 String p2,
+						 String p3,
+						 String p4,
+						 String p5,
+						 String p6,
+						 String p7,
+						 String p8,
+						 String p9,
+						 String p10)
+	{
+		m_enterCommand	= command;
+		m_enterP1		= p1;
+		m_enterP2		= p2;
+		m_enterP3		= p3;
+		m_enterP4		= p4;
+		m_enterP5		= p5;
+		m_enterP6		= p6;
+		m_enterP7		= p7;
+		m_enterP8		= p8;
+		m_enterP9		= p9;
+		m_enterP10		= p10;
 	}
 
 	/**
@@ -892,6 +953,7 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 
 			m_listBox.addListSelectionListener(this);
 			m_listBox.addMouseListener(this);
+			m_listBox.addKeyListener(this);
 			m_parentPanel.add(m_listBoxScroller);
 		}
 		if (m_xmlListboxMaster != null)
@@ -1330,6 +1392,37 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 		}
 	}
 
+	@Override
+	public void keyTyped(KeyEvent e)
+	{
+		if (e.getSource().equals(m_listBox))
+		{
+			if (e.getKeyCode() == KeyEvent.VK_ENTER)
+			{	// They pressed enter on this selection, execute its enter command
+				m_commandMaster.processCommand(m_parentPRI,
+											   m_enterCommand,
+											   m_enterP1,
+											   m_enterP2,
+											   m_enterP3,
+											   m_enterP4,
+											   m_enterP5,
+											   m_enterP6,
+											   m_enterP7,
+											   m_enterP8,
+											   m_enterP9,
+											   m_enterP10);
+			}
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
+
 	/**
 	 * When the mouse button is pressed down on an add, delete or clone button.
 	 *
@@ -1560,6 +1653,18 @@ public class PanelRightListbox implements ListSelectionListener, MouseListener
 	private String			m_dblClickP8;
 	private String			m_dblClickP9;
 	private String			m_dblClickP10;
+
+	private String			m_enterCommand;
+	private String			m_enterP1;
+	private String			m_enterP2;
+	private String			m_enterP3;
+	private String			m_enterP4;
+	private String			m_enterP5;
+	private String			m_enterP6;
+	private String			m_enterP7;
+	private String			m_enterP8;
+	private String			m_enterP9;
+	private String			m_enterP10;
 
 	private String			m_listBoxAddCommand;
 	private String			m_listBoxAddCommandP1;
