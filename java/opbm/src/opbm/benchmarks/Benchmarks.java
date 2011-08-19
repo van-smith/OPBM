@@ -19,6 +19,7 @@
 
 package opbm.benchmarks;
 
+import java.io.File;
 import opbm.Opbm;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import opbm.benchmarks.waituntilidle.WaitUntilIdle;
 import opbm.dialogs.OpbmDialog;
 import opbm.dialogs.OpbmInput;
+import opbm.resultsviewer.ResultsViewer;
 
 /**
  *
@@ -159,6 +161,16 @@ public class Benchmarks
 		} else if (!m_userNotYetWarnedAboutUAC && Opbm.isUACEnabled()) {
 			// User has been warned, and it is enabled, cancel the test
 			return;
+		}
+
+		// Make sure the JVM home location is correct
+		File f = new File(Opbm.m_jvmHome);
+		if (!f.exists())
+		{	// Oops!
+			System.out.println("Warning: Working java.home location \"" + Opbm.m_jvmHome + "\" does not exist.");
+			System.out.println("Unable to locate java.exe at java.home location: " + Opbm.m_jvmHome+ ".");
+			System.out.println("The OPBM Restarter will NOT be able to automatically re-launch OPBM after reboot.");
+			System.out.println("Use [-home:\"c:\\full\\path\\to\\java.exe\"] command line override to manually set java.home location (surround with double-quotes if pathname contains a space).");
 		}
 
 		// Indicate the atom we're going into for the stack
@@ -342,6 +354,9 @@ public class Benchmarks
 			if (!m_bp.m_deb.isVisible())
 				m_bp.m_deb.setVisible(true);
 		}
+
+		// Hide all the results viewer windows
+		m_bp.m_opbm.hideAllResultsViewerWindowsInQueue();
 	}
 
 	/**
@@ -350,7 +365,6 @@ public class Benchmarks
 	public void benchmarkShutdown()
 	{
 		String fileName;
-
 
 		// All finished
 		if (m_bp.m_headsUpActive)
@@ -375,8 +389,12 @@ public class Benchmarks
 		// Close the benchmark run
 		m_bp.m_opbm.setRunFinished();
 
+		// Restore the results viewer windows
+		m_bp.m_opbm.showAllResultsViewerWindowsInQueue();
+
 		// Launch the results viewer
-		m_bp.m_opbm.createAndShowResultsViewer(fileName);
+		ResultsViewer rv = m_bp.m_opbm.createAndShowResultsViewer(fileName);
+		rv.getDroppableFrame().forceWindowToHaveFocus();
 	}
 
 	/**

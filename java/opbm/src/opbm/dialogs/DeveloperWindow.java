@@ -30,8 +30,8 @@ public class DeveloperWindow extends DroppableFrame
 
 		// Initialize our parent and size our window
 		m_opbm		= opbm;
-		m_width		= 1300;
-		m_height	= 700 + /* statusBar.getHeight() is not yet assigned, but is */ 16;
+		m_width		= 1100;
+		m_height	= 645;
 		setTitle( Opbm.m_title );
 
 		// Compute the actual size we need for our window, so it's properly centered
