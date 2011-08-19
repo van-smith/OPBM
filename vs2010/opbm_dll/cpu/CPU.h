@@ -1,6 +1,23 @@
 #pragma once
+#ifndef UNICODE
+	#define UNICODE
+#endif
+#ifndef _UNICODE
+	#define _UNICODE
+#endif
 
-#include "wchar.h"
+#pragma  warning( disable:4201) // nonstandard extension used : nameless struct/union
+#pragma  warning( disable:4710) // warning C4710: function 'toto' not expanded
+
+#include <crtdbg.h>
+#include <windows.h>
+#include <windowsx.h>
+#include <tchar.h>
+#include <iostream>
+#include <stdio.h>
+#include "psapi.h"
+#include <winbase.h>
+#include <wchar.h>
 
 #ifndef null
 #define null 0

@@ -510,6 +510,9 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 			{
 				// Allocate a buffer to read the value
 				intermediate = (BYTE*)malloc(length);
+				if (!intermediate)
+					return(NULL);
+
 				RegQueryValueExA( hkout, keyName, 0, &type, intermediate, &length );
 				RegCloseKey(hkout);
 				switch (type)
@@ -523,9 +526,10 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 
 					case REG_DWORD:
 						// Convert the dword value to its string form
-						converted = (char*)malloc(length);
+						converted = (char*)malloc(32);
 						if (converted != NULL)
 						{
+							memset(converted, 0, 32);
 							sprintf_s(converted, length, "%u", *(DWORD*)intermediate);
 						}
 						free(intermediate);
@@ -533,9 +537,10 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 
 					case REG_QWORD:
 						// Convert the qword value to its string form
-						converted = (char*)malloc(length);
+						converted = (char*)malloc(32);
 						if (converted != NULL)
 						{
+							memset(converted, 0, 32);
 							sprintf_s(converted, length, "%I64u", *(__int64*)intermediate);
 						}
 						free(intermediate);

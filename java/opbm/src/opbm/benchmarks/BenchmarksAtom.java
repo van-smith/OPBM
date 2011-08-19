@@ -1246,6 +1246,12 @@ public class BenchmarksAtom
 							}
 							m_bp.m_hud.updateCounter(counter);
 
+
+							if (retryCount != 0)
+							{	// Indicate we are retrying after a failure
+								m_bp.m_hud.updateStatus("Retry after error #" + Integer.toString(retryCount));
+							}
+
 							// Change the current directory to the directory of the executable, and get this command's user-readable name
 							curDir	= Utils.makeTheCurrentDirectoryThatOfThisExecutable(command);
 							name	= m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));

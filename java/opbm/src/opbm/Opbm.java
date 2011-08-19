@@ -1805,6 +1805,26 @@ public final class Opbm extends	ModalApp
 	}
 
 	/**
+	 * Examines the registry keys to see if User Account Control is enabled,
+	 * which will prevent unsigned executables from running.
+	 * @return
+	 */
+	public static boolean isUACEnabled()
+	{
+		String value;
+
+		value = Opbm.GetRegistryKeyValue("HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\EnableLUA");
+		try {
+			if (Integer.valueOf(value) != 0)
+				return(true);	// UAC is enabled
+		} catch (Throwable t) {
+			// Probably a number exception, but should not happen as this registry key is a DWORD
+		}
+		// If we get here, not enabled or an error (which we then assume not enabled)
+		return(false);
+	}
+
+	/**
 	 * Debugging tool, enable or disable debugging
 	 * @param enabled
 	 */

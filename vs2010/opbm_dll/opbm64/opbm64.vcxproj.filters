@@ -41,5 +41,8 @@
     <ClInclude Include="..\cpu\CPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\opbm_common_extern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
