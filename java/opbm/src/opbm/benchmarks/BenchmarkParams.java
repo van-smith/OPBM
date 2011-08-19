@@ -136,7 +136,9 @@ public class BenchmarkParams
 	public List<String>			m_outputArray;
 	public StreamGobbler		m_outputGobbler;
 
-	// Used to process the timing lines, as in "timing,Launch Program,1.58392837639873,102.38908379387398
+// Timing line elements
+// Used to process the timing lines
+// as in "timing,Launch Program,1.58392837639873,102.38908379387398
 	public String				m_line;
 	public int					m_firstComma;
 	public int					m_secondComma;

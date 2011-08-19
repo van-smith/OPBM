@@ -408,16 +408,6 @@ public class Benchmarks
 	 */
 	public void benchmarkInitializeExecutionEnvironment(BenchmarkParams bp)
 	{
-		if (m_bp == bp)
-		{	// We are initializing the current entry, so we can take a snapshot
-			// of the system as it exists right now before the benchmark is run
-			Opbm.snapshotProcesses();
-			// Saves all processes currently running, and all windows currently
-			// open.  Opbm.stopProcesses() is used during the benchmark to
-			// restore everything to its original state (cleaning up in that way
-			// after the benchmark terminates)
-		}
-
 		// Initialize our relative items
 		bp.m_bpAtom.m_executeCounter	= 0;
 		bp.m_bpAtom.m_failureCounter	= 0;
@@ -494,6 +484,17 @@ public class Benchmarks
 		bp.m_xmlResultsLastScenario		= null;
 		bp.m_xmlResultsLastMolecule		= null;
 		bp.m_xmlResultsLastAtom			= null;
+
+		// If we are initializing this m_bp member, we also snapshot everything as it is now
+		if (m_bp == bp)
+		{	// We are initializing the current entry, so we can take a snapshot
+			// of the system as it exists right now before the benchmark is run
+			Opbm.snapshotProcesses();
+			// Saves all processes currently running, and all windows currently
+			// open.  Opbm.stopProcesses() is used during the benchmark to
+			// restore everything to its original state (cleaning up in that way
+			// after the benchmark terminates)
+		}
 	}
 
 	public void addStandardResultAttributes(Xml result)

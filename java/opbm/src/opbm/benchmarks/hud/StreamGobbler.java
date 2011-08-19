@@ -46,6 +46,7 @@ public class StreamGobbler extends Thread
 	@Override
     public void run()
     {
+		String name;
 		String line = null;
 
 		try
@@ -60,28 +61,29 @@ public class StreamGobbler extends Thread
 				if (line.toLowerCase().startsWith("status,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateStatus(line.substring(7));	// Update the status display with this information
+					m_hud.updateStatus(line.substring(7), line);	// Update the status display with this information
 				}
 
 				if (line.toLowerCase().startsWith("timing,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateTiming(line.substring(7));	// Update the status display with this information
+					m_hud.updateTiming(line.substring(7), line);	// Update the status display with this information
 				}
 
 				if (line.toLowerCase().startsWith("error,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateError(line.substring(6));	// Update the status display with this information
+					m_hud.updateError(line.substring(6), line);		// Update the status display with this information
 				}
 
 				if (line.toLowerCase().startsWith("debug,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateDebug(line.substring(6));	// Update the status display with this information
+					m_hud.updateDebug(line.substring(6), line);		// Update the status display with this information
 				}
 
-				m_hud.updateName("Running " + m_hudPrefixText + " (" + Integer.toString(m_lineKnownCount) + ((m_lineKnownCount != m_lineTotalCount) ? " + " + Integer.toString(m_lineTotalCount - m_lineKnownCount) : "") + " events logged)");
+				name = "Running " + m_hudPrefixText + " (" + Integer.toString(m_lineKnownCount) + ((m_lineKnownCount != m_lineTotalCount) ? " + " + Integer.toString(m_lineTotalCount - m_lineKnownCount) : "") + " events logged)";
+				m_hud.updateName(name, name);
 
 				m_output.add(Utils.getTimestamp() + ": " + line);
 			}

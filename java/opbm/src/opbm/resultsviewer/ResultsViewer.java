@@ -118,11 +118,6 @@ public final class ResultsViewer implements KeyListener,
 			m_pan.moveToFront(m_lblScoreboard);
 		}
 		img = new AlphaImage(m_imgScoreboardInternal);
-//		if (m_failureCount == 0)
-//		{	// Make the background green
-//			img.alphaize(128);
-//			img.colorize(AlphaImage.makeARGB(255, 0, 255, 0));
-//		}
 		img.applyAlphaMask(m_imgScoreboardInternal1Mask);
 
 		// 1b) Render the rainbow gauge
