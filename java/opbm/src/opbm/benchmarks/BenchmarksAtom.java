@@ -1238,7 +1238,7 @@ public class BenchmarksAtom
 							// Update the hud with executed scripts, plus failures
 							counter = Integer.toString(m_executeCounter) + " " + Utils.singularOrPlural(m_executeCounter, "Script", "Scripts") + " Executed";
 							if (m_failureCounter != 0)
-								counter += ", " + Integer.toString(m_failureCounter) + Utils.singularOrPlural(m_failureCounter, "Failure", "Failures");
+								counter += " + " + Integer.toString(m_failureCounter) + " " + Utils.singularOrPlural(m_failureCounter, "Failure", "Failures");
 
 							if (m_bp.m_thisIteration != 0)
 							{	// Update the iteration information

@@ -128,10 +128,20 @@ int _tmain(int argc, _TCHAR* argv[])
 
 void usage(int returnCode)
 {
-	printf("\n");
+	int i;
+
+	printf("-----\n");
 	printf("Usage:\n");
+	printf("    restarter c:\\cana\\java\\opbm\\ \"c:\\program files\\java\\jre7\\bin\\java.exe\" opbm.jar\n");
 	printf("\n");
-	printf("    restarter \"c:\\cana\\opbm\\\" \"c:\\program files\\java\\jdk1.7.0\\jre7\\bin\\java.exe\" \"dist\\opbm.jar\"\n");
-	Sleep(10000);
+	printf("\n");
+	printf("-----\n");
+	printf("Please copy-and-paste or hit PrtScrn key (captures screen image to clipboard)\n\n");
+#define MAX_SECONDS 60
+	for (i = 0; i < MAX_SECONDS; i++)
+	{	// Keep the message up for 30 seconds
+		printf("\r%u seconds before exit", MAX_SECONDS - i - 1);
+		Sleep(1000);
+	}
 	exit(returnCode);
 }

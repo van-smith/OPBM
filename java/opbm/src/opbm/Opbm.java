@@ -117,7 +117,12 @@ public final class Opbm extends	ModalApp
     public Opbm(String[] args)
 	{
 		m_opbm = this;
-		System.out.println(m_jvmHome);
+		System.out.println("JVM home: " + m_jvmHome);
+		File f = new File(m_jvmHome);
+		if (!f.exists())
+		{	// Give a warning
+			System.out.println("Warning: JVM home does not exist. Use -home:path override");
+		}
 
 /*
  * Used for debugging, or reference.  This data comes from the opbm64.dll or opbm32.dll functions:
@@ -146,6 +151,7 @@ public final class Opbm extends	ModalApp
 		m_editPanels				= new ArrayList<PanelRight>(0);
 		m_rawEditPanels				= new ArrayList<PanelRight>(0);
 		m_zoomFrames				= new ArrayList<JFrame>(0);
+		m_rvFrames					= new ArrayList<DroppableFrame>(0);
 		m_tuples					= new ArrayList<Tuple>(0);
 		m_macroMaster				= new Macros(this);
 		m_benchmarkMaster			= new Benchmarks(this);
@@ -206,13 +212,13 @@ public final class Opbm extends	ModalApp
 						}
 
 						// If they specified any command line options, grab them
-						m_executingFromCommandLine	= !args.isEmpty();
 						runCount					= 0;
 						for (i = 0; i < args.size(); i++)
 						{
 							line = args.get(i);
 							if (line.toLowerCase().startsWith("-atom("))
 							{	// It's an iterative atom count, at least it's supposed to be
+								m_executingFromCommandLine = true;
 								digits		= Utils.extractOnlyNumbers(line.substring(6));
 								iterations	= Integer.valueOf(digits);
 								list.clear();
@@ -240,6 +246,7 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-atom:")) {
 								// It's an iterative atom count
 								// Grab all of the atoms and iterate to find the name of the one we're after
+								m_executingFromCommandLine = true;
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 								if (!list.isEmpty())
@@ -264,11 +271,13 @@ public final class Opbm extends	ModalApp
 
 							} else if (line.toLowerCase().startsWith("-trial")) {
 								// They want to run a trial benchmark run
+								m_executingFromCommandLine = true;
 								++runCount;
 								m_benchmarkMaster.benchmarkTrialRun(true);
 
 							} else if (line.toLowerCase().startsWith("-official")) {
 								// They want to run an official benchmark run
+								m_executingFromCommandLine = true;
 								++runCount;
 								m_benchmarkMaster.benchmarkOfficialRun(true);
 
@@ -285,6 +294,15 @@ public final class Opbm extends	ModalApp
 								m_executingBenchmarkRunName = line.substring(6);
 								System.out.println("Benchmark given '" + m_executingBenchmarkRunName + "' name.");
 
+							} else if (line.toLowerCase().startsWith("-home:")) {
+								// They are overriding the default java.home location for java.exe for the restarter
+								m_jvmHome = line.substring(6).replace("\"", "");
+								File f = new File(m_jvmHome);
+								if (!f.exists())
+								{	// The override location does not exist
+									System.out.println("Warning: Java.home command-line override \"" + m_jvmHome + "\" does not exist.");
+								}
+
 							} else {
 								// Ignore the unknown option
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
@@ -295,9 +313,15 @@ public final class Opbm extends	ModalApp
 							// If we get here, we did not have an error, and we're ready to exit
 							System.exit(0);
 						}
+						// Done doing command-line things
+						m_executingFromCommandLine = false;
 					}
 				};
 				t.start();
+				try {
+					t.join();
+				} catch (InterruptedException ex) {
+				}
             }
         });
 	}
@@ -340,19 +364,25 @@ public final class Opbm extends	ModalApp
 	/**
 	 * Creates the Results Viewer
 	 */
-	public void createAndShowResultsViewer(String resultsXmlFilename)
+	public ResultsViewer createAndShowResultsViewer(String resultsXmlFilename)
 	{
+		int count;
+		m_rv = null;
+
+		m_rvsync = 0;
 		if (!resultsXmlFilename.isEmpty() && !m_executingFromCommandLine)
 		{	// We only process real files
 			m_rvFilename = resultsXmlFilename;
 
 			// Launch the Results Viewer in another thread (keeps GUI running)
+			++m_rvsync;		// Raise the condition of this sync point's use
 			Thread t = new Thread("results_viewer_loader")
 			{
 				@Override
 				public void run()
 				{
 					m_rv = new ResultsViewer(m_opbm, 800, 556, true);
+					--m_rvsync;
 
 					// Add the filter tags
 					m_rv.addFilterTag("Internet",	"No");
@@ -372,6 +402,18 @@ public final class Opbm extends	ModalApp
 			};
 			t.start();
 		}
+		count = 0;
+		while (count < 50/* 50*200 = 10 seconds */ && m_rvsync != 0)
+		{
+			try
+			{	// Wait for m_rv to be created and run() to to notify m_rvsync
+			   Thread.sleep(200);
+
+			} catch (InterruptedException ex) {
+			}
+		   ++count;
+		}
+		return(m_rv);
 	}
 
 	/**
@@ -1851,6 +1893,100 @@ public final class Opbm extends	ModalApp
 		return(m_frameDeveloper);
 	}
 
+	/**
+	 * Adds the frame to a list so that it can be closed when starting a new
+	 * benchmark run
+	 * @param frame
+	 */
+	public void addResultsViewerToQueue(DroppableFrame frame)
+	{
+		int i;
+
+		for (i = 0; i < m_rvFrames.size(); i++)
+		{
+			if (m_rvFrames.get(i).equals(frame))
+			{	// It's already in our list
+				return;
+			}
+		}
+		// If we get here, it's not in our list, add it
+		m_rvFrames.add(frame);
+	}
+
+	/**
+	 * Removes the entry from the queue
+	 * @param frame
+	 */
+	public void removeResultsViewerFromQueue(DroppableFrame frame)
+	{
+		int i;
+
+		for (i = 0; i < m_rvFrames.size(); i++)
+		{
+			if (m_rvFrames.get(i).equals(frame))
+			{	// It's here, delete it
+				m_rvFrames.remove(i);
+			}
+		}
+	}
+
+	/**
+	 * Called when a benchmark run starts to close all the results viewer windows
+	 */
+	public void hideAllResultsViewerWindowsInQueue()
+	{
+		int i;
+
+		for (i = 0; i < m_rvFrames.size(); i++)
+			m_rvFrames.get(i).setVisible(false);
+	}
+
+	/**
+	 * Called when a benchmark ends to restore all the results viewer windows
+	 */
+	public void showAllResultsViewerWindowsInQueue()
+	{
+		int i;
+
+		for (i = 0; i < m_rvFrames.size(); i++)
+			m_rvFrames.get(i).setVisible(true);
+	}
+
+	/**
+	 * The JDK and JRE return different "home" locations.  The JDK nicely points
+	 * to its full path, such as c:\program files\java\jdk1.7.0\ whereas the JRE
+	 * points only to "c:\program files\java\" even though it lives in
+	 * "c:\program files\java\jre7\" or "c:\program files\java\jre6\", etc.
+	 * @return a valid directory relative to the reported java.home location
+	 * where java.exe exists
+	 */
+	public static String getPathToJavaDotExe()
+	{
+		int i;
+		String pathName;
+		File f1, f2, f3, f4, f5;
+
+		pathName	= Utils.verifyNoDoubleBackslashesInPathName(Utils.verifyPathEndsInBackslash(System.getProperty("java.home") + "\\"));
+		f1			= new File(pathName + "bin\\java.exe");
+		f2			= new File(pathName + "jre7\\bin\\java.exe");
+		f3			= new File(pathName + "jre6\\bin\\java.exe");
+		f4			= new File(pathName + "jre8\\bin\\java.exe");
+		f5			= new File(pathName + "jre9\\bin\\java.exe");
+		if (f1.exists())
+		{	// java.home is reporting correctly!
+			return(f1.getAbsolutePath());
+		} else if (f2.exists()) {
+			return(f2.getAbsolutePath());
+		} else if (f3.exists()) {
+			return(f3.getAbsolutePath());
+		} else if (f4.exists()) {
+			return(f4.getAbsolutePath());
+		} else if (f5.exists()) {
+			return(f5.getAbsolutePath());
+		}
+		return(f1.getAbsolutePath());
+	}
+
 	/** Main app entry point.
 	 *
 	 * @param args command line parameters
@@ -1969,6 +2105,7 @@ public final class Opbm extends	ModalApp
 	private SimpleWindow			m_frameSimple;
 
 	private List<JFrame>			m_zoomFrames;
+	private List<DroppableFrame>	m_rvFrames;		// Holds list of open windows, closed automatically at benchmark run
 	private ResultsViewer			m_rv;
 	private String					m_rvFilename;
 	private boolean					m_executingFromCommandLine;
@@ -1999,5 +2136,8 @@ public final class Opbm extends	ModalApp
 
 // REMEMBER for non-Windows based java runtimes, this logic will need to be changed
 // REMEMBER there's also a registry key for this item which may need to be used instead (for custom installations of Java), though for the standard installations from Oracle, this should always work:
-	public static String			m_jvmHome				= Utils.verifyNoDoubleBackslashesInPathName(Utils.verifyPathEndsInBackslash(System.getProperty("java.home") + "\\") + "bin\\java.exe");
+	public static String			m_jvmHome				= getPathToJavaDotExe();
+
+	// Synchronization items used for various wait-until-all-parts-are-completed operations
+	public volatile static int		m_rvsync = 0;		// Used by createAndShowResultsViewer
 }

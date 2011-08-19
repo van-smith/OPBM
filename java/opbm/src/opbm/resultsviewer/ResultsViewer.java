@@ -19,6 +19,7 @@
 
 package opbm.resultsviewer;
 
+import java.awt.event.WindowEvent;
 import opbm.graphics.JLabelHotTrack;
 import opbm.dialogs.DroppableFrame;
 import opbm.graphics.AlphaImage;
@@ -36,6 +37,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -50,7 +52,8 @@ import opbm.common.Xml;
 
 public final class ResultsViewer implements KeyListener,
 											MouseWheelListener,
-											ComponentListener
+											ComponentListener,
+											WindowListener
 
 {
 	public ResultsViewer(Opbm		opbm,
@@ -751,6 +754,7 @@ img.grayscale();
 		Dimension prefSize;
 
 		m_frame = new DroppableFrame(m_opbm, false);
+		m_opbm.addResultsViewerToQueue(m_frame);
 		m_frame.setTitle("OPBM - Results Viewer");
 
 		// Compute the actual size we need for our window, so it's properly centered
@@ -776,6 +780,7 @@ img.grayscale();
 		m_frame.addKeyListener(this);
 		m_frame.addMouseWheelListener(this);
 		m_frame.addComponentListener(this);
+		m_frame.addWindowListener(this);
 
 		Container c = m_frame.getContentPane();
 		c.setBackground(new Color(120, 120, 120));
@@ -1308,8 +1313,40 @@ m_imgRefSystemOver.grayscale();
 		}
 	}
 
-	public ResultsViewerLine getRootRVL()	{	return(m_rootRVL);		}
-	public Tuple getFilterTags()			{	return(m_filterTags);	}
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e)
+	{	// We're about done with, tell OPBM to remove us from any future going-concerns
+		m_opbm.removeResultsViewerFromQueue(m_frame);
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		m_frame = null;
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+	}
+
+	public DroppableFrame getDroppableFrame()	{	return(m_frame);		}
+	public ResultsViewerLine getRootRVL()		{	return(m_rootRVL);		}
+	public Tuple getFilterTags()				{	return(m_filterTags);	}
 
 	private Opbm						m_opbm;				// The parent
 	private DroppableFrame				m_frame;			// The physical window
