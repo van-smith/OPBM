@@ -27,6 +27,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -43,7 +46,10 @@ import opbm.Opbm;
 import opbm.common.Utils;
 import opbm.common.Xml;
 
-public class PanelRightLookupbox implements ListSelectionListener, MouseListener
+public class PanelRightLookupbox
+						implements	ListSelectionListener,
+									MouseListener,
+									KeyListener
 {
 	public PanelRightLookupbox(Opbm				opbm,
 							   JPanel			parentPanel,
@@ -75,6 +81,7 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 		m_lookupboxXml			= null;
 		m_lookupboxName			= "";
 		m_lookupboxButtons		= "";
+
 		m_listByP1				= "";
 		m_listByP2				= "";
 		m_listByP3				= "";
@@ -86,19 +93,31 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 		m_listByP9				= "";
 		m_listByP10				= "";
 
-		m_dblClickCommand	= "";
-		m_dblClickP1		= "";
-		m_dblClickP2		= "";
-		m_dblClickP3		= "";
-		m_dblClickP4		= "";
-		m_dblClickP5		= "";
-		m_dblClickP6		= "";
-		m_dblClickP7		= "";
-		m_dblClickP8		= "";
-		m_dblClickP9		= "";
-		m_dblClickP10		= "";
+		m_dblClickCommand		= "";
+		m_dblClickP1			= "";
+		m_dblClickP2			= "";
+		m_dblClickP3			= "";
+		m_dblClickP4			= "";
+		m_dblClickP5			= "";
+		m_dblClickP6			= "";
+		m_dblClickP7			= "";
+		m_dblClickP8			= "";
+		m_dblClickP9			= "";
+		m_dblClickP10			= "";
 
-		m_lookupboxAddCommand = "";
+		m_enterCommand			= "";
+		m_enterP1				= "";
+		m_enterP2				= "";
+		m_enterP3				= "";
+		m_enterP4				= "";
+		m_enterP5				= "";
+		m_enterP6				= "";
+		m_enterP7				= "";
+		m_enterP8				= "";
+		m_enterP9				= "";
+		m_enterP10				= "";
+
+		m_lookupboxAddCommand	= "";
 		m_lookupboxAddCommandP1 = "";
 		m_lookupboxAddCommandP2 = "";
 		m_lookupboxAddCommandP3 = "";
@@ -848,6 +867,48 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 	}
 
 	/**
+	 * Setter sets the associated <code>_TYPE_LISTBOX</code> listing parameters
+	 * Populated from PanelFactory, or dynamically as list filters change.
+	 * The list is populated dynamically when called to update its list contents.
+	 *
+	 * @param command command to execute
+	 * @param p1 first list-by parameter
+	 * @param p2 second list-by parameter
+	 * @param p3 third list-by parameter
+	 * @param p4 fourth list-by parameter
+	 * @param p5 fifth list-by parameter
+	 * @param p6 sixth list-by parameter
+	 * @param p7 seventh list-by parameter
+	 * @param p8 eighth list-by parameter
+	 * @param p9 ninth list-by parameter
+	 * @param p10 tenth list-by parameter
+	 */
+	public void setEnter(String command,
+						 String p1,
+						 String p2,
+						 String p3,
+						 String p4,
+						 String p5,
+						 String p6,
+						 String p7,
+						 String p8,
+						 String p9,
+						 String p10)
+	{
+		m_enterCommand	= command;
+		m_enterP1		= p1;
+		m_enterP2		= p2;
+		m_enterP3		= p3;
+		m_enterP4		= p4;
+		m_enterP5		= p5;
+		m_enterP6		= p6;
+		m_enterP7		= p7;
+		m_enterP8		= p8;
+		m_enterP9		= p9;
+		m_enterP10		= p10;
+	}
+
+	/**
 	 * Setter sets the associated <code>_TYPE_LOOKUPBOX</code> onSelect parameters
 	 * Populated from PanelFactory, or dynamically as list filters change.
 	 * The list is populated dynamically when called to update its list contents.
@@ -983,7 +1044,7 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 
 			} else {
 				// We must load the specified file
-				m_lookupboxXml = m_opbm.loadXml(m_lookupboxFileName);
+				m_lookupboxXml = Opbm.loadXml(m_lookupboxFileName);
 				if (m_lookupboxXml == null) {
 					m_lookupboxXml = failedLoad();
 					m_lookupboxSource = "root.error";
@@ -1001,7 +1062,9 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 		if (m_lookupBox == null)
 		{
 			m_lookupBox = new JList();
-			m_lookupboxScroller = new JScrollPane(m_lookupBox);
+			m_lookupBox.addKeyListener(this);
+			m_lookupBox.addListSelectionListener(this);
+			m_lookupBox.addMouseListener(this);
 			m_lookupBox.setSize(m_width, m_height);
 			m_lookupBox.setFont(m_font);
 			m_lookupBox.setLocation(m_x, m_y);
@@ -1011,12 +1074,12 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 			PanelRightListboxRenderer prlr = new PanelRightListboxRenderer(m_listByP1, m_listByP2, m_listByP3, m_listByP4, m_listByP5, m_listByP6, m_listByP7, m_listByP8, m_listByP9, m_listByP10);
 			if (prlr != null)
 				m_lookupBox.setCellRenderer(prlr);
-			m_lookupBox.setVisible(true);
+			m_lookupboxScroller = new JScrollPane(m_lookupBox);
+			m_lookupboxScroller.addKeyListener(this);
 			m_lookupboxScroller.setSize(m_width, m_height);
 			m_lookupboxScroller.setLocation(m_x, m_y);
 			m_lookupboxScroller.setVisible(true);
-			m_lookupBox.addListSelectionListener(this);
-			m_lookupBox.addMouseListener(this);
+			m_lookupBox.setVisible(true);
 			m_parentPanel.add(m_lookupboxScroller);
 		}
 
@@ -1643,6 +1706,37 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 		fillOrRefillLookupBoxArray();
 	}
 
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		if (e.getSource().equals(m_lookupBox))
+		{
+			if (e.getKeyCode() == KeyEvent.VK_ENTER)
+			{	// They pressed enter on this selection, execute its enter command
+				m_commandMaster.processCommand(m_parentPRI,
+											   m_enterCommand,
+											   m_enterP1,
+											   m_enterP2,
+											   m_enterP3,
+											   m_enterP4,
+											   m_enterP5,
+											   m_enterP6,
+											   m_enterP7,
+											   m_enterP8,
+											   m_enterP9,
+											   m_enterP10);
+			}
+		}
+	}
+
 	/**
 	 * Not used but required for override
 	 *
@@ -1874,6 +1968,18 @@ public class PanelRightLookupbox implements ListSelectionListener, MouseListener
 	private String			m_dblClickP8;
 	private String			m_dblClickP9;
 	private String			m_dblClickP10;
+
+	private String			m_enterCommand;
+	private String			m_enterP1;
+	private String			m_enterP2;
+	private String			m_enterP3;
+	private String			m_enterP4;
+	private String			m_enterP5;
+	private String			m_enterP6;
+	private String			m_enterP7;
+	private String			m_enterP8;
+	private String			m_enterP9;
+	private String			m_enterP10;
 
 	private String			m_lookupboxAddCommand;
 	private String			m_lookupboxAddCommandP1;

@@ -265,6 +265,7 @@ Func MakeTextWrapTightAroundPictures()
 	Local $imageAlignment
 	Local $textAlignment
 	Local $result
+	Local $moveForward
 
 	outputDebug( $ALICE_UPDATING_IMAGE_TEXT_ALIGNMENT )
 
@@ -272,68 +273,76 @@ Func MakeTextWrapTightAroundPictures()
 	; Iteratively process each graphical image in turn
 	$imageAlignment = 0		; 0-left, 1-center, 2-right, cycles through repeatedly for each iteration
 	$textAlignment	= 0		; 0-in line, 1-square, 2-tight, 3-through, 4-top and bottom, 5-behind text, 6-in front of text
-	For $i = 1 to 20
+	$MoveForward	= True
+	
+	; Loop until we're done, or until the last images are not having text in front or behind the image
+	$i = 0
+	While $i < 20 or not $MoveForward
 		; Give focus to Word (just in case)
 		opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
-		; Bring up the "Find and Replace" dialog window
-		Send("^h")
-		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-		opbmWinWaitActivate( $FIND_AND_REPLACE, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word Find and Replace: Unable to find Window." )
-		; Switch to the "Find" dialog tab (instead of "Find/Replace")
-		Send("!d")
-		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-		; Send "^g" to the input textbox (see note above)
-		Send("{^}g{Enter}")
-		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-		; At this point, the first image has been found and has Word's focus, but Windows' focus is still on the
-		; Find and Replace dialog window.
-		; The only exception to this will be if an image wasn't found, in which case there's a modal dialog box with focus:
-		;	title of "Microsoft Word" with text "Word has finished searching the document"
-		; Check for that not found dialog
-		$result = WinExists( $MICROSOFT_WORD_WINDOW, $WORD_HAS_FINISHED_SEARCHING_THE_DOCUMENT )
-		If $result <> 0 Then
-			; The modal dialog box was found, so we're done
-			outputError( "An unexpected shortage of images was encountered in AliceInWonderland.html" )
-			; Return indicating failure:
-			Return False
-		EndIf
-		; Close the find dialog window
-		Send("!{f4}")
-		; Make sure Word has focus
-		opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
-		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		If $moveForward Then
+			; We are moving forward to the next image
+			; Bring up the "Find and Replace" dialog window
+			Send("^h")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+			opbmWinWaitActivate( $FIND_AND_REPLACE, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word Find and Replace: Unable to find Window." )
+			; Switch to the "Find" dialog tab (instead of "Find/Replace")
+			Send("!d")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+			; Send "^g" to the input textbox (see note above)
+			Send("{^}g{Enter}")
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+			; At this point, the first image has been found and has Word's focus, but Windows' focus is still on the
+			; Find and Replace dialog window.
+			; The only exception to this will be if an image wasn't found, in which case there's a modal dialog box with focus:
+			;	title of "Microsoft Word" with text "Word has finished searching the document"
+			; Check for that not found dialog
+			$result = WinExists( $MICROSOFT_WORD_WINDOW, $WORD_HAS_FINISHED_SEARCHING_THE_DOCUMENT )
+			If $result <> 0 Then
+				; The modal dialog box was found, so we're done
+				outputError( "An unexpected shortage of images was encountered in AliceInWonderland.html" )
+				; Return indicating failure:
+				Return False
+			EndIf
+			; Close the find dialog window
+			Send("!{f4}")
+			; Make sure Word has focus
+			opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 
 ; Microsoft Word has set all of the graphics image alignment tools to grayed out after
 ; the paste-from-html above, meaning we can't manually specify the alignment of the images.
 ; These would be the keystrokes to access the position dialog box:
-;		; Send the keystrokes to align the image horizontally on the page, either left, center or right,
-;		; and cycle text alignment to its value for the next iteration
-;		opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
-;		; Send alt
-;		Send("!")
-;		Sleep(100)
-;		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-;		; Send "jp" to select "format picture"
-;		Send("jp")
-;		Sleep(100)
-;		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-;		; Send "po" to select "position"
-;		Send("po")
-;		Sleep(100)
-;		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-;		If $imageAlignment = 0 Then
-;			; Left-alignment
-;			$imageAlignment = 1	; next iteration will be centered
-;			
-;		ElseIf $imageAlignment = 1 Then
-;			; Center-alignment
-;			$imageAlignment = 2	; next iteration will be right-justified
-;			
-;		Else
-;			; Right-alignment
-;			$imageAlignment = 0	; next iteration will be left-justified
-;			
-;		EndIf
+;			; Send the keystrokes to align the image horizontally on the page, either left, center or right,
+;			; and cycle text alignment to its value for the next iteration
+;			opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+;			; Send alt
+;			Send("!")
+;			Sleep(100)
+;			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+;			; Send "jp" to select "format picture"
+;			Send("jp")
+;			Sleep(100)
+;			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+;			; Send "po" to select "position"
+;			Send("po")
+;			Sleep(100)
+;			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+;			If $imageAlignment = 0 Then
+;				; Left-alignment
+;				$imageAlignment = 1	; next iteration will be centered
+;				
+;			ElseIf $imageAlignment = 1 Then
+;				; Center-alignment
+;				$imageAlignment = 2	; next iteration will be right-justified
+;				
+;			Else
+;				; Right-alignment
+;				$imageAlignment = 0	; next iteration will be left-justified
+;				
+;			EndIf
+		EndIf
+		$moveForward = True
 
 		; Send the keystrokes to align the text around the image, and cycle said alignment to
 		; its value for the next iteration
@@ -373,20 +382,30 @@ Func MakeTextWrapTightAroundPictures()
 			Send("o")
 			$textAlignment = 5	; next iteration will be Behind Text
 			
+		; It was determined that while these are valid Office image placement conditions, they
+		; aren't pretty.
+		; So, we go ahead and let Office process the logic to figure everything out by putting
+		; text behind and in front of the image, but then it wraps back around to "in-line with
+		; text" at the end
 		ElseIf $textAlignment = 5 Then
 			; Behind Text
 			Send("d")
 			$textAlignment = 6	; next iteration will be In Front of Text
+			$moveForward = False
 			
 		Else
 			; In Front of Text
 			Send("n")
 			$textAlignment = 0	; next iteration will be In Line with Text
+			$moveForward = False
 			
 		EndIf
 		; Finish up waiting and let Word finish processing the change
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	Next
+		
+		; Move to next item
+		$i = $i + 1
+	WEnd
 	; Return indicating success
 	TimerEnd( $ALICE_UPDATING_IMAGE_TEXT_ALIGNMENT )
 	Return True
