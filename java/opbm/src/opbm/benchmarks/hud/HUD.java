@@ -31,6 +31,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -39,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import opbm.Opbm;
 import opbm.benchmarks.BenchmarkParams;
+import opbm.common.Utils;
 import opbm.graphics.AlphaImage;
 import opbm.graphics.AnimateImageTask;
 
@@ -50,7 +52,8 @@ public final class HUD extends DroppableFrame
 			   boolean				isZoomWindow)
 	{
 		super(opbm, isZoomWindow);
-		m_bp = bp;
+		m_bp		= bp;
+		m_rebooting	= false;
 		createHUD();
 	}
 
@@ -226,39 +229,55 @@ public final class HUD extends DroppableFrame
 
 	public void updateName(String line)
 	{
+		updateName(line, line);
+	}
+	public void updateName(String line, String original)
+	{
 		if (m_name != null)
 		{
 			updateDefaults();
-			m_name.setText(line);
+			m_name.setText(properlyFormat(line, original));
 		}
 	}
 
 	public void updateStatus(String line)
+	{
+		updateStatus(line, line);
+	}
+	public void updateStatus(String line, String original)
 	{
 		if (m_status1 != null)
 		{
 			updateDefaults();
 			m_status1.setText(m_status2.getText());
 			m_status1.setForeground(m_status2.getForeground());
-			m_status2.setText(line);
+			m_status2.setText(properlyFormat(line, original));
 			m_status2.setForeground(new Color(0,0,0));
 		}
 	}
 
 	public void updateTiming(String line)
 	{
+		updateTiming(line, line);
+	}
+	public void updateTiming(String line, String original)
+	{
 		if (m_status1 != null)
 		{
 			updateDefaults();
 			m_status1.setText(m_status2.getText());
 			m_status1.setForeground(m_status2.getForeground());
-			m_status2.setText(line);
+			m_status2.setText(properlyFormat(line, original));
 			m_status2.setForeground(new Color(0,0,192));
 		}
 	}
 
 	public void updateError(String line)
 	{
+		updateError(line, line);
+	}
+	public void updateError(String line, String original)
+	{
 		if (m_debug1 != null)
 		{
 			updateDefaults();
@@ -268,13 +287,17 @@ public final class HUD extends DroppableFrame
 			m_debug2.setForeground(m_debug3.getForeground());
 			m_debug3.setText(m_debug4.getText());
 			m_debug3.setForeground(m_debug4.getForeground());
-			m_debug4.setText(line);
+			m_debug4.setText(properlyFormat(line, original));
 			m_debug4.setForeground(new Color(192,0,0));
 		}
 	}
 
 	public void updateDebug(String line)
 	{
+		updateDebug(line, line);
+	}
+	public void updateDebug(String line, String original)
+	{
 		if (m_debug1 != null)
 		{
 			updateDefaults();
@@ -284,18 +307,52 @@ public final class HUD extends DroppableFrame
 			m_debug2.setForeground(m_debug3.getForeground());
 			m_debug3.setText(m_debug4.getText());
 			m_debug3.setForeground(m_debug4.getForeground());
-			m_debug4.setText(line);
+			m_debug4.setText(properlyFormat(line, original));
 			m_debug4.setForeground(new Color(0,0,0));
 		}
 	}
 
 	public void updateCounter(String line)
 	{
+		updateCounter(line, line);
+	}
+	public void updateCounter(String line, String original)
+	{
 		if (m_counter != null)
 		{
 			updateDefaults();
-			m_counter.setText(line);
+			m_counter.setText(properlyFormat(line, original));
 		}
+	}
+
+	public String properlyFormat(String line, String original)
+	{
+		String formattedLine;
+		String finishLine = "status,timerfinish: total runtime,";
+		String numbers;
+		double value;
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMinimumFractionDigits(2);
+		nf.setMaximumFractionDigits(2);
+
+		formattedLine = line;
+		if (original.toLowerCase().startsWith("timing,"))
+		{	// timing lines needs to be adjusted for display purposes
+			m_bp.extractTimingLineElements(line);
+			formattedLine = m_bp.m_timingName + ":  " + nf.format(m_bp.m_timingInSeconds) + "s, " + nf.format(m_bp.m_timingOfBaseline) + "%";
+
+		} else if (original.toLowerCase().startsWith(finishLine)) {
+			// Input line is: "status,TimerFinish: Total Runtime,28.3679337510449"
+			try
+			{	// We try to do the conversion, if it doesn't work, we'll just display the number with full precision, no biggie
+				numbers	= Utils.extractOnlyNumbersWithCommasPeriodsAndSignsWholeString(original).replace(",", "");
+				value	= Double.valueOf(numbers);
+				formattedLine = "Script finished. Total time:  " + nf.format(value) + "s";
+			} catch (Throwable t) {
+			}
+		}
+		System.out.println(formattedLine);
+		return(formattedLine);
 	}
 
 	public void updateDefaults()
@@ -341,16 +398,28 @@ public final class HUD extends DroppableFrame
 		m_animatedButton.add(m_flashStopWarningImage1);
 		m_animatedButton.add(m_flashStopWarningImage2);
 		m_animatedButton.setupCallback(this, "hud", null);
-		m_animatedButton.animateComponent(m_stop, 333);
+		m_animatedButton.animateComponent(m_stop, 250);
 	}
 
 	public void animateImageTaskCallback(Object obj)
 	{
-		updateCounter("Attempting to stop, please wait...");
-		updateStatus("Attempting to stop, please wait...");
-		updateError("Attempting to stop, please wait...");
-		updateTiming("Attempting to stop, please wait...");
-		updateDebug("Attempting to stop, please wait...");
+		String msg = "Attempting to stop, please wait...";
+
+		if (!m_rebooting)
+		{
+			updateCounter(msg, msg);
+			updateStatus(msg, msg);
+			updateError(msg, msg);
+			updateTiming(msg, msg);
+			updateDebug(msg, msg);
+		}
+	}
+
+	public void setRebooting()
+	{
+		m_rebooting = true;
+		killAnimatedTask();
+		setupAnimateFlashingStopWarningTask();
 	}
 
 	@Override
@@ -397,7 +466,8 @@ public final class HUD extends DroppableFrame
 		}
 	}
 
-	private BenchmarkParams	m_bp;
+	private BenchmarkParams		m_bp;
+	private boolean				m_rebooting;
 	private JLabel				m_background;
 	private JLabel				m_name;
 	private JLabel				m_status1;

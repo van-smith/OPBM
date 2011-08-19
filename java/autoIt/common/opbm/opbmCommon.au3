@@ -19,7 +19,7 @@ Global $gPID
 Global $gTimerPoint
 Global $gTimer
 Global $gTimerStart
-Global $gIndex						= 0
+Global $gIndex									= 0
 Global $gTimeIndex[ $TIMER_MAX_INDEX_COUNT ]
 Global $gScriptBeginTime
 Global $gCSVPath
@@ -205,7 +205,12 @@ Func outputDebug( $outputString )
 EndFunc
 
 Func outputTiming( $outputString )
+;; There is a dependency on this format in the HUD.properlyFormat() method:
+;; Begin
 	ConsoleWrite( "timing," & $outputString & @CRLF )
+;; Please do not change
+;; Line must be passed to OPBM as: "timing,Run Google V8, 25.5744077447851, 53.8921816837743"
+;; End
 EndFunc
 
 Func outputStatus( $outputString )
@@ -221,8 +226,13 @@ Func TimerWriteTimesToCSV( $CSVPath )
 	Local $i
 	
 	$gTimerPoint = TimerDiff( $gScriptBeginTime )	
+;; There is a dependency on this format in the HUD.properlyFormat() method:
+;; Begin
 	$gTimeIndex[ $gIndex ] = "Total Runtime," & ( $gTimerPoint / 1000 )
 	outputStatus( "TimerFinish: " & $gTimeIndex[$gIndex] & @CRLF )
+;; Please do not change
+;; Line must be passed to OPBM as: "status,TimerFinish: Total Runtime,28.3679337510449"
+;; End
 	$lFileTimerCsv = FileOpen($CSVPath, 9)
 	If 	$lFileTimerCsv = -1 Then
 		ErrorHandle($ERROR_PREFIX & "TimerFinish:FileOpen: . Unable to open file.")

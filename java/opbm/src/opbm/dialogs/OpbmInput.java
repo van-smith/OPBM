@@ -291,6 +291,7 @@ public final class OpbmInput
 		}
 
 		m_frame.setVisible(true);
+		m_frame.forceWindowToHaveFocus();
 	}
 
 	@Override

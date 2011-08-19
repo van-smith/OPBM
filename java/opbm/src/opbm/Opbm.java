@@ -17,6 +17,22 @@
  *
  */
 
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////// REMEMBER TO FIX THE LOOKUPBOX ENTER-KEY KEYLISTENER ISSUE ///////////
+////////// PanelRightListbox & PanelRightLookupbox, August 19, 2011  ///////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 package opbm;
 
 import opbm.common.Xml;
@@ -1952,41 +1968,6 @@ public final class Opbm extends	ModalApp
 			m_rvFrames.get(i).setVisible(true);
 	}
 
-	/**
-	 * The JDK and JRE return different "home" locations.  The JDK nicely points
-	 * to its full path, such as c:\program files\java\jdk1.7.0\ whereas the JRE
-	 * points only to "c:\program files\java\" even though it lives in
-	 * "c:\program files\java\jre7\" or "c:\program files\java\jre6\", etc.
-	 * @return a valid directory relative to the reported java.home location
-	 * where java.exe exists
-	 */
-	public static String getPathToJavaDotExe()
-	{
-		int i;
-		String pathName;
-		File f1, f2, f3, f4, f5;
-
-		pathName	= Utils.verifyNoDoubleBackslashesInPathName(Utils.verifyPathEndsInBackslash(System.getProperty("java.home") + "\\"));
-		f1			= new File(pathName + "bin\\java.exe");
-		f2			= new File(pathName + "jre7\\bin\\java.exe");
-		f3			= new File(pathName + "jre6\\bin\\java.exe");
-		f4			= new File(pathName + "jre8\\bin\\java.exe");
-		f5			= new File(pathName + "jre9\\bin\\java.exe");
-		if (f1.exists())
-		{	// java.home is reporting correctly!
-			return(f1.getAbsolutePath());
-		} else if (f2.exists()) {
-			return(f2.getAbsolutePath());
-		} else if (f3.exists()) {
-			return(f3.getAbsolutePath());
-		} else if (f4.exists()) {
-			return(f4.getAbsolutePath());
-		} else if (f5.exists()) {
-			return(f5.getAbsolutePath());
-		}
-		return(f1.getAbsolutePath());
-	}
-
 	/** Main app entry point.
 	 *
 	 * @param args command line parameters
@@ -2112,20 +2093,7 @@ public final class Opbm extends	ModalApp
 	private boolean					m_executingTrialRun;
 	private boolean					m_executingOfficialRun;
 	private String					m_executingBenchmarkRunName;
-
 	private Tuple					m_dialogTuple;
-
-	// Essential services
-//import java.lang.Class;
-//import java.awt.Robot;
-//import java.sql.SQLException;
-//import java.sql.ResultSet;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
-//import javax.swing.border.TitledBorder;
-//import javax.swing.border.EtchedBorder;
-//	private Robot					m_robot;				// Used to insert keystrokes and mouse events
-//	private SqlUtils				m_sqlUtils;				// Used to store permanent data across sessions
 
 	/**
 	 * An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not
@@ -2133,10 +2101,9 @@ public final class Opbm extends	ModalApp
 	public static boolean			m_breakpointsEnabled;
 	public static String			m_title					= "OPBM - Office Productivity Benchmark";
 	public static String			m_lastStaticError;
-
 // REMEMBER for non-Windows based java runtimes, this logic will need to be changed
 // REMEMBER there's also a registry key for this item which may need to be used instead (for custom installations of Java), though for the standard installations from Oracle, this should always work:
-	public static String			m_jvmHome				= getPathToJavaDotExe();
+	public static String			m_jvmHome				= Utils.getPathToJavaDotExe();
 
 	// Synchronization items used for various wait-until-all-parts-are-completed operations
 	public volatile static int		m_rvsync = 0;		// Used by createAndShowResultsViewer

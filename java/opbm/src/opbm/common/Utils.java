@@ -551,6 +551,26 @@ public class Utils
 	}
 
 	/**
+	 * Scans the entire string, and extracts out only numbers, periods, commas,
+	 * and plus or minus signs
+	 */
+	public static String extractOnlyNumbersWithCommasPeriodsAndSignsWholeString(String source)
+	{
+		int i;
+		char ch;
+		String numbers = "";
+
+		// Continue concatenating until we stop with the characters
+		for (i = 0; i < source.length(); i++)
+		{
+			ch =  source.charAt(i);
+			if ((ch >= '0' && ch <= '9') || ch == '.' || ch == ',' || ch == '-' || ch == '+')
+				numbers += source.charAt(i);
+		}
+		return(numbers);
+	}
+
+	/**
 	 * Returns the singular or plural string based on the test value
 	 * @param testValue integer that's either 1 or something else
 	 * @param singular what to return if 1
@@ -924,6 +944,41 @@ public class Utils
 		{	// Remove this vermin!
 			c.removeKeyListener(kl[i]);
 		}
+	}
+
+	/**
+	 * The JDK and JRE return different "home" locations.  The JDK nicely points
+	 * to its full path, such as c:\program files\java\jdk1.7.0\ whereas the JRE
+	 * points only to "c:\program files\java\" even though it lives in
+	 * "c:\program files\java\jre7\" or "c:\program files\java\jre6\", etc.
+	 * @return a valid directory relative to the reported java.home location
+	 * where java.exe exists
+	 */
+	public static String getPathToJavaDotExe()
+	{
+		int i;
+		String pathName;
+		File f1, f2, f3, f4, f5;
+
+		pathName	= Utils.verifyNoDoubleBackslashesInPathName(Utils.verifyPathEndsInBackslash(System.getProperty("java.home") + "\\"));
+		f1			= new File(pathName + "bin\\java.exe");
+		f2			= new File(pathName + "jre7\\bin\\java.exe");
+		f3			= new File(pathName + "jre6\\bin\\java.exe");
+		f4			= new File(pathName + "jre8\\bin\\java.exe");
+		f5			= new File(pathName + "jre9\\bin\\java.exe");
+		if (f1.exists())
+		{	// java.home is reporting correctly!
+			return(f1.getAbsolutePath());
+		} else if (f2.exists()) {
+			return(f2.getAbsolutePath());
+		} else if (f3.exists()) {
+			return(f3.getAbsolutePath());
+		} else if (f4.exists()) {
+			return(f4.getAbsolutePath());
+		} else if (f5.exists()) {
+			return(f5.getAbsolutePath());
+		}
+		return(f1.getAbsolutePath());
 	}
 
 	private static final String		errMsg = "Error attempting to launch web browser";

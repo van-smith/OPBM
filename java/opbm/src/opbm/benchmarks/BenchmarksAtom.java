@@ -20,6 +20,8 @@
 
 package opbm.benchmarks;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import opbm.benchmarks.hud.StreamGobbler;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
@@ -1164,7 +1166,7 @@ public class BenchmarksAtom
 	{
 		int i, retryCount;
 		Xml options, xmlType, xmlError;
-		Xml xmlOutput;
+		Xml xmlOutput, xmlCommand;
 		Process process;
 		ProcessBuilder builder;
 		String exception, exception2, name, curDir, counter, sourcename, result;
@@ -1204,7 +1206,7 @@ public class BenchmarksAtom
 				if (options != null)
 				{	// It appears to be a properly formatted atom command, so we'll run it
 
-					while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount < m_bp.m_retryAttempts)
+					while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount <= m_bp.m_retryAttempts)
 					{	// Process repepatedly until we have a success, or our on-failure retry count is reached, or the user forces a stop
 						// Prepare for this run
 						m_bp.m_wui.prepareBeforeScriptExecution();
@@ -1223,17 +1225,18 @@ public class BenchmarksAtom
 						p10		= m_bp.m_macroMaster.parseMacros(options.getAttributeOrChild("p10"));
 						if (command != null && !command.isEmpty())
 						{
+							commandsAndParameters.clear();
 							commandsAndParameters.add(command);
 							if (p1  != null && !p1.isEmpty())	commandsAndParameters.add(p1);
-							if (p2  != null && !p1.isEmpty())	commandsAndParameters.add(p2);
-							if (p3  != null && !p1.isEmpty())	commandsAndParameters.add(p3);
-							if (p4  != null && !p1.isEmpty())	commandsAndParameters.add(p4);
-							if (p5  != null && !p1.isEmpty())	commandsAndParameters.add(p5);
-							if (p6  != null && !p1.isEmpty())	commandsAndParameters.add(p6);
-							if (p7  != null && !p1.isEmpty())	commandsAndParameters.add(p7);
-							if (p8  != null && !p1.isEmpty())	commandsAndParameters.add(p8);
-							if (p9  != null && !p1.isEmpty())	commandsAndParameters.add(p9);
-							if (p10 != null && !p1.isEmpty())	commandsAndParameters.add(p10);
+							if (p2  != null && !p2.isEmpty())	commandsAndParameters.add(p2);
+							if (p3  != null && !p3.isEmpty())	commandsAndParameters.add(p3);
+							if (p4  != null && !p4.isEmpty())	commandsAndParameters.add(p4);
+							if (p5  != null && !p5.isEmpty())	commandsAndParameters.add(p5);
+							if (p6  != null && !p6.isEmpty())	commandsAndParameters.add(p6);
+							if (p7  != null && !p7.isEmpty())	commandsAndParameters.add(p7);
+							if (p8  != null && !p8.isEmpty())	commandsAndParameters.add(p8);
+							if (p9  != null && !p9.isEmpty())	commandsAndParameters.add(p9);
+							if (p10 != null && !p10.isEmpty())	commandsAndParameters.add(p10);
 
 							// Update the hud with executed scripts, plus failures
 							counter = Integer.toString(m_executeCounter) + " " + Utils.singularOrPlural(m_executeCounter, "Script", "Scripts") + " Executed";
@@ -1249,7 +1252,7 @@ public class BenchmarksAtom
 
 							if (retryCount != 0)
 							{	// Indicate we are retrying after a failure
-								m_bp.m_hud.updateStatus("Retry after error #" + Integer.toString(retryCount));
+								m_bp.m_hud.updateError("Error, retry #" + Integer.toString(retryCount) + " of #" + Integer.toString(m_bp.m_retryAttempts));
 							}
 
 							// Change the current directory to the directory of the executable, and get this command's user-readable name
@@ -1264,7 +1267,13 @@ public class BenchmarksAtom
 
 								// Indicate our beginning, and the command to execute
 								xmlType.appendChild(Utils.processExecutableLine("start", Utils.getTimestamp()));
-								xmlType.appendChild(new Xml("command", command));
+								xmlCommand = new Xml("command", command);
+								xmlType.appendChild(xmlCommand);
+								if (commandsAndParameters.size() > 1)
+								{	// Append the parameters
+									for (i = 1; i < commandsAndParameters.size(); i++)
+										xmlType.appendChild("p" + Integer.toString(i), commandsAndParameters.get(i));
+								}
 
 								// Add space for any errors
 								xmlError = new Xml("errors");
@@ -1414,6 +1423,12 @@ public class BenchmarksAtom
 
 							// Clean up any temporary files and what-not which the script may have left behind
 							m_bp.m_wui.cleanupAfterScriptExecution();
+
+							// If there's a failure,
+							if (failure && retryCount < m_bp.m_retryAttempts)
+							{	// stop extraneous processes, and pause briefly before retrying
+								Opbm.stopProcesses();
+							}
 						}
 					}
 				}
@@ -1440,13 +1455,27 @@ public class BenchmarksAtom
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndTerminate")) {
 				// Rebooting, and terminating the benchmark test (will restart the system and leave it in its natural state)
-				m_bp.m_hud.updateStatus("Rebooting and terminating benchmark...");
-				m_bp.m_hud.updateDebug("Rebooting and terminating benchmark...");
+				m_bp.m_hud.updateStatus("Terminating benchmark...");
 				reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), false);
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndContinue")) {
 				// Rebooting, and continuing back from the next atom after the one we're on now
-				return(thisCommand.getNext());
+				// Rebooting, and restarting the benchmark from the beginning
+				m_bp.m_hud.updateDebug("Setting registry key for current user startup");
+				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
+				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
+				m_bp.m_hud.updateDebug(result);
+				if (result.equalsIgnoreCase("success"))
+				{
+					m_bp.m_hud.updateStatus("Continue benchmark after system restart...");
+					reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), true);
+
+				} else {
+					// Failure creating the registry key, it won't work
+					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY;
+					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_restart", "");
+					return(null);
+				}
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndRestart")) {
 				// Rebooting, and restarting the benchmark from the beginning
@@ -1456,8 +1485,7 @@ public class BenchmarksAtom
 				m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))
 				{
-					m_bp.m_hud.updateStatus("Reboot and restart benchmark from beginning...");
-					m_bp.m_hud.updateDebug("Reboot and restart benchmark from beginning...");
+					m_bp.m_hud.updateStatus("Restarting benchmark from beginning...");
 					reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), true);
 
 				} else {
@@ -1490,23 +1518,36 @@ public class BenchmarksAtom
 	public void reboot(String		name,
 					   boolean		saveStateBeforeReboot)
 	{
-		int i;
+		int i, max;
 		Process process;
 
+		m_bp.m_hud.setRebooting();
 		if (saveStateBeforeReboot)
 		{
+			// Update the HUD
+			if (m_bp != null && m_bp.m_hud != null)
+				m_bp.m_hud.updateStatus("Rebooting...");
+
+			// Stop everything that may be "hanging around" out there
 			Opbm.stopProcesses();
-//////////
-//
-// REMEMBER to save everything here we need to
-//          the data we save is the current results.xml, the state of the
-//          benchmark manifest (the entire benchmark we're running, where we
-//          are in it, and everything in BenchmarkParams
-//////////
+
+	//////////
+	//
+	// REMEMBER to save everything here we need to
+	//          the data we save is the current results.xml, the state of the
+	//          benchmark manifest (the entire benchmark we're running, where we
+	//////////
 		}
 
+		// This dialog will persist until the user clicks okay, or until the system
+		// reboots, but it is not a blocking operation, and execution will continue
+		// below at the reboot command.
+		OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "System will restart...", "Rebooting", OpbmDialog._OKAY_BUTTON, "", "");
 		try {
-			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /t 1 /r");
+			if (m_bp != null && m_bp.m_hud != null)
+				m_bp.m_hud.updateStatus("Executing shutdown...");
+
+			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /r");
 
 			// Grab the output
 			m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
@@ -1518,19 +1559,70 @@ public class BenchmarksAtom
 			process.waitFor();
 
 			// Display the messages given
+			// See note in Utils.processExecutableLine() for why 44 is used here:
+			// updateError() is used show it shows up in red, not because it's an actual error
 			for (i = 0; i < m_bp.m_errorArray.size(); i++)
-				System.out.println(m_bp.m_errorArray.get(i));
+			{
+				if (m_bp != null && m_bp.m_hud != null)
+					m_bp.m_hud.updateError(m_bp.m_errorArray.get(i).substring(44));
+
+				System.out.println(m_bp.m_errorArray.get(i).substring(44));
+			}
 
 			for (i = 0; i < m_bp.m_outputArray.size(); i++)
-				System.out.println(m_bp.m_outputArray.get(i));
+			{
+				if (m_bp != null && m_bp.m_hud != null)
+					m_bp.m_hud.updateError(m_bp.m_outputArray.get(i).substring(44));
+
+				System.out.println(m_bp.m_outputArray.get(i).substring(44));
+			}
 
 		} catch (Throwable t) {
 		}
+
+		// Wait up to 60 seconds for the system to shut down
+		try {
+			if (!m_bp.m_errorArray.isEmpty() || !m_bp.m_outputArray.isEmpty())
+			{	// Wait a moment so they can read the output
+				try {
+					Thread.sleep(10000);
+
+				} catch (InterruptedException ex) {
+				}
+				// We've already burned 10 seconds
+				i = 10;
+
+			} else {
+				i = 0;
+			}
+			if (m_bp != null && m_bp.m_hud != null)
+				m_bp.m_hud.updateStatus("-->  (Watchdog set for 60 seconds)");
+
+			max	= 60;
+			while (i < max)
+			{
+				Thread.sleep(1000);
+				++i;
+				if (i > 20)
+				{	// We'll display the countdown after 30 seconds, but not before
+					if (m_bp != null && m_bp.m_hud != null)
+					{
+						if (i < 40)
+							m_bp.m_hud.updateDebug(Integer.toString(i));
+						else
+							m_bp.m_hud.updateDebug(Integer.toString(i) + ", OPBM will exit in " + Integer.toString(60 - i));
+					}
+				}
+			}
+
+		} catch (InterruptedException ex) {
+		}
+		// If it doesn't shut down within that time, go ahead and exit so the user can restart
 		// Exit the system
 		System.exit(0);
 	}
 
-	private BenchmarkParams	m_bp;
+	private BenchmarkParams		m_bp;
 	public	int					m_failureCounter;
 	public	int					m_executeCounter;
 	public	List<Xml>			m_timingEvents;
