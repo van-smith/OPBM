@@ -355,8 +355,8 @@ public class Benchmarks
 				m_bp.m_deb.setVisible(true);
 		}
 
-		// Hide all the results viewer windows
-		m_bp.m_opbm.hideAllResultsViewerWindowsInQueue();
+		// Close all opf the the results viewer instances
+		m_bp.m_opbm.closeAllResultsViewerWindowsInQueue();
 	}
 
 	/**

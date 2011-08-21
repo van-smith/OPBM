@@ -1968,6 +1968,20 @@ public final class Opbm extends	ModalApp
 	/**
 	 * Called when a benchmark run starts to close all the results viewer windows
 	 */
+	public void closeAllResultsViewerWindowsInQueue()
+	{
+		int i;
+
+		for (i = m_rvFrames.size() - 1; i >= 0; i--)
+		{	// Close and remove them from this list (so they won't show up again and will be garbage collected)
+			m_rvFrames.get(i).dispose();
+			m_rvFrames.remove(i);
+		}
+	}
+
+	/**
+	 * Called when a benchmark run starts to hide all the results viewer windows
+	 */
 	public void hideAllResultsViewerWindowsInQueue()
 	{
 		int i;
