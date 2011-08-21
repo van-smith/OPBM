@@ -268,7 +268,7 @@
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
-				<abstract name="Acrobat Uninstall" sourcename="execute">
+				<abstract name="Acrobat Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -417,7 +417,7 @@
 				</abstract>
 			</atom>
 			<atom name="All Un(slash)install">
-				<abstract name="Acrobat Uninstall" sourcename="execute">
+				<abstract name="Acrobat Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -556,7 +556,7 @@
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
-				<abstract name="Acrobat Uninstall" sourcename="execute">
+				<abstract name="Acrobat Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -862,8 +862,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Acrobat Reader 10.1 Uninstall">
-				<abstract name="Uninstall" sourcename="execute">
+			<atom name="Acrobat Reader 10.1 Un(hyphen)install">
+				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
