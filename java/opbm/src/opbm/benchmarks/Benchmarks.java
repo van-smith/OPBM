@@ -335,16 +335,16 @@ public class Benchmarks
 		// Begin the process
 		benchmarkInitializeExecutionEnvironment(m_bp);
 
+		// Hide the main windows regardless
+		m_bp.m_opbm.hideDeveloperWindow();
+		m_bp.m_opbm.hideSimpleWindow();
+
 		// See if they are using the HUD
 		if (m_bp.m_headsUpActive)
 		{
 			// Update the heads-up display
 			if (!m_bp.m_hud.isVisible())
-			{
-				m_bp.m_opbm.hideDeveloperWindow();
-				m_bp.m_opbm.hideSimpleWindow();
 				m_bp.m_hud.setVisible(true);
-			}
 		}
 
 		// See if they are using the debugger
@@ -367,10 +367,11 @@ public class Benchmarks
 		String fileName;
 
 		// All finished
+		m_bp.m_opbm.showUserWindow();
+
 		if (m_bp.m_headsUpActive)
 		{
 			m_bp.m_hud.dispose();
-			m_bp.m_opbm.showUserWindow();
 			m_bp.m_hud = null;
 		}
 
@@ -682,6 +683,11 @@ public class Benchmarks
 			// Move to the next sibling
 			child = child.getNext();
 		}
+	}
+
+	public BenchmarkParams getBP()
+	{
+		return(m_bp);
 	}
 
 	private Opbm				m_opbm;

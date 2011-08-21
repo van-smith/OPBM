@@ -157,13 +157,6 @@
 					</options>
 				</abstract>
 			</atom>
--->
-			<atom name="Reboot And Restart OPBM">
-				<abstract name="Reboot And Restart OPBM" sourcename="rebootAndRestart"></abstract>
-			</atom>
-			<atom name="Reboot And Exit OPBM">
-				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
-			</atom>
 			<atom name="SpinUp">
 				<abstract name="Spinup Placeholder" sourcename="spinUp">
 					<options>
@@ -171,6 +164,7 @@
 					</options>
 				</abstract>
 			</atom>
+-->
 			<atom name="All Tests">
 				<abstract name="Excel World Heat" sourcename="execute">
 					<options>
@@ -874,6 +868,12 @@
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
 				</abstract>
+			</atom>
+			<atom name="Reboot And Restart OPBM">
+				<abstract name="Reboot And Restart OPBM" sourcename="rebootAndRestart"></abstract>
+			</atom>
+			<atom name="Reboot And Exit OPBM">
+				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
 			</atom>
 		</atoms>
 		<molecules>

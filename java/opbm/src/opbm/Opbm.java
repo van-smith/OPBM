@@ -634,6 +634,20 @@ public final class Opbm extends	ModalApp
 		return(false);
 	}
 
+	/**
+	 * When the left panel (menu) is updated, by toggling a macro or clicking
+	 * on some link that will change the display, we need to rebuild it.
+	 */
+	public void refreshLeftPanelsAfterMacroUpdate()
+	{
+		int i;
+
+		for (i = 0; i < m_leftPanels.size(); i++)
+		{	// Update every menu in turn, so when they are redisplayed, they are updated
+			m_leftPanels.get(i).refreshAfterMacroUpdate();
+		}
+	}
+
 	/** Navigate backward in the chain of navigated panels.
 	 *
 	 * @return true or false if navigation backward was possible

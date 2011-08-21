@@ -10,7 +10,7 @@
  * currently defined.  Macros can also be used which are refreshed
  * periodically from OPBM system variables (in Settings and Macros).
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Aug 21, 2011
  *
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -36,12 +36,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import opbm.common.Macros;
 import opbm.Opbm;
+import opbm.common.Utils;
 
 /**
  * Handles subordinate items in the navigation panel, including navigable items,
  * headers, links, spacers and text items.
  */
-public class PanelLeftItem implements MouseListener {
+public class PanelLeftItem implements MouseListener
+{
 	/** Constructor creates default size, <code>JLabel</code> object (and links
 	 * object to parent), stores variables related to parent.
 	 *
@@ -50,7 +52,12 @@ public class PanelLeftItem implements MouseListener {
 	 * @param statusBar Status bar on main <code>JFrame</code> object, updated with tooltip text
 	 * @param parent Parent <code>JPanel</code> object to which this PanelLeftItem's <code>JLabel</code> object will be added.
 	 */
-	PanelLeftItem(Opbm opbm, Macros macroMaster, Label statusBar, JPanel parent) {
+	@SuppressWarnings("LeakingThisInConstructor")
+	PanelLeftItem(Opbm		opbm,
+				  Macros	macroMaster,
+				  Label		statusBar,
+				  JPanel	parent)
+	{
 		m_text			= "";
 		m_foreColor		= Color.BLACK;
 		m_backColor		= Color.WHITE;
@@ -84,7 +91,8 @@ public class PanelLeftItem implements MouseListener {
 	/** Called when navigating away from a panel
 	 *
 	 */
-	public void navigateAway() {
+	public void navigateAway()
+	{
 		m_label.setVisible(false);
 	}
 
@@ -93,10 +101,16 @@ public class PanelLeftItem implements MouseListener {
 	 * opaqueness and visibility.
 	 *
 	 */
-	public void navigateTo() {
+	public void navigateTo()
+	{
+		// There may be macros here, so we populate them
+		refreshForeColor();
+		refreshBackColor();
+
 		if (m_command.isEmpty()) {
 			m_label.setText("<html>" + m_macroMaster.parseMacros(m_text));
 			m_label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
 		} else {
 			m_label.setText("<html><u>" + m_macroMaster.parseMacros(m_text) + "</u>");
 			m_label.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -109,9 +123,11 @@ public class PanelLeftItem implements MouseListener {
 		if (m_opaque) {
 			m_label.setBackground(m_backColor);
 			m_label.setOpaque(true);
+
 		} else {
 			m_label.setOpaque(false);
 		}
+
 		m_label.setBounds(m_position.width, m_position.height, m_size.width, m_size.height);
 		m_label.setVisible(m_visible);
 	}
@@ -122,7 +138,8 @@ public class PanelLeftItem implements MouseListener {
 	 * @param e System mouse event
 	 */
 	@Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e)
+	{
 		if (!m_command.isEmpty()) {
 			// There's a command here, and it's being clicked
 			m_opbm.processCommand(m_command,
@@ -190,18 +207,30 @@ public class PanelLeftItem implements MouseListener {
 	 *
 	 * @param color from Color() class
 	 */
-	public void setForeColor(Color color)
+	public void setForeColor(String fgcolor)
 	{
-		m_foreColor = color;
+		m_fgcolor	= fgcolor;
+		refreshForeColor();
+	}
+
+	public void refreshForeColor()
+	{
+		m_foreColor = Color.decode(m_opbm.expandMacros(Utils.verifyColorFormat(m_fgcolor)));
 	}
 
 	/** Setter sets background color of <code>JLabel</code>.  Only used if opaque set to true.
 	 *
 	 * @param color from Color() class
 	 */
-	public void setBackColor(Color color)
+	public void setBackColor(String bgcolor)
 	{
-		m_backColor = color;
+		m_bgcolor	= bgcolor;
+		refreshBackColor();
+	}
+
+	public void refreshBackColor()
+	{
+		m_backColor = Color.decode(m_opbm.expandMacros(Utils.verifyColorFormat(m_bgcolor)));
 	}
 
 	/** Setter sets visible property of <code>JLabel</code>.
@@ -543,10 +572,20 @@ public class PanelLeftItem implements MouseListener {
 		return(m_size);
 	}
 
+	/**
+	 * Simulating a navigation to this window will refresh everything
+	 */
+	public void refreshAfterMacroUpdate()
+	{
+		navigateTo();
+	}
+
 	private Opbm		m_opbm;
 	private Macros		m_macroMaster;
 	private String		m_text;
+	private String		m_fgcolor;
 	private Color		m_foreColor;
+	private String		m_bgcolor;
 	private Color		m_backColor;
 	private boolean		m_visible;
 	private boolean		m_opaque;

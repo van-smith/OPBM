@@ -100,6 +100,7 @@ public class BenchmarkParams
 	public List<Xml>			m_benchmarkStack;
 	public boolean				m_headsUpActive;
 	public HUD					m_hud;
+	private boolean				m_hudDebugInfo;
 
 	public boolean				m_debuggerActive;
 	public boolean				m_singleStepping;

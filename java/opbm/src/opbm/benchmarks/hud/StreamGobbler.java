@@ -61,29 +61,34 @@ public class StreamGobbler extends Thread
 				if (line.toLowerCase().startsWith("status,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateStatus(line.substring(7), line);	// Update the status display with this information
+					if (m_hud != null)
+						m_hud.updateStatus(line.substring(7), line);	// Update the status display with this information
 				}
 
 				if (line.toLowerCase().startsWith("timing,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateTiming(line.substring(7), line);	// Update the status display with this information
+					if (m_hud != null)
+						m_hud.updateTiming(line.substring(7), line);	// Update the status display with this information
 				}
 
 				if (line.toLowerCase().startsWith("error,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateError(line.substring(6), line);		// Update the status display with this information
+					if (m_hud != null)
+						m_hud.updateError(line.substring(6), line);		// Update the status display with this information
 				}
 
 				if (line.toLowerCase().startsWith("debug,"))
 				{
 					++m_lineKnownCount;
-					m_hud.updateDebug(line.substring(6), line);		// Update the status display with this information
+					if (m_hud != null)
+						m_hud.updateDebug(line.substring(6), line);		// Update the status display with this information
 				}
 
 				name = "Running " + m_hudPrefixText + " (" + Integer.toString(m_lineKnownCount) + ((m_lineKnownCount != m_lineTotalCount) ? " + " + Integer.toString(m_lineTotalCount - m_lineKnownCount) : "") + " events logged)";
-				m_hud.updateName(name, name);
+				if (m_hud != null)
+					m_hud.updateName(name, name);
 
 				m_output.add(Utils.getTimestamp() + ": " + line);
 			}

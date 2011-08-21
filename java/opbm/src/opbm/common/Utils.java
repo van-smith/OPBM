@@ -57,7 +57,8 @@ public class Utils
 	 * @param candidate Color text as "ff0000" for red
 	 * @return Converted to "0xff0000"
 	 */
-	public static String verifyColorFormat(String candidate) {
+	public static String verifyColorFormat(String candidate)
+	{
 		try {
 			// See if it's already good
 			Color c = Color.decode(candidate);
@@ -74,6 +75,15 @@ public class Utils
 				return(candidate);
 			}
 		}
+	}
+
+	public static String encodeColorFormat(int	red,
+										   int	grn,
+										   int	blu)
+	{
+		return("0x" + Utils.padLeft(Integer.toHexString(red), 2, "0") +
+					  Utils.padLeft(Integer.toHexString(grn), 2, "0") +
+					  Utils.padLeft(Integer.toHexString(blu), 2, "0"));
 	}
 
 	/** Uses the <code>String.format()</code> function to put thousand separators
@@ -885,6 +895,13 @@ public class Utils
 	public static String padLeft(String		text,
 								 int		length)
 	{
+		return(padLeft(text, length, " "));
+	}
+
+	public static String padLeft(String		text,
+								 int		length,
+								 String		fillChar)
+	{
 		int i;
 
 		if (text.length() >= length)
@@ -894,7 +911,7 @@ public class Utils
 		} else {
 			// String is not long enough, pad with spaces, and return
 			for (i = text.length(); i < length; i++)
-				text += " ";
+				text += fillChar;
 
 			return(text);
 		}
@@ -979,6 +996,62 @@ public class Utils
 			return(f5.getAbsolutePath());
 		}
 		return(f1.getAbsolutePath());
+	}
+
+	public static int getValueOf(String number,
+								 int	defaultValue,
+								 int	minValue,
+								 int	maxValue)
+	{
+		int value = getValueOf(number, defaultValue);
+		if (minValue > maxValue)
+		{	// Swap them
+			int t = maxValue;
+			maxValue = minValue;
+			minValue = t;
+		}
+
+		if (value < minValue)
+			value = minValue;
+
+		if (value > maxValue)
+			value = maxValue;
+
+		return(value);
+	}
+
+	public static int getValueOf(String number,
+								 int	defaultValue)
+	{
+		int value;
+
+		try
+		{	// Convert what they have as a number into either its value
+			value = Integer.valueOf(number);
+
+		} catch (NumberFormatException ex) {
+			value = defaultValue;
+		} catch (NullPointerException ex) {
+			value = defaultValue;
+		} catch (Throwable t) {
+			value = defaultValue;
+		}
+
+		return(value);
+	}
+
+	/**
+	 * Returns "Yes" or "No" in first-char-upper-case form, so a toLowerCase()
+	 * or ToUpperCase() can address specific other needs
+	 * @param test input test condition
+	 * @return "Yes" or "No"
+	 */
+	public static String evaluateLogicalToYesOrNo(boolean test)
+	{
+		if (test)
+			return("Yes");
+		else
+			return("No");
 	}
 
 	private static final String		errMsg = "Error attempting to launch web browser";
