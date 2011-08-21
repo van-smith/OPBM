@@ -138,6 +138,7 @@
 			</abstract>
 		</abstracts>
 		<atoms>
+<!--
 			<atom name="Reboot And Continue">
 				<abstract name="IE Google V8" sourcename="execute">
 					<options>
@@ -156,10 +157,11 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Reboot And Restart">
-				<abstract name="Reboot And Restart" sourcename="rebootAndRestart"></abstract>
+-->
+			<atom name="Reboot And Restart OPBM">
+				<abstract name="Reboot And Restart OPBM" sourcename="rebootAndRestart"></abstract>
 			</atom>
-			<atom name="Reboot And Terminate">
+			<atom name="Reboot And Exit OPBM">
 				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
 			</atom>
 			<atom name="SpinUp">

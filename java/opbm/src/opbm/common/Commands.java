@@ -324,6 +324,11 @@ public class Commands
 			m_opbm.showDeveloperWindow();
 
 //////////
+// MISCELLANEOUS COMMANDS
+		} else if (command.equals("compute_results_averages")) {
+			m_opbm.computeResultsXmlAverages();
+
+//////////
 // CLOSING BRACE
 		}
 

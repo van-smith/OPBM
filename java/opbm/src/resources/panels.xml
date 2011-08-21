@@ -21,6 +21,7 @@
 				<command p1="Execute Atoms">edit</command>
 				<tooltip>Record a benchmark run for an Atom.</tooltip>
 			</menu>
+<!--
 			<menu>
 				<text>Molecules</text>
 				<command p1="Execute Molecules">edit</command>
@@ -60,6 +61,7 @@
 				<command p1="machine_info">leftpanel</command>
 				<tooltip></tooltip>
 			</menu>
+-->
 			<spacer/>
 			<heading>
 				<text>Maintenance:</text>
@@ -69,6 +71,7 @@
 				<command p1="Edit Scripts">leftpanel</command>
 				<tooltip>Setup scripts, including flows, abstracts, atoms, molecules, scenarios and suites.</tooltip>
 			</menu>
+<!--
 			<menu>
 				<text>Edit Devices</text>
 				<command p1="Edit Devices">leftpanel</command>
@@ -84,6 +87,7 @@
 				<command p1="keywords">edit</command>
 				<tooltip>Edit keywords to be tagged for individual benchmarks.</tooltip>
 			</menu>
+-->
 			<spacer/>
 			<text>Click on the links above to access</text>
 			<text>sub-menus, functions and OPBM.</text>
@@ -147,6 +151,11 @@
 				<text>View or Edit raw XML files</text>
 				<command p1="XML File Viewing">leftpanel</command>
 				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text>Compute results averages</text>
+				<command>compute_results_averages</command>
+				<tooltip>Takes a directory of results.xml files and computes averages for every timing point (worklet)</tooltip>
 			</menu>
 			<spacer/>
 			<text>The Scripting Engine components</text>

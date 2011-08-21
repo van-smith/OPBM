@@ -93,13 +93,12 @@ public class Tuple
 	/**
 	 * Adds a new entry to the tuple, which could be a duplicate.
 	 *
-	 * @param name <code>String</code> to identify the object
-	 * @param o object to add
+	 * @param first <code>String</code> to identify the object
 	 */
-	public int add(String name, Object o)
+	public int add(String first)
 	{
-		m_first.add(name);
-		m_second.add(o);
+		m_first.add(first);
+		m_second.add(null);
 		m_third.add(null);
 		m_fourth.add(null);
 		m_fifth.add(null);
@@ -113,14 +112,34 @@ public class Tuple
 	/**
 	 * Adds a new entry to the tuple, which could be a duplicate.
 	 *
-	 * @param name <code>String</code> to identify the object
-	 * @param o object to add
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 */
+	public int add(String first, Object second)
+	{
+		m_first.add(first);
+		m_second.add(second);
+		m_third.add(null);
+		m_fourth.add(null);
+		m_fifth.add(null);
+		m_sixth.add(null);
+		m_seventh.add(null);
+		m_triggerCommand.add(null);
+		m_triggerFilters.add(null);
+		return(size() - 1);
+	}
+
+	/**
+	 * Adds a new entry to the tuple, which could be a duplicate.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
 	 * @param third extra object to add
 	 */
-	public int add(String name, Object o, Object third)
+	public int add(String first, Object second, Object third)
 	{
-		m_first.add(name);
-		m_second.add(o);
+		m_first.add(first);
+		m_second.add(second);
 		m_third.add(third);
 		m_fourth.add(null);
 		m_fifth.add(null);

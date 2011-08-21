@@ -20,8 +20,6 @@
 
 package opbm.benchmarks;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import opbm.benchmarks.hud.StreamGobbler;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;

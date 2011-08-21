@@ -20,7 +20,7 @@ import opbm.graphics.AlphaImage;
 public class SimpleWindow extends DroppableFrame
 {
 	public SimpleWindow(Opbm		opbm,
-						boolean	isZoomWindow)
+						boolean		isZoomWindow)
 	{
 		// Call DroppableFrame constructor
 		super(opbm, isZoomWindow);

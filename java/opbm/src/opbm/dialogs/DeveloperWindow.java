@@ -173,6 +173,17 @@ public class DeveloperWindow extends DroppableFrame
 		statusBar.addMouseWheelListener(m_opbm);
     }
 
+	public void componentResized(ComponentEvent evt)
+	{
+	// Called when the newFrame (window) is resized
+		Dimension newSize = ((Component)evt.getSource()).getSize();
+		Insets fi = getInsets();
+		m_actual_width	= (int)newSize.getWidth();
+		m_actual_height	= (int)newSize.getHeight();
+		m_width			= m_actual_width  - fi.left - fi.right;
+		m_height		= m_actual_height - fi.top  - fi.bottom;
+	}
+
 	/** Called to resize everything when the user resizes the window.
 	 *
 	 */
@@ -192,17 +203,6 @@ public class DeveloperWindow extends DroppableFrame
 		// Resize the right panel
 		panRight.setSize(m_width - panRight.getX(),
 						 m_height - panRight.getY() - statusBar.getHeight());
-	}
-
-	public void componentResized(ComponentEvent evt)
-	{
-	// Called when the newFrame (window) is resized
-		Dimension newSize = ((Component)evt.getSource()).getSize();
-		Insets fi = getInsets();
-		m_actual_width	= (int)newSize.getWidth();
-		m_actual_height	= (int)newSize.getHeight();
-		m_width			= m_actual_width  - fi.left - fi.right;
-		m_height		= m_actual_height - fi.top  - fi.bottom;
 	}
 
 	/**
