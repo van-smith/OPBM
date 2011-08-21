@@ -481,8 +481,13 @@ Func ManipulateInAcrobatReader()
 			Send("^+{-}")
 		EndIf
 		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
-		
-		; First page
+	
+		; Move forward 2 pages, a page at a time
+		Send("{PGUP}")
+		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+		Send("{PGUP}")
+		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+		; Move to first page
 		Send("{Home}")
 		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 	Next
