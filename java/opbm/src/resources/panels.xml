@@ -37,20 +37,12 @@
 				<command p1="Execute Suites">edit</command>
 				<tooltip>Record a benchmark run for a Suite.</tooltip>
 			</menu>
+-->
+<!--
 			<spacer/>
 			<heading>
 				<text>Options:</text>
 			</heading>
-			<menu>
-				<text fgcolor="$debug_mode_color$">Debug mode: $debug_mode$</text>
-				<command>toggle_debug_mode</command>
-				<tooltip></tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$heads_up_color$">Heads-up: $heads_up$</text>
-				<command>toggle_heads_up</command>
-				<tooltip></tooltip>
-			</menu>
 			<menu>
 				<text>View Log...</text>
 				<command p1="view_log">leftpanel</command>
@@ -1314,10 +1306,31 @@
 			<heading>
 				<text>Atoms:</text>
 			</heading>
+			<text>1) Select an item in "Atoms Listing"</text>
+			<text>2) Double-click to run sequence.</text>
+			<text></text>
+			<text>Note:  The "Run Atom Sequence"</text>
+			<text>Note:  link will also run the</text>
+			<text>Note:  sequence.</text>
+			<spacer/>
+			<spacer/>
+			<heading>
+				<text>Options:</text>
+			</heading>
 			<menu>
-				<text>Run Sequence</text>
-				<command p1="atoms">run_execute</command>
-				<tooltip>FOR TESTING ONLY:  Executes all "execute" commands in this grouping.</tooltip>
+				<text fgcolor="$debug_info_color$">Debug Info?  $debug_info$</text>
+				<command>toggle_debug_info</command>
+				<tooltip>Debug Information shows up on the HUD at the bottom four lines. They can be hidden to make the HUD smaller and cleaner.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="$hud_color$">Show HUD?  $hud_translucency$</text>
+				<command>toggle_hud</command>
+				<tooltip>HUD options allow 25% translucency, 50%, 75%, 100%, or to be turned completely off.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="$retry_color$">Retry Attempts: $retry_attempts$</text>
+				<command>toggle_retry_attempts</command>
+				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
 			</menu>
 		</left>
 

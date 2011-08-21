@@ -22,6 +22,7 @@
 package opbm.common;
 
 import opbm.Opbm;
+import opbm.benchmarks.BenchmarkParams;
 
 public class Macros
 {
@@ -32,8 +33,6 @@ public class Macros
 	public Macros(Opbm opbm)
 	{
 		m_opbm					= opbm;
-		m_debugMode				= false;
-		m_headsUp				= true;
 		m_scriptingEngineSort	= 0;
 	}
 
@@ -89,20 +88,36 @@ public class Macros
 					macroSubstitution = "</i>";
 
 	//////////
-	// DEBUG MODE
-	// DEBUG MODE COLOR
-				else if (macro.equalsIgnoreCase("debug_mode")) {
-					macroSubstitution = logicalEvaluation(m_debugMode).toUpperCase();
-				} else if (macro.equalsIgnoreCase("debug_mode_color")) {
-					macroSubstitution = greenRedEvaluation(m_debugMode);
+	// HUD DEBUG INFO
+	// HUD DEBUG INFO COLOR
+				else if (macro.equalsIgnoreCase("debug_info")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = logicalEvaluation(m_settings.getHUDVisible() && m_settings.getHUDDebugInfo()).toUpperCase();
+				} else if (macro.equalsIgnoreCase("debug_info_color")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = greenRedEvaluation(m_settings.getHUDVisible() && m_settings.getHUDDebugInfo()).toUpperCase();
 
 	//////////
-	// HEADS UP
-	// HEADS UP COLOR
-				} else if (macro.equalsIgnoreCase("heads_up")) {
-					macroSubstitution = logicalEvaluation(m_headsUp).toUpperCase();
-				} else if (macro.equalsIgnoreCase("heads_up_color")) {
-					macroSubstitution = greenRedEvaluation(m_headsUp);
+	// HUD
+	// HUD COLOR
+				} else if (macro.equalsIgnoreCase("hud")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = logicalEvaluation(m_settings.getHUDVisible()).toUpperCase();
+				} else if (macro.equalsIgnoreCase("hud_color")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = greenRedEvaluation(m_settings.getHUDVisible()).toUpperCase();
+				} else if (macro.equalsIgnoreCase("hud_translucency")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = logicalTranslucentEvaluation(m_settings.getHUDVisible(), m_settings.getHUDTranslucency());
+
+	//////////
+	// RETRY ATTEMPTS
+				} else if (macro.equalsIgnoreCase("retry_attempts")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = Integer.toString(m_settings.getRetryAttempts());
+				} else if (macro.equalsIgnoreCase("retry_color")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = greenRedEvaluation(m_settings.getRetryAttempts() != 0).toUpperCase();
 
 
 	//////////
@@ -128,11 +143,11 @@ public class Macros
 	// panels.xml
 	// scripts.xml
 				} else if (macro.equalsIgnoreCase("edits.xml")) {
-					macroSubstitution = m_opbm.locateFile("edits.xml");
+					macroSubstitution = Opbm.locateFile("edits.xml");
 				} else if (macro.equalsIgnoreCase("panels.xml")) {
-					macroSubstitution = m_opbm.locateFile("panels.xml");
+					macroSubstitution = Opbm.locateFile("panels.xml");
 				} else if (macro.equalsIgnoreCase("scripts.xml")) {
-					macroSubstitution = m_opbm.locateFile("scripts.xml");
+					macroSubstitution = Opbm.locateFile("scripts.xml");
 
 
 	//////////
@@ -172,6 +187,36 @@ public class Macros
 	public String greenRedEvaluation(boolean condition) {
 		return(condition ? "0x3f7f3f"/* true  = green */ :
 						   "0x8f3f3f"/* false = red   */);
+	}
+
+	/**
+	 * Returns a human-readable string identifying the state of the HUD.
+	 * @param hudVisible
+	 * @param hudTranslucency
+	 * @return
+	 */
+	public String logicalTranslucentEvaluation(boolean		hudVisible,
+											   float		hudTranslucency)
+	{
+		if (hudVisible)
+		{	// Enabled, but at what level?
+			if (hudTranslucency <= 0.25f) {
+				return("25%");
+
+			} else if (hudTranslucency <= 0.50f) {
+				return("50%");
+
+			} else if (hudTranslucency <= 0.75f) {
+				return("75%");
+
+			} else {
+				return("100%");
+			}
+
+		} else {
+			// Not enabled
+			return("NO");
+		}
 	}
 
 	/** Sample case statement returning one of multiple possible conditions.
@@ -277,8 +322,8 @@ public class Macros
 	}
 
 	// Public macro variables
-	private Opbm		m_opbm;
-	private boolean		m_debugMode;
-	private boolean		m_headsUp;
-	private int			m_scriptingEngineSort;
+	private Opbm				m_opbm;
+	private BenchmarkParams		m_bp;
+	private Settings			m_settings;
+	private int					m_scriptingEngineSort;
 }

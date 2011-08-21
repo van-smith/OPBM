@@ -1046,8 +1046,8 @@
 			<label width="250" text="Sequence Description:"/>
 			<textbox width="250" field="elements.#name"/>
 			<vspacer height="100"/>
-			<link text="Run benchmark">
-				<command p1="atom">run_atom_benchmark</command>
+			<link text="Run Atom Sequence">
+				<command p1="atom">run_atom_sequence</command>
 			</link>
 			<vspacer height="20"/>
 			<link text="Results Viewer Sample">

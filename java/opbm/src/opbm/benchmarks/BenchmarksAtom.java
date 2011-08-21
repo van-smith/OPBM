@@ -1245,12 +1245,14 @@ public class BenchmarksAtom
 							{	// Update the iteration information
 								counter = Integer.toString(m_bp.m_thisIteration) + " of " + Integer.toString(m_bp.m_maxIterations) + "; " + counter;
 							}
-							m_bp.m_hud.updateCounter(counter);
+							if (m_bp.m_hud != null)
+								m_bp.m_hud.updateCounter(counter);
 
 
 							if (retryCount != 0)
 							{	// Indicate we are retrying after a failure
-								m_bp.m_hud.updateError("Error, retry #" + Integer.toString(retryCount) + " of #" + Integer.toString(m_bp.m_retryAttempts));
+								if (m_bp.m_hud != null)
+									m_bp.m_hud.updateError("Error, retry #" + Integer.toString(retryCount) + " of #" + Integer.toString(m_bp.m_retryAttempts));
 							}
 
 							// Change the current directory to the directory of the executable, and get this command's user-readable name
@@ -1453,19 +1455,23 @@ public class BenchmarksAtom
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndTerminate")) {
 				// Rebooting, and terminating the benchmark test (will restart the system and leave it in its natural state)
-				m_bp.m_hud.updateStatus("Terminating benchmark...");
+				if (m_bp.m_hud != null)
+					m_bp.m_hud.updateStatus("Terminating benchmark...");
 				reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), false);
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndContinue")) {
 				// Rebooting, and continuing back from the next atom after the one we're on now
 				// Rebooting, and restarting the benchmark from the beginning
-				m_bp.m_hud.updateDebug("Setting registry key for current user startup");
+				if (m_bp.m_hud != null)
+					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
 				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
 				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
-				m_bp.m_hud.updateDebug(result);
+				if (m_bp.m_hud != null)
+					m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))
 				{
-					m_bp.m_hud.updateStatus("Continue benchmark after system restart...");
+					if (m_bp.m_hud != null)
+						m_bp.m_hud.updateStatus("Continue benchmark after system restart...");
 					reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), true);
 
 				} else {
@@ -1477,13 +1483,16 @@ public class BenchmarksAtom
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndRestart")) {
 				// Rebooting, and restarting the benchmark from the beginning
-				m_bp.m_hud.updateDebug("Setting registry key for current user startup");
+				if (m_bp.m_hud != null)
+					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
 				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
 				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
-				m_bp.m_hud.updateDebug(result);
+				if (m_bp.m_hud != null)
+					m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))
 				{
-					m_bp.m_hud.updateStatus("Restarting benchmark from beginning...");
+					if (m_bp.m_hud != null)
+						m_bp.m_hud.updateStatus("Restarting benchmark from beginning...");
 					reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), true);
 
 				} else {
@@ -1519,7 +1528,9 @@ public class BenchmarksAtom
 		int i, max;
 		Process process;
 
-		m_bp.m_hud.setRebooting();
+		if (m_bp != null && m_bp.m_hud != null)
+			m_bp.m_hud.setRebooting();
+		
 		if (saveStateBeforeReboot)
 		{
 			// Update the HUD

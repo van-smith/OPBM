@@ -292,7 +292,7 @@ public class Commands
 
 //////////
 // BENCHMARKS
-		} else if (command.equals("run_atom_benchmark")) {
+		} else if (command.equals("run_atom_sequence")) {
 			m_opbm.benchmarkRunAtom(null, 1, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 		} else if (command.equals("launch_trial_run")) {
 			m_opbm.benchmarkLaunchTrialRun(/*not automated*/false);
@@ -322,6 +322,19 @@ public class Commands
 			m_opbm.showSimpleWindow();
 		} else if (command.equals("developer")) {
 			m_opbm.showDeveloperWindow();
+
+//////////
+// TOGGLE MENU ITEMS
+		} else if (command.equals("toggle_debug_info")) {
+			m_settingsMaster.toggleHUDDebugInfo();
+			m_opbm.refreshLeftPanelsAfterMacroUpdate();
+		} else if (command.equals("toggle_hud")) {
+			m_settingsMaster.toggleHUDTranslucency();
+			m_opbm.refreshLeftPanelsAfterMacroUpdate();
+		} else if (command.equals("toggle_retry_attempts")) {
+			m_settingsMaster.toggleRetryAttempts();
+			m_opbm.refreshLeftPanelsAfterMacroUpdate();
+
 
 //////////
 // MISCELLANEOUS COMMANDS

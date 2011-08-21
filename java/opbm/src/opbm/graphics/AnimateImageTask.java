@@ -20,6 +20,7 @@
 
 package opbm.graphics;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -43,7 +44,8 @@ public class AnimateImageTask extends TimerTask
 
 	public void add(AlphaImage img)
 	{
-		m_images.add(new ImageIcon(img.getBufferedImage()));
+		BufferedImage bi = img.getBufferedImage();
+		m_images.add(new ImageIcon(bi));
 	}
 
 	public void animateComponent(JLabel		label,

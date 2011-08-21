@@ -29,10 +29,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 import java.text.NumberFormat;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -67,12 +64,20 @@ public final class HUD extends DroppableFrame
 
 		setTitle("OPBM HUD");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setSize(320, 200);
+		if (m_bp.m_hudDebugInfo)
+		{	// We are showing debug information
+			m_width		= 320;
+			m_height	= 200;
+		} else {
+			// Just the status information
+			m_width		= 320;
+			m_height	= 117;
+		}
 
 		pack();
         Insets fi		= getInsets();
-		actualWidth		= 320 + fi.left + fi.right;
-		actualHeight	= 200 + fi.top  + fi.bottom;
+		actualWidth		= m_width + fi.left + fi.right;
+		actualHeight	= m_height + fi.top  + fi.bottom;
         size = new Dimension(actualWidth, actualHeight);
         setMinimumSize(size);
         setMaximumSize(size);
@@ -88,21 +93,18 @@ public final class HUD extends DroppableFrame
 
 		m_pan = new JLayeredPane();
 		m_pan.setLayout(null);
-		m_pan.setBounds(0, 0, 320, 200);
+		m_pan.setBounds(0, 0, m_width, 200);
 		m_pan.setVisible(true);
 		m_pan.setBorder(BorderFactory.createEmptyBorder());
 		c.add(m_pan);
 
 		// Create the header image
 		m_background = new JLabel();
-		try {
-			m_background.setIcon(new ImageIcon(ImageIO.read(new File(Opbm.locateFile("hud.png")))));
-
-		} catch (IOException ex) {
-			m_background.setText("missing hud.png");	// Nothing to do really, indicates an improper installation
-		}
-		m_background.setBounds(0, 0, 320, 200);
+		m_backgroundImg	= new AlphaImage(Opbm.locateFile("hud.png"));
+		m_background.setIcon(new ImageIcon(m_backgroundImg.getBufferedImage()));
+		m_background.setBounds(0, 0, m_width, 200);
 		m_background.setHorizontalAlignment(JLabel.LEFT);
+		m_background.setVerticalAlignment(JLabel.TOP);
 		m_background.setOpaque(false);
 		m_background.setVisible(true);
 		m_pan.add(m_background);
@@ -208,15 +210,13 @@ public final class HUD extends DroppableFrame
 
 		// Create the stop control and load its images
 		m_stop						= new JLabel();
-		m_stopNeutral1				= new AlphaImage(Opbm.locateFile("hud_stop_neutral1.png"));
-		m_stopNeutral2				= new AlphaImage(Opbm.locateFile("hud_stop_neutral2.png"));
-		m_stopOver1					= new AlphaImage(Opbm.locateFile("hud_stop_over1.png"));
-		m_stopOver2					= new AlphaImage(Opbm.locateFile("hud_stop_over2.png"));
+		m_stopNeutral1				= new AlphaImage(Opbm.locateFile("hud_neutral1.png"));
+		m_stopNeutral2				= new AlphaImage(Opbm.locateFile("hud_neutral2.png"));
 		m_flashStopWarningImage1	= new AlphaImage(Opbm.locateFile("hud_flash1.png"));
 		m_flashStopWarningImage2	= new AlphaImage(Opbm.locateFile("hud_flash2.png"));
 
 		// Setup the stop control
-		m_stop.setBounds(270, 6, 44, 35);
+		m_stop.setBounds(248, 6, 66, 36);
 		m_stop.setVerticalAlignment(JLabel.CENTER);
 		m_stop.setHorizontalAlignment(JLabel.CENTER);
 		m_stop.setVisible(true);
@@ -377,7 +377,7 @@ public final class HUD extends DroppableFrame
 		killAnimatedTask();
 		m_animatedButton = new AnimateImageTask();
 		m_animatedButton.add(m_stopNeutral1);
-		m_animatedButton.add(m_stopNeutral2);
+		m_animatedButton.add(m_stopNeutral1);
 		m_animatedButton.animateComponent(m_stop, 500);
 	}
 
@@ -385,8 +385,8 @@ public final class HUD extends DroppableFrame
 	{
 		killAnimatedTask();
 		m_animatedButton = new AnimateImageTask();
-		m_animatedButton.add(m_stopOver1);
-		m_animatedButton.add(m_stopOver2);
+		m_animatedButton.add(m_stopNeutral2);
+		m_animatedButton.add(m_stopNeutral2);
 		m_animatedButton.animateComponent(m_stop, 500);
 	}
 
@@ -397,7 +397,7 @@ public final class HUD extends DroppableFrame
 		m_animatedButton.add(m_flashStopWarningImage1);
 		m_animatedButton.add(m_flashStopWarningImage2);
 		m_animatedButton.setupCallback(this, "hud", null);
-		m_animatedButton.animateComponent(m_stop, 250);
+		m_animatedButton.animateComponent(m_stop, 333);
 	}
 
 	public void animateImageTaskCallback(Object obj)
@@ -406,11 +406,8 @@ public final class HUD extends DroppableFrame
 
 		if (!m_rebooting)
 		{
-			updateCounter(msg, msg);
 			updateStatus(msg, msg);
 			updateError(msg, msg);
-			updateTiming(msg, msg);
-			updateDebug(msg, msg);
 		}
 	}
 
@@ -431,7 +428,15 @@ public final class HUD extends DroppableFrame
 		if (e.getComponent().equals(m_stop))
 		{	// Pressed on the stop button
 			setupAnimateFlashingStopWarningTask();
-			Opbm.stopProcesses();
+			Thread t = new Thread("OPBM_Command_Line_Thread")
+			{
+				@Override
+				public void run()
+				{
+					Opbm.stopProcesses();
+				}
+			};
+			t.start();
 			m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP;
 		}
 	}
@@ -466,8 +471,11 @@ public final class HUD extends DroppableFrame
 	}
 
 	private BenchmarkParams		m_bp;
+	private int					m_width;
+	private int					m_height;
 	private boolean				m_rebooting;
 	private JLabel				m_background;
+	private AlphaImage			m_backgroundImg;
 	private JLabel				m_name;
 	private JLabel				m_status1;
 	private JLabel				m_status2;
@@ -477,8 +485,6 @@ public final class HUD extends DroppableFrame
 	private JLabel				m_debug4;
 	private JLabel				m_counter;
 	private JLabel				m_stop;
-	private AlphaImage			m_stopOver1;
-	private AlphaImage			m_stopOver2;
 	private AlphaImage			m_stopNeutral1;
 	private AlphaImage			m_stopNeutral2;
 	private JLayeredPane		m_pan;

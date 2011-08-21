@@ -1,9 +1,29 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class is used by the OPBM Office Productivity Benchmark.
+ * The settings tree looks like this
+ * (Note: numbers are used for reference in extractSettingsXmlEntries()):
+ *		#1	<opbm>
+ *		#2		<settings>
+ *		#3			<benchmarks>
+ *		#4				<debugger>no</debugger>
+ *		#5				<singlestep>no</singlestep>
+ *		#6				<hud>
+ *		#7					<visible>yes</visible>
+ *		#8					<translucency>0.5</translucency>
+ *		#9					<debuginfo>yes</debuginfo>
+ *						</hud>
+ *		#10				<retry>
+ *		#11					<enabled>yes</enabled>
+ *		#12					<attempts>5</attempts>
+ *						</retry>
+ *		#13				<stopIfFailure>yes</stopIfFailure>
+ *					</benchmarks>
+ *		#14			<skin>developer</skin>
+ *				</settings>
+ *			</opbm>
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Aug 20, 2011
  *
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -24,58 +44,265 @@ public final class Settings
 {
 	public Settings(Opbm opbm)
 	{
-		String translucency, count;
-		double value;
-
-		// Initially set defaults
-		m_debugMode			= true;
-		m_singleStepping	= true;
-		m_hudVisible		= true;
-		m_hudTranslucency	= 0.67f;
-		m_retry				= true;
-		m_retryAttempts		= 3;
-		m_retryStops		= false;
+		m_opbm = opbm;
 
 		// See if we can set real values
 		m_settingsFilename	= Opbm.locateFile("settings.xml");
-		m_settings			= Opbm.loadXml(m_settingsFilename);
-		if (m_settings != null)
-		{	// We can, use the xml-based settings
-			System.out.println("Using " + m_settingsFilename);
-			m_debugMode			= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.debugger")).equalsIgnoreCase("yes");
-			m_singleStepping	= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.singlestep")).equalsIgnoreCase("yes");
-			m_hudVisible		= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.hud.visible")).equalsIgnoreCase("yes");
-			translucency		= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.hud.translucency"));
-			value				= Double.valueOf(translucency);
-			if (value > 1.0f || value < 0.0f)
-				value = 0.67;
-			m_hudTranslucency	= value;
-			m_skin				= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.skin"));
-			m_retry				= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.retry")).equalsIgnoreCase("yes");
-			if (m_retry)
-			{	// Grab the count
-				try
-				{
-					count = opbm.getMacroMaster().parseMacros(m_settings.getAttributeOrChild("settings.benchmarks.retry.attempts"));
-					if (count.isEmpty())
-					{	// Nothing was specified, so we use the default
-						count = "3";
-					}
-					m_retryAttempts = Integer.valueOf(count);
-				} catch (NumberFormatException ex) {
-				} catch (NullPointerException ex) {
-				}
-			}
-			String test = m_settings.getChild("opbm.settings.benchmarks.retry.#stopIfFailureOnRetries");
-			m_retryStops		= opbm.getMacroMaster().parseMacros(test).equalsIgnoreCase("yes");
+		m_settingsRootXml	= Opbm.loadXml(m_settingsFilename);
+		if (m_settingsRootXml == null)
+		{	// Use defaults
+			System.out.println("Unable to locate settings.xml");
+			createDefaultSettingsXml();
 
 		} else {
-			// Use defaults
-			System.out.println("Unable to locate settings.xml, using internal defaults.");
+			// We can use the settings.xml they have
+			System.out.println("Using " + m_settingsFilename);
+			extractSettingsXmlEntries();
+		}
+	}
 
+	/**
+	 * Create the root node, and let the extractSettingsXmlEntries() populate
+	 * all the missing defaults
+	 */
+	public void createDefaultSettingsXml()
+	{
+		m_settingsRootXml = new Xml();
+		extractSettingsXmlEntries();
+	}
+
+	public void extractSettingsXmlEntries()
+	{
+		String translucency, count;
+		double value;
+		int updateCount = 0;
+
+//////////
+// OPBM
+		m_opbmXml = m_settingsRootXml;
+		if (m_opbmXml == null)
+		{	// #1 - Create it
+			++updateCount;
+			m_opbmXml = new Xml("opbm");
+			m_settingsRootXml = m_opbmXml;
+			// "opbm" is root node
+		}
+
+//////////
+// SETTINGS
+		m_settingsXml = m_opbmXml.getChildNode("settings");
+		if (m_settingsXml == null)
+		{	// #2 - Create it
+			++updateCount;
+			m_settingsXml = new Xml("settings");
+			m_opbmXml.appendChild(m_settingsXml);
+			// "settings" goes on opbm node
+		}
+
+//////////
+// BENCHMARKS
+		m_benchmarksXml = m_settingsXml.getChildNode("benchmarks");
+		if (m_benchmarksXml == null)
+		{	// #3 - Create it
+			++updateCount;
+			m_benchmarksXml = new Xml("benchmarks");
+			m_settingsXml.appendChild(m_benchmarksXml);
+			// "benchmarks" goes on settings node
+		}
+
+//////////
+// DEBUGGER
+		m_debuggerXml = m_benchmarksXml.getChildNode("debugger");
+		if (m_debuggerXml == null)
+		{	// #4 - Create it and set default value
+			++updateCount;
+			m_debuggerXml = new Xml("debugger");
+			m_benchmarksXml.appendChild(m_debuggerXml);
+			// "debugger" goes on benchmarks node
+			m_debuggerXml.setText("no");
+			m_debugMode = false;
+
+		} else {
+			// #4 - Grab value
+			m_debugMode	= m_opbm.getMacroMaster().parseMacros(m_debuggerXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
+// SINGLE-STEP
+		m_singleStepXml = m_benchmarksXml.getChildNode("debugger");
+		if (m_singleStepXml == null)
+		{	// #5 - Create it and set default value
+			++updateCount;
+			m_singleStepXml = new Xml("singlestep");
+			m_benchmarksXml.appendChild(m_singleStepXml);
+			// "singlestep" goes on benchmarks node
+			m_singleStepXml.setText("no");
+			m_singleStep = false;
+
+		} else {
+			// #5 - Grab value
+			m_singleStep = m_opbm.getMacroMaster().parseMacros(m_singleStepXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
+// HUD
+		m_hudXml = m_benchmarksXml.getChildNode("hud");
+		if (m_hudXml == null)
+		{	// #6 - Create it
+			++updateCount;
+			m_hudXml = new Xml("hud");
+			m_benchmarksXml.appendChild(m_hudXml);
+			// "hud" goes on benchmarks node
+		}
+
+//////////
+// HUD VISIBLE
+		m_hudVisibleXml = m_hudXml.getChildNode("visible");
+		if (m_hudVisibleXml == null)
+		{	// #7 - Create it and set default value
+			++updateCount;
+			m_hudVisibleXml = new Xml("visible");
+			m_hudXml.appendChild(m_hudVisibleXml);
+			// "visible" goes on hud node
+			m_hudVisibleXml.setText("yes");
+			m_hudVisible = true;
+
+		} else {
+			// #4 - Grab value
+			m_hudVisible = m_opbm.getMacroMaster().parseMacros(m_hudVisibleXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
+// HUD TRANSLUCENCY
+		m_hudTranslucencyXml = m_hudXml.getChildNode("translucency");
+		if (m_hudTranslucencyXml == null)
+		{	// #8 - Create it and set default value
+			++updateCount;
+			m_hudTranslucencyXml = new Xml("translucency");
+			m_hudXml.appendChild(m_hudTranslucencyXml);
+			// "translucency" goes on hud node
+			m_hudTranslucencyXml.setText("0.5");
+			m_hudTranslucency = 0.5;
+
+		} else {
+			// #4 - Grab value
+			translucency	= m_opbm.getMacroMaster().parseMacros(m_hudTranslucencyXml.getText());
+			value			= Double.valueOf(translucency);
+			if (value > 1.0f || value < 0.0f)
+				value = 0.5;
+			m_hudTranslucency	= value;
+		}
+
+//////////
+// HUD DEBUG INFO
+		m_hudDebugInfoXml = m_hudXml.getChildNode("debuginfo");
+		if (m_hudDebugInfoXml == null)
+		{	// #9 - Create it and set default value
+			++updateCount;
+			m_hudDebugInfoXml = new Xml("debuginfo");
+			m_hudXml.appendChild(m_hudDebugInfoXml);
+			// "debugInfo" goes on hud node
+			m_hudDebugInfoXml.setText("yes");
+			m_hudDebugInfo = true;
+
+		} else {
+			// #9 - Grab value
+			m_hudDebugInfo = m_opbm.getMacroMaster().parseMacros(m_hudDebugInfoXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
+// RETRY
+		m_retryXml = m_benchmarksXml.getChildNode("retry");
+		if (m_retryXml == null)
+		{	// #10 - Create it
+			++updateCount;
+			m_retryXml = new Xml("retry");
+			m_benchmarksXml.appendChild(m_retryXml);
+			// "retry" goes on benchmarks node
+		}
+
+//////////
+// RETRY ENABLED
+		m_retryEnabledXml = m_retryXml.getChildNode("enabled");
+		if (m_retryEnabledXml == null)
+		{	// #11 - Create it and set default value
+			++updateCount;
+			m_retryEnabledXml = new Xml("enabled");
+			m_retryXml.appendChild(m_retryEnabledXml);
+			// "enabled" goes on retry node
+			m_retryEnabledXml.setText("yes");
+			m_retryEnabled = true;
+
+		} else {
+			// #11 - Grab value
+			m_retryEnabled = m_opbm.getMacroMaster().parseMacros(m_retryEnabledXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
+// RETRY ATTEMPTS
+		m_retryAttemptsXml = m_retryXml.getChildNode("attempts");
+		if (m_retryAttemptsXml == null)
+		{	// #12 - Create it and set default value
+			++updateCount;
+			m_retryAttemptsXml = new Xml("enabled");
+			m_retryXml.appendChild(m_retryAttemptsXml);
+			// "attempts" goes on retry node
+			m_retryAttemptsXml.setText("yes");
+			m_retryAttempts = 5;
+
+		} else {
+			// #12 - Grab value
+			count = m_opbm.getMacroMaster().parseMacros(m_retryAttemptsXml.getText());
+			if (count.isEmpty())
+			{	// Nothing was specified, so we use the default
+				m_retryAttempts = 5;
+			} else {
+				m_retryAttempts = Utils.getValueOf(count, 5);
+			}
+		}
+		validateRetryAttempts();
+
+//////////
+// STOP IF FAILURE
+		m_stopIfFailureXml = m_benchmarksXml.getChildNode("stopIfFailure");
+		if (m_stopIfFailureXml == null)
+		{	// #11 - Create it and set default value
+			++updateCount;
+			m_stopIfFailureXml = new Xml("stopIfFailure");
+			m_benchmarksXml.appendChild(m_stopIfFailureXml);
+			// "stopIfFailure" goes on benchmarks node
+			m_stopIfFailureXml.setText("yes");
+			m_stopIfFailure = true;
+
+		} else {
+			// #11 - Grab value
+			m_stopIfFailure = m_opbm.getMacroMaster().parseMacros(m_stopIfFailureXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
+// SKIN
+		m_skinXml = m_settingsXml.getChildNode("skin");
+		if (m_skinXml == null)
+		{	// #11 - Create it and set default value
+			++updateCount;
+			m_skinXml = new Xml("skin");
+			m_settingsXml.appendChild(m_skinXml);
+			// "skin" goes on settings node
+			m_skinXml.setText("simple");
+			m_skin = "simple";
+
+		} else {
+			// #11 - Grab value
+			m_skin = m_opbm.getMacroMaster().parseMacros(m_skinXml.getText());
 		}
 		validateSkin();
-		validateRetries();
+
+
+		// All done!
+		if (updateCount != 0)
+		{	// Tell the user we had to reset some internal defaults
+			System.out.println("Warning:  Updated " + Integer.toString(updateCount) + " default " + Utils.singularOrPlural(updateCount, "value", "values") + " in settings.xml");
+		}
 	}
 
 	public boolean isInDebugMode()
@@ -91,12 +318,12 @@ public final class Settings
 
 	public boolean isSingleStepping()
 	{
-		return(m_singleStepping);
+		return(m_singleStep);
 	}
 
 	public void setSingleStepping(boolean b)
 	{
-		m_singleStepping = b;
+		m_singleStep = b;
 		saveSettings();
 	}
 
@@ -113,7 +340,18 @@ public final class Settings
 
 	public void saveSettings()
 	{
-		m_settings.saveNode(m_settingsFilename);
+		// Update the entries in the Xml
+		m_singleStepXml.setText(Utils.evaluateLogicalToYesOrNo(m_singleStep));
+		m_hudVisibleXml.setText(Utils.evaluateLogicalToYesOrNo(m_hudVisible));
+		m_hudTranslucencyXml.setText(Double.toString(m_hudTranslucency));
+		m_hudDebugInfoXml.setText(Utils.evaluateLogicalToYesOrNo(m_hudDebugInfo));
+		m_retryEnabledXml.setText(Utils.evaluateLogicalToYesOrNo(m_retryEnabled));
+		m_retryAttemptsXml.setText(Integer.toString(m_retryAttempts));
+		m_stopIfFailureXml.setText(Utils.evaluateLogicalToYesOrNo(m_stopIfFailure));
+		m_skinXml.setText(m_skin);
+
+		// Save the Xml to the local user's settings directory
+		m_settingsRootXml.saveNode(Opbm.getSettingsDirectory() + "settings.xml");
 	}
 
 	public void validateSkin()
@@ -122,22 +360,26 @@ public final class Settings
 		{	// See if what was specified is valid
 			if (m_skin.toLowerCase().contains("simple"))
 			{	// We're good
+				m_skinXml.setText(m_skin);
 				return;
 
 			} else if (m_skin.toLowerCase().contains("developer")) {
 				// We're good
+				m_skinXml.setText(m_skin);
 				return;
 			}
 		}
 		// If we get here, it wasn't found, so we default to simple
 		m_skin = "simple";
+		m_skinXml.setText(m_skin);
 	}
 
-	public void validateRetries()
+	public void validateRetryAttempts()
 	{
-		if (m_retry)
+		if (m_retryEnabled)
 		{	// Make sure the count is valid, between 0 and 10 retries
 			m_retryAttempts = Math.min(Math.max(m_retryAttempts, 0), 10);
+			m_retryAttemptsXml.setText(Integer.toString(m_retryAttempts));
 		}
 	}
 
@@ -163,7 +405,7 @@ public final class Settings
 
 	public boolean isBenchmarkToRetryOnErrors()
 	{
-		return(m_retry);
+		return(m_retryEnabled);
 	}
 
 	public int benchmarkRetryOnErrorCount()
@@ -173,7 +415,12 @@ public final class Settings
 
 	public boolean benchmarkStopsIfRetriesFail()
 	{
-		return(m_retryStops);
+		return(m_stopIfFailure);
+	}
+
+	public boolean getHUDVisible()
+	{
+		return(m_hudVisible);
 	}
 
 	public float getHUDTranslucency()
@@ -181,14 +428,87 @@ public final class Settings
 		return((float)m_hudTranslucency);
 	}
 
-	private Xml			m_settings;
+	public boolean getHUDDebugInfo()
+	{
+		return(m_hudDebugInfo);
+	}
+
+	public void toggleHUDDebugInfo()
+	{
+		m_hudDebugInfo = !m_hudDebugInfo;
+		saveSettings();
+	}
+
+	public void toggleHUDTranslucency()
+	{
+		if (!m_hudVisible)
+		{	// Turn it on
+			m_hudVisible		= true;
+			m_hudTranslucency	= 0.25f;
+
+		} else {
+			// Cycle through the values
+			if (m_hudTranslucency <= 0.25f)
+			{	// Make it 50%
+				m_hudTranslucency = 0.50f;
+
+			} else if (m_hudTranslucency <= 0.50f) {
+				// Make it 75%
+				m_hudTranslucency = 0.75f;
+
+			} else if (m_hudTranslucency <= 0.75f) {
+				// Make it 100%
+				m_hudTranslucency = 1.00f;
+
+			} else {
+				// Turn it off
+				m_hudVisible = false;
+			}
+		}
+		saveSettings();
+	}
+
+	public void toggleRetryAttempts()
+	{
+		++m_retryAttempts;
+		if (m_retryAttempts > 10)
+		{	// Reset to 0
+			m_retryAttempts = 0;
+		}
+		saveSettings();
+	}
+
+	public int getRetryAttempts()
+	{
+		return(m_retryAttempts);
+	}
+
+	private Opbm		m_opbm;
+	private Xml			m_settingsRootXml;
 	private String		m_settingsFilename;
 	private boolean		m_debugMode;
-	private boolean		m_singleStepping;
+	private boolean		m_singleStep;
 	private boolean		m_hudVisible;
 	private double		m_hudTranslucency;
-	private boolean		m_retry;
+	private boolean		m_hudDebugInfo;
+	private boolean		m_retryEnabled;
 	private int			m_retryAttempts;
-	private boolean		m_retryStops;
+	private boolean		m_stopIfFailure;
 	private String		m_skin;
+
+	// Tags to reach the entries in the Xml tree
+	private	Xml			m_opbmXml;
+	private	Xml			m_settingsXml;
+	private Xml			m_benchmarksXml;
+	private	Xml			m_debuggerXml;
+	private	Xml			m_singleStepXml;
+	private	Xml			m_hudXml;
+	private	Xml			m_hudVisibleXml;
+	private	Xml			m_hudTranslucencyXml;
+	private	Xml			m_hudDebugInfoXml;
+	private	Xml			m_retryXml;
+	private	Xml			m_retryEnabledXml;
+	private	Xml			m_retryAttemptsXml;
+	private	Xml			m_stopIfFailureXml;
+	private	Xml			m_skinXml;
 }

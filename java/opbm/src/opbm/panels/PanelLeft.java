@@ -4,7 +4,7 @@
  * This class is the top-level class for all left-panel items, which is the
  * menu-pane along the left side used for system navigation.
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Aug 21, 2011
  *
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -58,6 +58,26 @@ public class PanelLeft {
 		m_associatedEdit	= "";
 		m_associatedRawEdit	= "";
 		parent.add(m_panel);
+	}
+
+	/**
+	 * Refreshes the contents of the text on all menu items in case any
+	 * content on the entry changed, and the new macro state will be
+	 * processed.
+	 */
+	public void refreshAfterMacroUpdate()
+	{
+		int i;
+
+		for (i = 0; i < m_navItems.size(); i++)
+		{	// Tell every item within to refresh itself
+			m_navItems.get(i).refreshAfterMacroUpdate();
+		}
+
+		for (i = 0; i < m_items.size(); i++)
+		{	// Tell every item within to refresh itself
+			m_items.get(i).refreshAfterMacroUpdate();
+		}
 	}
 
 	/** Refreshes the <code>JLabel</code> object by resizing and repainting it.

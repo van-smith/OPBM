@@ -157,13 +157,6 @@
 					</options>
 				</abstract>
 			</atom>
--->
-			<atom name="Reboot And Restart OPBM">
-				<abstract name="Reboot And Restart OPBM" sourcename="rebootAndRestart"></abstract>
-			</atom>
-			<atom name="Reboot And Exit OPBM">
-				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
-			</atom>
 			<atom name="SpinUp">
 				<abstract name="Spinup Placeholder" sourcename="spinUp">
 					<options>
@@ -171,6 +164,7 @@
 					</options>
 				</abstract>
 			</atom>
+-->
 			<atom name="All Tests">
 				<abstract name="Excel World Heat" sourcename="execute">
 					<options>
@@ -274,7 +268,7 @@
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
-				<abstract name="Acrobat Uninstall" sourcename="execute">
+				<abstract name="Acrobat Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -423,7 +417,7 @@
 				</abstract>
 			</atom>
 			<atom name="All Un(slash)install">
-				<abstract name="Acrobat Uninstall" sourcename="execute">
+				<abstract name="Acrobat Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -562,7 +556,7 @@
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
-				<abstract name="Acrobat Uninstall" sourcename="execute">
+				<abstract name="Acrobat Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -868,12 +862,18 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Acrobat Reader 10.1 Uninstall">
-				<abstract name="Uninstall" sourcename="execute">
+			<atom name="Acrobat Reader 10.1 Un(hyphen)install">
+				<abstract name="Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
 				</abstract>
+			</atom>
+			<atom name="Reboot And Restart OPBM">
+				<abstract name="Reboot And Restart OPBM" sourcename="rebootAndRestart"></abstract>
+			</atom>
+			<atom name="Reboot And Exit OPBM">
+				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
 			</atom>
 		</atoms>
 		<molecules>

@@ -98,8 +98,9 @@ public class BenchmarkParams
 	public int					m_retryAttempts;
 
 	public List<Xml>			m_benchmarkStack;
-	public boolean				m_headsUpActive;
 	public HUD					m_hud;
+	public boolean				m_hudActive;
+	public boolean				m_hudDebugInfo;
 
 	public boolean				m_debuggerActive;
 	public boolean				m_singleStepping;

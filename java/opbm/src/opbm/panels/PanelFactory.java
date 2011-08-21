@@ -136,18 +136,18 @@ public class PanelFactory {
 
 						bgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlNavigation.getChildNode("text"), "bgcolor")));
 						if (!bgcolor.isEmpty()) {
-							pn.setBackColor(Color.decode(Utils.verifyColorFormat(bgcolor)));
+							pn.setBackColor(bgcolor);
 							pn.setOpaque(true);
 						} else {
-							pn.setBackColor(new Color(255,160,50));
+							pn.setBackColor(Utils.encodeColorFormat(255,160,50));
 							pn.setOpaque(false);
 						}
 
 						fgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlNavigation.getChildNode("text"), "fgcolor")));
 						if (!fgcolor.isEmpty())
-							pn.setForeColor(Color.decode(Utils.verifyColorFormat(fgcolor)));
+							pn.setForeColor(fgcolor);
 						else
-							pn.setForeColor(new Color(190,118,37));
+							pn.setForeColor(Utils.encodeColorFormat(190,118,37));
 
 						pn.setFont(navigation);
 						pn.setPosition(lnLeft, lnTop);
@@ -195,22 +195,22 @@ public class PanelFactory {
 						} else if (xmlUnknown.getName().equalsIgnoreCase("heading")) {
 							// Now it's known, adding a heading item
 							pi = new PanelLeftItem(opbm, macroMaster, statusBar, panel.getJPanel());
-							pi.setText(xmlUnknown.getAttributeOrChild("text"));
+							pi.setText(xmlUnknown.getAttributeOrChild("text"));	// We don't parse macros because they are parsed in real-time by the PanelLeftItem()
 
-							bgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlUnknown.getChildNode("text"), "bgcolor")));
+							bgcolor = Utils.verifyColorFormat(Xml.getAttribute(xmlUnknown.getChildNode("text"), "bgcolor"));
 							if (!bgcolor.isEmpty()) {
-								pi.setBackColor(Color.decode(Utils.verifyColorFormat(bgcolor)));
+								pi.setBackColor(bgcolor);
 								pi.setOpaque(true);
 							} else {
-								pi.setBackColor(new Color(255,255,255));
+								pi.setBackColor(Utils.encodeColorFormat(255,255,255));
 								pi.setOpaque(false);
 							}
 
-							fgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlUnknown.getChildNode("text"), "fgcolor")));
+							fgcolor = Utils.verifyColorFormat(Xml.getAttribute(xmlUnknown.getChildNode("text"), "fgcolor"));
 							if (!fgcolor.isEmpty())
-								pi.setForeColor(Color.decode(Utils.verifyColorFormat(fgcolor)));
+								pi.setForeColor(fgcolor);
 							else
-								pi.setForeColor(new Color(255,160,50));
+								pi.setForeColor(Utils.encodeColorFormat(255,160,50));
 
 							pi.setFont(heading);
 							pi.setPosition(15, lnTop);
@@ -224,22 +224,22 @@ public class PanelFactory {
 							// Now it's known, adding a a menu item
 							pi = new PanelLeftItem(opbm, macroMaster, statusBar, panel.getJPanel());
 							xmlCommand	= xmlUnknown.getChildNode("command");
-							pi.setText(xmlUnknown.getAttributeOrChild("text"));
+							pi.setText(xmlUnknown.getAttributeOrChild("text"));	// We don't parse macros because they are parsed in real-time by the PanelLeftItem()
 
-							bgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlUnknown.getChildNode("text"), "bgcolor")));
+							bgcolor = Utils.verifyColorFormat(Xml.getAttribute(xmlUnknown.getChildNode("text"), "bgcolor"));
 							if (!bgcolor.isEmpty()) {
-								pi.setBackColor(Color.decode(Utils.verifyColorFormat(bgcolor)));
+								pi.setBackColor(bgcolor);
 								pi.setOpaque(true);
 							} else {
-								pi.setBackColor(new Color(255,160,50));
+								pi.setBackColor(Utils.encodeColorFormat(255,160,50));
 								pi.setOpaque(false);
 							}
 
-							fgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlUnknown.getChildNode("text"), "fgcolor")));
+							fgcolor = Utils.verifyColorFormat(Xml.getAttribute(xmlUnknown.getChildNode("text"), "fgcolor"));
 							if (!fgcolor.isEmpty())
-								pi.setForeColor(Color.decode(Utils.verifyColorFormat(fgcolor)));
+								pi.setForeColor(fgcolor);
 							else
-								pi.setForeColor(Color.BLUE);
+								pi.setForeColor(Utils.encodeColorFormat(0,0,255));
 
 							pi.setFont(menu);
 							pi.setCommand(xmlUnknown.getAttributeOrChild("command"));
@@ -266,22 +266,22 @@ public class PanelFactory {
 						} else if (xmlUnknown.getName().equalsIgnoreCase("text")) {
 							// Now it's known, adding a display-only item
 							pi = new PanelLeftItem(opbm, macroMaster, statusBar, panel.getJPanel());
-							pi.setText(xmlUnknown.getText());
+							pi.setText(xmlUnknown.getText());	// We don't parse macros because they are parsed in real-time by the PanelLeftItem()
 
-							bgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlUnknown, "bgcolor")));
+							bgcolor = Utils.verifyColorFormat(Xml.getAttribute(xmlUnknown, "bgcolor"));
 							if (!bgcolor.isEmpty()) {
-								pi.setBackColor(Color.decode(Utils.verifyColorFormat(bgcolor)));
+								pi.setBackColor(bgcolor);
 								pi.setOpaque(true);
 							} else {
-								pi.setBackColor(new Color(255,160,50));
+								pi.setBackColor(Utils.encodeColorFormat(255,160,50));
 								pi.setOpaque(false);
 							}
 
-							fgcolor = Utils.verifyColorFormat(opbm.expandMacros(Xml.getAttribute(xmlUnknown, "fgcolor")));
+							fgcolor = Utils.verifyColorFormat(Xml.getAttribute(xmlUnknown, "fgcolor"));
 							if (!fgcolor.isEmpty())
-								pi.setForeColor(Color.decode(Utils.verifyColorFormat(fgcolor)));
+								pi.setForeColor(fgcolor);
 							else
-								pi.setForeColor(new Color(128,128,92));
+								pi.setForeColor(Utils.encodeColorFormat(128,128,92));
 
 							pi.setFont(text);
 							pi.setPosition(15, lnTop);
