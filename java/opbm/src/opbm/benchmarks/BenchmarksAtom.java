@@ -1401,7 +1401,7 @@ public class BenchmarksAtom
 							}
 
 							// Now, based on the state of this run, we append its information to the appropriate place
-							if (failure && (retryCount + 1) < m_bp.m_retryAttempts)
+							if (failure && retryCount != m_bp.m_retryAttempts)
 							{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
 								if (record)
 									xmlRun_RunFailure.appendChild(xmlType);

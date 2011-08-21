@@ -88,10 +88,8 @@ Func LaunchFirefox()
 	TimerBegin()
 	$gPID = Run( $FIREFOX_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
-	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, 30 )
+	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_FIREFOX )
-	
-	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
 EndFunc
 
 Func CloseFirefox()

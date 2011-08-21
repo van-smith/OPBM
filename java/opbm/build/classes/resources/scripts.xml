@@ -259,6 +259,7 @@
 				</abstract>
 			</atom>
 			<atom name="All Tests w(slash)install">
+<!--
 				<abstract name="Acrobat Install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
@@ -319,6 +320,7 @@
 						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
 					</options>
 				</abstract>
+-->
 				<abstract name="Safari Google V8" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
