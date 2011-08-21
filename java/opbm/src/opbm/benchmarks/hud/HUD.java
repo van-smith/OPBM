@@ -67,12 +67,20 @@ public final class HUD extends DroppableFrame
 
 		setTitle("OPBM HUD");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setSize(320, 200);
+		if (m_bp.m_hudDebugInfo)
+		{	// We are showing debug information
+			m_width		= 320;
+			m_height	= 200;
+		} else {
+			// Just the status information
+			m_width		= 320;
+			m_height	= 117;
+		}
 
 		pack();
         Insets fi		= getInsets();
-		actualWidth		= 320 + fi.left + fi.right;
-		actualHeight	= 200 + fi.top  + fi.bottom;
+		actualWidth		= m_width + fi.left + fi.right;
+		actualHeight	= m_height + fi.top  + fi.bottom;
         size = new Dimension(actualWidth, actualHeight);
         setMinimumSize(size);
         setMaximumSize(size);
@@ -88,7 +96,7 @@ public final class HUD extends DroppableFrame
 
 		m_pan = new JLayeredPane();
 		m_pan.setLayout(null);
-		m_pan.setBounds(0, 0, 320, 200);
+		m_pan.setBounds(0, 0, m_width, 200);
 		m_pan.setVisible(true);
 		m_pan.setBorder(BorderFactory.createEmptyBorder());
 		c.add(m_pan);
@@ -101,8 +109,9 @@ public final class HUD extends DroppableFrame
 		} catch (IOException ex) {
 			m_background.setText("missing hud.png");	// Nothing to do really, indicates an improper installation
 		}
-		m_background.setBounds(0, 0, 320, 200);
+		m_background.setBounds(0, 0, m_width, 200);
 		m_background.setHorizontalAlignment(JLabel.LEFT);
+		m_background.setVerticalAlignment(JLabel.TOP);
 		m_background.setOpaque(false);
 		m_background.setVisible(true);
 		m_pan.add(m_background);
@@ -466,6 +475,8 @@ public final class HUD extends DroppableFrame
 	}
 
 	private BenchmarkParams		m_bp;
+	private int					m_width;
+	private int					m_height;
 	private boolean				m_rebooting;
 	private JLabel				m_background;
 	private JLabel				m_name;

@@ -340,7 +340,7 @@ public class Benchmarks
 		m_bp.m_opbm.hideSimpleWindow();
 
 		// See if they are using the HUD
-		if (m_bp.m_headsUpActive)
+		if (m_bp.m_hudActive)
 		{
 			// Update the heads-up display
 			if (!m_bp.m_hud.isVisible())
@@ -369,7 +369,7 @@ public class Benchmarks
 		// All finished
 		m_bp.m_opbm.showUserWindow();
 
-		if (m_bp.m_headsUpActive)
+		if (m_bp.m_hudActive)
 		{
 			m_bp.m_hud.dispose();
 			m_bp.m_hud = null;
@@ -431,14 +431,15 @@ public class Benchmarks
 		}
 		bp.m_debuggerOrHUDAction		= BenchmarkParams._NO_ACTION;
 
-		bp.m_headsUpActive				= bp.m_settingsMaster.isHUDVisible();
-		if (bp.m_headsUpActive)
+		bp.m_hudActive					= bp.m_settingsMaster.isHUDVisible();
+		if (bp.m_hudActive)
 		{	// The HUD is displayed
 			bp.m_hud					= new HUD(bp.m_opbm, bp, false);
 		} else {
 			// Not displayed (typical condition)
 			bp.m_hud					= null;
 		}
+		bp.m_hudDebugInfo				= bp.m_settingsMaster.getHUDDebugInfo();
 
 		bp.m_retry						= bp.m_settingsMaster.isBenchmarkToRetryOnErrors();
 		bp.m_retryAttempts				= bp.m_settingsMaster.benchmarkRetryOnErrorCount();
