@@ -9,7 +9,7 @@
 				<visible>yes</visible>
 				<translucency>0.5</translucency>
 			</hud>
-			<retry attempts="3" stopIfFailureOnRetries="no">yes</retry>
+			<retry attempts="5" stopIfFailureOnRetries="yes">yes</retry>
 		</benchmarks>
 		<skin>developer</skin>	<!-- options are "simple" or "developer", can be bulked as "simple, developer" to have both screens launch -->
 	</settings>

@@ -66,7 +66,8 @@ public final class Settings
 				} catch (NullPointerException ex) {
 				}
 			}
-			m_retryStops		= opbm.getMacroMaster().parseMacros(m_settings.getChild("opbm.settings.benchmarks.retry.#stopIfFailureOnretries")).equalsIgnoreCase("yes");
+			String test = m_settings.getChild("opbm.settings.benchmarks.retry.#stopIfFailureOnRetries");
+			m_retryStops		= opbm.getMacroMaster().parseMacros(test).equalsIgnoreCase("yes");
 
 		} else {
 			// Use defaults

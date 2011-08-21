@@ -351,7 +351,6 @@ public final class HUD extends DroppableFrame
 			} catch (Throwable t) {
 			}
 		}
-		System.out.println(formattedLine);
 		return(formattedLine);
 	}
 

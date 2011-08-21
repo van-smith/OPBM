@@ -46,10 +46,8 @@ Func LaunchIE()
 	TimerBegin()
 	$gPID = Run( $IE_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
-	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE )
+	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_IE )
-	
-	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
 EndFunc
 
 Func CloseIE( $windowTitle = $IE_WINDOW )

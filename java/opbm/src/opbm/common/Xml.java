@@ -286,21 +286,22 @@ public class Xml
 		{
 			Xml xmlThis;
 			List<String> theseTags = null;
-			String search;
+			String search, nextSearch;
 			boolean lLookingForMoreLevels = false;
 
 			// Find out what we're searching for, a single tag or multiple theseTags deep
 			if (searchMaster.contains(".")) {		// Looking for "something.like.this" (multiple theseTags/levels deep)
 				lLookingForMoreLevels = true;
-				search = searchMaster.substring(0, searchMaster.indexOf("."));
+				search		= searchMaster.substring(0, searchMaster.indexOf("."));
+				nextSearch	= searchMaster.substring(search.length() + 1, searchMaster.length());
 
 			} else {								// Looking for something like "this" (one tag only)
-				search = searchMaster;
+				search		= searchMaster;
+				nextSearch	= "";
 
 			}
 			if (search.trim().startsWith("[") && search.trim().endsWith("]"))
-			{
-				// Looking for something like [multiple,theseTags,like,this]
+			{	// Looking for something like [multiple,theseTags,like,this]
 				theseTags = new ArrayList<String>(0);
 				getTagsList(theseTags, search.substring(1, search.length() - 1));
 			}
@@ -318,7 +319,7 @@ public class Xml
 						// This is a match at this level
 						if (lLookingForMoreLevels) {
 							// We have to continue at a lower level, which will update nodes
-							getNodeList(nodes, xmlThis.getFirstChild(), searchMaster.substring(search.length() + 1, searchMaster.length()), onlyOneLevel);
+							getNodeList(nodes, xmlThis.getFirstChild(), nextSearch, onlyOneLevel);
 
 						} else {
 							// This is one we're adding
@@ -331,7 +332,13 @@ public class Xml
 						// This is a match at this level
 						if (lLookingForMoreLevels) {
 							// We have to continue at a lower level, which will update nodes
-							getNodeList(nodes, xmlThis.getFirstChild(), searchMaster.substring(search.length() + 1, searchMaster.length()), onlyOneLevel);
+							if (nextSearch.startsWith("#"))
+							{	// They're looking for an attribute
+								getNodeList(nodes, xmlThis.getFirstAttribute(), nextSearch.substring(1), onlyOneLevel);
+
+							} else {
+								getNodeList(nodes, xmlThis.getFirstChild(), nextSearch, onlyOneLevel);
+							}
 
 						} else {
 							// This is one we're adding

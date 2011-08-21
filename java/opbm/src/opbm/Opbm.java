@@ -59,8 +59,10 @@ import java.util.List;
 import java.util.ArrayList;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+import opbm.benchmarks.BenchmarkParams;
 import opbm.common.ModalApp;
 import opbm.dialogs.DeveloperWindow;
+import opbm.dialogs.OpbmDialog;
 import opbm.dialogs.SimpleWindow;
 import org.xml.sax.SAXException;
 
@@ -1173,8 +1175,11 @@ public final class Opbm extends	ModalApp
 	public void componentResized(ComponentEvent evt)
 	{
 	// Called when the newFrame (window) is resized
-		m_frameDeveloper.componentResized(evt);
-		resizeEverything();
+		if (evt.getComponent().equals(m_frameDeveloper))
+		{	// Resize everything on the developer window
+			m_frameDeveloper.componentResized(evt);
+			resizeEverything();
+		}
 	}
 
 	/** Not used.  Required definition for KeyListener.
@@ -1966,6 +1971,183 @@ public final class Opbm extends	ModalApp
 
 		for (i = 0; i < m_rvFrames.size(); i++)
 			m_rvFrames.get(i).setVisible(true);
+	}
+
+	/**
+	 * Asks the user for a directory, and loads all results*.xml files, adding
+	 * up every timing point contained within, and producing an average and
+	 * output file called results_averages.xml in the same directory.
+	 */
+	public void computeResultsXmlAverages()
+	{
+		int i, j, totalFiles, totalEntries;
+		String fileName, directoryName, entry, atomName, timingName, timingSeconds, outputLine;
+		JFileChooser chooser;
+		String[] files;
+		File candidate;
+		Xml results, timing;
+		List<Xml> resultsData;
+		List<Xml> resultItems;
+		Tuple compiledResults;
+		Tuple detailedResults;
+		BenchmarkParams bp;
+		OpbmDialog od;
+		FilenameFilter fileFilter;
+		javax.swing.filechooser.FileFilter directoryFilter;
+		List<String> output;
+
+
+		// Include only those files which are results*.xml
+		fileFilter = new FilenameFilter()
+		{
+			@Override
+			public boolean accept(File dir, String name)
+			{
+				return(name.toLowerCase().startsWith("results") && name.toLowerCase().endsWith(".xml"));
+			}
+		};
+
+		// Include only those files which are results*.xml
+		directoryFilter = new javax.swing.filechooser.FileFilter() {
+			@Override
+			public boolean accept(File file)
+			{
+				return(file.isDirectory());
+			}
+			@Override
+			public String getDescription() {
+				return("Directory");
+			}
+		};
+
+
+		// Ask the user for the directory
+		chooser = new JFileChooser();
+		chooser.setFileFilter(directoryFilter);
+		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		if (chooser.showOpenDialog(m_frameDeveloper) == JFileChooser.APPROVE_OPTION)
+		{
+			directoryName	= Utils.verifyPathEndsInBackslash(chooser.getSelectedFile().getAbsolutePath());
+			candidate		= new File(directoryName);
+			System.out.println("Loading results*.xml files from " + directoryName + " for average.");
+
+			// Get a list of all matching files in the list
+			files = candidate.list(fileFilter);
+			if (files != null)
+			{	// Process each file in the list
+				bp = new BenchmarkParams();
+
+				// Create the master list to be used for all data gathering
+				// resultsData (allocated below, once for each file)
+				// holds a full list of pointers to each score line
+
+				compiledResults = new Tuple(this);
+				// The tuple array contains one entry per file, with these data items in these element locations:
+				//		first	= fileName
+				//		second	= resultsData ArrayList of raw Xml entries for the file
+				//		third	= Tuple containing:
+				//					first	= name of timing item
+				//					second	= timing
+				//					third	= results entry for this item
+
+				// Iterate through every file
+				totalFiles		= 0;
+				totalEntries	= 0;
+				for (i = 0; i < files.length; i++)
+				{	// Get filename of file or directory
+					fileName	= directoryName + files[i];
+					candidate	= new File(fileName);
+					if (candidate.exists() && candidate.isFile() && candidate.canRead())
+					{	// Try to load as an Xml
+						results = loadXml(fileName);
+						if (results != null)
+						{	// Process its data elements
+							++totalFiles;
+
+							// Grab the list of nodes
+							resultsData = new ArrayList<Xml>(0);			// Holds the list of opbm.rawdata.run.results nodes in the file
+							Xml.getNodeList(resultsData, results, "opbm.rawdata.run.results", false);
+							if (!resultsData.isEmpty())
+							{	// There is at least one entry in this file
+
+								// Create the entries for this listing
+								resultItems		= new ArrayList<Xml>(0);	// Holds the scoring data lines from each result*.xml file that's loaded
+								detailedResults	= new Tuple(this);			// Holds the detailed items for each Xml entry broken out
+								compiledResults.add(fileName, resultItems, detailedResults);
+								for (j = 0; j < resultsData.size(); j++)
+								{	// Grab all of the named elements that are not total lines
+									results = resultsData.get(j);
+									timing = results.getChildNode("timing");
+									while (timing != null)
+									{	// Process every entry that's not a timing line
+										entry = timing.getText();
+										if (!entry.toLowerCase().startsWith("total,"))
+										{	// Save this entry
+											++totalEntries;
+											resultItems.add(timing);
+											bp.extractTimingLineElements(timing.getText());
+											detailedResults.add(bp.m_timingName, Double.toString(bp.m_timingInSeconds), results);
+										}
+
+										// Move to next sibling
+										timing = timing.getNext();
+									}
+									// When we get here, this entry's timing elements have been exhausted
+									// Proceed to the next results entry
+								}
+								// When we get here, all results for this file have been consumed
+								// We don't clear up the results Xml that was loaded, because
+								// it has elements referenced above
+
+							} else {
+								System.out.println("No opbm.rawdata.run.results elements found in " + fileName);
+							}
+							// When we get here, we're ready to try the next file
+
+						} else {
+							System.out.println("Unable to load " + fileName);
+						}
+
+					} else {
+						System.out.println("Ignoring " + fileName + ", not found.");
+					}
+					// When we get here, we're ready to try the next file
+				}
+				// When we get here, we've tried all files
+				if (totalFiles == 0)
+				{	// Nothing to do
+					od = new OpbmDialog(m_opbm, "Directory had no files with opbm.rawdata.run.results elements.", "Error", OpbmDialog._OKAY_BUTTON, "", "");
+					return;
+				}
+				// If we get here, there is some data to process
+				output = new ArrayList<String>(0);
+				// Generate an output of everything we have
+				for (i = 0; i < compiledResults.size(); i++)
+				{	// Generate output from each entry
+					fileName		= compiledResults.getFirst(i);
+					resultItems		= (List<Xml>)compiledResults.getSecond(i);
+					detailedResults	= (Tuple)compiledResults.getThird(i);
+					for (j = 0; j < detailedResults.size(); j++)
+					{	// Build the line for this entry
+						timingName		= (String)detailedResults.getFirst(j);
+						timingSeconds	= (String)detailedResults.getSecond(j);
+						atomName		= ((Xml)detailedResults.getThird(j)).getAttribute("name");
+						outputLine		= atomName + "," + timingName + "," + timingSeconds;
+						output.add(outputLine);
+					}
+					// When we get here, all entries for this file are generated
+					// Proceed to the next file
+				}
+				// When we get here, the output list is populated
+				fileName = directoryName + "output.csv";
+				Utils.writeTerminatedLinesToFile(fileName, output);
+				od = new OpbmDialog(m_opbm, "Compiled results to " + fileName, "Success", OpbmDialog._OKAY_BUTTON, "", "");
+				return;
+			}
+			// Directory contains no results*.xml files
+			od = new OpbmDialog(m_opbm, "Directory contains no results*.xml files", "Error", OpbmDialog._OKAY_BUTTON, "", "");
+			return;
+		}
 	}
 
 	/** Main app entry point.

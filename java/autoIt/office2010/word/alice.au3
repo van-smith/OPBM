@@ -163,12 +163,13 @@ Func PageDownNTimes()
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Next
 	; Wait until everything related to Windows is settled (because Internet Explorer is "very close to home" and accesses many Windows functions in unique "Microsoft ways")
-	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+	opbmWaitUntilSystemIdle( $gPercent, 1000, $gTimeoutMS )
 	opbmWinWaitActivate( $WINDOW_IE9_ALICE_IN_WONDERLAND, "", $gTimeout, $ERROR_PREFIX & "WinWait: Internet Explorer 9: Unable to find Window." )
 	TimerEnd( $ALICE_PAGE_DOWN_N_TIMES_IN_IE9 )
 EndFunc
 
 Func CopyToClipboard()
+	opbmWinWaitActivate( $WINDOW_IE9_ALICE_IN_WONDERLAND, "", $gTimeout, $ERROR_PREFIX & "WinWait: Internet Explorer 9: Unable to find Window." )
 	outputDebug( "Copying HTML to clipboard" )
 	TimerBegin()
 	; Select everything that was loaded in preparation to copy-and-paste into Word
@@ -222,6 +223,7 @@ EndFunc
 ; Word 2010 has special font effects that can make for some beautiful typography.
 ; This test enables those effects
 Func SetFontEffects()
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
 	outputDebug( $ALICE_SET_FONT_EFFECTS )
 	TimerBegin()
 	; Select everything
@@ -267,6 +269,7 @@ Func MakeTextWrapTightAroundPictures()
 	Local $result
 	Local $moveForward
 
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
 	outputDebug( $ALICE_UPDATING_IMAGE_TEXT_ALIGNMENT )
 
 	TimerBegin()
@@ -413,6 +416,8 @@ EndFunc
 
 Func SaveAsAliceInWonderLandPdf()
 	; Save as...
+	outputDebug( $SAVE_AS_PDF )
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
 	TimerBegin()
 	Send("!fa")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
@@ -444,6 +449,8 @@ EndFunc
 Func ManipulateInAcrobatReader()
 	Local $i
 	
+	opbmWinWaitActivate( $ADOBE_READER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Adobe Reader: Unable to find Window." )
+	outputDebug( $MANIPULATE_IN_ACROBAT_READER )
 	TimerBegin()
 	; Turn on navigation pane
 	Send("{F4}")
