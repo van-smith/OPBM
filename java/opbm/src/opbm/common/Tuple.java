@@ -25,7 +25,6 @@ package opbm.common;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import opbm.Opbm;
 
 /**
@@ -68,7 +67,7 @@ public class Tuple
 		int i;
 
 		m_opbm				= opbm;
-		m_uuid				= UUID.randomUUID();
+		m_uuid				= Utils.getUUID();
 		m_first				= new ArrayList<String>(0);
 		m_second			= new ArrayList<Object>(0);
 		m_third				= new ArrayList<Object>(0);
@@ -87,7 +86,7 @@ public class Tuple
 	 */
 	public String getUUID()
 	{
-		return(m_uuid.toString());
+		return(m_uuid);
 	}
 
 	/**
@@ -785,7 +784,7 @@ public class Tuple
 	/**
 	 * When the class is created, a UUID is assigned.
 	 */
-	private UUID					m_uuid;
+	private String					m_uuid;
 
 	/**
 	 * Holds list of String items for the tuple.  Has a 1:1 relationship with

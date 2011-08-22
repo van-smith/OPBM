@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import opbm.Opbm;
@@ -1052,6 +1053,24 @@ public class Utils
 			return("Yes");
 		else
 			return("No");
+	}
+
+	/**
+	 * The UUID string representation is as described by this BNF:
+	 *
+	 *	 UUID                   = time_low-time_mid-time_high_and_version-variant_and_sequence-node
+	 *	 time_low               = 4*<hexOctet>				// 8 bytes
+	 *	 time_mid               = 2*<hexOctet>				// 4 bytes
+	 *	 time_high_and_version  = 2*<hexOctet>				// 4 bytes
+	 *	 variant_and_sequence   = 2*<hexOctet>				// 4 bytes
+	 *	 node                   = 6*<hexOctet>				// 12 bytes
+	 *	 hexOctet               = <hexDigit><hexDigit>		// 2 bytes
+	 *	 hexDigit               = "0" through "f" or "F"	// 1 byte
+	 * @return the aforementioned format
+	 */
+	public static String getUUID()
+	{
+		return(UUID.randomUUID().toString());
 	}
 
 	private static final String		errMsg = "Error attempting to launch web browser";

@@ -1085,12 +1085,12 @@ public class Xml
 	{
 		Xml prev;
 
-		if (newNode.getParent() == null && m_parent != null)
+		// Assign this node's new parent
+		if (m_parent != null)
 			newNode.setParent(m_parent);
 
 		if (m_prev != null)
-		{
-			// Inserting in the middle of a chain
+		{	// Inserting in the middle of a chain, not at the start
 			prev = m_prev;
 			prev.setNext(newNode);
 			setPrev(newNode);
@@ -1098,12 +1098,12 @@ public class Xml
 			newNode.setNext(this);
 
 		} else {
-			// Appending to beginning
+			// Appending to start of the chain, this will be the first item
 			setPrev(newNode);
 			newNode.setNext(this);
 
 			if (m_parent != null)
-			{
+			{	// Set the parent to point to this new thing
 				if (isAttribute)
 					m_parent.setFirstAttribute(newNode);
 				else
@@ -1271,7 +1271,7 @@ public class Xml
 		while (child != null && child.getNext() != null)
 		{
 			if (child.getName().equalsIgnoreCase(xmlAdd.getName()))
-			{	// The attribute name already exists, so we update it
+			{	// The attribute name already exists, so we delete it so we can add it to the beginning
 				nextChild = child.getNext();
 				child.deleteNode(true);
 				child = nextChild;
@@ -1404,7 +1404,7 @@ public class Xml
 			while (child != null && child.getNext() != null)
 			{
 				if (child.getName().equalsIgnoreCase(xmlAdd.getName()))
-				{	// The attribute name already exists, so we update it
+				{	// The attribute name already exists, so we remove it so we can append it to the end
 					nextChild = child.getNext();
 					child.deleteNode(true);
 					child = nextChild;
@@ -1416,6 +1416,7 @@ public class Xml
 			}
 			// Append after this one
 			child.setNext(xmlAdd);
+			xmlAdd.setPrev(child);
 
 		} else {
 			// Is the first child
@@ -1568,17 +1569,19 @@ public class Xml
 	 * @param isAttribute true if this node is an attribute (alters which parent
 	 * item is updated), false if regular child
 	 */
-	public void deleteNode(boolean isAttribute) {
-		// See if there's one after this
-		if (m_next != null) {
-			if (m_prev != null) {
-				// There's one before this too
+	public void deleteNode(boolean isAttribute)
+	{
+		if (m_next != null)
+		{	// See if there's one after this
+			if (m_prev != null)
+			{	// There's one before this too
 				m_prev.setNext(m_next);
 				m_next.setPrev(m_prev);
 
 			} else {
 				// This is the first one
-				if (m_parent != null) {
+				if (m_parent != null)
+				{
 					if (isAttribute)
 						m_parent.setFirstAttribute(m_next);
 					else
@@ -1586,26 +1589,32 @@ public class Xml
 
 				} else {
 					// This is likely an error.
-					// Every node should have a parent (except the root-most node)
-
+					// Every node should have a parent
+					// ...except the root-most node, which is why we don't report it
 				}
-
 			}
 
 		} else {
-			if (m_prev != null) {
-				// This was the last one
+			// There is no item after this
+			// But if there is no item before this, then there are no more
+			// children or attributes
+			if (m_prev != null)
+			{	// There is one before this.
+				// This was the last one in a chain, so we just set the
+				// previous one to now point to null
 				m_prev.setNext(null);
 
 			} else {
-				// This was the only one
-				if (m_parent != null) {
+				// There was nothing before this.
+				// This was the only attribute there was, so we set the
+				// parent to now point to no [attribute or child]
+				if (m_parent != null)
+				{	// Assign the parent to null for its [attribute or child]
 					if (isAttribute)
 						m_parent.setFirstAttribute(null);
 					else
 						m_parent.setFirstChild(null);
 				}
-
 			}
 		}
 	}
@@ -1936,6 +1945,178 @@ public class Xml
 			dos.writeBytes(" " + node.getName().trim() + "=\"" + node.getText().trim() + "\"");
 			node = node.getNext();
 		}
+	}
+
+	/**
+	 * Non-static version of addUUIDToAllNodes(Xml node, boolean includeAttributes)
+	 */
+	public void addUUIDsToAllNodes(boolean includeAttributes)
+	{
+		addUUIDsToAllNodes(this, includeAttributes);
+	}
+
+	/**
+	 * Adds "uuid='x'" attribute to every node and attribute from the root node
+	 * down.  Used for assigning unique references to elements across sessions,
+	 * so pointers can be easily re-established.
+	 * @param node <code>Xml</code> node to start at
+	 */
+	public static void addUUIDsToAllNodes(Xml		node,
+										  boolean	includeAttributes)
+	{
+		while (node != null)
+		{
+			if (includeAttributes)
+			{	// Assign to every attribute
+				// Note:  Attribute UUIDs DO NOT PERSIST across instances, they
+				//        are not saved and are lost when the xml file is re-loaded
+				addUUIDsToAllNodes(node.getFirstAttribute(), includeAttributes);
+			}
+
+			// Assign to every child
+			addUUIDsToAllNodes(node.getFirstChild(), includeAttributes);
+
+			// Assign to this entry (updates if already exists, creates if doesn't)
+			assignUUID(node);
+
+			// Move to next sibling
+			node = node.getNext();
+		}
+	}
+
+	/**
+	 * Non-static version of stripUUIDsFromAllNodes(Xml node, boolean includeAttributes)
+	 * @param includeAttributes
+	 */
+	public void stripUUIDsFromAllNodes(boolean	includeAttributes)
+	{
+		stripUUIDsFromAllNodes(this, includeAttributes);
+	}
+
+	/**
+	 * Called to remove all UUIDs from all nodes, can be used before saving
+	 * an Xml to make sure it isn't filled with large quantities of extraneous
+	 * information that is not necessary to be preserved across a save.
+	 * @param node root node to start at
+	 * @param includeAttributes should attributes be included?
+	 */
+	public static void stripUUIDsFromAllNodes(Xml		node,
+											  boolean	includeAttributes)
+	{
+		Xml uuid;
+
+		while (node != null)
+		{	// Delete this node's uuid (if any)
+			uuid = node.getAttributeNode("uuid");
+			if (uuid != null)
+				uuid.deleteNode(true);
+
+			if (includeAttributes)
+			{	// Delete all uuids from the attributes
+				stripUUIDsFromAllNodes(node.getFirstAttribute(), includeAttributes);
+			}
+
+			// Delete all uuids from the children
+			stripUUIDsFromAllNodes(node.getFirstChild(), includeAttributes);
+
+			// Move to next sibling
+			node = node.getNext();
+		}
+	}
+
+	/**
+	 * Non-static version of assignUUID(Xml node)
+	 */
+	public void assignUUID()
+	{
+		this.assignUUID();
+	}
+
+	/**
+	 * Assigns a UUID to the specified node
+	 * @param node
+	 */
+	public static void assignUUID(Xml node)
+	{
+		node.appendAttribute("uuid", Utils.getUUID());
+	}
+
+	/**
+	 * Non-static version of assignUUIDAndReturnValue(Xml node) which returns
+	 * the newly assigned uuid as a string
+	 */
+	public String assignUUIDAndReturnValue()
+	{
+		return(this.assignUUIDAndReturnValue());
+	}
+
+	/**
+	 * Assigns a UUID to the specified node, and return the new uuid value
+	 * @param node
+	 */
+	public static String assignUUIDAndReturnValue(Xml node)
+	{
+		String uuid = Utils.getUUID();
+		node.addAttribute("uuid", uuid);
+		return(uuid);
+	}
+
+	/**
+	 * Non-static version of getChildByUUID(Xml node, String uuid, boolean searchAttributes)
+	 * @param uuid string to search for
+	 * @param searchAtttributes should attributes also be searched
+	 * @return found <code>Xml</code> or null
+	 */
+	public Xml getNodeByUUID(String		uuid,
+							 boolean	searchAttributes)
+	{
+		return(getNodeByUUID(this, uuid, searchAttributes));
+	}
+
+	/**
+	 * Searches the root node and deeper to find the specified node by its UUID
+	 * @param node where to begin looking
+	 * @param uuid UUID to find
+	 * @param searchAttributes should attributes be searched (attribute UUIDs
+	 * are only valid while an Xml is in memory. They are lost at disk saves
+	 * and will not be restored when re-loaded).
+	 * @return
+	 */
+	public static Xml getNodeByUUID(Xml			node,
+									String		uuid,
+									boolean		searchAttributes)
+	{
+		Xml nodeTest;
+		String thisUUID;
+
+		while (node != null)
+		{
+			// See if it's this entry
+			thisUUID = node.getAttribute("uuid");
+			if (!thisUUID.isEmpty() && thisUUID.equals(uuid))
+			{	// It was a match
+				return(node);
+			}
+			// If we get here, it wasn't this node, see if it's oen of its
+			// attributes or children
+
+			if (searchAttributes)
+			{	// See if it's any of its attributes
+				nodeTest = getNodeByUUID(node.getFirstAttribute(), uuid, searchAttributes);
+				if (nodeTest != null)
+					return(nodeTest);
+			}
+
+			// See if it's any of its children
+			nodeTest = getNodeByUUID(node.getFirstChild(), uuid, searchAttributes);
+			if (nodeTest != null)
+				return(nodeTest);
+
+			// Move to next sibling
+			node = node.getNext();
+		}
+		// If we get here, it wasn't found at this level through any attributes or children
+		return(node);
 	}
 
 	/**

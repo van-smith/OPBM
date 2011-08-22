@@ -5,8 +5,8 @@
  * including all abstracts, flow controls one-by-one, through the entire
  * sequence provided for by the source Xml, called "atom" here.
  *
- * Last Updated:  Aug 01, 2011
- *
+  * Last Updated:  Aug 21, 2011
+*
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
@@ -1530,7 +1530,7 @@ public class BenchmarksAtom
 
 		if (m_bp != null && m_bp.m_hud != null)
 			m_bp.m_hud.setRebooting();
-		
+
 		if (saveStateBeforeReboot)
 		{
 			// Update the HUD
