@@ -205,12 +205,16 @@ public class Benchmarks
 			{
 				xmlSuccess		= xmlRun_Success;
 				xmlFailure		= xmlRun_Failure;
-				xmlIteration	= new Xml("iteration");
 
 				// Append success iteration information
+				xmlIteration	= new Xml("iteration");
 				xmlIteration.appendAttribute("this", Integer.toString(i+1));
-				xmlIteration.appendAttribute("max", Integer.toString(iterations));
+				xmlIteration.appendAttribute("max",  Integer.toString(iterations));
 				xmlRun_Success = xmlRun_Success.appendChild(xmlIteration);
+
+				xmlIteration	= new Xml("iteration");
+				xmlIteration.appendAttribute("this", Integer.toString(i+1));
+				xmlIteration.appendAttribute("max",  Integer.toString(iterations));
 				xmlRun_Failure = xmlRun_Failure.appendChild(xmlIteration);
 
 				// Indicate where we are in the overall scheme
@@ -229,10 +233,10 @@ public class Benchmarks
 				if (m_bp.m_debuggerActive)
 				{
 					// Update the debugger display
-					m_bp.m_debugLastAction	= m_bp.m_debuggerOrHUDAction;
+					m_bp.m_debugLastAction		= m_bp.m_debuggerOrHUDAction;
 					m_bp.m_debuggerOrHUDAction	= BenchmarkParams._NO_ACTION;
-					m_bp.m_debugParent		= atom;
-					m_bp.m_debugChild		= child;
+					m_bp.m_debugParent			= atom;
+					m_bp.m_debugChild			= child;
 					// Put focus in the window
 					m_bp.m_deb.forceWindowToHaveFocus();
 					m_bp.m_deb.update();
@@ -355,8 +359,8 @@ public class Benchmarks
 				m_bp.m_deb.setVisible(true);
 		}
 
-		// Hide all the results viewer windows
-		m_bp.m_opbm.hideAllResultsViewerWindowsInQueue();
+		// Close all opf the the results viewer instances
+		m_bp.m_opbm.closeAllResultsViewerWindowsInQueue();
 	}
 
 	/**
@@ -394,8 +398,12 @@ public class Benchmarks
 		m_bp.m_opbm.showAllResultsViewerWindowsInQueue();
 
 		// Launch the results viewer
-		ResultsViewer rv = m_bp.m_opbm.createAndShowResultsViewer(fileName);
-		rv.getDroppableFrame().forceWindowToHaveFocus();
+		if (!m_bp.m_opbm.willTerminateAfterRun())
+		{	// They are not going to automatically terminate, so we show the results viewer
+			ResultsViewer rv = m_bp.m_opbm.createAndShowResultsViewer(fileName);
+			if (rv != null)
+				rv.getDroppableFrame().forceWindowToHaveFocus();
+		}
 	}
 
 	/**

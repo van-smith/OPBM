@@ -196,20 +196,21 @@ public final class Opbm extends	ModalApp
             @Override
             public void run()
 			{
-				// Show the GUI, which also loads the scripts.xml, edits.xml and panels.xml (essential files)
-                createAndShowGUI();
-
 				// Create a non-edt thread to allow the GUI to continue starting up and displaying while processing
-				Thread t = new Thread("OPBM_Command_Line_Thread")
+				Thread t = new Thread("OPBMStartupThread")
 				{
 					@Override
 					public void run()
 					{
+						m_noExit = false;
 						List<String>	args	= new ArrayList<String>(0);
 						List<Xml>		list	= new ArrayList<Xml>(0);
 						Xml target;
 						String line, name, digits;
 						int i, j, iterations, runCount;
+
+						// Show the GUI, which also loads the scripts.xml, edits.xml and panels.xml (essential files)
+						createAndShowGUI();
 
 						// Load the command line options, including those from files, into the execution sequence
 						// Arguments get loaded into "List<String> args" rather than m_args[]
@@ -229,8 +230,38 @@ public final class Opbm extends	ModalApp
 							}
 						}
 
+						// Look for necessary-to-know-in-advance flags
+						for (i = 0; i < args.size(); i++)
+						{
+							line = args.get(i);
+							if (line.toLowerCase().startsWith("-noexit"))
+							{	// They don't want to exit when any automated runs are complete
+								m_noExit = true;
+
+							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
+								// They want to launch the simple skinned window
+								showSimpleWindow();
+
+							} else if (line.toLowerCase().startsWith("-developer")) {
+								// They want to launch the developer window
+								showDeveloperWindow();
+
+							} else if (line.toLowerCase().startsWith("-home:")) {
+								// They are overriding the default java.home location for java.exe for the restarter
+								m_jvmHome = line.substring(6).replace("\"", "");
+								File f = new File(m_jvmHome);
+								if (!f.exists())
+								{	// The override location does not exist
+									System.out.println("Warning: Java.home command-line override \"" + m_jvmHome + "\" does not exist.");
+								}
+
+							} else {
+								// We don't do anything with other options, they'll be handled below
+							}
+						}
+
 						// If they specified any command line options, grab them
-						runCount					= 0;
+						runCount = 0;
 						for (i = 0; i < args.size(); i++)
 						{
 							line = args.get(i);
@@ -299,36 +330,27 @@ public final class Opbm extends	ModalApp
 								++runCount;
 								m_benchmarkMaster.benchmarkOfficialRun(true);
 
-							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
-								// They want to launch the simple skinned window
-								showSimpleWindow();
-
-							} else if (line.toLowerCase().startsWith("-developer")) {
-								// They want to launch the developer window
-								showDeveloperWindow();
-
 							} else if (line.toLowerCase().startsWith("-name:")) {
 								// They are specifying a name for the run
 								m_executingBenchmarkRunName = line.substring(6);
 								System.out.println("Benchmark given '" + m_executingBenchmarkRunName + "' name.");
 
+							} else if (line.toLowerCase().startsWith("-noexit")) {
+								// handled above in pre-this-loop processing
 							} else if (line.toLowerCase().startsWith("-home:")) {
-								// They are overriding the default java.home location for java.exe for the restarter
-								m_jvmHome = line.substring(6).replace("\"", "");
-								File f = new File(m_jvmHome);
-								if (!f.exists())
-								{	// The override location does not exist
-									System.out.println("Warning: Java.home command-line override \"" + m_jvmHome + "\" does not exist.");
-								}
+								// handled above in pre-this-loop processing
+							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
+								// handled above in pre-this-loop processing
+							} else if (line.toLowerCase().startsWith("-developer")) {
+								// handled above in pre-this-loop processing
 
 							} else {
 								// Ignore the unknown option
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
 							}
 						}
-						if (runCount != 0)
-						{
-							// If we get here, we did not have an error, and we're ready to exit
+						if (!m_noExit && runCount != 0)
+						{	// If we get here, they don't want us to exit, or we did a run without any errors and we're ready to exit
 							System.exit(0);
 						}
 						// Done doing command-line things
@@ -336,10 +358,6 @@ public final class Opbm extends	ModalApp
 					}
 				};
 				t.start();
-				try {
-					t.join();
-				} catch (InterruptedException ex) {
-				}
             }
         });
 	}
@@ -388,7 +406,7 @@ public final class Opbm extends	ModalApp
 		m_rv = null;
 
 		m_rvsync = 0;
-		if (!resultsXmlFilename.isEmpty() && !m_executingFromCommandLine)
+		if (!resultsXmlFilename.isEmpty() && !m_opbm.willTerminateAfterRun())
 		{	// We only process real files
 			m_rvFilename = resultsXmlFilename;
 
@@ -445,7 +463,7 @@ public final class Opbm extends	ModalApp
 
 	public void toggleDeveloperWindow()
 	{
-		if (m_frameDeveloper.isVisible())
+		if (m_frameDeveloper != null && m_frameDeveloper.isVisible())
 		{	// Turn it off
 			m_frameDeveloper.setVisible(false);
 
@@ -459,13 +477,13 @@ public final class Opbm extends	ModalApp
 	public void showDeveloperWindow()
 	{
 		// Show the developer window
-		if (!m_frameDeveloper.isVisible())
+		if (m_frameDeveloper != null && !m_frameDeveloper.isVisible())
 		{	// Turn it on
 			m_frameDeveloper.setVisible(true);
 		}
 
 		// Hide the simple window
-		if (m_frameSimple.isVisible())
+		if (m_frameSimple != null && m_frameSimple.isVisible())
 		{	// Turn it off
 			m_frameSimple.setVisible(false);
 		}
@@ -474,7 +492,7 @@ public final class Opbm extends	ModalApp
 	public void hideDeveloperWindow()
 	{
 		// Show the developer window
-		if (m_frameDeveloper.isVisible())
+		if (m_frameDeveloper != null && m_frameDeveloper.isVisible())
 		{	// Turn it off
 			m_frameDeveloper.setVisible(false);
 		}
@@ -491,7 +509,7 @@ public final class Opbm extends	ModalApp
 
 	public void toggleSimpleWindow()
 	{
-		if (m_frameSimple.isVisible())
+		if (m_frameSimple != null && m_frameSimple.isVisible())
 		{	// Turn it off
 			m_frameSimple.setVisible(false);
 
@@ -505,13 +523,13 @@ public final class Opbm extends	ModalApp
 	public void showSimpleWindow()
 	{
 		// Hide the developer window
-		if (m_frameDeveloper.isVisible())
+		if (m_frameDeveloper != null && m_frameDeveloper.isVisible())
 		{	// Turn it off
 			m_frameDeveloper.setVisible(false);
 		}
 
 		// Show the simple window
-		if (!m_frameSimple.isVisible())
+		if (m_frameSimple != null && !m_frameSimple.isVisible())
 		{	// Turn it on
 			m_frameSimple.setVisible(true);
 		}
@@ -520,7 +538,7 @@ public final class Opbm extends	ModalApp
 	public void hideSimpleWindow()
 	{
 		// Hide the simple window
-		if (m_frameSimple.isVisible())
+		if (m_frameSimple != null && m_frameSimple.isVisible())
 		{	// Turn it off
 			m_frameSimple.setVisible(false);
 		}
@@ -529,13 +547,13 @@ public final class Opbm extends	ModalApp
 	public void showUserWindow()
 	{
 		// See which one should be visible
-		if (m_settingsMaster.isSimpleSkin())
+		if (m_frameSimple != null && m_settingsMaster.isSimpleSkin())
 		{	// We're viewing the simple skin
 			m_frameSimple.setVisible(true);
 
 		}
 
-		if (m_settingsMaster.isDeveloperSkin())
+		if (m_frameDeveloper != null && m_settingsMaster.isDeveloperSkin())
 		{	// Viewing the developer window
 			m_frameDeveloper.setVisible(true);
 		}
@@ -1968,6 +1986,20 @@ public final class Opbm extends	ModalApp
 	/**
 	 * Called when a benchmark run starts to close all the results viewer windows
 	 */
+	public void closeAllResultsViewerWindowsInQueue()
+	{
+		int i;
+
+		for (i = m_rvFrames.size() - 1; i >= 0; i--)
+		{	// Close and remove them from this list (so they won't show up again and will be garbage collected)
+			m_rvFrames.get(i).dispose();
+			m_rvFrames.remove(i);
+		}
+	}
+
+	/**
+	 * Called when a benchmark run starts to hide all the results viewer windows
+	 */
 	public void hideAllResultsViewerWindowsInQueue()
 	{
 		int i;
@@ -2164,6 +2196,30 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
+	/**
+	 * When a command line sequence is run, this variable is set high.
+	 * @return yes or no if we're running a sequence from the command line
+	 */
+	public boolean isExecutingFromCommandLine()
+	{
+		return(m_executingFromCommandLine);
+	}
+
+	/**
+	 * Based on a combination of factors.  If running a manual benchmark,
+	 * then will not be terminating afterward.  If running from the command
+	 * line then they will be terminating unless they've specified the -noexit
+	 * command line parameter.
+	 * @return
+	 */
+	public boolean willTerminateAfterRun()
+	{
+		if (m_executingFromCommandLine)
+			return(!m_noExit);
+		else
+			return(false);
+	}
+
 	/** Main app entry point.
 	 *
 	 * @param args command line parameters
@@ -2289,6 +2345,7 @@ public final class Opbm extends	ModalApp
 	private boolean					m_executingTrialRun;
 	private boolean					m_executingOfficialRun;
 	private String					m_executingBenchmarkRunName;
+	private boolean					m_noExit;						// Was the -noexit command line option specified?
 	private Tuple					m_dialogTuple;
 
 	/**

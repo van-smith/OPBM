@@ -186,7 +186,8 @@ Func CopyToClipboard()
 EndFunc
 
 Func PasteIntoDocument()
-	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	;opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	WinActivate( $MICROSOFT_WORD_WINDOW )
 	outputDebug( $ALICE_PASTE_INTO_DOCUMENT )
 	
 	TimerBegin()
@@ -481,8 +482,13 @@ Func ManipulateInAcrobatReader()
 			Send("^+{-}")
 		EndIf
 		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
-		
-		; First page
+	
+		; Move forward 2 pages, a page at a time
+		Send("{PGUP}")
+		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+		Send("{PGUP}")
+		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+		; Move to first page
 		Send("{Home}")
 		opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 	Next

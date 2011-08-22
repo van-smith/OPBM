@@ -138,6 +138,20 @@
 			</abstract>
 		</abstracts>
 		<atoms>
+			<atom name="Simulate Failure">
+				<abstract name="Simulate Failure" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)tests(backslash)failure(backslash)failure.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Simulate Success">
+				<abstract name="Simulate success" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)tests(backslash)success(backslash)success.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 <!--
 			<atom name="Reboot And Continue">
 				<abstract name="IE Google V8" sourcename="execute">
