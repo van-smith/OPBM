@@ -200,21 +200,21 @@ public class DroppableFrame extends JFrame
 	 */
 	public void setTransparency(float opaquePercent)
 	{
-		try {
-			Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
-			Method mSetWindowOpacity;
-			mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
-			if (mSetWindowOpacity != null)
-				mSetWindowOpacity.invoke(null, this, Float.valueOf(opaquePercent));
-// REMEMBER, since 1.7.0, this is generating an exception, needs to be looked at
-
-		} catch (NoSuchMethodException ex) {
-		} catch (SecurityException ex) {
-		} catch (ClassNotFoundException ex) {
-		} catch (IllegalAccessException ex) {
-		} catch (IllegalArgumentException ex) {
-		} catch (InvocationTargetException ex) {
-		}
+//		try {
+//			Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
+//			Method mSetWindowOpacity;
+//			mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
+//			if (mSetWindowOpacity != null)
+//				mSetWindowOpacity.invoke(null, this, Float.valueOf(opaquePercent));
+//// REMEMBER, since 1.7.0, this is generating an exception, needs to be looked at
+//
+//		} catch (NoSuchMethodException ex) {
+//		} catch (SecurityException ex) {
+//		} catch (ClassNotFoundException ex) {
+//		} catch (IllegalAccessException ex) {
+//		} catch (IllegalArgumentException ex) {
+//		} catch (InvocationTargetException ex) {
+//		}
 	}
 
 	@Override

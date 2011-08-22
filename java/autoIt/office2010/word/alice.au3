@@ -186,7 +186,8 @@ Func CopyToClipboard()
 EndFunc
 
 Func PasteIntoDocument()
-	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	;opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
+	WinActivate( $MICROSOFT_WORD_WINDOW )
 	outputDebug( $ALICE_PASTE_INTO_DOCUMENT )
 	
 	TimerBegin()
