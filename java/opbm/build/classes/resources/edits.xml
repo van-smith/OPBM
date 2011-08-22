@@ -315,510 +315,6 @@
 			<newcolumn/>
 		</edit>
 
-		<edit name="manufacturers">
-			<precommand p1="Edit Manufacturers">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.manufacturers.manufacturer</source>
-				<foreach>manufacturer</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Simple Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox field="manufacturer"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="cpus">
-			<precommand p1="Edit CPUs">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.cpus.cpu</source>
-				<foreach>cpu</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Cores"/>
-			<textbox width="170" field="cores"/>
-			<label text="Frequency"/>
-			<textbox width="170" field="frequency"/>
-			<label text="Voltage:"/>
-			<textbox width="170" field="voltage"/>
-			<label text="Watts Idle:"/>
-			<textbox width="170" field="wattsidle"/>
-			<label text="Watts Typical"/>
-			<textbox width="170" field="wattstypical"/>
-			<label text="Watts Max:"/>
-			<textbox width="170" field="wattsmax"/>
-			<newcolumn width="280"/>
-			<label text="L1 Data Cache (KB):"/>
-			<textbox width="170" field="l1dcache"/>
-			<label text="L1 Instruction Cache (KB):"/>
-			<textbox width="170" field="l1icache"/>
-			<label text="L2 Data Cache (KB):"/>
-			<textbox width="170" field="l2dcache"/>
-			<label text="L2 Instruction Cache (KB):"/>
-			<textbox width="170" field="l2icache"/>
-			<label text="L3 Data Cache (KB):"/>
-			<textbox width="170" field="l3dcache"/>
-			<label text="L3 Instruction Cache (KB):"/>
-			<textbox width="170" field="l3icache"/>
-			<label text="L4 Data Cache (KB):"/>
-			<textbox width="170" field="l4dcache"/>
-			<label text="L4 Instruction Cache (KB):"/>
-			<textbox width="170" field="l4icache"/>
-			<newcolumn width="210"/>
-			<label text="Temperature Min (F):"/>
-			<textbox width="170" field="tempminf"/>
-			<label text="Temperature Max (F):"/>
-			<textbox width="170" field="tempmaxf"/>
-		</edit>
-
-		<edit name="chipsets">
-			<precommand p1="Edit Chipsets">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.chipsets.chipset</source>
-				<foreach>chipset</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-		</edit>
-
-		<edit name="memorys">
-			<precommand p1="Edit Memorys">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.memorys.memory</source>
-				<foreach>memory</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Size:"/>
-			<textbox width="250" field="size"/>
-			<label text="Speed:"/>
-			<textbox width="250" field="speed"/>
-			<label text="Timing:"/>
-			<textbox width="250" field="timing"/>
-		</edit>
-
-		<edit name="oses">
-			<precommand p1="Edit Oses">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.oses.os</source>
-				<foreach>os</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Bits:"/>
-			<textbox width="250" field="bits"/>
-			<label text="Add-ons:"/>
-			<editbox field="addons"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="videos">
-			<precommand p1="Edit Videos">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.videos.video</source>
-				<foreach>video</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Memory Type:"/>
-			<textbox width="250" field="memorytype"/>
-			<label text="Memory Size:"/>
-			<textbox width="250" field="memorysize"/>
-			<label text="Frequency:"/>
-			<textbox width="250" field="frequency"/>
-		</edit>
-
-		<edit name="audios">
-			<precommand p1="Edit Audios">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.audios.audio</source>
-				<foreach>audio</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="networkadapters">
-			<precommand p1="Edit Network Adapters">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.networkadapters.networkadapter</source>
-				<foreach>networkadapter</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="harddrives">
-			<precommand p1="Edit Hard Drives">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.harddrives.harddrive</source>
-				<foreach>harddrive</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="cddrives">
-			<precommand p1="Edit CD Drives">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.cddrives.cddrive</source>
-				<foreach>cddrive</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="dvddrives">
-			<precommand p1="Edit DVD Drives">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.dvddrives.dvddrive</source>
-				<foreach>dvddrive</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="floppydrives">
-			<precommand p1="Edit Floppy Drives">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.floppydrives.floppydrive</source>
-				<foreach>floppydrive</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="mmcs">
-			<precommand p1="Edit MMCs">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.mmcs.mmc</source>
-				<foreach>mmc</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="monitors">
-			<precommand p1="Edit Monitors">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.monitors.monitor</source>
-				<foreach>monitor</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="usbs">
-			<precommand p1="Edit USBs">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.usbs.usb</source>
-				<foreach>usb</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="mice">
-			<precommand p1="Edit Mice">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.mice.mouse</source>
-				<foreach>mouse</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="keyboards">
-			<precommand p1="Edit Keyboards">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.keyboards.keyboard</source>
-				<foreach>keyboard</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
-		<edit name="others">
-			<precommand p1="Edit Others">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.machinedata.others.other</source>
-				<foreach>other</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Name:"/>
-			<textbox width="250" field="#name"/>
-			<label text="Manufacturer:"/>
-			<textbox width="250" field="manufacturer"/>
-			<label text="Model:"/>
-			<textbox width="250" field="model"/>
-			<label text="Revision:"/>
-			<textbox width="250" field="revision"/>
-			<label text="Style:"/>
-			<textbox width="250" field="style"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
-		</edit>
-
 		<edit name="keywords">
 			<precommand p1="Edit Keywords">leftpanel</precommand>
 			<listbox>
@@ -837,187 +333,6 @@
 			<editbox field="notes"/>
 		</edit>
 
-		<edit name="machines">
-			<precommand p1="Edit Machines">leftpanel</precommand>
-			<label width="250" text="Machine Description:"/>
-			<textbox width="250" field="#name"/>
-			<label width="250" text="Machines Listing:"/>
-			<listbox name="machine">
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<onselect p1="elements">lookupbox_update</onselect>
-				<source>opbm.machinedata.machines.machine</source>
-				<foreach>machine</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label width="250" text="Device Description:"/>
-			<textbox width="250" field="devices.#name"/>
-			<label width="250" text="List of Devices:"/>
-			<lookupbox name="devices" autoupdate="no" height="max">
-				<subtract>lookupbox_subtract</subtract>
-				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
-				<up>lookupbox_move_up</up>
-				<down>lookupbox_move_down</down>
-				<source relativeto="machine">[cpu,memory,os,video,audio,networkadapter,harddrive,cddrive,dvddrive,floppydrive,mmc,monitor,usb,mouse,keyboard,other]</source>
-				<foreach>[cpu,memory,os,video,audio,networkadapter,harddrive,cddrive,dvddrive,floppydrive,mmc,monitor,usb,mouse,keyboard,other]</foreach>
-				<relativeedits p1="cpu=cpus" p2="memory=memorys" p3="os=oses" p4="video=videos" p5="audio=audios" p6="networkadapter=networkadapters" p7="harddrive=harddrives" p8="cddrive=cddrives" p9="dvddrive=dvddrives" p10="floppydrive=floppydrives" p11="mmc=mmcs" p12="monitor=monitors" p13="usb=usbs" p14="mouse=mice" p15="keyboard=keyboards" p16="other=others"/>
-				<relativeoptions p1="cpu=opbm.machinedata.cpus.cpu" p2="memory=opbm.machinedata.memorys.memory" p3="os=opbm.machinedata.oses.os" p4="video=opbm.machinedata.videos.video" p5="audio=opbm.machinedata.audios.audio" p6="networkadapter=opbm.machinedata.networkadapters.networkadapter" p7="harddrive=opbm.machinedata.harddrives.harddrive" p8="cddrive=opbm.machinedata.cddrives.cddrive" p9="dvddrive=opbm.machinedata.dvddrives.dvddrive" p10="floppydrive=opbm.machinedata.floppydrives.floppydrive" p11="mmc=opbm.machinedata.mmcs.mmc" p12="monitor=opbm.machinedata.monitors.monitor" p13="usb=opbm.machinedata.usbs.usb" p14="mouse=opbm.machinedata.mice.mouse" p15="keyboard=opbm.machinedata.keyboards.keyboard" p16="other=opbm.machinedata.others.other"/>
-				<listby p1="#name"/>
-			</lookupbox>
-			<newcolumn/>
-			<label text="Note: Too many options to edit easily."/>
-<!--
-			<label text="CPUs:"/>
-			<lookupbox height="75" name="cpus" autoupdate="no">
-				<add p1="machines" p2="devices" p3="cpus">lookupbox_add</add>
-				<zoom p1="cpus" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.cpus.cpu</source>
-				<foreach>cpu</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Memory:"/>
-			<lookupbox height="75" name="memorys" autoupdate="no">
-				<add p1="machines" p2="devices" p3="memorys">lookupbox_add</add>
-				<zoom p1="memorys" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.memorys.memory</source>
-				<foreach>memory</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="OSes:"/>
-			<lookupbox height="75" name="oses" autoupdate="no">
-				<add p1="machines" p2="devices" p3="oses">lookupbox_add</add>
-				<zoom p1="oses" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.oses.os</source>
-				<foreach>os</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Video:"/>
-			<lookupbox height="75" name="memorys" autoupdate="no">
-				<add p1="machines" p2="devices" p3="memorys">lookupbox_add</add>
-				<zoom p1="memorys" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.memorys.memory</source>
-				<foreach>memory</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Audio:"/>
-			<lookupbox height="75" name="audios" autoupdate="no">
-				<add p1="machines" p2="devices" p3="audios">lookupbox_add</add>
-				<zoom p1="audios" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.audios.audio</source>
-				<foreach>audio</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Network Cards:"/>
-			<lookupbox height="75" name="networkadapters" autoupdate="no">
-				<add p1="machines" p2="devices" p3="networkadapters">lookupbox_add</add>
-				<zoom p1="networkadapters" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.networkadapters.networkadapter</source>
-				<foreach>networkadapter</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<newcolumn/>
-			<label text="Hard Drives:"/>
-			<lookupbox height="75" name="harddrives" autoupdate="no">
-				<add p1="machines" p2="devices" p3="harddrives">lookupbox_add</add>
-				<zoom p1="harddrives" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.harddrives.harddrive</source>
-				<foreach>harddrive</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="CD Drives:"/>
-			<lookupbox height="75" name="cddrives" autoupdate="no">
-				<add p1="machines" p2="devices" p3="cddrives">lookupbox_add</add>
-				<zoom p1="cddrives" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.cddrives.cddrive</source>
-				<foreach>cddrive</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="DVD Drives:"/>
-			<lookupbox height="75" name="dvddrives" autoupdate="no">
-				<add p1="machines" p2="devices" p3="dvddrives">lookupbox_add</add>
-				<zoom p1="harddrives" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.dvddrives.dvddrive</source>
-				<foreach>dvddrive</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Floppy Drives:"/>
-			<lookupbox height="75" name="floppydrives" autoupdate="no">
-				<add p1="machines" p2="devices" p3="floppydrives">lookupbox_add</add>
-				<zoom p1="floppydrives" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.floppydrives.floppydrive</source>
-				<foreach>floppydrive</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="MMCs:"/>
-			<lookupbox height="75" name="mmcs" autoupdate="no">
-				<add p1="machines" p2="devices" p3="mmcs">lookupbox_add</add>
-				<zoom p1="mmcs" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.mmcs.mmc</source>
-				<foreach>mmc</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Monitors:"/>
-			<lookupbox height="75" name="monitors" autoupdate="no">
-				<add p1="machines" p2="devices" p3="monitors">lookupbox_add</add>
-				<zoom p1="monitors" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.monitors.monitor</source>
-				<foreach>monitors</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<newcolumn/>
-			<label text="USBs:"/>
-			<lookupbox height="75" name="usbs" autoupdate="no">
-				<add p1="machines" p2="devices" p3="usbs">lookupbox_add</add>
-				<zoom p1="usbs" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.usbs.usb</source>
-				<foreach>usb</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Mice:"/>
-			<lookupbox height="75" name="mice" autoupdate="no">
-				<add p1="machines" p2="devices" p3="mice">lookupbox_add</add>
-				<zoom p1="mice" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.mice.mouse</source>
-				<foreach>mouse</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Keyboards:"/>
-			<lookupbox height="75" name="keyboards" autoupdate="no">
-				<add p1="machines" p2="devices" p3="keyboards">lookupbox_add</add>
-				<zoom p1="keyboards" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.keyboards.keyboard</source>
-				<foreach>keyboard</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<vspacer height="-15"/>
-			<label text="Others:"/>
-			<lookupbox height="75" name="others" autoupdate="no">
-				<add p1="machines" p2="devices" p3="others">lookupbox_add</add>
-				<zoom p1="others" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.machinedata.others.other</source>
-				<foreach>other</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
-			<newcolumn/>
-			<options relativeto="devices"/>
--->
-		</edit>
-
 		<edit name="execute atoms">
 			<precommand p1="Execute Atoms">leftpanel</precommand>
 			<label width="250" text="Atom Description:"/>
@@ -1031,6 +346,8 @@
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
 			</listbox>
+			<label width="250" text="Sequence Description:"/>
+			<textbox width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations:"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
@@ -1043,11 +360,132 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label width="250" text="Sequence Description:"/>
-			<textbox width="250" field="elements.#name"/>
-			<vspacer height="100"/>
+			<vspacer height="200"/>
 			<link text="Run Atom Sequence" fontsize="24" height="40">
 				<command p1="atom">run_atom_sequence</command>
+			</link>
+			<vspacer height="60"/>
+			<link text="Results Viewer (Sample)">
+				<command>run_results_viewer_sample</command>
+			</link>
+			<vspacer height="20"/>
+			<link text="Results Viewer (Choose File)">
+				<command>prompt_run_results_viewer</command>
+			</link>
+		</edit>
+
+		<edit name="execute molecules">
+			<precommand p1="Execute Molecules">leftpanel</precommand>
+			<label width="250" text="Molecule Description:"/>
+			<textbox width="250" field="#name"/>
+			<label width="250" text="Molecule Listing:"/>
+			<listbox name="molecule">
+				<onselect p1="elements">lookupbox_update</onselect>
+				<dblclick p1="molecule">run_molecule_benchmark</dblclick>
+				<enter p1="molecule">run_molecule_benchmark</enter>
+				<source>opbm.scriptdata.molecules.molecule</source>
+				<foreach>molecule</foreach>
+				<listby p1="#name"/>
+			</listbox>
+			<label width="250" text="Sequence Description:"/>
+			<textbox width="250" field="elements.#name"/>
+			<label width="250" text="Sequence of Operations:"/>
+			<lookupbox name="elements" autoupdate="no" height="max">
+				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
+				<up>lookupbox_move_up</up>
+				<down>lookupbox_move_down</down>
+				<source relativeto="molecule">[flow,abstract,atom]</source>
+				<foreach>[flow,abstract,atom]</foreach>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts" p3="atom=atoms"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract" p3="atom=opbm.scriptdata.atoms.atom"/>
+				<listby p1="#name"/>
+			</lookupbox>
+			<newcolumn/>
+			<vspacer height="200"/>
+			<link text="Run Molecule Sequence" fontsize="24" height="40">
+				<command p1="molecule">run_molecule_sequence</command>
+			</link>
+			<vspacer height="60"/>
+			<link text="Results Viewer (Sample)">
+				<command>run_results_viewer_sample</command>
+			</link>
+			<vspacer height="20"/>
+			<link text="Results Viewer (Choose File)">
+				<command>prompt_run_results_viewer</command>
+			</link>
+		</edit>
+
+		<edit name="execute scenarios">
+			<precommand p1="Execute Scenarios">leftpanel</precommand>
+			<label width="250" text="Scenario Description:"/>
+			<textbox width="250" field="#name"/>
+			<label width="250" text="Scenario Listing:"/>
+			<listbox name="scenario">
+				<onselect p1="elements">lookupbox_update</onselect>
+				<dblclick p1="scenario">run_scenario_benchmark</dblclick>
+				<enter p1="scenario">run_scenario_benchmark</enter>
+				<source>opbm.scriptdata.scenarios.scenario</source>
+				<foreach>scenario</foreach>
+				<listby p1="#name"/>
+			</listbox>
+			<label width="250" text="Sequence Description:"/>
+			<textbox width="250" field="elements.#name"/>
+			<label width="250" text="Sequence of Operations:"/>
+			<lookupbox name="elements" autoupdate="no" height="max">
+				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
+				<up>lookupbox_move_up</up>
+				<down>lookupbox_move_down</down>
+				<source relativeto="scenario">[flow,abstract,atom,molecule]</source>
+				<foreach>[flow,abstract,atom,molecule]</foreach>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts" p3="atom=atoms" p4="molecule=molecules"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract" p3="atom=opbm.scriptdata.atoms.atom" p4="molecule=opbm.scriptdata.molecules.molecule"/>
+				<listby p1="#name"/>
+			</lookupbox>
+			<newcolumn/>
+			<vspacer height="200"/>
+			<link text="Run Scenario Sequence" fontsize="24" height="40">
+				<command p1="scenario">run_scenario_sequence</command>
+			</link>
+			<vspacer height="60"/>
+			<link text="Results Viewer (Sample)">
+				<command>run_results_viewer_sample</command>
+			</link>
+			<vspacer height="20"/>
+			<link text="Results Viewer (Choose File)">
+				<command>prompt_run_results_viewer</command>
+			</link>
+		</edit>
+
+		<edit name="execute suites">
+			<precommand p1="Execute Suites">leftpanel</precommand>
+			<label width="250" text="Suite Description:"/>
+			<textbox width="250" field="#name"/>
+			<label width="250" text="Suite Listing:"/>
+			<listbox name="suite">
+				<onselect p1="elements">lookupbox_update</onselect>
+				<dblclick p1="suite">run_suite_benchmark</dblclick>
+				<enter p1="suite">run_suite_benchmark</enter>
+				<source>opbm.scriptdata.suites.suite</source>
+				<foreach>suite</foreach>
+				<listby p1="#name"/>
+			</listbox>
+			<label width="250" text="Sequence Description:"/>
+			<textbox width="250" field="elements.#name"/>
+			<label width="250" text="Sequence of Operations:"/>
+			<lookupbox name="elements" autoupdate="no" height="max">
+				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
+				<up>lookupbox_move_up</up>
+				<down>lookupbox_move_down</down>
+				<source relativeto="suite">[flow,abstract,atom,molecule,scenario]</source>
+				<foreach>[flow,abstract,atom,molecule,scenario]</foreach>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts" p3="atom=atoms" p4="molecule=molecules" p5="scenario=scenarios"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract" p3="atom=opbm.scriptdata.atoms.atom" p4="molecule=opbm.scriptdata.molecules.molecule" p5="scenario=opbm.scriptdata.scenarios.scenario"/>
+				<listby p1="#name"/>
+			</lookupbox>
+			<newcolumn/>
+			<vspacer height="200"/>
+			<link text="Run Suite Sequence" fontsize="24" height="40">
+				<command p1="suite">run_suite_sequence</command>
 			</link>
 			<vspacer height="60"/>
 			<link text="Results Viewer (Sample)">

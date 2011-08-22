@@ -324,6 +324,13 @@ public class Commands
 			m_opbm.showDeveloperWindow();
 
 //////////
+// TRIAL RUN and OFFICIAL RUN
+		} else if (command.equals("trial_run")) {
+			m_opbm.trialRun(false);
+		} else if (command.equals("official_run")) {
+			m_opbm.officialRun(false);
+
+//////////
 // TOGGLE MENU ITEMS
 		} else if (command.equals("toggle_debug_info")) {
 			m_settingsMaster.toggleHUDDebugInfo();

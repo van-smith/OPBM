@@ -304,16 +304,16 @@ public final class Opbm extends	ModalApp
 								}
 
 							} else if (line.toLowerCase().startsWith("-trial")) {
-								// They want to run a trial benchmark run
+								// They want to run a trial benchmark ru
 								m_executingFromCommandLine = true;
 								++runCount;
-								m_benchmarkMaster.benchmarkTrialRun(true);
+								trialRun(true);
 
 							} else if (line.toLowerCase().startsWith("-official")) {
 								// They want to run an official benchmark run
 								m_executingFromCommandLine = true;
 								++runCount;
-								m_benchmarkMaster.benchmarkOfficialRun(true);
+								officialRun(true);
 
 							} else if (line.toLowerCase().startsWith("-name:")) {
 								// They are specifying a name for the run
@@ -345,6 +345,16 @@ public final class Opbm extends	ModalApp
 				t.start();
             }
         });
+	}
+
+	public void trialRun(boolean fromCommandLine)
+	{	// Execute a trial run benchmark
+		m_benchmarkMaster.benchmarkTrialRun(fromCommandLine);
+	}
+
+	public void officialRun(boolean fromCommandLine)
+	{	// Execute an official run benchmark
+		m_benchmarkMaster.benchmarkOfficialRun(fromCommandLine);
 	}
 
 	public static void readTerminatedLinesFromFile(String			fileName,

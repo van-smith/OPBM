@@ -92,6 +92,8 @@ public class Macros
 					macroSubstitution = "</table>";
 				else if (macro.equalsIgnoreCase("tr"))
 					macroSubstitution = "<tr>";
+				else if (macro.equalsIgnoreCase("trheight100"))
+					macroSubstitution = "<tr height='100'>";
 				else if (macro.equalsIgnoreCase("/tr"))
 					macroSubstitution = "</tr>";
 				else if (macro.equalsIgnoreCase("td"))
@@ -102,6 +104,8 @@ public class Macros
 					macroSubstitution = "<td width='20'>";
 				else if (macro.equalsIgnoreCase("tdwidth45"))
 					macroSubstitution = "<td width='45'>";
+				else if (macro.equalsIgnoreCase("tdwidth180"))
+					macroSubstitution = "<td width='180'>";
 				else if (macro.equalsIgnoreCase("/td"))
 					macroSubstitution = "</td>";
 

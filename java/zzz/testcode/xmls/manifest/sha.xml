@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+	<sha>
+		<!-- each entry is 32 bytes long -->
+		<seed>f0e082a2ea564f62a17f22685ca12d2d</seed>
+		<manifest>0f12d3e13fefe900172f257630014471</manifest>
+		<output>13fefe900f12d301720fe014123d3428</output>
+	</sha>
+</opbm>

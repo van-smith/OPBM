@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opbm>
+	<aggregateresults>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+		<result start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+	</aggregateresults>
+</opbm>

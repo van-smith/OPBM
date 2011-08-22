@@ -3,7 +3,7 @@
 	<settings>
 		<benchmarks>
 			<debugger>No</debugger>
-			<singlestep>no</singlestep>
+			<singlestep>No</singlestep>
 			<hud>
 				<visible>Yes</visible>
 				<translucency>0.5</translucency>
