@@ -5,7 +5,7 @@
  * benchmarking.  It has only those methods necessary to process the data
  * consumed or referenced during benchmark execution.
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Aug 21, 2011
  *
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
