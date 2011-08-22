@@ -45,7 +45,8 @@ public class DroppableFrame extends JFrame
 	 * determining what to do when closing the window)
 	 */
 	public DroppableFrame(Opbm		opbm,
-						  boolean	isZoomWindow)
+						  boolean	isZoomWindow,
+						  boolean	isResizeable)
 	{
 		m_dragSource	= DragSource.getDefaultDragSource();
 		m_dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
@@ -54,7 +55,9 @@ public class DroppableFrame extends JFrame
 		m_opbm			= opbm;
 		m_isZoomWindow	= isZoomWindow;
 		m_isAppWindow	= !isZoomWindow;
+		m_isResizeable	= isResizeable;
 		m_lookupbox		= null;
+		setResizable(isResizeable);
 	}
 
 	/** Updates the status bar with the specified label (used to indicate drop operation)
@@ -200,21 +203,21 @@ public class DroppableFrame extends JFrame
 	 */
 	public void setTransparency(float opaquePercent)
 	{
-//		try {
-//			Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
-//			Method mSetWindowOpacity;
-//			mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
-//			if (mSetWindowOpacity != null)
-//				mSetWindowOpacity.invoke(null, this, Float.valueOf(opaquePercent));
-//// REMEMBER, since 1.7.0, this is generating an exception, needs to be looked at
-//
-//		} catch (NoSuchMethodException ex) {
-//		} catch (SecurityException ex) {
-//		} catch (ClassNotFoundException ex) {
-//		} catch (IllegalAccessException ex) {
-//		} catch (IllegalArgumentException ex) {
-//		} catch (InvocationTargetException ex) {
-//		}
+		try {
+			Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
+			Method mSetWindowOpacity;
+			mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
+			if (mSetWindowOpacity != null)
+				mSetWindowOpacity.invoke(null, this, Float.valueOf(opaquePercent));
+// REMEMBER, since 1.7.0, this is generating an exception, needs to be looked at
+
+		} catch (NoSuchMethodException ex) {
+		} catch (SecurityException ex) {
+		} catch (ClassNotFoundException ex) {
+		} catch (IllegalAccessException ex) {
+		} catch (IllegalArgumentException ex) {
+		} catch (InvocationTargetException ex) {
+		}
 	}
 
 	@Override
@@ -265,5 +268,6 @@ public class DroppableFrame extends JFrame
 	protected Opbm					m_opbm;
 	protected boolean				m_isAppWindow;
 	protected boolean				m_isZoomWindow;
+	protected boolean				m_isResizeable;
 	protected PanelRightLookupbox	m_lookupbox;
 }

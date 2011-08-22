@@ -124,7 +124,7 @@ public final class OpbmInput
 
 		m_width		= 450;
 		m_height	= 250;
-		m_frame		= new DroppableFrame(m_opbm, false);
+		m_frame		= new DroppableFrame(m_opbm, false, false);
 		m_frame.setTitle(m_caption.isEmpty() ? "OPBM Input" : m_caption);
 
 		// Compute the actual size we need for our window, so it's properly centered

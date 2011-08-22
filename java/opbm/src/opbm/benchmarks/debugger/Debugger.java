@@ -51,7 +51,7 @@ public final class Debugger extends DroppableFrame implements KeyListener, Mouse
 {
 	public Debugger(BenchmarkParams bp)
 	{
-		super(bp.m_opbm, false);
+		super(bp.m_opbm, false, false);
 
 		m_bp					= bp;
 		m_thisDebuggerStepName	= "(not yet defined)";

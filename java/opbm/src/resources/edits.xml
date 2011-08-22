@@ -1046,11 +1046,11 @@
 			<label width="250" text="Sequence Description:"/>
 			<textbox width="250" field="elements.#name"/>
 			<vspacer height="100"/>
-			<link text="Run Atom Sequence">
+			<link text="Run Atom Sequence" fontsize="24" height="40">
 				<command p1="atom">run_atom_sequence</command>
 			</link>
-			<vspacer height="20"/>
-			<link text="Results Viewer Sample">
+			<vspacer height="60"/>
+			<link text="Results Viewer (Sample)">
 				<command>run_results_viewer_sample</command>
 			</link>
 			<vspacer height="20"/>

@@ -26,7 +26,7 @@ public class DeveloperWindow extends DroppableFrame
 	public DeveloperWindow(Opbm		opbm,
 						   boolean	isZoomWindow)
 	{
-		super(opbm, isZoomWindow);	// Call DroppableFrame constructor
+		super(opbm, isZoomWindow, true);	// Call DroppableFrame constructor
 
 		// Initialize our parent and size our window
 		m_opbm		= opbm;
@@ -77,7 +77,7 @@ public class DeveloperWindow extends DroppableFrame
 		} catch (IOException ex) {
 			// Nothing to do really, indicates an improper installation
 			m_lastError = ex.getMessage();
-			lblHeader.setText("OPBM - Office Productivity Benchmark");
+			lblHeader.setText(m_opbm.getAppTitle());
 		}
 		lblHeader.setBackground(Color.BLACK);
 		lblHeader.setForeground(Color.WHITE);

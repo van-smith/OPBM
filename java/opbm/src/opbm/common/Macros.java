@@ -71,7 +71,7 @@ public class Macros
 
 	//////////
 	// Common HTML tags:
-	// br, b, /b, i, /i, u, /u
+	// br, b, /b, i, /i, u, /u, table, tr, td
 				if (macro.equalsIgnoreCase("br"))
 					macroSubstitution = "<br>";
 				else if (macro.equalsIgnoreCase("b"))
@@ -86,6 +86,24 @@ public class Macros
 					macroSubstitution = "<i>";
 				else if (macro.equalsIgnoreCase("/i"))
 					macroSubstitution = "</i>";
+				else if (macro.equalsIgnoreCase("table"))
+					macroSubstitution = "<table>";
+				else if (macro.equalsIgnoreCase("/table"))
+					macroSubstitution = "</table>";
+				else if (macro.equalsIgnoreCase("tr"))
+					macroSubstitution = "<tr>";
+				else if (macro.equalsIgnoreCase("/tr"))
+					macroSubstitution = "</tr>";
+				else if (macro.equalsIgnoreCase("td"))
+					macroSubstitution = "<td>";
+				else if (macro.equalsIgnoreCase("tdwidth10"))
+					macroSubstitution = "<td width='10'>";
+				else if (macro.equalsIgnoreCase("tdwidth20"))
+					macroSubstitution = "<td width='20'>";
+				else if (macro.equalsIgnoreCase("tdwidth45"))
+					macroSubstitution = "<td width='45'>";
+				else if (macro.equalsIgnoreCase("/td"))
+					macroSubstitution = "</td>";
 
 	//////////
 	// HUD DEBUG INFO
