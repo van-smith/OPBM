@@ -196,6 +196,10 @@ public final class Opbm extends	ModalApp
             @Override
             public void run()
 			{
+				// Show the GUI, which also loads the scripts.xml, edits.xml and panels.xml (essential files)
+				createAndShowGUI();
+				// This function exists outside the thead so it blocks the UI until everything is created
+
 				// Create a non-edt thread to allow the GUI to continue starting up and displaying while processing
 				Thread t = new Thread("OPBMStartupThread")
 				{
@@ -208,9 +212,6 @@ public final class Opbm extends	ModalApp
 						Xml target;
 						String line, name, digits;
 						int i, j, iterations, runCount;
-
-						// Show the GUI, which also loads the scripts.xml, edits.xml and panels.xml (essential files)
-						createAndShowGUI();
 
 						// Load the command line options, including those from files, into the execution sequence
 						// Arguments get loaded into "List<String> args" rather than m_args[]
@@ -575,19 +576,26 @@ public final class Opbm extends	ModalApp
 		// Load the XML panel content
 		if (loadPanelsXml()) {
 			// Once the Xml panel content is loaded, create all of the physical panels based on its instruction
+			System.out.println("Loaded panels.xml");
 			if (PanelFactory.createLeftPanelObjects(this, m_macroMaster, m_frameDeveloper.lblHeader, m_frameDeveloper.statusBar, m_frameDeveloper.panLeft, m_frameDeveloper)) {
 				// All default panels are created, render the top-level item
+				System.out.println("Created menus and navigation panels");
 				if (navigateToLeftPanel("main")) {
 					// If we get here, the main navigation panel is displayed and we're still good
+					System.out.println("Found main panel");
 					if (loadEditsXml()) {
 						// We have our edits loaded, we're still good
+						System.out.println("Loaded edits.xml");
 						if (loadScriptsXml()) {
 							// We have our scripts loaded, we're totally good
+							System.out.println("Loaded scripts.xml");
+							System.out.println("OPBM System Initialization completed successfully");
 							// Normal system flow should reach this point
 							m_frameDeveloper.statusBar.setText("Loaded panels.xml, edits.xml and scrips.xml okay.");
 
 						} else {
 							// Not found or not loaded properly, navigate to the raw editing options
+							System.out.println("Unable to load scripts.xml");
 							m_frameDeveloper.statusBar.setText("Error loading scripts.xml.  Please repair file manually. " + m_frameDeveloper.m_lastError);
 							navigateToLeftPanel("XML File Maintenance");
 
@@ -595,6 +603,7 @@ public final class Opbm extends	ModalApp
 
 					} else {
 						// Not found or not loaded properly, navigate to the raw editing options
+						System.out.println("Unable to load edits.xml");
 						m_frameDeveloper.statusBar.setText("Error loading edits.xml.  Please repair file manually. " + m_frameDeveloper.m_lastError);
 						navigateToLeftPanel("XML File Maintenance");
 
@@ -602,18 +611,21 @@ public final class Opbm extends	ModalApp
 
 				} else {
 					// If we get here, the "main" panel wasn'tup found
+					System.out.println("Could not find main panel in panels.xml");
 					// Display our default panel, which indicates the error condition
 					m_frameDeveloper.panLeft.setVisible(true);
 				}
 
 			} else {
-				// If we get here, the "main" panel wasn'tup found
+				// If we get here, the "main" panel wasn't found
 				// Display our default panel, which indicates the error condition
+				System.out.println("Unable to create main menus and navigation panels");
 				m_frameDeveloper.panLeft.setVisible(true);
 			}
 
 		} else {
 			// If we get here, the "main" panel wasn'tup found
+			System.out.println("Unable to load panels.xml");
 			// Display our default panel, which indicates the error condition
 			m_frameDeveloper.statusBar.setText("Error loading panels.xml.  Please exit application and repair file manually. " + m_frameDeveloper.m_lastError);
 			m_frameDeveloper.panLeft.setVisible(true);
@@ -1351,7 +1363,7 @@ public final class Opbm extends	ModalApp
 		int actualWidth, actualHeight;
 		Dimension size;
 
-		DroppableFrame fr = new DroppableFrame(this, true);
+		DroppableFrame fr = new DroppableFrame(this, true, false);
 		fr.setTitle("Zoom: " + name);
         fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		fr.setSize(panelRef.getWidth(), panelRef.getHeight());
@@ -2220,6 +2232,24 @@ public final class Opbm extends	ModalApp
 			return(false);
 	}
 
+	/**
+	 * Returns the encoded final static version string, which is the build
+	 * date and time.
+	 */
+	public String getVersion()
+	{
+		return(m_version);
+	}
+
+	/**
+	 * Returns the encoded final static title string, which includes the build
+	 * date and time.
+	 */
+	public String getAppTitle()
+	{
+		return(m_title);
+	}
+
 	/** Main app entry point.
 	 *
 	 * @param args command line parameters
@@ -2352,7 +2382,6 @@ public final class Opbm extends	ModalApp
 	 * An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not
 	 */
 	public static boolean			m_breakpointsEnabled;
-	public static String			m_title					= "OPBM - Office Productivity Benchmark";
 	public static String			m_lastStaticError;
 // REMEMBER for non-Windows based java runtimes, this logic will need to be changed
 // REMEMBER there's also a registry key for this item which may need to be used instead (for custom installations of Java), though for the standard installations from Oracle, this should always work:
@@ -2360,4 +2389,8 @@ public final class Opbm extends	ModalApp
 
 	// Synchronization items used for various wait-until-all-parts-are-completed operations
 	public volatile static int		m_rvsync = 0;		// Used by createAndShowResultsViewer
+
+	// Used for the build-date and time
+	public final static String		m_version				= "Built 2011.08.22 05:19am";
+	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

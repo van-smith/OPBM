@@ -687,7 +687,7 @@ img.grayscale();
 
 		width = 640;
 		height = 258;
-		frame = new DroppableFrame(m_opbm, false);
+		frame = new DroppableFrame(m_opbm, false, false);
 		frame.setTitle("OPBM - System Data");
 
 		// Compute the actual size we need for our window, so it's properly centered
@@ -748,7 +748,7 @@ img.grayscale();
 	{
 		Dimension prefSize;
 
-		m_frame = new DroppableFrame(m_opbm, false);
+		m_frame = new DroppableFrame(m_opbm, false, false);
 		m_opbm.addResultsViewerToQueue(m_frame);
 		m_frame.setTitle("OPBM - Results Viewer");
 

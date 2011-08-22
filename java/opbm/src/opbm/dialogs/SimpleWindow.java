@@ -23,12 +23,12 @@ public class SimpleWindow extends DroppableFrame
 						boolean		isZoomWindow)
 	{
 		// Call DroppableFrame constructor
-		super(opbm, isZoomWindow);
+		super(opbm, isZoomWindow, false);
 
 		m_opbm		= opbm;
 		m_width		= 473;	// width of "simple_background.png"
 		m_height	= 313;
-		setTitle("OPBM");
+		setTitle("OPBM - " + m_opbm.getVersion());
 
 		// Compute the actual size we need for our window, so it's properly centered
 		pack();

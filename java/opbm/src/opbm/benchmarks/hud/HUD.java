@@ -48,7 +48,7 @@ public final class HUD extends DroppableFrame
 			   BenchmarkParams		bp,
 			   boolean				isZoomWindow)
 	{
-		super(opbm, isZoomWindow);
+		super(opbm, isZoomWindow, false);
 		m_bp		= bp;
 		m_rebooting	= false;
 		createHUD();

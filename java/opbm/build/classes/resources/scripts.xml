@@ -152,33 +152,6 @@
 					</options>
 				</abstract>
 			</atom>
-<!--
-			<atom name="Reboot And Continue">
-				<abstract name="IE Google V8" sourcename="execute">
-					<options>
-						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
-					</options>
-				</abstract>
-				<abstract name="Reboot And Continue" sourcename="rebootAndContinue"></abstract>
-				<abstract name="Spinup After Restart" sourcename="spinUp">
-					<options>
-						<executable>..(backslash)autoIT(backslash)common(backslash)opbm(backslash)exe(backslash)spinup.exe</executable>
-					</options>
-				</abstract>
-				<abstract name="IE Google V8" sourcename="execute">
-					<options>
-						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
-					</options>
-				</abstract>
-			</atom>
-			<atom name="SpinUp">
-				<abstract name="Spinup Placeholder" sourcename="spinUp">
-					<options>
-						<executable>..(backslash)autoIT(backslash)common(backslash)opbm(backslash)exe(backslash)spinup.exe</executable>
-					</options>
-				</abstract>
-			</atom>
--->
 			<atom name="All Tests">
 				<abstract name="Excel World Heat" sourcename="execute">
 					<options>
@@ -430,7 +403,7 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="All Un(slash)install">
+			<atom name="All Un(hyphen)install">
 				<abstract name="Acrobat Un(hyphen)install" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>

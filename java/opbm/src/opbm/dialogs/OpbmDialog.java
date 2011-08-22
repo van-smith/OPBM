@@ -76,7 +76,7 @@ public final class OpbmDialog
 
 		width = 450;
 		height = 200;
-		m_frame = new DroppableFrame(m_opbm, false);
+		m_frame = new DroppableFrame(m_opbm, false, false);
 		m_frame.setTitle(m_caption.isEmpty() ? "OPBM Dialog" : m_caption);
 
 		// Compute the actual size we need for our window, so it's properly centered

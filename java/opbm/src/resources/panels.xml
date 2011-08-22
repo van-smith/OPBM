@@ -144,17 +144,14 @@
 				<command p1="XML File Viewing">leftpanel</command>
 				<tooltip></tooltip>
 			</menu>
+<!--
 			<menu>
 				<text>Compute results averages</text>
 				<command>compute_results_averages</command>
 				<tooltip>Takes a directory of results.xml files and computes averages for every timing point (worklet)</tooltip>
 			</menu>
+-->
 			<spacer/>
-			<text>The Scripting Engine components</text>
-			<text>provide an abstraction layer</text>
-			<text>between OPBM and the underlying</text>
-			<text>tool (AutoIT in Windows, Mago</text>
-			<text> in Linux).</text>
 		</left>
 
 		<left name="Edit Devices">
@@ -1306,12 +1303,12 @@
 			<heading>
 				<text>Atoms:</text>
 			</heading>
-			<text>1) Select an item in "Atoms Listing"</text>
+			<text>1) Select an item in Atoms Listing</text>
 			<text>2) Double-click to run sequence.</text>
 			<text></text>
-			<text>Note:  The "Run Atom Sequence"</text>
-			<text>Note:  link will also run the</text>
-			<text>Note:  sequence.</text>
+			<text>$table$$tr$$tdwidth45$Note:$/td$$td$The "Run Atom Sequence"$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth45$$/td$$td$link will also run the$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth45$$/td$$td$sequence$/td$$/tr$$/table$</text>
 			<spacer/>
 			<spacer/>
 			<heading>
@@ -1332,6 +1329,15 @@
 				<command>toggle_retry_attempts</command>
 				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
 			</menu>
+			<spacer/>
+			<text>The HUD is divided into five</text>
+			<text>component areas:</text>
+			<spacer height="10"/>
+			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)1 (hyphen) Header$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)2 (hyphen) Stop button$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)3 (hyphen) Status info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)4 (hyphen) Statusbar (slash) counter$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 	</panels>

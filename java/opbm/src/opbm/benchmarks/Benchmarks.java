@@ -440,6 +440,7 @@ public class Benchmarks
 		bp.m_debuggerOrHUDAction		= BenchmarkParams._NO_ACTION;
 
 		bp.m_hudActive					= bp.m_settingsMaster.isHUDVisible();
+		bp.m_hudDebugInfo				= bp.m_settingsMaster.getHUDDebugInfo();
 		if (bp.m_hudActive)
 		{	// The HUD is displayed
 			bp.m_hud					= new HUD(bp.m_opbm, bp, false);
@@ -447,7 +448,6 @@ public class Benchmarks
 			// Not displayed (typical condition)
 			bp.m_hud					= null;
 		}
-		bp.m_hudDebugInfo				= bp.m_settingsMaster.getHUDDebugInfo();
 
 		bp.m_retry						= bp.m_settingsMaster.isBenchmarkToRetryOnErrors();
 		bp.m_retryAttempts				= bp.m_settingsMaster.benchmarkRetryOnErrorCount();
