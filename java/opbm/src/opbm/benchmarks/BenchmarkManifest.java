@@ -87,16 +87,14 @@ public final class BenchmarkManifest
 	 * molecule or atom to run, otherwise runs the trial or official benchmark.
 	 * @param type "trial", "official" or "compilation"
 	 * @param name (optional) name given to the run
-	 * @param suiteToRun suite(s) to run if manual (separated by commas), empty otherwise
-	 * @param scenarioToRun scenario(s) to run if manual (separated by commas), empty otherwise
-	 * @param moleculeToRun molecule(s) to run if manual (separated by commas), empty otherwise
-	 * @param atomToRun atom(s) to run if manual (separated by commas), empty otherwise
 	 */
 	public BenchmarkManifest(Opbm		opbm,
-							 String		type)
+							 String		type,
+							 String		manifestPathName)
 	{
 		m_isManifestInError		= false;
 		m_opbm					= opbm;
+		m_bm					= opbm.getBenchmarkMaster();
 		m_type					= type;
 		m_name					= m_opbm.getRunName();
 
@@ -110,6 +108,7 @@ public final class BenchmarkManifest
 
 		m_compilation			= new Tuple(opbm);
 
+		m_manifestIsLoaded		= false;
 												// In manifest.xml, access to these nodes:
 		m_root					= null;			//		opbm
 		m_benchmarks			= null;			//		opbm.benchmarks
@@ -122,7 +121,10 @@ public final class BenchmarkManifest
 		m_runPasses				= new Tuple(opbm);
 
 		// Create the blank manifest template
-		createManifest();
+		if (manifestPathName.isEmpty())
+			createManifest();
+		else
+			reloadManifest(manifestPathName);
 	}
 
 	/**
@@ -167,10 +169,6 @@ public final class BenchmarkManifest
 			result = false;
 		}
 
-		// If we're good, finalize the build settings
-		if (result)
-			buildFinalize();
-
 		// Indicate success or failure to caller
 		return(result);
 	}
@@ -182,7 +180,6 @@ public final class BenchmarkManifest
 	{
 		setPassMaxValues();
 		assignUUIDs();
-		m_root.saveNode(Opbm.getRunningDirectory() + "manifest.xml");
 	}
 
 	/**
@@ -935,9 +932,9 @@ public final class BenchmarkManifest
 		// Set the initial control values
 		m_controlRun.appendAttribute("type", m_type);
 		m_controlRun.appendAttribute("name", m_name);
-		m_controlLastRunUuid.appendAttribute("uuid");
-		m_controlLastTagUuid.appendAttribute("uuid");
-		m_controlLastWorkletUuid.appendAttribute("uuid");
+		m_controlLastRun.appendAttribute(m_controlLastRunUuid);
+		m_controlLastTag.appendAttribute(m_controlLastTagUuid);
+		m_controlLastWorklet.appendAttribute(m_controlLastWorkletUuid);
 
 //////////
 // Append in statistics
@@ -981,6 +978,50 @@ public final class BenchmarkManifest
 
 // REMEMBER for CPU-Z CPUZ stuff
 		m_root.saveNode(Opbm.getRunningDirectory() + "manifest.xml");
+		m_manifestIsLoaded = true;
+	}
+
+	/**
+	 * Reloads the specified filename to the manifest.xml file
+	 * @param pathName
+	 */
+	public void reloadManifest(String pathName)
+	{
+		m_root = Opbm.loadXml(pathName);
+		if (m_root == null)
+		{	// Did not load successfully
+			return;
+		}
+		// Try to set our tags
+		m_benchmarks				= m_root.getChildNode("opbm.benchmarks");
+		m_manifest					= m_root.getChildNode("opbm.benchmarks.manifest");
+		m_control					= m_root.getChildNode("opbm.benchmarks.control");
+		m_statistics				= m_root.getChildNode("opbm.benchmarks.statistics");
+		m_discovery					= m_root.getChildNode("opbm.benchmarks.discovery");
+		m_controlRun				= m_root.getChildNode("opbm.benchmarks.control.run");
+		m_controlLastRun			= m_root.getChildNode("opbm.benchmarks.control.run.lastrun");
+		m_controlLastTag			= m_root.getChildNode("opbm.benchmarks.control.run.lasttag");
+		m_controlLastWorklet		= m_root.getChildNode("opbm.benchmarks.control.run.lastworklet");
+		m_controlLastRunUuid		= m_root.getChildNode("opbm.benchmarks.control.run.lastrun.#uuid");
+		m_controlLastTagUuid		= m_root.getChildNode("opbm.benchmarks.control.run.lasttag.#uuid");
+		m_controlLastWorkletUuid	= m_root.getChildNode("opbm.benchmarks.control.run.lastworklet.#uuid");
+		m_statisticsRuntime			= m_root.getChildNode("opbm.benchmarks.statistics.runtime");
+		m_statisticsRuntimeBegan	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.began");
+		m_statisticsRuntimeEnded	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.ended");
+		m_statisticsRuntimeHarness	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.harness");
+		m_statisticsRuntimeScripts	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.scripts");
+		m_statisticsSuccesses		= m_root.getChildNode("opbm.benchmarks.statistics.successes");
+		m_statisticsFailures		= m_root.getChildNode("opbm.benchmarks.statistics.failures");
+		m_statisticsRetries			= m_root.getChildNode("opbm.benchmarks.statistics.retries");
+
+		// Append in user settings at time of manifest creation
+		m_settings					= m_root.getChildNode("opbm.benchmarks.settings");
+		m_discovery					= m_root.getChildNode("opbm.benchmarks.discovery");
+
+// REMEMBER Verify everything is correct
+
+		// If we get here, we found everything, everything looks good, etc.
+		m_manifestIsLoaded = true;
 	}
 
 	/**
@@ -988,66 +1029,88 @@ public final class BenchmarkManifest
 	 */
 	public void run()
 	{
-		OpbmDialog od;
+		boolean processing;
 
 		if (m_isManifestInError)
 		{	// We cannot run this manifest because it's in error
-			od = new OpbmDialog(m_opbm, m_error, "Run Error", OpbmDialog._OKAY_BUTTON, "", "");
-
-		} else {
-			// We're good, get ready to run it
-			od = new OpbmDialog(m_opbm, "Manifest Run would begin", "Ready", OpbmDialog._OKAY_BUTTON, "", "");
+			OpbmDialog od = new OpbmDialog(m_opbm, m_error, "Run Error", OpbmDialog._OKAY_BUTTON, "", "");
+			return;
 		}
+		// We're good, run the manifest
+
+		// Initialize everything
+		m_bm.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster());
+
+		// Continue processing until we're done
+		processing = true;
+		while (processing)
+		{	// Continue until there's nothing else to do
+
+		}
+
+		// Finish up, show the results viewer
+		m_bm.benchmarkShutdown();
+	}
+
+	/**
+	 * A self-contained
+	 * @return
+	 */
+	public boolean processNext()
+	{
+		return(true);
 	}
 
 	// Error conditions
-	private boolean		m_isManifestInError;
-	private String		m_error;
-	private int			m_passThis;
-	private int			m_passMax;
+	private boolean			m_isManifestInError;
+	private String			m_error;
+	private int				m_passThis;
+	private int				m_passMax;
 
 	// Change as the levels are traversed during add operations
-	private String		m_suiteName;
-	private String		m_scenarioName;
-	private String		m_moleculeName;
-	private String		m_atomName;
+	private String			m_suiteName;
+	private String			m_scenarioName;
+	private String			m_moleculeName;
+	private String			m_atomName;
 
 	// Compilation variables
-	private Tuple		m_compilation;
+	private Tuple			m_compilation;
 
 	// Class member variables
-	private Opbm		m_opbm;
-	private String		m_type;
-	private String		m_name;
+	private Opbm			m_opbm;
+	private Benchmarks		m_bm;
+	private String			m_type;
+	private String			m_name;
 
 	// Root-level Xml entries
-	private	Xml			m_root;
-	private Xml			m_benchmarks;
-	private Xml			m_manifest;
-	private Xml			m_control;
-	private Xml			m_statistics;
-	private Xml			m_settings;
-	private Xml			m_discovery;
+	private boolean			m_manifestIsLoaded;
+	private	Xml				m_root;
+	private Xml				m_benchmarks;
+	private Xml				m_manifest;
+	private Xml				m_control;
+	private Xml				m_statistics;
+	private Xml				m_settings;
+	private Xml				m_discovery;
 
 	// Run passes
-	private Tuple		m_runPasses;
+	private Tuple			m_runPasses;
 
 	// Control data
-	private Xml			m_controlRun;
-	private Xml			m_controlLastRun;
-	private Xml			m_controlLastTag;
-	private Xml			m_controlLastWorklet;
-	private Xml			m_controlLastRunUuid;
-	private Xml			m_controlLastTagUuid;
-	private Xml			m_controlLastWorkletUuid;
+	private Xml				m_controlRun;
+	private Xml				m_controlLastRun;
+	private Xml				m_controlLastTag;
+	private Xml				m_controlLastWorklet;
+	private Xml				m_controlLastRunUuid;
+	private Xml				m_controlLastTagUuid;
+	private Xml				m_controlLastWorkletUuid;
 
 	// Statistics data
-	private Xml			m_statisticsRuntime;
-	private Xml			m_statisticsRuntimeBegan;
-	private Xml			m_statisticsRuntimeEnded;
-	private Xml			m_statisticsRuntimeHarness;
-	private Xml			m_statisticsRuntimeScripts;
-	private Xml			m_statisticsSuccesses;
-	private Xml			m_statisticsFailures;
-	private Xml			m_statisticsRetries;
+	private Xml				m_statisticsRuntime;
+	private Xml				m_statisticsRuntimeBegan;
+	private Xml				m_statisticsRuntimeEnded;
+	private Xml				m_statisticsRuntimeHarness;
+	private Xml				m_statisticsRuntimeScripts;
+	private Xml				m_statisticsSuccesses;
+	private Xml				m_statisticsFailures;
+	private Xml				m_statisticsRetries;
 }

@@ -96,7 +96,7 @@ public class Benchmarks
 			m_opbm.setRunName("Trial Run");
 		}
 		System.out.println("Beginning trial run named \"" + m_opbm.getRunName() + "\"");
-		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial");
+		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "");
 		bm.build();
 		bm.run();
 	}
@@ -144,13 +144,15 @@ public class Benchmarks
 			m_opbm.setRunName("Official Run");
 		}
 		System.out.println("Beginning official run named \"" + m_opbm.getRunName() + "\"");
-		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official");
+		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "");
 		bm.build();
 		bm.run();
 	}
 
 	/**
-	 * Called to physically execute the specified atom (pointed to by "atom")
+	 * Original code used by OPBM during early phases.  Has been replaced now
+	 * by benchmarkRunManifest().
+	 * This method is called to physically execute the specified atom.
 	 * @param atom
 	 * @param iterations
 	 */
@@ -215,6 +217,7 @@ public class Benchmarks
 			child = atom.getFirstChild();
 			Stack.enterNewBlock(Stack._STACK_ROOT, child, m_bp.m_atomStack);
 
+			// Set everything up if there are multiple iterations
 			if (iterations != 1)
 			{
 				xmlSuccess		= xmlRun_Success;
@@ -241,68 +244,10 @@ public class Benchmarks
 
 			}
 
-			// Process all atom commands one-by-one until finished, or until the user presses the stop button
-			while (child != null)
-			{
-				if (m_bp.m_debuggerActive)
-				{
-					// Update the debugger display
-					m_bp.m_debugLastAction		= m_bp.m_debuggerOrHUDAction;
-					m_bp.m_debuggerOrHUDAction	= BenchmarkParams._NO_ACTION;
-					m_bp.m_debugParent			= atom;
-					m_bp.m_debugChild			= child;
-					// Put focus in the window
-					m_bp.m_deb.forceWindowToHaveFocus();
-					m_bp.m_deb.update();
+			// Process all of the children for this atom (all of its sequence of operations)
+			benchmarkRunAtomProcessChildren(atom, xmlRun_Success, xmlRun_Failure);
 
-					if (m_bp.m_singleStepping)
-					{
-						// Position the cursor
-						m_bp.m_deb.getCareTextbox().requestFocusInWindow();
-
-						// Wait for user input and respond to the command
-						try {
-							do {
-								// The warning which appears here can be ignored because we're
-								// waiting for the debugger's window to set a value here in
-								// m_bp.m_debuggerOrHUDAction.  Once populated, the break
-								// will be executed below.
-								// It may be worth in the future creation some atomic variable
-								// that can be set and released by the debugger.  For now,
-								// this works.
-								Thread.sleep(50);
-
-								// Did they select something while they were running?
-								if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION)
-									break;
-
-							} while (true);
-
-						} catch (InterruptedException ex) {
-						}
-						m_bp.m_deb.setVisible(false);
-
-						// See what option they chose
-						if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._RUN) {
-							// Lower the single-stepping flag
-							m_bp.m_singleStepping = false;
-
-						} else if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._SINGLE_STEP) {
-							// Do nothing, except continue on
-
-						} else if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP) {
-							// We're finished
-							break;
-						}
-					}
-				}
-
-				// Process the next command
-				child = m_bp.m_bpAtom.processCommand(child, atom, xmlRun_Success, xmlRun_Failure);
-				if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
-					break;
-			}
-
+			// Restore everything
 			if (iterations != 1)
 			{	// For each iteration we created (above) a child of the actual
 				// xmlRun_Success and xmlRun_Failure entries.
@@ -327,6 +272,82 @@ public class Benchmarks
 
 		// Indicate the atom is done
 		m_bp.m_benchmarkStack.remove(m_bp.m_benchmarkStack.size() - 1);		// Remove the last item
+	}
+
+	/**
+	 * Executes all of the sequence of operations for the specified atom
+	 * @param atom
+	 * @param xmlRun_Success
+	 * @param xmlRun_Failure
+	 */
+	public void benchmarkRunAtomProcessChildren(Xml		atom,
+												Xml		xmlRun_Success,
+												Xml		xmlRun_Failure)
+	{
+		Xml child;
+
+		// Process all atom commands one-by-one until finished, or until the user presses the stop button
+		child = atom.getFirstChild();
+		while (child != null)
+		{
+			if (m_bp.m_debuggerActive)
+			{
+				// Update the debugger display
+				m_bp.m_debugLastAction		= m_bp.m_debuggerOrHUDAction;
+				m_bp.m_debuggerOrHUDAction	= BenchmarkParams._NO_ACTION;
+				m_bp.m_debugParent			= atom;
+				m_bp.m_debugChild			= child;
+				// Put focus in the window
+				m_bp.m_deb.forceWindowToHaveFocus();
+				m_bp.m_deb.update();
+
+				if (m_bp.m_singleStepping)
+				{
+					// Position the cursor
+					m_bp.m_deb.getCareTextbox().requestFocusInWindow();
+
+					// Wait for user input and respond to the command
+					try {
+						do {
+							// The warning which appears here can be ignored because we're
+							// waiting for the debugger's window to set a value here in
+							// m_bp.m_debuggerOrHUDAction.  Once populated, the break
+							// will be executed below.
+							// It may be worth in the future creation some atomic variable
+							// that can be set and released by the debugger.  For now,
+							// this works.
+							Thread.sleep(50);
+
+							// Did they select something while they were running?
+							if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION)
+								break;
+
+						} while (true);
+
+					} catch (InterruptedException ex) {
+					}
+					m_bp.m_deb.setVisible(false);
+
+					// See what option they chose
+					if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._RUN) {
+						// Lower the single-stepping flag
+						m_bp.m_singleStepping = false;
+
+					} else if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._SINGLE_STEP) {
+						// Do nothing, except continue on
+
+					} else if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP) {
+						// We're finished
+						break;
+					}
+				}
+			}
+
+			// Process the next command
+			child = m_bp.m_bpAtom.processCommand(child, atom, xmlRun_Success, xmlRun_Failure);
+			if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+				break;
+		}
 	}
 
 	/**
