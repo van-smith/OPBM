@@ -105,18 +105,19 @@ public final class BenchmarkManifest
 		m_moleculeName			= "";
 		m_atomName				= "";
 
-		m_passThis				= 0;
-		m_passMax				= 0;
+		m_passThis				= 1;
+		m_passMax				= 1;
 
 		m_compilation			= new Tuple(opbm);
 
-		m_root					= null;			// of opbm in manifest.xml
-		m_benchmarks			= null;			// of opbm.benchmarks in manifest.xml
-		m_manifest				= null;			// of opbm.benchmarks.manifest in manifest.xml
-		m_control				= null;			// of opbm.benchmarks.control in manifest.xml
-		m_statistics			= null;			// of opbm.benchmarks.statistics in manifest.xml
-		m_settings				= null;			// of opbm.benchmarks.settings in manifest.xml
-		m_discovery				= null;			// of opbm.benchmarks.discovery in manifest.xml
+												// In manifest.xml, access to these nodes:
+		m_root					= null;			//		opbm
+		m_benchmarks			= null;			//		opbm.benchmarks
+		m_manifest				= null;			//		opbm.benchmarks.manifest
+		m_control				= null;			//		opbm.benchmarks.control
+		m_statistics			= null;			//		opbm.benchmarks.statistics
+		m_settings				= null;			//		opbm.benchmarks.settings
+		m_discovery				= null;			//		opbm.benchmarks.discovery
 
 		m_runPasses				= new Tuple(opbm);
 
@@ -162,8 +163,7 @@ public final class BenchmarkManifest
 
 		} else {
 			// Unknown
-			m_isManifestInError = true;
-			m_error				= "Run named '" + m_name + "' was not specified to be trial, official or compilation.  Cannot build.";
+			setError("Run named '" + m_name + "' was not specified to be trial, official or compilation.  Cannot build.");
 			result = false;
 		}
 
@@ -228,27 +228,21 @@ public final class BenchmarkManifest
 			} else if (type.equalsIgnoreCase("scenario")) {
 				if (addScenarioByName(name, count) != 1)
 				{	// The scenario wasn't found
-					m_isManifestInError = true;
-					m_error = "Fatal Error: Unable to add scenario named \"" + name + "\": does not exist";
-					System.out.println(m_error);
+					setError("Fatal Error: Unable to add scenario named \"" + name + "\": does not exist");
 					return(false);
 				}
 
 			} else if (type.equalsIgnoreCase("molecule")) {
 				if (addMoleculeByName(name, count) != 1)
 				{	// The molecule wasn't found
-					m_isManifestInError = true;
-					m_error = "Fatal Error: Unable to add molecule named \"" + name + "\": does not exist";
-					System.out.println(m_error);
+					setError("Fatal Error: Unable to add molecule named \"" + name + "\": does not exist");
 					return(false);
 				}
 
 			} else if (type.equalsIgnoreCase("atom")) {
 				if (addAtomByName(name, count) != 1)
 				{	// The atom wasn't found
-					m_isManifestInError = true;
-					m_error = "Fatal Error: Unable to add atom named \"" + name + "\": does not exist";
-					System.out.println(m_error);
+					setError("Fatal Error: Unable to add atom named \"" + name + "\": does not exist");
 					return(false);
 				}
 			}
@@ -306,14 +300,14 @@ public final class BenchmarkManifest
 		List<Xml> nodes = new ArrayList<Xml>(0);
 
 		// Grab every suite by its name
-		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.suites", false);
+		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.suites.suite", false);
 
 		// For each returned entry, add it to the list for the specified number of passes
 		m_passMax = passes;
 		count = 0;
 		for (i = 0; i < passes; i++)
 		{
-			m_passThis = i + 1;
+			setPass(i + 1);
 			for (j = 0; j < nodes.size(); j++)
 			{	// Add each suite
 				count += addSuite(nodes.get(j));
@@ -335,7 +329,7 @@ public final class BenchmarkManifest
 		List<Xml> nodes = new ArrayList<Xml>(0);
 		Xml suite;
 
-		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.suites", false);
+		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.suites.suite", false);
 		for (i = 0; i < nodes.size(); i++)
 		{	// See if we can find this one
 			suite = nodes.get(i);
@@ -349,13 +343,14 @@ public final class BenchmarkManifest
 					{	// Failure
 						return(0);
 					}
-					++count;
+					count += result;
 				}
 				// When we get here, indicate how many were added
 				return(count);
 			}
 		}
 		// If we get here, the named suite wasn't found
+		setError("Error: Unable to find suite by name: \"" + name + "\"");
 		return(0);
 	}
 
@@ -372,7 +367,7 @@ public final class BenchmarkManifest
 		List<Xml> nodes = new ArrayList<Xml>(0);
 		Xml scenario;
 
-		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.scenarios", false);
+		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
 		for (i = 0; i < nodes.size(); i++)
 		{	// See if we can find this one
 			scenario = nodes.get(i);
@@ -386,13 +381,14 @@ public final class BenchmarkManifest
 					{	// Failure
 						return(0);
 					}
-					++count;
+					count += result;
 				}
 				// When we get here, indicate how many were added
 				return(count);
 			}
 		}
 		// If we get here, the named scenario wasn't found
+		setError("Error: Unable to find scenario by name: \"" + name + "\"");
 		return(0);
 	}
 
@@ -409,7 +405,7 @@ public final class BenchmarkManifest
 		List<Xml> nodes = new ArrayList<Xml>(0);
 		Xml molecule;
 
-		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.molecules", false);
+		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
 		for (i = 0; i < nodes.size(); i++)
 		{	// See if we can find this one
 			molecule = nodes.get(i);
@@ -423,13 +419,14 @@ public final class BenchmarkManifest
 					{	// Failure
 						return(0);
 					}
-					++count;
+					count += result;
 				}
 				// When we get here, indicate how many were added
 				return(count);
 			}
 		}
-		// If we get here, the named suite wasn't found
+		// If we get here, the named molecule wasn't found
+		setError("Error: Unable to find molecule by name: \"" + name + "\"");
 		return(0);
 	}
 
@@ -446,7 +443,7 @@ public final class BenchmarkManifest
 		List<Xml> nodes = new ArrayList<Xml>(0);
 		Xml atom;
 
-		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms", false);
+		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 		for (i = 0; i < nodes.size(); i++)
 		{	// See if we can find this one
 			atom = nodes.get(i);
@@ -460,13 +457,14 @@ public final class BenchmarkManifest
 					{	// Failure
 						return(0);
 					}
-					++count;
+					count += result;
 				}
 				// When we get here, indicate how many were added
 				return(count);
 			}
 		}
-		// If we get here, the named suite wasn't found
+		// If we get here, the named atom wasn't found
+		setError("Error: Unable to find atom by name: \"" + name + "\"");
 		return(0);
 	}
 
@@ -482,7 +480,7 @@ public final class BenchmarkManifest
 		String type;
 
 		// Grab every suite element
-		Xml.getNodeList(nodes, suite, "[flow,abstract,scenario,molecule,atom]", true);
+		Xml.getNodeList(nodes, suite.getFirstChild(), "[flow,abstract,scenario,molecule,atom]", false);
 
 		if (nodes.isEmpty())
 		{	// Nothing to do, no nodes for this
@@ -499,8 +497,8 @@ public final class BenchmarkManifest
 		count = 0;
 		for (i = 0; !m_isManifestInError && i < nodes.size(); i++)
 		{
-			element = nodes.get(i);
-			type = element.getName();
+			element	= nodes.get(i);
+			type	= element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
 				addElement(element);
@@ -510,13 +508,13 @@ public final class BenchmarkManifest
 				++count;
 
 			} else if (type.equalsIgnoreCase("scenario")) {
-				count += addScenario(element);
+				count += addScenarioByName(element.getAttribute("sourcename"), 1);
 
 			} else if (type.equalsIgnoreCase("molecule")) {
-				count += addMolecule(element);
+				count += addMoleculeByName(element.getAttribute("sourcename"), 1);
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				count += addAtom(element);
+				count += addAtomByName(element.getAttribute("sourcename"), 1);
 
 			}
 		}
@@ -541,12 +539,11 @@ public final class BenchmarkManifest
 		String type;
 
 		// Grab every suite element
-		Xml.getNodeList(nodes, scenario, "[flow,abstract,molecule,atom]", true);
+		Xml.getNodeList(nodes, scenario.getFirstChild(), "[flow,abstract,molecule,atom]", false);
 
 		if (nodes.isEmpty())
 		{	// Nothing to do, no nodes for this
-			m_isManifestInError = true;
-			m_error = "Empty node list for " + scenario.getAttribute("name");
+			setError("Empty node list for " + scenario.getAttribute("name"));
 			return(0);
 		}
 
@@ -569,10 +566,10 @@ public final class BenchmarkManifest
 				++count;
 
 			} else if (type.equalsIgnoreCase("molecule")) {
-				count += addMolecule(element);
+				count += addMoleculeByName(element.getAttribute("sourcename"), 1);
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				count += addAtom(element);
+				count += addAtomByName(element.getAttribute("sourcename"), 1);
 
 			}
 		}
@@ -597,12 +594,11 @@ public final class BenchmarkManifest
 		String type;
 
 		// Grab every suite element
-		Xml.getNodeList(nodes, molecule, "[flow,abstract,atom]", true);
+		Xml.getNodeList(nodes, molecule.getFirstChild(), "[flow,abstract,atom]", false);
 
 		if (nodes.isEmpty())
 		{	// Nothing to do, no nodes for this
-			m_isManifestInError = true;
-			m_error = "Empty node list for " + molecule.getAttribute("name");
+			setError("Empty node list for " + molecule.getAttribute("name"));
 			return(0);
 		}
 
@@ -625,7 +621,7 @@ public final class BenchmarkManifest
 				++count;
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				count += addAtom(element);
+				count += addAtomByName(element.getAttribute("sourcename"), 1);
 
 			}
 		}
@@ -650,12 +646,11 @@ public final class BenchmarkManifest
 		String type;
 
 		// Grab every suite element
-		Xml.getNodeList(nodes, atom, "[flow,abstract]", true);
+		Xml.getNodeList(nodes, atom.getFirstChild(), "[flow,abstract]", false);
 
 		if (nodes.isEmpty())
 		{	// Nothing to do, no nodes for this
-			m_isManifestInError = true;
-			m_error = "Empty node list for " + atom.getAttribute("name");
+			setError("Empty node list for " + atom.getAttribute("name"));
 			return(0);
 		}
 
@@ -750,6 +745,18 @@ public final class BenchmarkManifest
 	}
 
 	/**
+	 * Sets an error condition and records the error message
+	 * @param errorMsg message to record for the error
+	 */
+	public void setError(String errorMsg)
+	{
+		m_error = errorMsg;
+		System.out.println(getLevel());
+		System.out.println(m_error);
+		m_isManifestInError = true;
+	}
+
+	/**
 	 * Manually overrides the pass, used typically for creation compilations,
 	 * to specify which pass items should be added to.  Also creates the pass's
 	 * run entry in the tuple, so it can be referenced later with
@@ -797,7 +804,7 @@ public final class BenchmarkManifest
 		// Locate the item for this pass
 		for (i = 0; i < m_runPasses.size(); i++)
 		{
-			if (i == m_passThis)
+			if (i + 1 == m_passThis)
 				return((Xml)m_runPasses.getSecond(i));
 		}
 
@@ -822,9 +829,9 @@ public final class BenchmarkManifest
 		// We have to add up to this pass
 		for (i = 0; i < m_passThis; i++)
 		{	// Each entry may have already been added
-			if (m_runPasses.size() < i)
+			if (m_runPasses.size() < i + 1)
 			{	// Create and add this one
-				number	= Integer.toString(i);
+				number	= Integer.toString(i + 1);
 				runPass = new Xml("run");
 				runPass.appendAttribute("this", number);
 
@@ -882,24 +889,19 @@ public final class BenchmarkManifest
 	 */
 	public void createManifest()
 	{
-		Xml last, settings;
+		Xml last;
 
 		m_root						= new Xml("opbm");
 		m_benchmarks				= new Xml("benchmarks");
 		m_manifest					= new Xml("manifest");
 		m_control					= new Xml("control");
 		m_statistics				= new Xml("statistics");
-		m_settings					= new Xml("settings");
 		m_discovery					= new Xml("discovery");
 
 		m_root.appendChild(m_benchmarks);				// opbm.benchmarks
-		m_benchmarks.appendChild(m_manifest);			// opbm.benchmarks.manifest
-		m_benchmarks.appendChild(m_control);			// opbm.benchmarks.control
-		m_benchmarks.appendChild(m_statistics);			// opbm.benchmarks.statistics
-		m_benchmarks.appendChild(m_settings);			// opbm.benchmarks.settings
-		m_benchmarks.appendChild(m_discovery);			// opbm.benchmarks.discovery
 
 		// Manifest data will be added based on the variables of the specific run
+		m_benchmarks.appendChild(m_manifest);			// opbm.benchmarks.manifest
 
 //////////
 // Append in the control data:
@@ -914,6 +916,7 @@ public final class BenchmarkManifest
 //		</control>
 //
 /////
+		m_benchmarks.appendChild(m_control);			// opbm.benchmarks.control
 		m_controlRun				= new Xml("run");
 		last						= new Xml("last");
 		m_controlLastRun			= new Xml("run");
@@ -950,6 +953,7 @@ public final class BenchmarkManifest
 //			<retries>7</retries>
 //		</statistics>
 /////
+		m_benchmarks.appendChild(m_statistics);			// opbm.benchmarks.statistics
 		m_statisticsRuntime			= new Xml("runtime");
 		m_statisticsRuntimeBegan	= new Xml("began");
 		m_statisticsRuntimeEnded	= new Xml("ended");
@@ -968,12 +972,15 @@ public final class BenchmarkManifest
 		m_statistics.appendChild(m_statisticsRetries);
 
 		// Append in user settings at time of manifest creation
-		settings = m_opbm.getSettingsMaster().getSettingsXml("opbm.settings.benchmarks").cloneNodeTree(true);
-		settings.setName("settings");
-		m_benchmarks.appendChild(settings);
+		m_settings = m_opbm.getSettingsMaster().getSettingsXml("opbm.settings.benchmarks").cloneNodeTree(true);
+		m_settings.setName("settings");
+		m_benchmarks.appendChild(m_settings);
 
 		// Append discovery info
+		m_benchmarks.appendChild(m_discovery);			// opbm.benchmarks.discovery
+
 // REMEMBER for CPU-Z CPUZ stuff
+		m_root.saveNode(Opbm.getRunningDirectory() + "manifest.xml");
 	}
 
 	/**
@@ -1013,6 +1020,7 @@ public final class BenchmarkManifest
 	private String		m_type;
 	private String		m_name;
 
+	// Root-level Xml entries
 	private	Xml			m_root;
 	private Xml			m_benchmarks;
 	private Xml			m_manifest;

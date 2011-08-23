@@ -259,7 +259,7 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install Chfome">
+			<atom name="Un(hyphen)install Chrome">
 				<abstract name="Un(hyphen)install Chrome" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
@@ -293,11 +293,6 @@
 						<executable>..(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
 					</options>
 				</abstract>
-				<flow name="quit" sourcename="quit">
-					<options>
-						<value>0</value>
-					</options>
-				</flow>
 			</atom>
 			<atom name="Un(hyphen)install Firefox">
 				<abstract name="Un(hyphen)install Firefox" sourcename="execute">
@@ -327,15 +322,15 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install Acrobat">
-				<abstract name="Install Acrobat" sourcename="execute">
+			<atom name="Install Acrobat Reader">
+				<abstract name="Install Acrobat Reader" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install Acrobat">
-				<abstract name="Un(hyphen)install Acrobat" sourcename="execute">
+			<atom name="Un(hyphen)install Acrobat Reader">
+				<abstract name="Un(hyphen)install Acrobat Reader" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -398,7 +393,7 @@
 		</molecules>
 		<scenarios>
 			<scenario name="Install Adobe">
-				<molecule name="Install Adobe" sourcename="Install Adboe"></molecule>
+				<molecule name="Install Adobe" sourcename="Install Adobe"></molecule>
 			</scenario>
 			<scenario name="Install Browsers">
 				<atom name="Install Chrome" sourcename="Install Chrome"></atom>
@@ -407,14 +402,14 @@
 				<atom name="Install Safari" sourcename="Install Safari"></atom>
 			</scenario>
 			<scenario name="Compute Browsers">
-				<atom name="Compute Chrome" sourcename="Chrome Tests"></atom>
-				<atom name="Compute Firefox" sourcename="Firefox Tests"></atom>
-				<atom name="Compute IE" sourcename="IE Tests"></atom>
-				<atom name="Compute Opera" sourcename="Opera Tests"></atom>
-				<atom name="Compute Safari" sourcename="Safari Tests"></atom>
+				<molecule name="Compute Chrome" sourcename="Compute Chrome"></molecule>
+				<molecule name="Compute Firefox" sourcename="Compute Firefox"></molecule>
+				<molecule name="Compute IE" sourcename="Compute IE"></molecule>
+				<molecule name="Compute Opera" sourcename="Compute Opera"></molecule>
+				<molecule name="Compute Safari" sourcename="Compute Safari"></molecule>
 			</scenario>
 			<scenario name="Un(hyphen)install Adobe">
-				<atom name="Un(hyphen)install Adobe" sourcename="Un(hyphen)install Adboe"></atom>
+				<molecule name="Un(hyphen)install Adobe" sourcename="Un(hyphen)install Adobe"></molecule>
 			</scenario>
 			<scenario name="Un(hyphen)install Browsers">
 				<atom name="Un(hyphen)install Chrome" sourcename="Un(hyphen)install Chrome"></atom>

@@ -139,10 +139,6 @@ public final class Opbm extends	ModalApp
 		System.out.println("    System32 Directory: " + getCSIDLDirectory("SYSTEM"));
  */
 
-		BenchmarkManifest bm = new BenchmarkManifest(this, "trial");
-		if (bm.build())
-			bm.run();
-
 		// Make sure we're the only app running
 		if (!isModalApp( getHarnessTempDirectory() + "opbm.dat", m_title ))
 		{	// Already another app instance running
