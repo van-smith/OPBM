@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.ArrayList;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+import opbm.benchmarks.BenchmarkManifest;
 import opbm.benchmarks.BenchmarkParams;
 import opbm.common.ModalApp;
 import opbm.dialogs.DeveloperWindow;
@@ -137,6 +138,10 @@ public final class Opbm extends	ModalApp
 		System.out.println("    Settings Directory: " + getSettingsDirectory());
 		System.out.println("    System32 Directory: " + getCSIDLDirectory("SYSTEM"));
  */
+
+		BenchmarkManifest bm = new BenchmarkManifest(this, "trial");
+		if (bm.build())
+			bm.run();
 
 		// Make sure we're the only app running
 		if (!isModalApp( getHarnessTempDirectory() + "opbm.dat", m_title ))

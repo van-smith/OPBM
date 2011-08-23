@@ -139,11 +139,20 @@
 		</abstracts>
 		<atoms>
 			<atom name="Excel Heat">
+				<flow name="whatever" sourcename="for">
+					<options>
+						<variable>x</variable>
+						<startvalue>1</startvalue>
+						<endvalue>10</endvalue>
+						<stepvalue>1</stepvalue>
+					</options>
+				</flow>
 				<abstract name="World Heat Calculation" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
 					</options>
 				</abstract>
+				<flow name="whatever" sourcename="next"></flow>
 			</atom>
 			<atom name="Word Alice">
 				<abstract name="Alice in Wonderland" sourcename="execute">

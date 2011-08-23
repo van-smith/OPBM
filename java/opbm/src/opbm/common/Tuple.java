@@ -150,6 +150,100 @@ public class Tuple
 	}
 
 	/**
+	 * Adds a new entry to the tuple, which could be a duplicate.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 */
+	public int add(String first, Object second, Object third, Object fourth)
+	{
+		m_first.add(first);
+		m_second.add(second);
+		m_third.add(third);
+		m_fourth.add(fourth);
+		m_fifth.add(null);
+		m_sixth.add(null);
+		m_seventh.add(null);
+		m_triggerCommand.add(null);
+		m_triggerFilters.add(null);
+		return(size() - 1);
+	}
+
+	/**
+	 * Adds a new entry to the tuple, which could be a duplicate.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 * @param fifth extra object to add
+	 */
+	public int add(String first, Object second, Object third, Object fourth, Object fifth)
+	{
+		m_first.add(first);
+		m_second.add(second);
+		m_third.add(third);
+		m_fourth.add(fourth);
+		m_fifth.add(fifth);
+		m_sixth.add(null);
+		m_seventh.add(null);
+		m_triggerCommand.add(null);
+		m_triggerFilters.add(null);
+		return(size() - 1);
+	}
+
+	/**
+	 * Adds a new entry to the tuple, which could be a duplicate.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 * @param fifth extra object to add
+	 * @param sixth extra object to add
+	 */
+	public int add(String first, Object second, Object third, Object fourth, Object fifth, Object sixth)
+	{
+		m_first.add(first);
+		m_second.add(second);
+		m_third.add(third);
+		m_fourth.add(fourth);
+		m_fifth.add(fifth);
+		m_sixth.add(sixth);
+		m_seventh.add(null);
+		m_triggerCommand.add(null);
+		m_triggerFilters.add(null);
+		return(size() - 1);
+	}
+
+	/**
+	 * Adds a new entry to the tuple, which could be a duplicate.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 * @param fifth extra object to add
+	 * @param sixth extra object to add
+	 * @param seventh extra object to add
+	 */
+	public int add(String first, Object second, Object third, Object fourth, Object fifth, Object sixth, Object seventh)
+	{
+		m_first.add(first);
+		m_second.add(second);
+		m_third.add(third);
+		m_fourth.add(fourth);
+		m_fifth.add(fifth);
+		m_sixth.add(sixth);
+		m_seventh.add(seventh);
+		m_triggerCommand.add(null);
+		m_triggerFilters.add(null);
+		return(size() - 1);
+	}
+
+	/**
 	 * Searches the tuples by its second (the object) and returns the
 	 * associated string if found.
 	 *
