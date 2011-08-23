@@ -693,7 +693,6 @@ public class Xml
 	{
 		Xml xml;
 		String search;
-		boolean lLookingForMoreLevels = false;
 
 		// Find out what we're searching for
 		// Either a single tag or multiple levels deep from the root node
@@ -742,26 +741,75 @@ public class Xml
 		return(getAttribute(root, search));
 	}
 
-	/** Returns the node of the attribute or child tag specified (if found)
-	 * or null otherwise
+	/**
+	 * Non-static version of <code>getAttributeOrChild(Xml, String)</code>.
+	 * @param tag tag or child name to search
+	 * @return value of specified tag or child
+	 * @see #getAttributeOrChild(opbm.Xml, java.lang.String)
+	 */
+	public Xml getAttributeOrChildNode(String tag)
+	{
+		return(getAttributeOrChildNode(this, tag));
+	}
+
+	/** Returns the contents of the attribute or child tag specified (if found)
+	 * empty string otherwise
 	 *
 	 * @param root parent of
-	 * @param tag tag to search for
+	 * @param searchMaster tag to search for
 	 * @return string of tag if found, empty string otherwise
 	 */
-	public static Xml getAttributeOrChildNode(Xml		root,
-											  String	tag)
+	public Xml getAttributeOrChildNode(Xml		root,
+									   String	searchMaster)
 	{
-		Xml x;
+		Xml xml;
+		String search;
 
-		x = root.getChildNode(tag);
-		if (x != null) {
-			// We found it in the child
-			return(x);
+		// Find out what we're searching for
+		// Either a single tag or multiple levels deep from the root node
+		if (searchMaster.contains("."))
+		{	// Looking for "something.like.this" or "something.like.#this" for an attribute named "this" of root.something.like
+			search = searchMaster.substring(0, searchMaster.indexOf("."));
+			searchMaster = searchMaster.substring(search.length() + 1, searchMaster.length()).trim();
+			if (search.startsWith("#"))
+			{	// Looking for an explicit attribute now
+				return(getAttributeNode(root, search.substring(1)));
+
+			} else {
+				// May be looking for a child or an attribute
+				xml = root.getChildNode(search);
+				if (xml != null)
+				{	// We found it in the child
+					if (searchMaster.isEmpty())
+						return(xml);
+					// Continue looking at lower levels
+					return(getAttributeOrChildNode(xml, searchMaster));
+				}
+				// Was not found as a child, try an attribute
+				xml = root.getAttributeNode(search);
+				if (xml != null)
+				{	// We found it in the attribute
+					if (searchMaster.isEmpty())
+						return(xml);
+					// They want to continue looking at lower levels beyond this attribute, which we can't
+					// It's a syntax error
+					return(null);
+				}
+			}
+
+		} else {								// Looking for something like "this" (one tag only)
+			search = searchMaster;
+
 		}
 
+		// Process this tag
+		xml = root.getChildNode(search);
+		if (xml != null) {
+			// We found it in the child
+			return(xml);
+		}
 		// Was not found as a child, try an attribute
-		return(getAttributeNode(root, tag));
+		return(getAttributeNode(root, search));
 	}
 
 	public String getAttributeOrChildExplicit(String tag)
@@ -1403,7 +1451,7 @@ public class Xml
 	public static Xml appendAttribute(Xml	root,
 									  Xml	xmlAdd)
 	{
-		Xml child, nextChild;
+		Xml child, nextChild, prevChild, parent;
 
 		if (xmlAdd.getParent() == null)
 			xmlAdd.setParent(root);
@@ -1424,9 +1472,26 @@ public class Xml
 
 				}
 			}
-			// Append after this one
-			child.setNext(xmlAdd);
-			xmlAdd.setPrev(child);
+			if (child.getName().equalsIgnoreCase(xmlAdd.getName()))
+			{	// Delete this last item which matches
+			if (child.getPrev() != null)
+				{	// There is one before this
+					prevChild = child.getPrev();
+					child.deleteNode(true);
+					prevChild.setNext(xmlAdd);
+					xmlAdd.setPrev(prevChild);
+
+				} else {
+					// This will be the first one
+					parent = child.getParent();
+					child.deleteNode(true);
+					parent.setFirstAttribute(xmlAdd);
+				}
+			} else {
+				// Append after this one
+				child.setNext(xmlAdd);
+				xmlAdd.setPrev(child);
+			}
 
 		} else {
 			// Is the first child

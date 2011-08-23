@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.ArrayList;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import opbm.benchmarks.BenchmarkManifest;
 import opbm.benchmarks.BenchmarkParams;
 import opbm.common.ModalApp;
 import opbm.dialogs.DeveloperWindow;
@@ -240,6 +239,12 @@ public final class Opbm extends	ModalApp
 								{	// The override location does not exist
 									System.out.println("Warning: Java.home command-line override \"" + m_jvmHome + "\" does not exist.");
 								}
+
+							} else if (line.toLowerCase().startsWith("-restart")) {
+								// They want to restart the prior benchmark, already in progress
+								m_executingFromCommandLine = true;
+								m_benchmarkMaster.benchmarkManifestRestart();
+								m_executingFromCommandLine = false;
 
 							} else {
 								// We don't do anything with other options, they'll be handled below

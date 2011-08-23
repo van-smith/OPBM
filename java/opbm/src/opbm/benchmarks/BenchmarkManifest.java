@@ -180,6 +180,15 @@ public final class BenchmarkManifest
 	{
 		setPassMaxValues();
 		assignUUIDs();
+		saveManifest();
+	}
+
+	/**
+	 * Writes the manifest to opbm\running\manifest.xml
+	 */
+	public void saveManifest()
+	{
+		m_root.saveNode(Opbm.getRunningDirectory() + "manifest.xml");
 	}
 
 	/**
@@ -969,7 +978,7 @@ public final class BenchmarkManifest
 		m_statistics.appendChild(m_statisticsRetries);
 
 		// Append in user settings at time of manifest creation
-		m_settings = m_opbm.getSettingsMaster().getSettingsXml("opbm.settings.benchmarks").cloneNodeTree(true);
+		m_settings = m_opbm.getSettingsMaster().getSettingsXml("opbm.settings.benchmarks").cloneNode(true);
 		m_settings.setName("settings");
 		m_benchmarks.appendChild(m_settings);
 
@@ -987,41 +996,56 @@ public final class BenchmarkManifest
 	 */
 	public void reloadManifest(String pathName)
 	{
+		OpbmDialog od = new OpbmDialog(m_opbm, "ReloadManifest is not validated yet", "BenchmarkManifest.java", OpbmDialog._OKAY_BUTTON, "", "");
+
 		m_root = Opbm.loadXml(pathName);
 		if (m_root == null)
 		{	// Did not load successfully
 			return;
 		}
 		// Try to set our tags
-		m_benchmarks				= m_root.getChildNode("opbm.benchmarks");
-		m_manifest					= m_root.getChildNode("opbm.benchmarks.manifest");
-		m_control					= m_root.getChildNode("opbm.benchmarks.control");
-		m_statistics				= m_root.getChildNode("opbm.benchmarks.statistics");
-		m_discovery					= m_root.getChildNode("opbm.benchmarks.discovery");
-		m_controlRun				= m_root.getChildNode("opbm.benchmarks.control.run");
-		m_controlLastRun			= m_root.getChildNode("opbm.benchmarks.control.run.lastrun");
-		m_controlLastTag			= m_root.getChildNode("opbm.benchmarks.control.run.lasttag");
-		m_controlLastWorklet		= m_root.getChildNode("opbm.benchmarks.control.run.lastworklet");
-		m_controlLastRunUuid		= m_root.getChildNode("opbm.benchmarks.control.run.lastrun.#uuid");
-		m_controlLastTagUuid		= m_root.getChildNode("opbm.benchmarks.control.run.lasttag.#uuid");
-		m_controlLastWorkletUuid	= m_root.getChildNode("opbm.benchmarks.control.run.lastworklet.#uuid");
-		m_statisticsRuntime			= m_root.getChildNode("opbm.benchmarks.statistics.runtime");
-		m_statisticsRuntimeBegan	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.began");
-		m_statisticsRuntimeEnded	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.ended");
-		m_statisticsRuntimeHarness	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.harness");
-		m_statisticsRuntimeScripts	= m_root.getChildNode("opbm.benchmarks.statistics.runtime.scripts");
-		m_statisticsSuccesses		= m_root.getChildNode("opbm.benchmarks.statistics.successes");
-		m_statisticsFailures		= m_root.getChildNode("opbm.benchmarks.statistics.failures");
-		m_statisticsRetries			= m_root.getChildNode("opbm.benchmarks.statistics.retries");
+		m_benchmarks				= m_root.getAttributeOrChildNode("benchmarks");
+		m_manifest					= m_root.getAttributeOrChildNode("benchmarks.manifest");
+		m_control					= m_root.getAttributeOrChildNode("benchmarks.control");
+		m_statistics				= m_root.getAttributeOrChildNode("benchmarks.statistics");
+		m_settings					= m_root.getAttributeOrChildNode("benchmarks.settings");
+		m_discovery					= m_root.getAttributeOrChildNode("benchmarks.discovery");
+		m_controlRun				= m_root.getAttributeOrChildNode("benchmarks.control.run");
+		m_controlLastRun			= m_root.getAttributeOrChildNode("benchmarks.control.last.run");
+		m_controlLastTag			= m_root.getAttributeOrChildNode("benchmarks.control.last.tag");
+		m_controlLastWorklet		= m_root.getAttributeOrChildNode("benchmarks.control.last.worklet");
+		m_controlLastRunUuid		= m_root.getAttributeOrChildNode("benchmarks.control.last.run.uuid");
+		m_controlLastTagUuid		= m_root.getAttributeOrChildNode("benchmarks.control.last.tag.uuid");
+		m_controlLastWorkletUuid	= m_root.getAttributeOrChildNode("benchmarks.control.last.worklet.uuid");
+		m_statisticsRuntime			= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime");
+		m_statisticsRuntimeBegan	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.began");
+		m_statisticsRuntimeEnded	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.ended");
+		m_statisticsRuntimeHarness	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.harness");
+		m_statisticsRuntimeScripts	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.scripts");
+		m_statisticsSuccesses		= m_root.getAttributeOrChildNode("benchmarks.statistics.successes");
+		m_statisticsFailures		= m_root.getAttributeOrChildNode("benchmarks.statistics.failures");
+		m_statisticsRetries			= m_root.getAttributeOrChildNode("benchmarks.statistics.retries");
 
-		// Append in user settings at time of manifest creation
-		m_settings					= m_root.getChildNode("opbm.benchmarks.settings");
-		m_discovery					= m_root.getChildNode("opbm.benchmarks.discovery");
-
-// REMEMBER Verify everything is correct
+		// Verify the settings there are as they should be
+		if (!m_opbm.getSettingsMaster().validateSettings(m_settings, false))
+		{	// The settings are not right
+			System.out.print("Error:  Unable to re-load manifest. Settings are not correct.");
+			return;
+		}
 
 		// If we get here, we found everything, everything looks good, etc.
 		m_manifestIsLoaded = true;
+	}
+
+	/**
+	 * Returns the manifest state.  If everything was created or loaded okay,
+	 * it will not be in error.  Used mostly for restarting, to see if the
+	 * reload went okay.
+	 * @return is the manifest in error?
+	 */
+	public boolean isManifestInError()
+	{
+		return(m_isManifestInError);
 	}
 
 	/**

@@ -509,19 +509,19 @@ public final class Settings
 		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.debugger")) {
 			// They want offset to this node
 			return(m_debuggerXml);
-		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.singlestep")) {
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.debugger.singleStep")) {
 			// They want offset to this node
 			return(m_singleStepXml);
-		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hud")) {
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.debugger.hud")) {
 			// They want offset to this node
 			return(m_hudXml);
-		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hud.visible")) {
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.debugger.hud.visible")) {
 			// They want offset to this node
 			return(m_hudVisibleXml);
-		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hud.translucency")) {
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.debugger.hud.translucency")) {
 			// They want offset to this node
 			return(m_hudTranslucencyXml);
-		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hudDebugInfo")) {
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.debugger.debugInfo")) {
 			// They want offset to this node
 			return(m_hudDebugInfoXml);
 		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.retry")) {
@@ -542,6 +542,139 @@ public final class Settings
 		} else {
 			return(null);
 		}
+	}
+
+	/**
+	 * Validates the settings for the settings.xml root Xml that's passed
+	 * @param settings pointer to a settings.xml
+	 * @param isFullSettings the BenchmarkManifest uses a subset of the full settings.xml structure
+	 * @return true or false if the settings there are validated
+	 */
+	public boolean validateSettings(Xml			settingsXml,
+									boolean		isFullSettings)
+	{
+		boolean isValid;
+		String translucency, count;
+		double value;
+		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml;
+
+		isValid = false;
+		if (isFullSettings)
+		{	// Not yet supported
+			System.out.println("Error: Validating full settings.xml file is not yet supported.");
+
+		} else {
+			// Validate the BenchmarkManifest subset, which is everything from opbm.settings.benchmarks and deeper
+			while (true)
+			{
+//////////
+// DEBUGGER
+				debuggerXml = settingsXml.getAttributeOrChildNode("debugger");
+				if (m_debuggerXml == null)
+				{	// #4 - fail
+					break;
+				}
+
+//////////
+// SINGLE-STEP
+				singleStepXml = settingsXml.getAttributeOrChildNode("singleStep");
+				if (m_singleStepXml == null)
+				{	// #5 - fail
+					break;
+				}
+
+//////////
+// HUD
+				hudXml = settingsXml.getAttributeOrChildNode("hud");
+				if (m_hudXml == null)
+				{	// #6 - fail
+					break;
+				}
+
+//////////
+// HUD VISIBLE
+				hudVisibleXml = hudXml.getAttributeOrChildNode("hud.visible");
+				if (m_hudVisibleXml == null)
+				{	// #7 - failed
+					break;
+				}
+
+//////////
+// HUD TRANSLUCENCY
+				hudTranslucencyXml = hudXml.getAttributeOrChildNode("hud.translucency");
+				if (m_hudTranslucencyXml == null)
+				{	// #8 - failed
+					break;
+
+				} else {
+					// #4 - Grab value
+					translucency	= m_opbm.getMacroMaster().parseMacros(m_hudTranslucencyXml.getText());
+					value			= Double.valueOf(translucency);
+					if (value < 0.0f || value > 1.0f)
+					{	// fail
+						break;
+					}
+				}
+
+//////////
+// HUD DEBUG INFO
+				hudDebugInfoXml = hudXml.getAttributeOrChildNode("hud.debuginfo");
+				if (m_hudDebugInfoXml == null)
+				{	// #9 - fail
+					break;
+				}
+
+//////////
+// RETRY
+				retryXml = settingsXml.getAttributeOrChildNode("retry");
+				if (m_retryXml == null)
+				{	// #10 - Create it
+					break;
+				}
+
+//////////
+// RETRY ENABLED
+				retryEnabledXml = retryXml.getAttributeOrChildNode("retryEnabled");
+				if (m_retryEnabledXml == null)
+				{	// #11 - fail
+					break;
+				}
+
+//////////
+// RETRY ATTEMPTS
+				retryAttemptsXml = retryXml.getAttributeOrChildNode("retryAttempts");
+				if (m_retryAttemptsXml == null)
+				{	// #12 - fail
+					break;
+
+				} else {
+					// #12 - Grab value
+					count = m_opbm.getMacroMaster().parseMacros(m_retryAttemptsXml.getText());
+					if (count.isEmpty())
+					{	// fail
+						break;
+					} else {
+						if (Utils.getValueOf(count, 5) < 0)
+						{	// fail
+							break;
+						}
+					}
+				}
+
+//////////
+// STOP IF FAILURE
+				stopIfFailureXml = settingsXml.getAttributeOrChildNode("stopIfFailure");
+				if (m_stopIfFailureXml == null)
+				{	// #11 - fail
+					break;
+				}
+
+				// If we get here, everything's acceptable
+				isValid = true;
+				break;
+			};
+		}
+		return(isValid);
 	}
 
 	private Opbm		m_opbm;

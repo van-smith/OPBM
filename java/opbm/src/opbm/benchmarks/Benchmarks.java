@@ -97,8 +97,8 @@ public class Benchmarks
 		}
 		System.out.println("Beginning trial run named \"" + m_opbm.getRunName() + "\"");
 		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "");
-		bm.build();
-		bm.run();
+		if (bm.build())
+			bm.run();
 	}
 
 	/**
@@ -145,8 +145,18 @@ public class Benchmarks
 		}
 		System.out.println("Beginning official run named \"" + m_opbm.getRunName() + "\"");
 		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "");
-		bm.build();
-		bm.run();
+		if (bm.build())
+			bm.run();
+	}
+
+	/**
+	 * Called to restart a benchmark already in progress
+	 */
+	public void benchmarkManifestRestart()
+	{
+		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "", Opbm.getRunningDirectory() + "manifest.xml");
+		if (!bm.isManifestInError())
+			bm.run();
 	}
 
 	/**
