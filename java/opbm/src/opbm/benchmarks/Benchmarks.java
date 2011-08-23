@@ -91,7 +91,14 @@ public class Benchmarks
 			m_opbm.clearDialogResponse("trial");
 		}
 		// Execute the trial run benchmark
-		OpbmDialog od = new OpbmDialog(m_opbm, "Trial Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
+		if (m_opbm.getRunName().isEmpty())
+		{	// Haven't given it a name yet, so we give it one
+			m_opbm.setRunName("Trial Run");
+		}
+		System.out.println("Beginning trial run named \"" + m_opbm.getRunName() + "\"");
+		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "", "", "", "");
+		bm.build();
+		bm.run();
 	}
 
 	/**
@@ -132,7 +139,14 @@ public class Benchmarks
 			m_opbm.clearDialogResponse("official");
 		}
 		// Execute the official run benchmark
-		OpbmDialog od = new OpbmDialog(m_opbm, "Official Run named '" + m_opbm.getRunName() + "' would begin", "caption", OpbmDialog._OKAY_BUTTON, "", "");
+		if (m_opbm.getRunName().isEmpty())
+		{	// Haven't given it a name yet, so we give it one
+			m_opbm.setRunName("Official Run");
+		}
+		System.out.println("Beginning official run named \"" + m_opbm.getRunName() + "\"");
+		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "", "", "", "");
+		bm.build();
+		bm.run();
 	}
 
 	/**

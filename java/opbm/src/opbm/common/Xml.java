@@ -1366,6 +1366,16 @@ public class Xml
 	 * Creates a new <code>Xml</code> and appends it to the attribute list
 	 *
 	 * @param tag tag to create
+	 */
+	public void appendAttribute(String tag)
+	{
+		appendAttribute(this, new Xml(tag, ""));
+	}
+
+	/**
+	 * Creates a new <code>Xml</code> and appends it to the attribute list
+	 *
+	 * @param tag tag to create
 	 * @param text text to store for tag
 	 */
 	public void appendAttribute(String tag, String text)

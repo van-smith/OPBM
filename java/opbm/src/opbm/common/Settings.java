@@ -483,6 +483,67 @@ public final class Settings
 		return(m_retryAttempts);
 	}
 
+	public Xml getSettingsXml()
+	{
+		return(m_settingsRootXml);
+	}
+
+	/**
+	 * Returns Xml pointer to the raw data element by name.  Note:  any changes
+	 * made here will be overwritten by the Settings class if the user changes
+	 * any settings through an accessor.  Should only be used for cloning.
+	 * @param element
+	 * @return
+	 */
+	public Xml getSettingsXml(String element)
+	{
+		if (element.equalsIgnoreCase("opbm"))
+		{	// They want offset to the root node
+			return(m_opbmXml);
+		} else if (element.equalsIgnoreCase("opbm.settings")) {
+			// They want offset to this node
+			return(m_settingsXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks")) {
+			// They want offset to this node
+			return(m_benchmarksXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.debugger")) {
+			// They want offset to this node
+			return(m_debuggerXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.singlestep")) {
+			// They want offset to this node
+			return(m_singleStepXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hud")) {
+			// They want offset to this node
+			return(m_hudXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hud.visible")) {
+			// They want offset to this node
+			return(m_hudVisibleXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hud.translucency")) {
+			// They want offset to this node
+			return(m_hudTranslucencyXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.hudDebugInfo")) {
+			// They want offset to this node
+			return(m_hudDebugInfoXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.retry")) {
+			// They want offset to this node
+			return(m_retryXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.retryEnabled")) {
+			// They want offset to this node
+			return(m_retryEnabledXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.retryAttempts")) {
+			// They want offset to this node
+			return(m_retryAttemptsXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.stopIfFailure")) {
+			// They want offset to this node
+			return(m_stopIfFailureXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.skin")) {
+			// They want offset to this node
+			return(m_skinXml);
+		} else {
+			return(null);
+		}
+	}
+
 	private Opbm		m_opbm;
 	private Xml			m_settingsRootXml;
 	private String		m_settingsFilename;
