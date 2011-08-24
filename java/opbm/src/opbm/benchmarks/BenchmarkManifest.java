@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 import opbm.Opbm;
 import opbm.common.Tuple;
+import opbm.common.Utils;
 import opbm.common.Xml;
 import opbm.dialogs.OpbmDialog;
 
@@ -95,6 +96,7 @@ public final class BenchmarkManifest
 		m_isManifestInError		= false;
 		m_opbm					= opbm;
 		m_bm					= opbm.getBenchmarkMaster();
+		m_bmr					= new BenchmarkManifestResults(this);
 		m_type					= type;
 		m_name					= m_opbm.getRunName();
 
@@ -180,6 +182,7 @@ public final class BenchmarkManifest
 	{
 		setPassMaxValues();
 		assignUUIDs();
+		m_bmr.createResultsdataFramework();
 		saveManifest();
 	}
 
@@ -507,10 +510,10 @@ public final class BenchmarkManifest
 			type	= element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element);
+				addElement(element, false);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element);
+				addElement(element, true);
 				++count;
 
 			} else if (type.equalsIgnoreCase("scenario")) {
@@ -565,10 +568,10 @@ public final class BenchmarkManifest
 			type = element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element);
+				addElement(element, false);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element);
+				addElement(element, true);
 				++count;
 
 			} else if (type.equalsIgnoreCase("molecule")) {
@@ -620,10 +623,10 @@ public final class BenchmarkManifest
 			type = element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element);
+				addElement(element, false);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element);
+				addElement(element, true);
 				++count;
 
 			} else if (type.equalsIgnoreCase("atom")) {
@@ -672,10 +675,10 @@ public final class BenchmarkManifest
 			type = element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element);
+				addElement(element, false);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element);
+				addElement(element, true);
 				++count;
 
 			}
@@ -690,28 +693,45 @@ public final class BenchmarkManifest
 	}
 
 	/**
-	 * Adds a flow control directive for the specified element
+	 * Adds a flow control directive or an atom for the specified element
 	 * @param element
 	 */
-	public void addElement(Xml element)
+	public void addElement(Xml		element,
+						   boolean	isAtom)
 	{
 		String level;
-		Xml flow, run;
+		Xml flowOrAtom, run, atomUuidXml;
 
 		// Grab the current level
 		level = getLevel();
 
 		// Duplicate the source flow control directive
-		flow = element.cloneNode(true);
+		flowOrAtom = element.cloneNode(true);
+		if (isAtom)
+		{	// Assign an atomuuid to this flowOrAtom entry (allows the same
+			// atom to be referenced in the output, even when used by different
+			// molecules, scenarios or suites, by creating a single number to
+			// reference throughout the entire manifest.
+			atomUuidXml = element.getAttributeNode("atomuuid");
+			if (atomUuidXml == null)
+			{	// Create a UUID for this atom
+				element.addAttribute("atomuuid", Utils.getUUID());
+			}
+			flowOrAtom.addAttribute("atomuuid", element.getAttribute("atomuuid"));
+
+		} else {
+			// Flow control directives don't get flowuuids, just their normal
+			// uuid, which isn't used anyway except for manual reference
+		}
 
 		// Tag on the level for this entry
-		flow.appendAttribute("level", level);
+		flowOrAtom.appendAttribute("level", level);
 
 		// Grab the current run pass we're appending to
 		run = getRunForThisPass();
 
 		// add the flow control directive to this run's pass
-		run.appendChild(flow);
+		run.appendChild(flowOrAtom);
 	}
 
 	/**
@@ -927,10 +947,14 @@ public final class BenchmarkManifest
 		last						= new Xml("last");
 		m_controlLastRun			= new Xml("run");
 		m_controlLastTag			= new Xml("tag");
+		m_controlLastResult			= new Xml("result");
+		m_controlLastAnnotation		= new Xml("annotation");
 		m_controlLastWorklet		= new Xml("worklet");
 		m_controlLastRunUuid		= new Xml("uuid");
 		m_controlLastTagUuid		= new Xml("uuid");
 		m_controlLastWorkletUuid	= new Xml("uuid");
+		m_controlLastResultUuid		= new Xml("uuid");
+		m_controlLastAnnotationUuid	= new Xml("uuid");
 
 		m_control.appendChild(m_controlRun);
 		m_control.appendChild(last);
@@ -944,6 +968,8 @@ public final class BenchmarkManifest
 		m_controlLastRun.appendAttribute(m_controlLastRunUuid);
 		m_controlLastTag.appendAttribute(m_controlLastTagUuid);
 		m_controlLastWorklet.appendAttribute(m_controlLastWorkletUuid);
+		m_controlLastResult.appendAttribute(m_controlLastResultUuid);
+		m_controlLastAnnotation.appendAttribute(m_controlLastAnnotationUuid);
 
 //////////
 // Append in statistics
@@ -991,7 +1017,9 @@ public final class BenchmarkManifest
 	}
 
 	/**
-	 * Reloads the specified filename to the manifest.xml file
+	 * Reloads the specified filename to the manifest.xml file, and processes
+	 * it to make sure everything that should be there is there, ignoring
+	 * extraneous information
 	 * @param pathName
 	 */
 	public void reloadManifest(String pathName)
@@ -1033,6 +1061,12 @@ public final class BenchmarkManifest
 			return;
 		}
 
+		if (!m_bmr.reloadResultsdata())
+		{	// The resultsdata section is not right
+			System.out.print("Error:  Unable to re-load manifest. Resultsdata is not correct.");
+			return;
+		}
+
 		// If we get here, we found everything, everything looks good, etc.
 		m_manifestIsLoaded = true;
 	}
@@ -1053,88 +1087,248 @@ public final class BenchmarkManifest
 	 */
 	public void run()
 	{
-		boolean processing;
-
 		if (m_isManifestInError)
 		{	// We cannot run this manifest because it's in error
 			OpbmDialog od = new OpbmDialog(m_opbm, m_error, "Run Error", OpbmDialog._OKAY_BUTTON, "", "");
 			return;
 		}
 		// We're good, run the manifest
+		m_processing = true;
 
 		// Initialize everything
 		m_bm.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster());
 
 		// Continue processing until we're done
-		processing = true;
-		while (processing)
-		{	// Continue until there's nothing else to do
+		while (m_processing)
+		{
+			// For commands like reboot-and-continue, there are follow-ups to the
+			// last command which must be stored, such as the time between reboot
+			// and continuation.
+			runPreprocessAnyFollowups();
 
+			if (m_processing)
+				runMoveToNext();	// Move to the next thing to do
+
+			if (m_processing)
+				runExecute();		// Execute that thing
 		}
+		// When we get here, we're no longer processing, but it may not be due
+		// to the benchmark being over.  If we are rebooting, then we simply
+		// shut down and continue.
+		if (!m_isManifestInError && !m_controlLastTagUuid.getText().equalsIgnoreCase("finished"))
+		{	// No error, and not finished
+			// Return to caller and wait for reboot
+			// Note:  Everything will have already been saved by the process
+			//        which setup this this exit/reboot in this way
+			return;
+		}
+		// If we get here, we are finished with the benchmark
 
 		// Finish up, show the results viewer
 		m_bm.benchmarkShutdown();
 	}
 
 	/**
-	 * A self-contained
+	 * Looks at the control portion of the manifest, and determines if there
+	 * is anything that needs to be followed-up on before continuing.  This is
+	 * typically used only for the reboot-and-continue or reboot-and-restart
+	 * commands.
+	 */
+	public void runPreprocessAnyFollowups()
+	{
+		String uuid;
+		Xml candidate;
+
+		uuid = m_controlLastRun.getAttribute("uuid");
+		if (!uuid.isEmpty())
+		{	// There is a uuid here, see what it relates to
+			candidate = m_manifest.getNodeByUUID(uuid, false);
+			if (candidate != null)
+			{	// We found the prior entry
+				if (candidate.getName().toLowerCase().startsWith("reboot"))
+				{	// It's a reboot command
+					// Grab the current time and update it in the log
+					m_bmr.appendToLastResultAnnotation("rebootEnded", Utils.getTimestamp(), candidate.getAttribute("uuid"));
+
+				} else {
+					// We don't have anything else to do for other commands
+					// So, we're done with preprocessing anything
+					// Return politely and silently
+				}
+			}
+		}
+		// When we get here, all finished with preprocessing
+	}
+
+	/**
+	 * Looks at the control portion of the manifest, and moves to the next flow
+	 * control directive, or abstract command, and prepares it for processing
+	 * by updating its location in the control portion.
+	 */
+	public void runMoveToNext()
+	{
+		Xml candidate, run, tag, worklet;
+
+		// Based on where we are currently in the opbm.benchmarks.manifest.control.last.*
+		// entries, move to the next location in opbm.benchmarks.manifest.*
+		if (m_controlLastWorkletUuid.getText().isEmpty())
+		{	// We haven't started yet, we are just beginning
+			// Process through the manifest to reach the first run entry
+			candidate	= m_manifest.getFirstChild();
+			run			= null;
+			while (candidate != null)
+			{	// Repeat until we find the run entry (it should be the first
+				// entry, but OPBM allows "dirty" or "extraneous" information
+				// to co-exist alongside real information, without reporting an
+				// error.  This decision was made to allow markups beyond OPBM-
+				// directed data sets, for personal use for testing in labs.
+				if (candidate.getName().equalsIgnoreCase("run"))
+				{	// We found our man
+					run = candidate;
+					break;
+				}
+
+				// Move to next entry
+				candidate = candidate.getNext();
+			}
+			if (run == null)
+			{	// Nothing to do, the manifest is empty or improperly formatted
+				setError("Error: opbm.benchmarks.manifest.run tag not found. Nothing to do.");
+				m_processing = false;
+				return;
+			}
+			// If we get here, we found the first run, now look for the first worklet,
+			// noting each tag as we go along
+			candidate	= run.getFirstChild();
+			tag			= null;
+			worklet		= null;
+			while (candidate != null)
+			{
+				if (candidate.getName().equalsIgnoreCase("tag"))
+				{	// Update the last tag found
+					tag = candidate;
+
+				} else if (candidate.getName().equalsIgnoreCase("flow")) {
+					// It's a flow-control directive, this is our next entry
+					worklet = candidate;
+					break;
+
+				} else if (candidate.getName().equalsIgnoreCase("abstract")) {
+					// It's an abstract command, this is our next entry
+					worklet = candidate;
+					break;
+
+				} else {
+					// Continue looking
+				}
+
+				// Move to next entry
+				candidate = candidate.getNext();
+			}
+			// When we get here, we have moved to our starting positions
+
+		} else {
+			// Continue on from our previous location
+			// Load our existing pointers
+			run		= m_manifest.getNodeByUUID(m_controlLastRunUuid.getText(), false);
+			tag		= m_manifest.getNodeByUUID(m_controlLastTagUuid.getText(), false);
+			worklet = m_manifest.getNodeByUUID(m_controlLastWorkletUuid.getText(), false);
+			if (run == null)
+			{	// Fail
+				setError("Error:  Unable to find last run position by uuid.");
+				return;
+			}
+			if (tag == null)
+			{	// Fail
+				setError("Error:  Unable to find last tag position by uuid.");
+				return;
+			}
+			if (worklet == null)
+			{	// Fail
+				setError("Error:  Unable to find last worklet position by uuid.");
+				return;
+			}
+		}
+
+		// Update our uuids for these entries
+		m_controlLastRunUuid.setText(run.getAttribute("uuid"));
+		m_controlLastTagUuid.setText(tag.getAttribute("uuid"));
+		m_controlLastWorkletUuid.setText(worklet.getAttribute("uuid"));
+		// Note:  We don't save our new manifest state to disk just yet, because
+		//        OPBM leaves everything in memory until such time as it begins
+		//        an execute* abstract.  Then, as part of the pre-processing for
+		//        the script/worklet execution of an external app, it fully saves
+		//        the state so it can resume should there be a power loss or
+		//        other catastrophic failure resulting in a system reboot.
+	}
+
+	/**
+	 * Runs the current command pointed to by the control portion of the manifest
 	 * @return
 	 */
-	public boolean processNext()
+	public boolean runExecute()
 	{
 		return(true);
 	}
 
+	public Xml getRootOpbm()	{	return(m_root);	}
+
 	// Error conditions
-	private boolean			m_isManifestInError;
-	private String			m_error;
-	private int				m_passThis;
-	private int				m_passMax;
+	private boolean						m_isManifestInError;
+	private String						m_error;
+	private int							m_passThis;
+	private int							m_passMax;
 
 	// Change as the levels are traversed during add operations
-	private String			m_suiteName;
-	private String			m_scenarioName;
-	private String			m_moleculeName;
-	private String			m_atomName;
+	private String						m_suiteName;
+	private String						m_scenarioName;
+	private String						m_moleculeName;
+	private String						m_atomName;
 
 	// Compilation variables
-	private Tuple			m_compilation;
+	private Tuple						m_compilation;
 
 	// Class member variables
-	private Opbm			m_opbm;
-	private Benchmarks		m_bm;
-	private String			m_type;
-	private String			m_name;
+	private Opbm						m_opbm;
+	private Benchmarks					m_bm;
+	private String						m_type;
+	private String						m_name;
+	private BenchmarkManifestResults	m_bmr;
+	private boolean						m_processing;			// Used in all of the run*() methods
 
 	// Root-level Xml entries
-	private boolean			m_manifestIsLoaded;
-	private	Xml				m_root;
-	private Xml				m_benchmarks;
-	private Xml				m_manifest;
-	private Xml				m_control;
-	private Xml				m_statistics;
-	private Xml				m_settings;
-	private Xml				m_discovery;
+	private boolean						m_manifestIsLoaded;
+	private	Xml							m_root;
+	private Xml							m_benchmarks;
+	private Xml							m_manifest;
+	private Xml							m_control;
+	private Xml							m_statistics;
+	private Xml							m_settings;
+	private Xml							m_discovery;
 
 	// Run passes
-	private Tuple			m_runPasses;
+	private Tuple						m_runPasses;
 
 	// Control data
-	private Xml				m_controlRun;
-	private Xml				m_controlLastRun;
-	private Xml				m_controlLastTag;
-	private Xml				m_controlLastWorklet;
-	private Xml				m_controlLastRunUuid;
-	private Xml				m_controlLastTagUuid;
-	private Xml				m_controlLastWorkletUuid;
+	private Xml							m_controlRun;
+	private Xml							m_controlLastRun;
+	private Xml							m_controlLastTag;
+	private Xml							m_controlLastResult;
+	private Xml							m_controlLastAnnotation;
+	private Xml							m_controlLastWorklet;
+	private Xml							m_controlLastRunUuid;
+	private Xml							m_controlLastTagUuid;
+	private Xml							m_controlLastWorkletUuid;
+	private Xml							m_controlLastResultUuid;
+	private Xml							m_controlLastAnnotationUuid;
 
 	// Statistics data
-	private Xml				m_statisticsRuntime;
-	private Xml				m_statisticsRuntimeBegan;
-	private Xml				m_statisticsRuntimeEnded;
-	private Xml				m_statisticsRuntimeHarness;
-	private Xml				m_statisticsRuntimeScripts;
-	private Xml				m_statisticsSuccesses;
-	private Xml				m_statisticsFailures;
-	private Xml				m_statisticsRetries;
+	private Xml							m_statisticsRuntime;
+	private Xml							m_statisticsRuntimeBegan;
+	private Xml							m_statisticsRuntimeEnded;
+	private Xml							m_statisticsRuntimeHarness;
+	private Xml							m_statisticsRuntimeScripts;
+	private Xml							m_statisticsSuccesses;
+	private Xml							m_statisticsFailures;
+	private Xml							m_statisticsRetries;
 }
