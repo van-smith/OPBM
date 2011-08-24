@@ -62,7 +62,7 @@ public class BenchmarksAtom
 // ABSTRACT
 		} else if (thisCommand.getName().equalsIgnoreCase("abstract")) {
 			// It's an abstract command
-			return(processAbstract_Atom(thisCommand, atom, xmlRun_Success, xmlRun_Failure));
+			return(processAbstract_Atom(thisCommand, xmlRun_Success, xmlRun_Failure));
 
 		}
 		// If we get here, we found something invalid.
@@ -1153,12 +1153,10 @@ public class BenchmarksAtom
 
 	/**
 	 * @param thisCommand xml to the atom of this command
-	 * @param root xml to the atom's root entry, containing
 	 * @param xmlRun_Success xml to append tags to for this portion of the run when it succeeds
 	 * @param xmlRun_Failure xml to append tags to for this portion of the run if there are failures
 	 */
 	public Xml processAbstract_Atom(Xml		thisCommand,
-									Xml		root,
 									Xml		xmlRun_RunSuccess,
 									Xml		xmlRun_RunFailure)
 	{
@@ -1289,6 +1287,7 @@ public class BenchmarksAtom
 							process = null;
 							try {
 								// Start the process (with its optional list of parameters)
+								m_bp.setLastWorkletStart(Utils.getTimestamp());
 								builder = new ProcessBuilder(commandsAndParameters);
 								process = builder.start();
 
@@ -1300,6 +1299,7 @@ public class BenchmarksAtom
 
 								// Wait for the process to finish
 								process.waitFor();
+								m_bp.setLastWorkletEnd(Utils.getTimestamp());
 								// Returns 0 if everything succeeded normally without error
 
 								if (record)
@@ -1435,6 +1435,7 @@ public class BenchmarksAtom
 				// Increase our counter
 				if (failure)
 				{
+					m_bp.setLastWorkletResult("failure");
 					++m_failureCounter;
 					if (m_bp.m_settingsMaster.benchmarkStopsIfRetriesFail())
 					{	// We have to force the stop now
@@ -1442,9 +1443,12 @@ public class BenchmarksAtom
 					}
 
 				} else {
+					m_bp.setLastWorkletResult("success");
 					++m_executeCounter;
-
 				}
+
+				// Store the number of retrise (should be 0 if no retries, 1 to m_bp.m_retryAttempts otherwise)
+				m_bp.setLastWorkletRetries(retryCount - 1);
 
 				// After the execute is finished, wait for the CPU to settle down
 				if (!(m_bp.m_debuggerActive && m_bp.m_singleStepping))

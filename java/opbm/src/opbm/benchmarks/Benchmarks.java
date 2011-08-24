@@ -95,10 +95,19 @@ public class Benchmarks
 		{	// Haven't given it a name yet, so we give it one
 			m_opbm.setRunName("Trial Run");
 		}
-		System.out.println("Beginning trial run named \"" + m_opbm.getRunName() + "\"");
-		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "");
-		if (bm.build())
-			bm.run();
+		// Create a non-edt thread to allow the GUI to continue starting up and displaying while processing
+		Thread t = new Thread("OPBM_BenchmarkManifest_runExecute")
+		{
+			@Override
+			public void run()
+			{
+				System.out.println("Beginning trial run named \"" + m_opbm.getRunName() + "\"");
+				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "");
+				if (bm.build())
+					bm.run();
+			}
+		};
+		t.start();
 	}
 
 	/**
@@ -143,10 +152,19 @@ public class Benchmarks
 		{	// Haven't given it a name yet, so we give it one
 			m_opbm.setRunName("Official Run");
 		}
-		System.out.println("Beginning official run named \"" + m_opbm.getRunName() + "\"");
-		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "");
-		if (bm.build())
-			bm.run();
+		// Create a non-edt thread to allow the GUI to continue starting up and displaying while processing
+		Thread t = new Thread("OPBM_BenchmarkManifest_runExecute")
+		{
+			@Override
+			public void run()
+			{
+				System.out.println("Beginning official run named \"" + m_opbm.getRunName() + "\"");
+				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "");
+				if (bm.build())
+					bm.run();
+			}
+		};
+		t.start();
 	}
 
 	/**
@@ -742,6 +760,11 @@ public class Benchmarks
 	public BenchmarkParams getBP()
 	{
 		return(m_bp);
+	}
+
+	public BenchmarksAtom getBPAtom()
+	{
+		return(m_bp.getBPAtom());
 	}
 
 	private Opbm				m_opbm;

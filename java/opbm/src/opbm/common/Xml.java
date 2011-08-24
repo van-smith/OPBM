@@ -2016,8 +2016,21 @@ public class Xml
 	public static void writeNodeAttributes(Xml node, DataOutputStream dos)
 			throws IOException
 	{
-		while (node != null) {
-			dos.writeBytes(" " + node.getName().trim() + "=\"" + node.getText().trim() + "\"");
+		String name, text;
+
+		while (node != null)
+		{
+			name = node.getName();
+			text = node.getText();
+
+			if (name == null)
+				name = "";
+			if (text == null)
+				text = "";
+
+			dos.writeBytes(" " + name.trim() + "=\"" + text.trim() + "\"");
+
+			// Move to next node
 			node = node.getNext();
 		}
 	}

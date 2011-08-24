@@ -86,6 +86,114 @@ public class BenchmarkParams
 			m_timingOfBaseline = 0.0;
 	}
 
+	/**
+	 * Returns the atom associated with this BenchmarkParams instance
+	 * @return
+	 */
+	public BenchmarksAtom getBPAtom()
+	{
+		return(m_bpAtom);
+	}
+
+	/**
+	 * Each time a worklet within an atom is processed, results are updated and
+	 * stored.  This accessor returns "success" or "failure"
+	 * @return "success" or "failure"
+	 */
+	public String getLastWorkletResult()			{	return(m_lastWorkletResult);		}
+
+	/**
+	 * Each time a worklet within an atom is processed, the number of retry
+	 * attempts are recorded.
+	 * @return the number of retries, or 0 if went through on first try
+	 */
+	public int getLastWorkletRetries()				{	return(m_lastWorkletRetries);		}
+
+	/**
+	 * Start time of the worklet
+	 * @return
+	 */
+	public String getLastWorkletStart()				{	return(m_lastWorkletStart);			}
+
+	/**
+	 * End time upon worklet process completion
+	 * @return
+	 */
+	public String getLastWorkletEnd()				{	return(m_lastWorkletEnd);			}
+
+	/**
+	 * Score as assigned by the script
+	 * @return
+	 */
+	public String getLastWorkletScore()				{	return(m_lastWorkletScore);			}
+
+	/**
+	 * Each time a worklet within an atom is processed, results are updated and
+	 * stored.  This accessor returns "success" or "failure"
+	 * @param r result code "success" or "failuire"
+	 */
+	public void setLastWorkletResult(String r)		{	m_lastWorkletResult = r;			}
+
+	/**
+	 * Each time a worklet within an atom is processed, the number of retry
+	 * attempts are recorded.
+	 * @param r number of retries
+	 */
+	public void setLastWorkletRetries(int r)		{	m_lastWorkletRetries = r;			}
+
+	/**
+	 * Start time of the worklet
+	 * @param t start time
+	 */
+	public void setLastWorkletStart(String t)		{	m_lastWorkletStart = t;				}
+
+	/**
+	 * End time upon worklet process completion
+	 * @param t end time
+	 */
+	public void setLastWorkletEnd(String t)			{	m_lastWorkletEnd = t;				}
+
+	/**
+	 * Score as assigned by the script
+	 * @param s score
+	 */
+	public void setLastWorkletScore(String s)		{	m_lastWorkletScore = s;				}
+
+	/**
+	 * Returns the current state of the m_debuggerOrHUDAction setting
+	 * @return
+	 */
+	public String getDebuggerOrHUDActionReason()
+	{
+		switch (m_debuggerOrHUDAction)
+		{
+			case _NO_ACTION:
+				return("normal");
+
+			case _SINGLE_STEP:
+				return("single-stepping");
+
+			case _RUN:
+				return("running");
+
+			case _STOP:
+				return("general stopping, no reason given");
+
+			case _STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES:
+				return("retry attempts failure count exceeded");
+
+			case _STOP_USER_CLICKED_STOP:
+				return("user clicked stop");
+
+			case _STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY:
+				return("failure on reboot write registry entry");
+
+			default:
+				return("unknown code " + Integer.toBinaryString(m_debuggerOrHUDAction));
+		}
+	}
+
+
 	public Opbm					m_opbm;
 	public Macros				m_macroMaster;
 	public Settings				m_settingsMaster;
@@ -146,6 +254,13 @@ public class BenchmarkParams
 	public String				m_timingName;
 	public double				m_timingInSeconds;
 	public double				m_timingOfBaseline;
+
+	// Conditions set when an atom's worklet is run:
+	private String				m_lastWorkletResult;		// "success" or "failure"
+	private int					m_lastWorkletRetries;		// 0 through (m_retryAttempts-1)
+	private String				m_lastWorkletStart;			// Tue Aug 16 16:39:51 CDT 2011 1313530812950
+	private String				m_lastWorkletEnd;			// Tue Aug 16 16:39:51 CDT 2011 1313530812950
+	private String				m_lastWorkletScore;
 
 // REMEMBER Data derived from CPUID library will go here
 

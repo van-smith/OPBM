@@ -334,6 +334,8 @@ public final class Opbm extends	ModalApp
 								// handled above in pre-this-loop processing
 							} else if (line.toLowerCase().startsWith("-developer")) {
 								// handled above in pre-this-loop processing
+							} else if (line.toLowerCase().startsWith("-restart")) {
+								// handled above in pre-this-loop processing
 
 							} else {
 								// Ignore the unknown option

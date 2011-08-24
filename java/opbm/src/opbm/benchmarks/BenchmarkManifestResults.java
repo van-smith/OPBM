@@ -10,11 +10,11 @@
  *
  *		<resultsdata>
  *			<results>
- *				<result manifestrunuuid="whatever" start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
- *				<annotation manifestrunuuid="whatever" rebootBegan="Tue Aug 16 16:39:51 CDT 2011 1313530812950" rebootEnded="Tue Aug 16 16:39:51 CDT 2011 1313530812950" delta="" uuid="whatever"/>
+ *				<result manifestworkletuuid="whatever" start="Aug 22, 2011 at 11:56am" end="Aug 22, 2011 at 11:59am" tested="yes" status="success" score="99" uuid="whatever"/>
+ *				<annotation manifestworkletuuid="whatever" rebootBegan="Tue Aug 16 16:39:51 CDT 2011 1313530812950" rebootEnded="Tue Aug 16 16:39:51 CDT 2011 1313530812950" delta="" uuid="whatever"/>
  *			</results>
  *			<details>
- *				<detail manifestrunuuid="whatever" retry="1" attempts="5">
+ *				<detail manifestworkletuuid="whatever" retry="1" attempts="5">
  *					<output>
  *					</output>
  *				</detail>
@@ -74,11 +74,11 @@ public class BenchmarkManifestResults
 	 * Adds an additional piece of information to the last stored result tag
 	 * @param attribute name of the attribute to append to the last result
 	 * @param data data to store for that attribute
-	 * @param manifestRunUuid
+	 * @param manifestWorkletUuid
 	 */
 	public void appendToLastResult(String	attribute,
 								   String	data,
-								   String	manifestRunUuid)
+								   String	manifestWorkletUuid)
 	{
 		Xml candidate, lastResult;
 
@@ -96,15 +96,15 @@ public class BenchmarkManifestResults
 			}
 			if (lastResult == null)
 			{	// Add a new result line
-				appendResultsResult(attribute, data, manifestRunUuid);
+				appendResultsResult(attribute, data, manifestWorkletUuid);
 
 			} else {
-				if (lastResult.getAttribute("manifestrunuuid").equalsIgnoreCase(manifestRunUuid))
+				if (lastResult.getAttribute("manifestworkletuuid").equalsIgnoreCase(manifestWorkletUuid))
 				{	// Add the attribute and data to this entry
 					lastResult.addAttribute(new Xml(attribute, data));
 				} else {
 					// The last entry does not match the specified uuid, so add a new entry
-					appendResultsResult(attribute, data, manifestRunUuid);
+					appendResultsResult(attribute, data, manifestWorkletUuid);
 				}
 			}
 		}
@@ -114,11 +114,11 @@ public class BenchmarkManifestResults
 	 * Appends data to the existing result element
 	 * @param attribute
 	 * @param data
-	 * @param manifestRunUuid
+	 * @param manifestWorkletUuid
 	 */
 	public void appendResultsResult(String		attribute,
 									String		data,
-									String		manifestRunUuid)
+									String		manifestWorkletUuid)
 	{
 		Xml result;
 
@@ -127,7 +127,7 @@ public class BenchmarkManifestResults
 			result = m_results.appendChild(new Xml("result"));
 
 			// Add the attribute and data to this entry
-			result.addAttribute(new Xml("manifestrunuuid", manifestRunUuid));
+			result.addAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
 			result.addAttribute(new Xml(attribute, data));
 		}
 	}
@@ -141,7 +141,7 @@ public class BenchmarkManifestResults
 	 */
 	public void appendToLastResultAnnotation(String		attribute,
 											 String		data,
-											 String		manifestRunUuid)
+											 String		manifestWorkletUuid)
 	{
 		Xml candidate, lastAnnotation;
 
@@ -161,15 +161,15 @@ public class BenchmarkManifestResults
 			{	// Add a new annotation line
 				// This should never occur, and would likely only occur if there is an error in the manifest.xml opbm.resultsdata section
 				System.out.println("Warning:  Unable to add to requested previous opbm.resultsdata.results.annotation entry. Creating new.");
-				appendResultsAnnotation(attribute, data, manifestRunUuid);
+				appendResultsAnnotation(attribute, data, manifestWorkletUuid);
 
 			} else {
-				if (lastAnnotation.getAttribute("manifestrunuuid").equalsIgnoreCase(manifestRunUuid))
+				if (lastAnnotation.getAttribute("manifestworkletuuid").equalsIgnoreCase(manifestWorkletUuid))
 				{	// Add the attribute and data to this entry
 					lastAnnotation.addAttribute(new Xml(attribute, data));
 				} else {
 					// The last entry does not match the specified uuid, so add a new entry
-					appendResultsAnnotation(attribute, data, manifestRunUuid);
+					appendResultsAnnotation(attribute, data, manifestWorkletUuid);
 				}
 
 			}
@@ -180,11 +180,11 @@ public class BenchmarkManifestResults
 	 * Appends data to the existing annotation element
 	 * @param attribute
 	 * @param data
-	 * @param manifestRunUuid
+	 * @param manifestWorkletUuid
 	 */
 	public void appendResultsAnnotation(String		attribute,
 										String		data,
-										String		manifestRunUuid)
+										String		manifestWorkletUuid)
 	{
 		Xml annotation;
 
@@ -195,6 +195,60 @@ public class BenchmarkManifestResults
 			// Add the attribute and data to this entry
 			annotation.addAttribute(new Xml(attribute, data));
 		}
+	}
+
+	/**
+	 * Appends a result to the manifest based on the successful or failed
+	 * completion of a worklet
+	 * @param manifestWorkletUuid unique ID to the run worklet which spawned it
+	 * @param startTime start time of the worklet (just before launch)
+	 * @param endTime end time of the worklet (just after process termination)
+	 * @param status "success" or "failure"
+	 * @param score assigned if success, based on script-returned scoring
+	 */
+	public void appendResult(String		manifestWorkletUuid,
+							 String		startTime,
+							 String		endTime,
+							 String		status,
+							 String		score)
+	{
+		Xml result;
+
+		result = new Xml("result");
+		result.appendAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
+		result.appendAttribute(new Xml("start", startTime));
+		result.appendAttribute(new Xml("end", endTime));
+		result.appendAttribute(new Xml("status", status));
+		result.appendAttribute(new Xml("score", score));
+		m_results.appendChild(result);
+	}
+
+
+	/**
+	 * Appends detailed information about the
+	 * @param success
+	 * @param failures
+	 * @param manifestWorkletUuid
+	 */
+	public void appendResultsDetail(Xml			success,
+									Xml			failures,
+									String		manifestWorkletUuid)
+	{
+		Xml detail;
+
+		detail = new Xml("detail");
+		detail.addAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
+		if (failures.getFirstChild() != null)
+		{	// There was at least one failure
+			detail.appendChild(success);
+			detail.appendChild(failures);
+
+		} else {
+			// Only blue skies!
+			detail.appendChild(success);
+		}
+		// The detail information has been added
+		m_details.appendChild(detail);
 	}
 
 	/**
@@ -212,19 +266,19 @@ public class BenchmarkManifestResults
 		Xml opbmXml;
 
 		opbmXml = m_bm.getRootOpbm();
-		m_resultsdataRoot			= opbmXml.addChild(new Xml("resultsdata"));				// opbm.resultsdata
-		m_results					= m_resultsdataRoot.addChild(new Xml("results"));		// opbm.resultsdata.results
-		m_details					= m_resultsdataRoot.addChild(new Xml("details"));		// opbm.resultsdata.details
-		m_aggregate					= m_resultsdataRoot.addChild(new Xml("aggregate"));		// opbm.resultsdata.aggregate
-		m_aggregateTiming			= m_aggregate.addChild(new Xml("timing"));				// opbm.resultsdata.aggregate.timing
-		m_aggregateTimingByUuid		= m_aggregateTiming.addChild(new Xml("byuuid"));		// opbm.resultsdata.aggregate.timing.byuuid
-		m_aggregateTimingTotal		= m_aggregateTiming.addChild(new Xml("total"));			// opbm.resultsdata.aggregate.timing.total
-		m_aggregateScoring			= m_aggregate.addChild(new Xml("scoring"));				// opbm.resultsdata.aggregate.scoring
-		m_aggregateScoringByUuid	= m_aggregateScoring.addChild(new Xml("byuuid"));		// opbm.resultsdata.aggregate.scoring.byuuid
-		m_aggregateScoringTotal		= m_aggregateScoring.addChild(new Xml("total"));		// opbm.resultsdata.aggregate.scoring.total
-		m_aggregateScoringAverage	= m_aggregateScoring.addChild(new Xml("average"));		// opbm.resultsdata.aggregate.scoring.average
-		m_aggregateScoringMean		= m_aggregateScoring.addChild(new Xml("mean"));			// opbm.resultsdata.aggregate.scoring.mean
-		m_aggregateScoringCV		= m_aggregateScoring.addChild(new Xml("cv"));			// opbm.resultsdata.aggregate.scoring.cv
+		m_resultsdataRoot			= opbmXml.appendChild(new Xml("resultsdata"));				// opbm.resultsdata
+		m_results					= m_resultsdataRoot.appendChild(new Xml("results"));		// opbm.resultsdata.results
+		m_details					= m_resultsdataRoot.appendChild(new Xml("details"));		// opbm.resultsdata.details
+		m_aggregate					= m_resultsdataRoot.appendChild(new Xml("aggregate"));		// opbm.resultsdata.aggregate
+		m_aggregateTiming			= m_aggregate.appendChild(new Xml("timing"));				// opbm.resultsdata.aggregate.timing
+		m_aggregateTimingByUuid		= m_aggregateTiming.appendChild(new Xml("byuuid"));			// opbm.resultsdata.aggregate.timing.byuuid
+		m_aggregateTimingTotal		= m_aggregateTiming.appendChild(new Xml("total"));			// opbm.resultsdata.aggregate.timing.total
+		m_aggregateScoring			= m_aggregate.appendChild(new Xml("scoring"));				// opbm.resultsdata.aggregate.scoring
+		m_aggregateScoringByUuid	= m_aggregateScoring.appendChild(new Xml("byuuid"));		// opbm.resultsdata.aggregate.scoring.byuuid
+		m_aggregateScoringTotal		= m_aggregateScoring.appendChild(new Xml("total"));			// opbm.resultsdata.aggregate.scoring.total
+		m_aggregateScoringAverage	= m_aggregateScoring.appendChild(new Xml("average"));		// opbm.resultsdata.aggregate.scoring.average
+		m_aggregateScoringMean		= m_aggregateScoring.appendChild(new Xml("mean"));			// opbm.resultsdata.aggregate.scoring.mean
+		m_aggregateScoringCV		= m_aggregateScoring.appendChild(new Xml("cv"));			// opbm.resultsdata.aggregate.scoring.cv
 		m_isLoaded = true;
 	}
 
@@ -244,19 +298,19 @@ public class BenchmarkManifestResults
 		while (true)
 		{
 			opbmXml = m_bm.getRootOpbm();
-			m_resultsdataRoot			= opbmXml.getAttributeOrChildNode("opbm.resultsdata");
-			m_results					= opbmXml.getAttributeOrChildNode("opbm.resultsdata.results");
-			m_details					= opbmXml.getAttributeOrChildNode("opbm.resultsdata.details");
-			m_aggregate					= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate");
-			m_aggregateTiming			= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.timing");
-			m_aggregateTimingByUuid		= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.byuuid");
-			m_aggregateTimingTotal		= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.total");
-			m_aggregateScoring			= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.scoring");
-			m_aggregateScoringByUuid	= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.byuuid");
-			m_aggregateScoringTotal		= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.total");
-			m_aggregateScoringAverage	= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.average");
-			m_aggregateScoringMean		= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.mean");
-			m_aggregateScoringCV		= opbmXml.getAttributeOrChildNode("opbm.resultsdata.aggregate.cv");
+			m_resultsdataRoot			= opbmXml.getAttributeOrChildNode("resultsdata");
+			m_results					= opbmXml.getAttributeOrChildNode("resultsdata.results");
+			m_details					= opbmXml.getAttributeOrChildNode("resultsdata.details");
+			m_aggregate					= opbmXml.getAttributeOrChildNode("resultsdata.aggregate");
+			m_aggregateTiming			= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.timing");
+			m_aggregateTimingByUuid		= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.timing.byuuid");
+			m_aggregateTimingTotal		= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.timing.total");
+			m_aggregateScoring			= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.scoring");
+			m_aggregateScoringByUuid	= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.scoring.byuuid");
+			m_aggregateScoringTotal		= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.scoring.total");
+			m_aggregateScoringAverage	= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.scoring.average");
+			m_aggregateScoringMean		= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.scoring.mean");
+			m_aggregateScoringCV		= opbmXml.getAttributeOrChildNode("resultsdata.aggregate.scoring.cv");
 
 			// Check everything
 			if (m_resultsdataRoot == null)

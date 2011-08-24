@@ -122,6 +122,10 @@ public final class BenchmarkManifest
 
 		m_runPasses				= new Tuple(opbm);
 
+		// Remove any previous uuids that may have been leftover from a
+		// previously failed build process
+		m_opbm.getScriptsXml().stripUUIDsFromAllNodes(true);
+
 		// Create the blank manifest template
 		if (manifestPathName.isEmpty())
 			createManifest();
@@ -184,6 +188,9 @@ public final class BenchmarkManifest
 		assignUUIDs();
 		m_bmr.createResultsdataFramework();
 		saveManifest();
+
+		// Clean up by removing the uuids that were temporarily assigned in the build process
+		m_opbm.getScriptsXml().stripUUIDsFromAllNodes(true);
 	}
 
 	/**
@@ -191,6 +198,7 @@ public final class BenchmarkManifest
 	 */
 	public void saveManifest()
 	{
+// REMEMBER need to add error checking here
 		m_root.saveNode(Opbm.getRunningDirectory() + "manifest.xml");
 	}
 
@@ -712,12 +720,12 @@ public final class BenchmarkManifest
 			// atom to be referenced in the output, even when used by different
 			// molecules, scenarios or suites, by creating a single number to
 			// reference throughout the entire manifest.
-			atomUuidXml = element.getAttributeNode("atomuuid");
+			atomUuidXml = element.getAttributeNode("uuid");
 			if (atomUuidXml == null)
 			{	// Create a UUID for this atom
-				element.addAttribute("atomuuid", Utils.getUUID());
+				element.addAttribute("uuid", Utils.getUUID());
 			}
-			flowOrAtom.addAttribute("atomuuid", element.getAttribute("atomuuid"));
+			flowOrAtom.addAttribute("atomuuid", element.getAttribute("uuid"));
 
 		} else {
 			// Flow control directives don't get flowuuids, just their normal
@@ -1024,8 +1032,6 @@ public final class BenchmarkManifest
 	 */
 	public void reloadManifest(String pathName)
 	{
-		OpbmDialog od = new OpbmDialog(m_opbm, "ReloadManifest is not validated yet", "BenchmarkManifest.java", OpbmDialog._OKAY_BUTTON, "", "");
-
 		m_root = Opbm.loadXml(pathName);
 		if (m_root == null)
 		{	// Did not load successfully
@@ -1083,6 +1089,24 @@ public final class BenchmarkManifest
 	}
 
 	/**
+	 * Returns the opbm tag in the manifest.xml file
+	 * @return opbm tag
+	 */
+	public Xml getRootOpbm()
+	{
+		return(m_root);
+	}
+
+
+
+
+
+
+
+
+
+
+	/**
 	 * Runs the manifest, records all data
 	 */
 	public void run()
@@ -1092,6 +1116,12 @@ public final class BenchmarkManifest
 			OpbmDialog od = new OpbmDialog(m_opbm, m_error, "Run Error", OpbmDialog._OKAY_BUTTON, "", "");
 			return;
 		}
+		if (m_controlLastRunUuid.getText().equalsIgnoreCase("finished"))
+		{	// The manifest is already finished, there's nothing else to do
+			OpbmDialog od = new OpbmDialog(m_opbm, "Benchmark has already completed", "Restart Error", OpbmDialog._OKAY_BUTTON, "", "");
+			return;
+		}
+
 		// We're good, run the manifest
 		m_processing = true;
 
@@ -1123,6 +1153,9 @@ public final class BenchmarkManifest
 			return;
 		}
 		// If we get here, we are finished with the benchmark
+
+		// Save the final result
+		saveManifest();
 
 		// Finish up, show the results viewer
 		m_bm.benchmarkShutdown();
@@ -1167,93 +1200,55 @@ public final class BenchmarkManifest
 	 */
 	public void runMoveToNext()
 	{
-		Xml candidate, run, tag, worklet;
+		Xml candidate;
 
 		// Based on where we are currently in the opbm.benchmarks.manifest.control.last.*
 		// entries, move to the next location in opbm.benchmarks.manifest.*
 		if (m_controlLastWorkletUuid.getText().isEmpty())
 		{	// We haven't started yet, we are just beginning
 			// Process through the manifest to reach the first run entry
-			candidate	= m_manifest.getFirstChild();
-			run			= null;
-			while (candidate != null)
-			{	// Repeat until we find the run entry (it should be the first
-				// entry, but OPBM allows "dirty" or "extraneous" information
-				// to co-exist alongside real information, without reporting an
-				// error.  This decision was made to allow markups beyond OPBM-
-				// directed data sets, for personal use for testing in labs.
-				if (candidate.getName().equalsIgnoreCase("run"))
-				{	// We found our man
-					run = candidate;
-					break;
-				}
-
-				// Move to next entry
-				candidate = candidate.getNext();
-			}
-			if (run == null)
-			{	// Nothing to do, the manifest is empty or improperly formatted
-				setError("Error: opbm.benchmarks.manifest.run tag not found. Nothing to do.");
-				m_processing = false;
+			runMoveToNext_MoveToNextRunTagAndWorklet();
+			if (!m_processing)
+			{	// Some failure in moving
 				return;
-			}
-			// If we get here, we found the first run, now look for the first worklet,
-			// noting each tag as we go along
-			candidate	= run.getFirstChild();
-			tag			= null;
-			worklet		= null;
-			while (candidate != null)
-			{
-				if (candidate.getName().equalsIgnoreCase("tag"))
-				{	// Update the last tag found
-					tag = candidate;
-
-				} else if (candidate.getName().equalsIgnoreCase("flow")) {
-					// It's a flow-control directive, this is our next entry
-					worklet = candidate;
-					break;
-
-				} else if (candidate.getName().equalsIgnoreCase("abstract")) {
-					// It's an abstract command, this is our next entry
-					worklet = candidate;
-					break;
-
-				} else {
-					// Continue looking
-				}
-
-				// Move to next entry
-				candidate = candidate.getNext();
 			}
 			// When we get here, we have moved to our starting positions
 
 		} else {
 			// Continue on from our previous location
 			// Load our existing pointers
-			run		= m_manifest.getNodeByUUID(m_controlLastRunUuid.getText(), false);
-			tag		= m_manifest.getNodeByUUID(m_controlLastTagUuid.getText(), false);
-			worklet = m_manifest.getNodeByUUID(m_controlLastWorkletUuid.getText(), false);
-			if (run == null)
+			m_run		= m_manifest.getNodeByUUID(m_controlLastRunUuid.getText(), false);
+			m_tag		= m_manifest.getNodeByUUID(m_controlLastTagUuid.getText(), false);
+			m_worklet = m_manifest.getNodeByUUID(m_controlLastWorkletUuid.getText(), false);
+			if (m_run == null)
 			{	// Fail
 				setError("Error:  Unable to find last run position by uuid.");
 				return;
 			}
-			if (tag == null)
+			if (m_tag == null)
 			{	// Fail
 				setError("Error:  Unable to find last tag position by uuid.");
 				return;
 			}
-			if (worklet == null)
+			if (m_worklet == null)
 			{	// Fail
 				setError("Error:  Unable to find last worklet position by uuid.");
 				return;
 			}
+
+			// We have retrieved our existing pointers, now move to the next location
+			runMoveToNext_MoveToNextTagAndWorklet();
+			if (!m_processing)
+			{	// Some failure in moving
+				return;
+			}
+			// When we get here, we're good, we have everything
 		}
 
 		// Update our uuids for these entries
-		m_controlLastRunUuid.setText(run.getAttribute("uuid"));
-		m_controlLastTagUuid.setText(tag.getAttribute("uuid"));
-		m_controlLastWorkletUuid.setText(worklet.getAttribute("uuid"));
+		m_controlLastRunUuid.setText(m_run.getAttribute("uuid"));
+		m_controlLastTagUuid.setText(m_tag.getAttribute("uuid"));
+		m_controlLastWorkletUuid.setText(m_worklet.getAttribute("uuid"));
 		// Note:  We don't save our new manifest state to disk just yet, because
 		//        OPBM leaves everything in memory until such time as it begins
 		//        an execute* abstract.  Then, as part of the pre-processing for
@@ -1263,15 +1258,202 @@ public final class BenchmarkManifest
 	}
 
 	/**
-	 * Runs the current command pointed to by the control portion of the manifest
-	 * @return
+	 * Moves to the first item in the run/pass
 	 */
-	public boolean runExecute()
+	public void runMoveToNext_MoveToFirstTagAndWorkletInRun()
 	{
-		return(true);
+		Xml candidate;
+
+		candidate		= m_run.getFirstChild();
+		m_tag			= null;
+		m_worklet		= null;
+		while (candidate != null)
+		{
+			if (candidate.getName().equalsIgnoreCase("tag"))
+			{	// Update the last tag found
+				m_tag = candidate;
+
+			} else if (candidate.getName().equalsIgnoreCase("flow")) {
+				// It's a flow-control directive, this is our next entry
+				m_worklet = candidate;
+				break;
+
+			} else if (candidate.getName().equalsIgnoreCase("abstract")) {
+				// It's an abstract command, this is our next entry
+				m_worklet = candidate;
+				break;
+
+			} else {
+				// Continue looking
+			}
+
+			// Move to next entry
+			candidate = candidate.getNext();
+		}
+		if (candidate == null)
+		{	// Nothing found to do in this run, see if there are any more runs
+			System.out.println("Warning: An empty opbm.benchmarks.manifest.run was not found. Nothing to do. Looking for next run tag.");
+			runMoveToNext_MoveToNextRunTagAndWorklet();
+			if (!m_processing)
+			{	// No more runs, nothing to do
+				setError("Error: No valid opbm.benchmarks.manifest.run entries found. Nothing to do.");
+				return;
+			}
+		}
+		// If we get here, we're good
 	}
 
-	public Xml getRootOpbm()	{	return(m_root);	}
+	public void runMoveToNext_MoveToNextTagAndWorklet()
+	{
+		Xml candidate;
+
+		candidate = m_worklet.getNext();
+		while (candidate != null)
+		{
+			if (candidate.getName().equalsIgnoreCase("tag"))
+			{	// Update the last tag found
+				m_tag = candidate;
+
+			} else if (candidate.getName().equalsIgnoreCase("flow")) {
+				// It's a flow-control directive, this is our next entry
+				m_worklet = candidate;
+				break;
+
+			} else if (candidate.getName().equalsIgnoreCase("abstract")) {
+				// It's an abstract command, this is our next entry
+				m_worklet = candidate;
+				break;
+
+			} else {
+				// Continue looking
+			}
+
+			// Move to next entry
+			candidate = candidate.getNext();
+		}
+		if (candidate == null)
+		{	// Nothing more was found, we're done with this pass
+			// See if there are any more passes
+			runMoveToNext_MoveToNextRunTagAndWorklet();
+			if (!m_processing)
+			{	// No more runs
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Moves to the next run (if any).  If there aren't any, then the benchmark
+	 * is finished.
+	 */
+	public void runMoveToNext_MoveToNextRunTagAndWorklet()
+	{
+		Xml candidate;
+		boolean wasFirst;
+
+		// If we're doing this the first time through, start from the beginning
+		// Otherwise, start from where the last run was, its next sibling
+		if (m_run == null)
+		{	// First time through, we have to try from the manifest
+			candidate	= m_manifest.getFirstChild();
+			wasFirst	= true;
+
+		} else {
+			candidate	= m_run.getNext();
+			wasFirst	= false;
+		}
+
+		// Iterate until there are no more entries at the opbm.benchmarks.manifest.* level
+		while (candidate != null)
+		{
+			if (candidate.getName().equalsIgnoreCase("run"))
+			{	// We found another pass
+				m_run = candidate;
+				break;
+			}
+			// Move to next location
+			candidate = candidate.getNext();
+		}
+		if (candidate == null)
+		{	// Nothing (more) was found
+			if (wasFirst)
+			{	// An error, this is a malformed manifest
+				setError("Error: Malformed manifest.xml, could not find a run to initiate.");
+
+			} else {
+				// We're done, benchmark is over
+				m_controlLastRunUuid.setText("finished");
+				m_controlLastTagUuid.setText("finished");
+				m_controlLastWorkletUuid.setText("finished");
+			}
+			m_processing = false;
+			return;
+		}
+		// When we get here, we found our next run, so move to the
+		// first thing to do
+		runMoveToNext_MoveToFirstTagAndWorkletInRun();
+		// When we get here, we're either finished, or we're on the first
+		// item in this or another run
+	}
+
+
+
+	/**
+	 * Runs the current command pointed to by the control portion of the manifest
+	 */
+	public void runExecute()
+	{
+		Xml success, failures;
+		String manifestWorkletUuid, type;
+		BenchmarkParams bp;
+		BenchmarksAtom bpa;
+
+		saveManifest();
+		System.out.println("Executing Pass #" + m_run.getAttribute("this") + " of #" + m_run.getAttribute("max") + ", " + m_worklet.getName() + " " + m_worklet.getAttribute("name") + " (" + m_worklet.getAttribute("sourcename") + ")");
+
+		if (m_worklet.getName().equalsIgnoreCase("abstract"))
+		{	// Create the area to store results from our execute atom
+			success		= new Xml("success");
+			failures	= new Xml("failures");
+
+			// Grab some pointers
+			bp					= m_bm.getBP();
+			bpa					= m_bm.getBPAtom();
+			manifestWorkletUuid	= m_controlLastWorkletUuid.getText();
+
+//////////
+// Physically conduct the work of the atom
+			bpa.processAbstract_Atom(m_worklet, success, failures);
+			if (bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION && bp.m_debuggerOrHUDAction != BenchmarkParams._RUN)
+			{	// They're doing something other than "nothing" or running
+				// Log it
+				type = bp.getDebuggerOrHUDActionReason();
+				m_bmr.appendResultsAnnotation("action", type, manifestWorkletUuid);
+
+				// And if they're stopping, cease processing
+				if (bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+				{	// They're stopping for whatever reason
+					m_processing = false;
+				}
+			}
+// End
+//////////
+
+			// Store the results good or bad
+			m_bmr.appendResultsDetail(success, failures, manifestWorkletUuid);
+
+			// Add the result line
+			m_bmr.appendResult(manifestWorkletUuid,
+							   bp.getLastWorkletStart(),
+							   bp.getLastWorkletEnd(),
+							   bp.getLastWorkletResult(),
+							   bp.getLastWorkletScore());
+
+		} else {
+			// It's a flow-control directive, it will update where we move from here
+			setError("Error: Flow control directives not yet been supported in manifest benchmarks");
+		}
+	}
 
 	// Error conditions
 	private boolean						m_isManifestInError;
@@ -1321,6 +1503,9 @@ public final class BenchmarkManifest
 	private Xml							m_controlLastWorkletUuid;
 	private Xml							m_controlLastResultUuid;
 	private Xml							m_controlLastAnnotationUuid;
+	private	Xml							m_run;		// Updated each pass through runMoveToNext()
+	private Xml							m_tag;		// Updated each pass through runMoveToNext()
+	private Xml							m_worklet;	// Updated each pass through runMoveToNext()
 
 	// Statistics data
 	private Xml							m_statisticsRuntime;
