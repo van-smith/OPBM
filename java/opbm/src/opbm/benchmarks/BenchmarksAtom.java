@@ -1546,6 +1546,9 @@ public class BenchmarksAtom
 		if (m_bp != null && m_bp.m_hud != null)
 			m_bp.m_hud.setRebooting();
 
+		if (m_bp != null && m_bp.m_bm != null)
+			m_bp.m_bm.runExecuteSetRebooting();
+
 		if (saveStateBeforeReboot)
 		{
 			// Update the HUD
@@ -1567,7 +1570,8 @@ public class BenchmarksAtom
 		// reboots, but it is not a blocking operation, and execution will continue
 		// below at the reboot command.
 		OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "System will restart...", "Rebooting", OpbmDialog._OKAY_BUTTON, "", "");
-		try {
+		try
+		{
 			if (m_bp != null && m_bp.m_hud != null)
 				m_bp.m_hud.updateStatus("Executing shutdown...");
 
@@ -1620,7 +1624,10 @@ public class BenchmarksAtom
 				i = 0;
 			}
 			if (m_bp != null && m_bp.m_hud != null)
+			{
 				m_bp.m_hud.updateStatus("-->  (Watchdog set for 60 seconds)");
+				m_bp.m_hud.updateDebug("--> (Type \"shutdown /a\" at C:\\> to abort)");
+			}
 
 			max	= 60;
 			while (i < max)
@@ -1642,6 +1649,10 @@ public class BenchmarksAtom
 		} catch (InterruptedException ex) {
 		}
 		// If it doesn't shut down within that time, go ahead and exit so the user can restart
+
+		if (m_bp != null && m_bp.m_bm != null)
+			m_bp.m_bm.runExecuteSetRebootingFailed();
+
 		// Exit the system
 		System.exit(0);
 	}

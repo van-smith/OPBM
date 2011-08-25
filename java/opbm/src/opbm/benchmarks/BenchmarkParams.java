@@ -20,6 +20,7 @@
 
 package opbm.benchmarks;
 
+import java.text.NumberFormat;
 import opbm.benchmarks.hud.StreamGobbler;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
@@ -200,9 +201,10 @@ public class BenchmarkParams
 	 */
 	public void computeLastWorkletScore(Xml outputs)
 	{
-		int count;
+		int i, count;
+		double power, score;
 		Xml output;
-		String score = "0";
+		NumberFormat nf = NumberFormat.getNumberInstance();
 		Tuple timingData = new Tuple(m_opbm);
 
 		count	= 0;
@@ -212,7 +214,7 @@ public class BenchmarkParams
 			if (output.getText().toLowerCase().contains("timing,"))
 			{	// This is a timing line
 				extractTimingLineElements(output.getText().substring(7));
-				timingData.add(m_timingName, m_timingInSeconds, m_timingOfBaseline);
+				timingData.add(m_timingName, Double.valueOf(m_timingInSeconds), Double.valueOf(m_timingOfBaseline));
 				++count;
 			}
 
@@ -221,13 +223,27 @@ public class BenchmarkParams
 		}
 
 		// When we get here, we have all of our timings
+		score = 0.0f;
 		if (count != 0)
 		{	// Compute a geometric mean
-			
+			power = 1.0 / (double)count;
+
+			// Perform the n_root(a1)... * n_root(an) computation
+			for (i = 0; i < timingData.size(); i++)
+			{
+				if (score == 0.0)
+					score = Math.pow((Double)timingData.getThird(i), power);
+				else
+					score *= Math.pow((Double)timingData.getThird(i), power);
+			}
 		}
 
 		// Store the score and continue
-		setLastWorkletScore(score);
+		nf.setMinimumIntegerDigits(0);
+		nf.setMaximumIntegerDigits(3);
+		nf.setMinimumFractionDigits(5);
+		nf.setMaximumFractionDigits(5);
+		setLastWorkletScore(nf.format(score));
 	}
 
 	/**
@@ -268,9 +284,9 @@ public class BenchmarkParams
 	public Opbm					m_opbm;
 	public Macros				m_macroMaster;
 	public Settings				m_settingsMaster;
-
 	public Benchmarks			m_parent;
 	public BenchmarksAtom		m_bpAtom;
+	public BenchmarkManifest	m_bm;
 	public WaitUntilIdle		m_wui;
 
 	public boolean				m_retry;

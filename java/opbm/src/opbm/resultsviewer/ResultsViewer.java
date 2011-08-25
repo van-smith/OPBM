@@ -794,12 +794,7 @@ img.grayscale();
 		m_lblBackground.setBounds(0, 0, m_width, m_height);
 		m_lblBackground.setHorizontalAlignment(JLabel.LEFT);
 		m_lblBackground.setVerticalAlignment(JLabel.TOP);
-//		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background1.png"));		// Original mahogany
-//		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background2.png"));		// Darker mahogany
-//		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background3.png"));		// Slate
-		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background4.png"));		// Granite
-//		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background5.png"));		// Clowns + Granite
-//		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background6.png"));		// Z80 CPU die
+		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background.png"));		// Granite
 		m_pan.add(m_lblBackground);
 		m_pan.moveToFront(m_lblBackground);
 

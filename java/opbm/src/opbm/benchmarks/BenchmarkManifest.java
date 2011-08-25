@@ -70,6 +70,7 @@ package opbm.benchmarks;
 import java.util.ArrayList;
 import java.util.List;
 import opbm.Opbm;
+import opbm.common.Macros;
 import opbm.common.Tuple;
 import opbm.common.Utils;
 import opbm.common.Xml;
@@ -86,6 +87,10 @@ public final class BenchmarkManifest
 	 * of run, either "trial", "official" or "compilation", gives it a name, and
 	 * specifies (if "compilation") the specific trial, official, suite, scenario,
 	 * molecule or atom to run, otherwise runs the trial or official benchmark.
+	 *
+	 * Note:  When this class is created, a valid BenchmarkParams class needs
+	 *        to have been instantiated for the Benchmarks class
+	 *
 	 * @param type "trial", "official" or "compilation"
 	 * @param name (optional) name given to the run
 	 */
@@ -95,7 +100,10 @@ public final class BenchmarkManifest
 	{
 		m_isManifestInError		= false;
 		m_opbm					= opbm;
-		m_bm					= opbm.getBenchmarkMaster();
+		m_benchmarksMaster		= opbm.getBenchmarkMaster();
+		m_macroMaster			= opbm.getMacroMaster();
+		m_bp					= null;
+		m_bpa					= null;
 		m_bmr					= new BenchmarkManifestResults(this);
 		m_type					= type;
 		m_name					= m_opbm.getRunName();
@@ -185,7 +193,7 @@ public final class BenchmarkManifest
 	public void buildFinalize()
 	{
 		setPassMaxValues();
-		insertRebootCommandsBetweenPasses();
+		insertAutoRebootCommands();
 		assignUUIDs();
 		m_bmr.createResultsdataFramework();
 		saveManifest();
@@ -218,7 +226,7 @@ public final class BenchmarkManifest
 		// See if they've build anything in the compilation
 		if (m_compilation.isEmpty())
 		{	// Nothing to do
-			System.out.println("Error: Nothing has been compiled to build manifest");
+			m_macroMaster.SystemOutPrintln("Error: Nothing has been compiled to build manifest");
 			return(false);
 		}
 
@@ -239,7 +247,7 @@ public final class BenchmarkManifest
 				{	// The suite wasn't found
 					m_isManifestInError = true;
 					m_error = "Fatal Error: Unable to add suite named \"" + name + "\": does not exist";
-					System.out.println(m_error);
+					m_macroMaster.SystemOutPrintln(m_error);
 					return(false);
 				}
 
@@ -708,30 +716,27 @@ public final class BenchmarkManifest
 	public void addElement(Xml		element,
 						   boolean	isAtom)
 	{
-		String level;
+		String level, atomuuid;
 		Xml flowOrAtom, run, atomUuidXml;
 
 		// Grab the current level
 		level = getLevel();
 
-		// Duplicate the source flow control directive
-		flowOrAtom = element.cloneNode(true);
+		// If it's an atom, it must have an "atomuuid" field
 		if (isAtom)
 		{	// Assign an atomuuid to this flowOrAtom entry (allows the same
 			// atom to be referenced in the output, even when used by different
 			// molecules, scenarios or suites, by creating a single number to
 			// reference throughout the entire manifest.
-			atomUuidXml = element.getAttributeNode("uuid");
+			atomUuidXml = element.getAttributeNode("atomuuid");
 			if (atomUuidXml == null)
-			{	// Create a UUID for this atom
-				element.addAttribute("uuid", Utils.getUUID());
+			{	// Create a UUID for this atom (if this atom is used again, it will be referenced with this single, unique value)
+				element.appendAttribute("atomuuid", Utils.getUUID());
 			}
-			flowOrAtom.addAttribute("atomuuid", element.getAttribute("uuid"));
-
-		} else {
-			// Flow control directives don't get flowuuids, just their normal
-			// uuid, which isn't used anyway except for manual reference
 		}
+
+		// Duplicate the source flow control directive
+		flowOrAtom = element.cloneNode(true);
 
 		// Tag on the level for this entry
 		flowOrAtom.appendAttribute("level", level);
@@ -786,8 +791,8 @@ public final class BenchmarkManifest
 	public void setError(String errorMsg)
 	{
 		m_error = errorMsg;
-		System.out.println(getLevel());
-		System.out.println(m_error);
+		m_macroMaster.SystemOutPrintln(getLevel());
+		m_macroMaster.SystemOutPrintln(m_error);
 		m_isManifestInError = true;
 	}
 
@@ -905,13 +910,28 @@ public final class BenchmarkManifest
 	 * Inserts automatic reboot-and-continue commands in-between passes, so the
 	 * benchmark will reboot itself automatically, and continue running.
 	 */
-	private void insertRebootCommandsBetweenPasses()
+	private void insertAutoRebootCommands()
 	{
+		int i;
+		Xml reboot, rebootTemplate;
+
 		if (m_passMax > 1)
 		{	// We need them
-// REMEMBER to add rebootAndContinue command here
+			// Build the master reboot abstract so it can be cloned for each pass
+			rebootTemplate = new Xml("abstract");
+			rebootTemplate.appendAttribute(new Xml("name", "Auto(hyphen)inserted by OPBM's Manifest Builder for reboot at start of each pass"));
+			rebootTemplate.appendAttribute(new Xml("sourcename", "rebootAndContinue"));
+			for (i = 0; i < m_runPasses.size(); i++)
+			{	// Update the run-level xml for each entry
+				reboot = rebootTemplate.cloneNode(true);
+				// The "addChild" adds it to the beginning of the children, so it will be the first entry
+				// Using "appendChild" or "appendAttribute" appends it to the end
+				((Xml)m_runPasses.getSecond(i)).addChild(reboot);
+			}
+
 		} else {
 			// For single-passes, no rebooting
+			// So, we're done
 		}
 	}
 
@@ -1061,6 +1081,7 @@ public final class BenchmarkManifest
 		m_root = Opbm.loadXml(pathName);
 		if (m_root == null)
 		{	// Did not load successfully
+			setError("Error: Unable to reload " + pathName + " manifest file, cannot restart.");
 			return;
 		}
 		// Try to set our tags
@@ -1275,13 +1296,17 @@ public final class BenchmarkManifest
 		if (m_statisticsRuntimeBegan.getText().isEmpty())
 		{	// The begin time has never been recorded, so record it
 			m_statisticsRuntimeBegan.setText(Utils.getTimestamp());
-		} else {
-			// Mark this time, as it is likely following a reboot
-			m_statisticsRuntimeBegan.appendAttribute(new Xml("mark", Utils.getTimestamp()));
 		}
+		// Mark this time, as it is likely following a reboot
+		m_bmr.appendResultsAnnotation("startup", Utils.getTimestamp(), "");
 
 		// Initialize everything
-		m_bm.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster());
+		m_benchmarksMaster.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster());
+
+		// Grab some necessary pointers for benchmark processing
+		m_bp		= m_benchmarksMaster.getBP();
+		m_bpa		= m_benchmarksMaster.getBPAtom();
+		m_bp.m_bm	= this;
 
 		// Continue processing until we're done
 		while (m_processing)
@@ -1301,13 +1326,50 @@ public final class BenchmarkManifest
 		// to the benchmark being over.  If we are rebooting, then we simply
 		// shut down and continue.
 		// Record the time of this event
-		m_statisticsRuntimeEnded.appendAttribute(new Xml("mark", Utils.getTimestamp()));
+		m_bmr.appendResultsAnnotation("shutdown", Utils.getTimestamp(), "");
 
 		// Save the final/current result
 		saveManifest();
 
 		// Finish up, show the results viewer
-		m_bm.benchmarkShutdown();
+		m_benchmarksMaster.benchmarkShutdown();
+	}
+
+	/**
+	 * Called to indicate a reboot is imminent.  If the current abstract is a
+	 * reboot command, then we mark it as finished so it will proceed to the
+	 * next entry upon OPBM restart.  Otherwise, we do nothing.
+	 */
+	public void runExecuteSetRebooting()
+	{
+		if (m_worklet.getName().equalsIgnoreCase("abstract"))
+		{	// We're processing an abstract
+			if (m_worklet.getAttribute("sourcename").toLowerCase().startsWith("reboot"))
+			{	// And it IS a reboot command
+				m_controlLastWorkletFinished.setText("yes");
+				// Save it to disk for the restart
+				saveManifest();
+				// If the reboot fails, it will report a failed reboot
+			}
+		}
+	}
+
+	/**
+	 * Called to indicate a reboot failed, and the watchdog timer (set for 60
+	 * seconds) timed out, and canceled the reboot.
+	 */
+	public void runExecuteSetRebootingFailed()
+	{
+		if (m_worklet.getName().equalsIgnoreCase("abstract"))
+		{	// We're processing an abstract
+			if (m_worklet.getAttribute("sourcename").toLowerCase().startsWith("reboot"))
+			{	// And it IS a reboot command
+				m_controlLastWorkletFinished.setText("no");
+				saveManifest();
+				setError("Error: Failed to reboot the operating system.");
+				m_processing = false;
+			}
+		}
 	}
 
 	/**
@@ -1368,14 +1430,15 @@ public final class BenchmarkManifest
 			// Load our existing pointers
 			m_run		= m_manifest.getNodeByUUID(m_controlLastRunUuid.getText(), false);
 			m_tag		= m_manifest.getNodeByUUID(m_controlLastTagUuid.getText(), false);
-			m_worklet = m_manifest.getNodeByUUID(m_controlLastWorkletUuid.getText(), false);
+			m_worklet	= m_manifest.getNodeByUUID(m_controlLastWorkletUuid.getText(), false);
 			if (m_run == null)
 			{	// Fail
 				setError("Error:  Unable to find last run position by uuid.");
 				return;
 			}
-			if (m_tag == null)
+			if (m_tag == null && !m_controlLastTagUuid.getText().isEmpty())
 			{	// Fail
+				// Note:  For the auto-inserted reboot command, the tag will be empty, so the failure is only valid if the tag is not empty
 				setError("Error:  Unable to find last tag position by uuid.");
 				return;
 			}
@@ -1398,9 +1461,9 @@ public final class BenchmarkManifest
 		}
 
 		// Update our uuids for these entries
-		m_controlLastRunUuid.setText(m_run.getAttribute("uuid"));
-		m_controlLastTagUuid.setText(m_tag.getAttribute("uuid"));
-		m_controlLastWorkletUuid.setText(m_worklet.getAttribute("uuid"));
+		m_controlLastRunUuid.setText(m_run == null ? "" : m_run.getAttribute("uuid"));
+		m_controlLastTagUuid.setText(m_tag == null ? "" : m_tag.getAttribute("uuid"));
+		m_controlLastWorkletUuid.setText(m_worklet == null ? "" : m_worklet.getAttribute("uuid"));
 		m_controlLastWorkletFinished.setText("no");
 		// Note:  We don't save our new manifest state to disk just yet, because
 		//        OPBM leaves everything in memory until such time as it begins
@@ -1461,7 +1524,7 @@ public final class BenchmarkManifest
 		}
 		if (candidate == null)
 		{	// Nothing found to do in this run, see if there are any more runs
-			System.out.println("Warning: An empty opbm.benchmarks.manifest.run was not found. Nothing to do. Looking for next run tag.");
+			m_macroMaster.SystemOutPrintln("Warning: An empty opbm.benchmarks.manifest.run was not found. Nothing to do. Looking for next run tag.");
 			runMoveToNext_MoveToNextRunTagAndWorklet();
 			if (!m_processing)
 			{	// No more runs, nothing to do
@@ -1565,8 +1628,6 @@ public final class BenchmarkManifest
 		// item in this or another run
 	}
 
-
-
 	/**
 	 * Runs the current command pointed to by the control portion of the manifest
 	 */
@@ -1574,11 +1635,9 @@ public final class BenchmarkManifest
 	{
 		Xml success, failures;
 		String manifestWorkletUuid, type;
-		BenchmarkParams bp;
-		BenchmarksAtom bpa;
 
 		saveManifest();
-		System.out.println("Pass #" + m_run.getAttribute("this") + " of #" + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
+		m_macroMaster.SystemOutPrintln("Pass #" + m_run.getAttribute("this") + " of #" + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
 
 		if (m_worklet.getName().equalsIgnoreCase("abstract"))
 		{	// Create the area to store results from our execute atom
@@ -1586,30 +1645,27 @@ public final class BenchmarkManifest
 			failures	= new Xml("failures");
 
 			// Grab some pointers
-			bp					= m_bm.getBP();
-			bpa					= m_bm.getBPAtom();
 			manifestWorkletUuid	= m_controlLastWorkletUuid.getText();
 
 //////////
 // Physically conduct the work of the atom
-			bpa.processAbstract_Atom(m_worklet, success, failures);
-			if (bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION && bp.m_debuggerOrHUDAction != BenchmarkParams._RUN)
+			m_bpa.processAbstract_Atom(m_worklet, success, failures);
+			if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._NO_ACTION && m_bp.m_debuggerOrHUDAction != BenchmarkParams._RUN)
 			{	// They're doing something other than "nothing" or running
 				// Log it
-				type = bp.getDebuggerOrHUDActionReason();
+				type = m_bp.getDebuggerOrHUDActionReason();
 				m_bmr.appendResultsAnnotation("note", type, manifestWorkletUuid);
 
 				// And if they're stopping, cease processing
-				if (bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+				if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 				{	// They're stopping for whatever reason
 					m_processing = false;
 				}
 			}
-			if (bp.getLastWorkletResult().equalsIgnoreCase("success"))
+			if (m_bp.getLastWorkletResult().equalsIgnoreCase("success"))
 			{	// We're good, it was a success
 				m_controlLastWorkletFinished.setText("yes");
 			}
-
 // End
 //////////
 
@@ -1618,10 +1674,10 @@ public final class BenchmarkManifest
 
 			// Add the result line
 			m_bmr.appendResult(manifestWorkletUuid,
-							   bp.getLastWorkletStart(),
-							   bp.getLastWorkletEnd(),
-							   bp.getLastWorkletResult(),
-							   bp.getLastWorkletScore());
+							   m_bp.getLastWorkletStart(),
+							   m_bp.getLastWorkletEnd(),
+							   m_bp.getLastWorkletResult(),
+							   m_bp.getLastWorkletScore());
 
 			// Update our statistics
 			runExecuteUpdateStatistics();
@@ -1661,7 +1717,7 @@ public final class BenchmarkManifest
 		}
 
 		// Successes or failures
-		if (m_bm.getBP().getLastWorkletResult().equalsIgnoreCase("success"))
+		if (m_bp.getLastWorkletResult().equalsIgnoreCase("success"))
 		{	// Increases successes
 			count = m_statisticsSuccesses.getText();
 			if (count.isEmpty())
@@ -1685,15 +1741,15 @@ public final class BenchmarkManifest
 		}
 
 		// Retries
-		if (m_bm.getBP().getLastWorkletRetries() != 0)
+		if (m_bp.getLastWorkletRetries() != 0)
 		{	// Increase retries
 			count = m_statisticsRetries.getText();
 			if (count.isEmpty())
 			{	// First entry
-				m_statisticsRetries.setText(Integer.toString(m_bm.getBP().getLastWorkletRetries()));
+				m_statisticsRetries.setText(Integer.toString(m_bp.getLastWorkletRetries()));
 			} else {
 				// Add to the existing count
-				m_statisticsRetries.setText(Integer.toString(Integer.valueOf(count) + m_bm.getBP().getLastWorkletRetries()));
+				m_statisticsRetries.setText(Integer.toString(Integer.valueOf(count) + m_bp.getLastWorkletRetries()));
 			}
 		}
 
@@ -1713,10 +1769,10 @@ public final class BenchmarkManifest
 		count = m_statisticsRuntimeScripts.getText();
 		if (count.isEmpty())
 		{	// First entry
-			m_statisticsRuntimeScripts.setText(Long.toString(m_bm.getBP().getMillisecondsRunningLastWorklet()));
+			m_statisticsRuntimeScripts.setText(Long.toString(m_bp.getMillisecondsRunningLastWorklet()));
 		} else {
 			// Add to the existing count
-			m_statisticsRuntimeScripts.setText(Long.toString(Integer.valueOf(count) + m_bm.getBP().getMillisecondsRunningLastWorklet()));
+			m_statisticsRuntimeScripts.setText(Long.toString(Integer.valueOf(count) + m_bp.getMillisecondsRunningLastWorklet()));
 		}
 	}
 
@@ -1737,7 +1793,10 @@ public final class BenchmarkManifest
 
 	// Class member variables
 	private Opbm						m_opbm;
-	private Benchmarks					m_bm;
+	private Benchmarks					m_benchmarksMaster;
+	private Macros						m_macroMaster;
+	private BenchmarkParams				m_bp;
+	private BenchmarksAtom				m_bpa;
 	private String						m_type;
 	private String						m_name;
 	private BenchmarkManifestResults	m_bmr;

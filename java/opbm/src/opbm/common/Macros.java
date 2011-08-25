@@ -343,6 +343,16 @@ public class Macros
 		return(candidate);
 	}
 
+	/**
+	 * Displays text with macro parsing, so "Un(hyphen)install" shows up as
+	 * "Un-install", etc.
+	 * @param text data to display to System.out
+	 */
+	public void SystemOutPrintln(String text)
+	{
+		System.out.println(parseMacros(text));
+	}
+
 	// Public macro variables
 	private Opbm				m_opbm;
 	private BenchmarkParams		m_bp;
