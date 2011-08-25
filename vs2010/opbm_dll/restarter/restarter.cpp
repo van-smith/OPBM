@@ -31,6 +31,7 @@
 #include <atlconv.h>
 
 char jarPrefix[] = " -jar ";
+char restart[] = " -restart ";
 void usage(int returnCode);
 
 
@@ -71,7 +72,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Assemble the params
 	memcpy(params, jarPrefix, strlen(jarPrefix));								// append -jar
 	memcpy(params + strlen(params), T2A(argv[3]), strlen(T2A(argv[3])));		// append opbm.jar
-	// Right now, the parameters looks like " -jar opbm.jar"
+	memcpy(params + strlen(params), restart, strlen(restart));					// append -restart
+	// Right now, the parameters looks like " -jar opbm.jar  -restart "
 
 	// Change to the specified directory
 	if (!SetCurrentDirectory(argv[1]))
@@ -89,7 +91,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	// Create buffers for the command and parameters
 	_tcscpy_s(tcommand, MAX_PATH * 2, A2T(command));
-	_tcscpy_s(tparams, MAX_PATH * 2, A2T(params)); // _T(" -jar opbm.jar opbm.Opbm"));
+	_tcscpy_s(tparams, MAX_PATH * 2, A2T(params));
 
 	// Tell the world what we're doing
 	printf("Executing: %s %s\n", T2A(tcommand), T2A(tparams));
@@ -104,7 +106,7 @@ int _tmain(int argc, _TCHAR* argv[])
 							NULL,										/* process attributes */
 							NULL,										/* thread attributes */
 							FALSE,										/* inherit handles? */
-							CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,	/* creation flags */
+							/*CREATE_NO_WINDOW |*/ NORMAL_PRIORITY_CLASS,	/* creation flags */
 							NULL,										/* environment */
 							NULL,										/* alternate startup directory */
 							&si,										/* startup info */

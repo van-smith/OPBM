@@ -185,6 +185,7 @@ public final class BenchmarkManifest
 	public void buildFinalize()
 	{
 		setPassMaxValues();
+		insertRebootCommandsBetweenPasses();
 		assignUUIDs();
 		m_bmr.createResultsdataFramework();
 		saveManifest();
@@ -901,6 +902,20 @@ public final class BenchmarkManifest
 	}
 
 	/**
+	 * Inserts automatic reboot-and-continue commands in-between passes, so the
+	 * benchmark will reboot itself automatically, and continue running.
+	 */
+	private void insertRebootCommandsBetweenPasses()
+	{
+		if (m_passMax > 1)
+		{	// We need them
+// REMEMBER to add rebootAndContinue command here
+		} else {
+			// For single-passes, no rebooting
+		}
+	}
+
+	/**
 	 * For every run entry, assign UUIDs to every node
 	 */
 	private void assignUUIDs()
@@ -924,6 +939,7 @@ public final class BenchmarkManifest
 	public void createManifest()
 	{
 		Xml last;
+		String time;
 
 		m_root						= new Xml("opbm");
 		m_benchmarks				= new Xml("benchmarks");
@@ -1012,6 +1028,14 @@ public final class BenchmarkManifest
 		m_statistics.appendChild(m_statisticsSuccesses);
 		m_statistics.appendChild(m_statisticsFailures);
 		m_statistics.appendChild(m_statisticsRetries);
+
+		// Set initial time values for the time-in-harness statistics computation
+		time = Utils.getTimestamp();
+		m_statisticsRuntimeBegan.setText(time);
+		m_statisticsRuntimeEnded.setText(time);
+		m_statisticsSuccesses.setText("0");
+		m_statisticsFailures.setText("0");
+		m_statisticsRetries.setText("0");
 
 		// Append in user settings at time of manifest creation
 		m_settings = m_opbm.getSettingsMaster().getSettingsXml("opbm.settings.benchmarks").cloneNode(true);
@@ -1251,8 +1275,10 @@ public final class BenchmarkManifest
 		if (m_statisticsRuntimeBegan.getText().isEmpty())
 		{	// The begin time has never been recorded, so record it
 			m_statisticsRuntimeBegan.setText(Utils.getTimestamp());
+		} else {
+			// Mark this time, as it is likely following a reboot
+			m_statisticsRuntimeBegan.appendAttribute(new Xml("mark", Utils.getTimestamp()));
 		}
-		m_statisticsRuntimeBegan.appendAttribute(new Xml("time", Utils.getTimestamp()));
 
 		// Initialize everything
 		m_bm.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster());
@@ -1275,7 +1301,7 @@ public final class BenchmarkManifest
 		// to the benchmark being over.  If we are rebooting, then we simply
 		// shut down and continue.
 		// Record the time of this event
-		m_statisticsRuntimeEnded.appendAttribute(new Xml("time", Utils.getTimestamp()));
+		m_statisticsRuntimeEnded.appendAttribute(new Xml("mark", Utils.getTimestamp()));
 
 		// Save the final/current result
 		saveManifest();
@@ -1612,8 +1638,8 @@ public final class BenchmarkManifest
 	 *			<runtime>
 	 *				<began>Tue Aug 16 16:39:51 CDT 2011 1313530812950</began>
 	 *				<ended>Tue Aug 16 16:39:51 CDT 2011 1313530812950</ended>
-	 *				<harness>00:00</harness>
-	 *				<scripts>00:00</scripts>
+	 *				<harness>00:00:00.0</harness>
+	 *				<scripts>298312950</scripts>	<!-- totla milliseconds running external scripts -->
 	 *			</runtime>
 	 *			<successes>00</successes>
 	 *			<failures>00</failures>
@@ -1624,12 +1650,14 @@ public final class BenchmarkManifest
 	{
 		String began, ended, count;
 
+//////////
+// Update the overall harness runtime
 		// Set the runtime
 		began = m_statisticsRuntimeBegan.getText();
 		ended = m_statisticsRuntimeEnded.getText();
 		if (!began.isEmpty() && !ended.isEmpty())
 		{	// There is a time here, we can compute the difference
-			m_statisticsRuntimeHarness.setText(Utils.convertMillisecondDifferenceToHHMMSS(began.substring(29), ended.substring(29)));
+			m_statisticsRuntimeHarness.setText(Utils.convertMillisecondDifferenceToHHMMSS(began, ended));
 		}
 
 		// Successes or failures
@@ -1667,6 +1695,28 @@ public final class BenchmarkManifest
 				// Add to the existing count
 				m_statisticsRetries.setText(Integer.toString(Integer.valueOf(count) + m_bm.getBP().getLastWorkletRetries()));
 			}
+		}
+
+//////////
+// Update the overall script runtime
+		runExecuteUpdateStatisticsScriptRuntime();
+
+//////////
+// Note:  To determine the time-in-harness, subtract out the m_statisticsRuntimeScripts
+//        value, and compute the resulting difference as HHMMSS.
+	}
+
+	public void runExecuteUpdateStatisticsScriptRuntime()
+	{
+		String count;
+
+		count = m_statisticsRuntimeScripts.getText();
+		if (count.isEmpty())
+		{	// First entry
+			m_statisticsRuntimeScripts.setText(Long.toString(m_bm.getBP().getMillisecondsRunningLastWorklet()));
+		} else {
+			// Add to the existing count
+			m_statisticsRuntimeScripts.setText(Long.toString(Integer.valueOf(count) + m_bm.getBP().getMillisecondsRunningLastWorklet()));
 		}
 	}
 
@@ -1732,4 +1782,7 @@ public final class BenchmarkManifest
 	private Xml							m_statisticsSuccesses;
 	private Xml							m_statisticsFailures;
 	private Xml							m_statisticsRetries;
+
+	// The resultsdata portions are handled by BenchmarkManifestResults
+	// See createResultsdataFramework().
 }

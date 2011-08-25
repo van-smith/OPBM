@@ -101,7 +101,7 @@ public class BenchmarkManifestResults
 			} else {
 				if (lastResult.getAttribute("manifestworkletuuid").equalsIgnoreCase(manifestWorkletUuid))
 				{	// Add the attribute and data to this entry
-					lastResult.addAttribute(new Xml(attribute, data));
+					lastResult.appendAttribute(new Xml(attribute, data));
 				} else {
 					// The last entry does not match the specified uuid, so add a new entry
 					appendResultsResult(attribute, data, manifestWorkletUuid);
@@ -127,8 +127,8 @@ public class BenchmarkManifestResults
 			result = m_results.appendChild(new Xml("result"));
 
 			// Add the attribute and data to this entry
-			result.addAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
-			result.addAttribute(new Xml(attribute, data));
+			result.appendAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
+			result.appendAttribute(new Xml(attribute, data));
 		}
 	}
 
@@ -166,7 +166,7 @@ public class BenchmarkManifestResults
 			} else {
 				if (lastAnnotation.getAttribute("manifestworkletuuid").equalsIgnoreCase(manifestWorkletUuid))
 				{	// Add the attribute and data to this entry
-					lastAnnotation.addAttribute(new Xml(attribute, data));
+					lastAnnotation.appendAttribute(new Xml(attribute, data));
 				} else {
 					// The last entry does not match the specified uuid, so add a new entry
 					appendResultsAnnotation(attribute, data, manifestWorkletUuid);
@@ -193,7 +193,7 @@ public class BenchmarkManifestResults
 			annotation = m_results.appendChild(new Xml("annotation"));
 
 			// Add the attribute and data to this entry
-			annotation.addAttribute(new Xml(attribute, data));
+			annotation.appendAttribute(new Xml(attribute, data));
 		}
 	}
 
@@ -215,11 +215,11 @@ public class BenchmarkManifestResults
 		Xml result;
 
 		result = new Xml("result");
-		result.appendAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
-		result.appendAttribute(new Xml("start", startTime));
-		result.appendAttribute(new Xml("end", endTime));
-		result.appendAttribute(new Xml("status", status));
-		result.appendAttribute(new Xml("score", score));
+		result.appendAttribute(new Xml("manifestworkletuuid",	manifestWorkletUuid));
+		result.appendAttribute(new Xml("start",					startTime));
+		result.appendAttribute(new Xml("end",					endTime));
+		result.appendAttribute(new Xml("status",				status));
+		result.appendAttribute(new Xml("score",					score));
 		m_results.appendChild(result);
 	}
 
@@ -237,7 +237,7 @@ public class BenchmarkManifestResults
 		Xml detail;
 
 		detail = new Xml("detail");
-		detail.addAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
+		detail.appendAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
 		if (failures.getFirstChild() != null)
 		{	// There was at least one failure
 			detail.appendChild(success);
@@ -279,6 +279,12 @@ public class BenchmarkManifestResults
 		m_aggregateScoringAverage	= m_aggregateScoring.appendChild(new Xml("average"));		// opbm.resultsdata.aggregate.scoring.average
 		m_aggregateScoringMean		= m_aggregateScoring.appendChild(new Xml("mean"));			// opbm.resultsdata.aggregate.scoring.mean
 		m_aggregateScoringCV		= m_aggregateScoring.appendChild(new Xml("cv"));			// opbm.resultsdata.aggregate.scoring.cv
+		m_aggregateTimingTotal.setText("0");
+		m_aggregateScoringTotal.setText("0");
+		m_aggregateScoringAverage.setText("0");
+		m_aggregateScoringMean.setText("0");
+		m_aggregateScoringCV.setText("0");
+		m_aggregateScoringTotal.setText("0");
 		m_isLoaded = true;
 	}
 

@@ -363,6 +363,27 @@ public class Utils
 		return(hhmmssf);
 	}
 
+	/**
+	 * Computes the milliseconds between two timestamps
+	 * @param began start time
+	 * @param ended end time
+	 * @return milliseconds between
+	 */
+	public static long millisecondsBetweenTimestamps(String		timestampBegan,
+													 String		timestampEnded)
+	{
+		String msBegan, msEnded;
+		long bms, ems;
+
+		msBegan = timestampBegan.substring(29);
+		msEnded = timestampEnded.substring(29);
+
+		bms		= Long.valueOf(msBegan);
+		ems		= Long.valueOf(msEnded);
+
+		return(ems - bms);
+	}
+
 	public static Xml processExecutableLine(String	tag,
 											String	source,
 											String	attributeName,

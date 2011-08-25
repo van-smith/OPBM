@@ -2174,37 +2174,58 @@ public class Xml
 									String		uuid,
 									boolean		searchAttributes)
 	{
-		Xml nodeTest;
-		String thisUUID;
+		return(getNodeByAttributeNameEqualsValue(node, "uuid", uuid, searchAttributes));
+	}
 
-		while (node != null)
+	/**
+	 * Searches the root node and deeper to find the specified node with a named
+	 * attribute containing the specified value, typically used for forms of
+	 * UUID stored information, such as "manifestWorkletUuid" attribute with a
+	 * specific value (used for BenchmarkManifest searches).
+	 * @param root where to begin looking
+	 * @param attribute name of attribute to find
+	 * @param value value attribute should contain
+	 * @param searchAttributes should attributes be searched (attribute searches
+	 * are only valid while an Xml is in memory. They are lost at disk saves
+	 * and will not be restored when re-loaded).
+	 * @return
+	 */
+	public static Xml getNodeByAttributeNameEqualsValue(Xml			root,
+														String		attribute,
+														String		value,
+														boolean		searchAttributes)
+	{
+		Xml nodeTest;
+		String thisAttribute;
+
+		while (root != null)
 		{
 			// See if it's this entry
-			thisUUID = node.getAttribute("uuid");
-			if (!thisUUID.isEmpty() && thisUUID.equals(uuid))
+			thisAttribute = root.getAttribute(attribute);
+			if (!thisAttribute.isEmpty() && thisAttribute.equals(value))
 			{	// It was a match
-				return(node);
+				return(root);
 			}
 			// If we get here, it wasn't this node, see if it's oen of its
 			// attributes or children
 
 			if (searchAttributes)
 			{	// See if it's any of its attributes
-				nodeTest = getNodeByUUID(node.getFirstAttribute(), uuid, searchAttributes);
+				nodeTest = getNodeByAttributeNameEqualsValue(root.getFirstAttribute(), attribute, value, searchAttributes);
 				if (nodeTest != null)
 					return(nodeTest);
 			}
 
 			// See if it's any of its children
-			nodeTest = getNodeByUUID(node.getFirstChild(), uuid, searchAttributes);
+			nodeTest = getNodeByAttributeNameEqualsValue(root.getFirstChild(), attribute, value, searchAttributes);
 			if (nodeTest != null)
 				return(nodeTest);
 
 			// Move to next sibling
-			node = node.getNext();
+			root = root.getNext();
 		}
 		// If we get here, it wasn't found at this level through any attributes or children
-		return(node);
+		return(root);
 	}
 
 	/**

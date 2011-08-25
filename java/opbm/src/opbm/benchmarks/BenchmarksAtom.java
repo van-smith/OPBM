@@ -1308,6 +1308,7 @@ public class BenchmarksAtom
 								// Wait for the process to finish
 								process.waitFor();
 								m_bp.setLastWorkletEnd(Utils.getTimestamp());
+								m_bp.accumulateLastWorkletTime();
 								// Returns 0 if everything succeeded normally without error
 
 								if (record)
@@ -1419,8 +1420,10 @@ public class BenchmarksAtom
 							} else {
 								// Just append like normal, they're not retrying, this failure will persist
 								if (record)
+								{
 									xmlRun_RunSuccess.appendChild(xmlType);
-								// If we succeed, we make only one pass through the loop, no need to increment the retry count
+									m_bp.computeLastWorkletScore(xmlOutput);
+								}
 							}
 							// Move the counter for the next retry
 							++retryCount;

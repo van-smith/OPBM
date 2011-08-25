@@ -30,6 +30,8 @@ import opbm.common.Macros;
 import opbm.Opbm;
 import opbm.benchmarks.waituntilidle.WaitUntilIdle;
 import opbm.common.Settings;
+import opbm.common.Tuple;
+import opbm.common.Utils;
 import opbm.common.Xml;
 
 public class BenchmarkParams
@@ -41,6 +43,11 @@ public class BenchmarkParams
 	 * like "1.4839839838393" (indicating seconds), and ofBaselinePercent is
 	 * something like "99.73833938262" where 100 is the baseline.
 	 * Populates into m_status, m_timing, m_ofBaseline
+	 *
+	 * If coming from a "timing,Launch program,1.4839839838393,99.73833938262",
+	 * use output.getText().substring(7) to access the "Launch program" part
+	 * directly.
+	 *
 	 * @param line "Launch program,1.4839839838393,99.73833938262"
 	 * @sets m_status = "Launch Program"
 	 * @sets m_timing = 1.4839839838393
@@ -128,6 +135,16 @@ public class BenchmarkParams
 	public String getLastWorkletScore()				{	return(m_lastWorkletScore);			}
 
 	/**
+	 * Return the number of milliseconds between the end and start of the last
+	 * worklet as recorded in BenchmarksAtom
+	 * @return total milliseconds elapsed on last worklet process run
+	 */
+	public long getMillisecondsRunningLastWorklet()
+	{
+		return(m_lastWorkletAccumulationTotal);
+	}
+
+	/**
 	 * Each time a worklet within an atom is processed, results are updated and
 	 * stored.  This accessor returns "success" or "failure"
 	 * @param r result code "success" or "failuire"
@@ -145,7 +162,11 @@ public class BenchmarkParams
 	 * Start time of the worklet
 	 * @param t start time
 	 */
-	public void setLastWorkletStart(String t)		{	m_lastWorkletStart = t;				}
+	public void setLastWorkletStart(String t)
+	{
+		m_lastWorkletAccumulationTotal	= 0;
+		m_lastWorkletStart				= t;
+	}
 
 	/**
 	 * End time upon worklet process completion
@@ -154,10 +175,60 @@ public class BenchmarkParams
 	public void setLastWorkletEnd(String t)			{	m_lastWorkletEnd = t;				}
 
 	/**
+	 * Computes the time between end and start, and adds it to an accumulation
+	 * total for the worklet runtime
+	 */
+	public void accumulateLastWorkletTime()
+	{
+		m_lastWorkletAccumulationTotal += Utils.millisecondsBetweenTimestamps(m_lastWorkletStart, m_lastWorkletEnd);
+	}
+
+	/**
 	 * Score as assigned by the script
 	 * @param s score
 	 */
 	public void setLastWorkletScore(String s)		{	m_lastWorkletScore = s;				}
+
+	/**
+	 * Points to the output data captured, which should hold timing data
+	 *		<outputs>
+	 *			<output date="Wed Aug 24 16:06:10 CDT 2011" millisecond="1314219970772">timing,Launch Adobe Acrobat 10.1 Installer, 11.5386581878518, 72.3408759520074</output>
+	 *			<output date="Wed Aug 24 16:07:18 CDT 2011" millisecond="1314220038918">timing,Install Adobe Acrobat 10.1, 67.9449565959183, 42.640666829038</output>
+	 *			<output date="Wed Aug 24 16:07:20 CDT 2011" millisecond="1314220040419">timing,Launch Adobe Acrobat 10.1, 1.50383500529185, 48.3342750994773</output>
+	 *		</outputs>
+	 * @param outputs pointer to the outputs tag
+	 */
+	public void computeLastWorkletScore(Xml outputs)
+	{
+		int count;
+		Xml output;
+		String score = "0";
+		Tuple timingData = new Tuple(m_opbm);
+
+		count	= 0;
+		output	= outputs.getFirstChild();
+		while (output != null)
+		{
+			if (output.getText().toLowerCase().contains("timing,"))
+			{	// This is a timing line
+				extractTimingLineElements(output.getText().substring(7));
+				timingData.add(m_timingName, m_timingInSeconds, m_timingOfBaseline);
+				++count;
+			}
+
+			// Move to next output sibling
+			output = output.getNext();
+		}
+
+		// When we get here, we have all of our timings
+		if (count != 0)
+		{	// Compute a geometric mean
+			
+		}
+
+		// Store the score and continue
+		setLastWorkletScore(score);
+	}
 
 	/**
 	 * Returns the current state of the m_debuggerOrHUDAction setting
@@ -251,16 +322,18 @@ public class BenchmarkParams
 	public String				m_line;
 	public int					m_firstComma;
 	public int					m_secondComma;
+	// Values obtained from extractTimingLineElements():
 	public String				m_timingName;
 	public double				m_timingInSeconds;
 	public double				m_timingOfBaseline;
 
 	// Conditions set when an atom's worklet is run:
-	private String				m_lastWorkletResult;		// "success" or "failure"
-	private int					m_lastWorkletRetries;		// 0 through (m_retryAttempts-1)
-	private String				m_lastWorkletStart;			// Tue Aug 16 16:39:51 CDT 2011 1313530812950
-	private String				m_lastWorkletEnd;			// Tue Aug 16 16:39:51 CDT 2011 1313530812950
-	private String				m_lastWorkletScore;
+	private String				m_lastWorkletResult;				// "success" or "failure"
+	private int					m_lastWorkletRetries;				// 0 through (m_retryAttempts-1)
+	private String				m_lastWorkletStart;					// Tue Aug 16 16:39:51 CDT 2011 1313530812950
+	private String				m_lastWorkletEnd;					// Tue Aug 16 16:39:51 CDT 2011 1313530812950
+	private String				m_lastWorkletScore;					// Computed at the end of each script executed for the timing points contained within
+	private long				m_lastWorkletAccumulationTotal;		// Holds an accumulation during retries of the time between scripts
 
 // REMEMBER Data derived from CPUID library will go here
 
