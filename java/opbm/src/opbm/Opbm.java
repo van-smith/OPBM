@@ -19,6 +19,8 @@
 
 package opbm;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import opbm.common.Xml;
 import opbm.common.Macros;
 import opbm.common.Settings;
@@ -163,7 +165,6 @@ public final class Opbm extends	ModalApp
 		m_executingTrialRun			= false;
 		m_executingOfficialRun		= false;
 		m_executingBenchmarkRunName	= "";
-
 
 		// If -font option is on command line, use slightly smaller fonts
 		// REMEMBER I desire to change this later to use settings.xml file
@@ -2259,7 +2260,7 @@ public final class Opbm extends	ModalApp
     public static void main(String[] args)
 	{
 		// Launch the system
-        Opbm o = new Opbm(args);
+		Opbm o = new Opbm(args);
     }
 
 	/**

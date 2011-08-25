@@ -951,18 +951,19 @@ public final class BenchmarkManifest
 //
 /////
 		m_benchmarks.appendChild(m_control);			// opbm.benchmarks.control
-		m_controlRun				= new Xml("run");
-		last						= new Xml("last");
-		m_controlLastRun			= new Xml("run");
-		m_controlLastTag			= new Xml("tag");
-		m_controlLastResult			= new Xml("result");
-		m_controlLastAnnotation		= new Xml("annotation");
-		m_controlLastWorklet		= new Xml("worklet");
-		m_controlLastRunUuid		= new Xml("uuid");
-		m_controlLastTagUuid		= new Xml("uuid");
-		m_controlLastWorkletUuid	= new Xml("uuid");
-		m_controlLastResultUuid		= new Xml("uuid");
-		m_controlLastAnnotationUuid	= new Xml("uuid");
+		m_controlRun					= new Xml("run");
+		last							= new Xml("last");
+		m_controlLastRun				= new Xml("run");
+		m_controlLastTag				= new Xml("tag");
+		m_controlLastResult				= new Xml("result");
+		m_controlLastAnnotation			= new Xml("annotation");
+		m_controlLastWorklet			= new Xml("worklet");
+		m_controlLastRunUuid			= new Xml("uuid");
+		m_controlLastTagUuid			= new Xml("uuid");
+		m_controlLastWorkletUuid		= new Xml("uuid");
+		m_controlLastWorkletFinished	= new Xml("finished");
+		m_controlLastResultUuid			= new Xml("uuid");
+		m_controlLastAnnotationUuid		= new Xml("uuid");
 
 		m_control.appendChild(m_controlRun);
 		m_control.appendChild(last);
@@ -976,6 +977,7 @@ public final class BenchmarkManifest
 		m_controlLastRun.appendAttribute(m_controlLastRunUuid);
 		m_controlLastTag.appendAttribute(m_controlLastTagUuid);
 		m_controlLastWorklet.appendAttribute(m_controlLastWorkletUuid);
+		m_controlLastWorklet.appendAttribute(m_controlLastWorkletFinished);
 		m_controlLastResult.appendAttribute(m_controlLastResultUuid);
 		m_controlLastAnnotation.appendAttribute(m_controlLastAnnotationUuid);
 
@@ -1038,27 +1040,148 @@ public final class BenchmarkManifest
 			return;
 		}
 		// Try to set our tags
-		m_benchmarks				= m_root.getAttributeOrChildNode("benchmarks");
-		m_manifest					= m_root.getAttributeOrChildNode("benchmarks.manifest");
-		m_control					= m_root.getAttributeOrChildNode("benchmarks.control");
-		m_statistics				= m_root.getAttributeOrChildNode("benchmarks.statistics");
-		m_settings					= m_root.getAttributeOrChildNode("benchmarks.settings");
-		m_discovery					= m_root.getAttributeOrChildNode("benchmarks.discovery");
-		m_controlRun				= m_root.getAttributeOrChildNode("benchmarks.control.run");
-		m_controlLastRun			= m_root.getAttributeOrChildNode("benchmarks.control.last.run");
-		m_controlLastTag			= m_root.getAttributeOrChildNode("benchmarks.control.last.tag");
-		m_controlLastWorklet		= m_root.getAttributeOrChildNode("benchmarks.control.last.worklet");
-		m_controlLastRunUuid		= m_root.getAttributeOrChildNode("benchmarks.control.last.run.uuid");
-		m_controlLastTagUuid		= m_root.getAttributeOrChildNode("benchmarks.control.last.tag.uuid");
-		m_controlLastWorkletUuid	= m_root.getAttributeOrChildNode("benchmarks.control.last.worklet.uuid");
-		m_statisticsRuntime			= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime");
-		m_statisticsRuntimeBegan	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.began");
-		m_statisticsRuntimeEnded	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.ended");
-		m_statisticsRuntimeHarness	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.harness");
-		m_statisticsRuntimeScripts	= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.scripts");
-		m_statisticsSuccesses		= m_root.getAttributeOrChildNode("benchmarks.statistics.successes");
-		m_statisticsFailures		= m_root.getAttributeOrChildNode("benchmarks.statistics.failures");
-		m_statisticsRetries			= m_root.getAttributeOrChildNode("benchmarks.statistics.retries");
+		m_benchmarks					= m_root.getAttributeOrChildNode("benchmarks");
+		m_manifest						= m_root.getAttributeOrChildNode("benchmarks.manifest");
+		m_control						= m_root.getAttributeOrChildNode("benchmarks.control");
+		m_statistics					= m_root.getAttributeOrChildNode("benchmarks.statistics");
+		m_settings						= m_root.getAttributeOrChildNode("benchmarks.settings");
+		m_discovery						= m_root.getAttributeOrChildNode("benchmarks.discovery");
+		m_controlRun					= m_root.getAttributeOrChildNode("benchmarks.control.run");
+		m_controlLastRun				= m_root.getAttributeOrChildNode("benchmarks.control.last.run");
+		m_controlLastTag				= m_root.getAttributeOrChildNode("benchmarks.control.last.tag");
+		m_controlLastWorklet			= m_root.getAttributeOrChildNode("benchmarks.control.last.worklet");
+		m_controlLastRunUuid			= m_root.getAttributeOrChildNode("benchmarks.control.last.run.uuid");
+		m_controlLastTagUuid			= m_root.getAttributeOrChildNode("benchmarks.control.last.tag.uuid");
+		m_controlLastWorkletUuid		= m_root.getAttributeOrChildNode("benchmarks.control.last.worklet.uuid");
+		m_controlLastWorkletFinished	= m_root.getAttributeOrChildNode("benchmarks.control.last.worklet.finished");
+		m_statisticsRuntime				= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime");
+		m_statisticsRuntimeBegan		= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.began");
+		m_statisticsRuntimeEnded		= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.ended");
+		m_statisticsRuntimeHarness		= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.harness");
+		m_statisticsRuntimeScripts		= m_root.getAttributeOrChildNode("benchmarks.statistics.runtime.scripts");
+		m_statisticsSuccesses			= m_root.getAttributeOrChildNode("benchmarks.statistics.successes");
+		m_statisticsFailures			= m_root.getAttributeOrChildNode("benchmarks.statistics.failures");
+		m_statisticsRetries				= m_root.getAttributeOrChildNode("benchmarks.statistics.retries");
+
+		if (m_benchmarks == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks not found");
+			return;
+		}
+
+		if (m_manifest == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.manifest not found");
+			return;
+		}
+
+		if (m_control == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control not found");
+			return;
+		}
+
+		if (m_controlRun == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.run not found");
+			return;
+		}
+
+		if (m_controlLastRun == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.last.run not found");
+			return;
+		}
+
+		if (m_controlLastTag == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.last.tag not found");
+			return;
+		}
+
+		if (m_controlLastWorklet == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.last.worklet not found");
+			return;
+		}
+
+		if (m_controlLastRunUuid == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.last.run.#uuid not found");
+			return;
+		}
+
+		if (m_controlLastTagUuid == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.last.tag.#uuid not found");
+			return;
+		}
+
+		if (m_controlLastWorkletUuid == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.last.worklet.#uuid not found");
+			return;
+		}
+
+		if (m_controlLastWorkletFinished == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.control.last.worklet.#finished not found");
+			return;
+		}
+
+		if (m_statistics == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics not found");
+			return;
+		}
+
+		if (m_statisticsRuntime == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.runtime not found");
+			return;
+		}
+
+		if (m_statisticsRuntimeBegan == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.runtime.began not found");
+			return;
+		}
+
+		if (m_statisticsRuntimeEnded == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.runtime.ended not found");
+			return;
+		}
+
+		if (m_statisticsRuntimeHarness == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.runtime.harness not found");
+			return;
+		}
+
+		if (m_statisticsRuntimeScripts == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.runtime.scripts not found");
+			return;
+		}
+
+		if (m_statisticsSuccesses == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.successes not found");
+			return;
+		}
+
+		if (m_statisticsFailures == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.failures not found");
+			return;
+		}
+
+		if (m_statisticsRetries == null)
+		{	// fail
+			System.out.print("Error:  Unable to re-load manifest. opbm.benchmarks.statistics.retries not found");
+			return;
+		}
 
 		// Verify the settings there are as they should be
 		if (!m_opbm.getSettingsMaster().validateSettings(m_settings, false))
@@ -1124,6 +1247,12 @@ public final class BenchmarkManifest
 
 		// We're good, run the manifest
 		m_processing = true;
+		// The benchmark may proceed many times through reboots, each time we re-record the time
+		if (m_statisticsRuntimeBegan.getText().isEmpty())
+		{	// The begin time has never been recorded, so record it
+			m_statisticsRuntimeBegan.setText(Utils.getTimestamp());
+		}
+		m_statisticsRuntimeBegan.appendAttribute(new Xml("time", Utils.getTimestamp()));
 
 		// Initialize everything
 		m_bm.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster());
@@ -1145,16 +1274,10 @@ public final class BenchmarkManifest
 		// When we get here, we're no longer processing, but it may not be due
 		// to the benchmark being over.  If we are rebooting, then we simply
 		// shut down and continue.
-		if (!m_isManifestInError && !m_controlLastTagUuid.getText().equalsIgnoreCase("finished"))
-		{	// No error, and not finished
-			// Return to caller and wait for reboot
-			// Note:  Everything will have already been saved by the process
-			//        which setup this this exit/reboot in this way
-			return;
-		}
-		// If we get here, we are finished with the benchmark
+		// Record the time of this event
+		m_statisticsRuntimeEnded.appendAttribute(new Xml("time", Utils.getTimestamp()));
 
-		// Save the final result
+		// Save the final/current result
 		saveManifest();
 
 		// Finish up, show the results viewer
@@ -1236,25 +1359,45 @@ public final class BenchmarkManifest
 				return;
 			}
 
-			// We have retrieved our existing pointers, now move to the next location
-			runMoveToNext_MoveToNextTagAndWorklet();
-			if (!m_processing)
-			{	// Some failure in moving
-				return;
+			// We have retrieved our existing pointers
+			if (runMoveToNext_DidLastWorkletFinish())
+			{	// Move to the next location
+				runMoveToNext_MoveToNextTagAndWorklet();
+				if (!m_processing)
+				{	// Some failure in moving
+					return;
+				}
+				// When we get here, we're good, we have everything
 			}
-			// When we get here, we're good, we have everything
 		}
 
 		// Update our uuids for these entries
 		m_controlLastRunUuid.setText(m_run.getAttribute("uuid"));
 		m_controlLastTagUuid.setText(m_tag.getAttribute("uuid"));
 		m_controlLastWorkletUuid.setText(m_worklet.getAttribute("uuid"));
+		m_controlLastWorkletFinished.setText("no");
 		// Note:  We don't save our new manifest state to disk just yet, because
 		//        OPBM leaves everything in memory until such time as it begins
 		//        an execute* abstract.  Then, as part of the pre-processing for
 		//        the script/worklet execution of an external app, it fully saves
 		//        the state so it can resume should there be a power loss or
 		//        other catastrophic failure resulting in a system reboot.
+	}
+
+	/**
+	 * See if the last run finished okay
+	 * @return true or false based on control.last.worklet.#finished
+	 */
+	public boolean runMoveToNext_DidLastWorkletFinish()
+	{
+		if (m_controlLastWorkletFinished.getText().equalsIgnoreCase("yes"))
+		{	// Finished okay
+			return(true);
+
+		} else {
+			// Did not finish, needs to be continued or tried again
+			return(false);
+		}
 	}
 
 	/**
@@ -1409,7 +1552,7 @@ public final class BenchmarkManifest
 		BenchmarksAtom bpa;
 
 		saveManifest();
-		System.out.println("Executing Pass #" + m_run.getAttribute("this") + " of #" + m_run.getAttribute("max") + ", " + m_worklet.getName() + " " + m_worklet.getAttribute("name") + " (" + m_worklet.getAttribute("sourcename") + ")");
+		System.out.println("Pass #" + m_run.getAttribute("this") + " of #" + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
 
 		if (m_worklet.getName().equalsIgnoreCase("abstract"))
 		{	// Create the area to store results from our execute atom
@@ -1428,7 +1571,7 @@ public final class BenchmarkManifest
 			{	// They're doing something other than "nothing" or running
 				// Log it
 				type = bp.getDebuggerOrHUDActionReason();
-				m_bmr.appendResultsAnnotation("action", type, manifestWorkletUuid);
+				m_bmr.appendResultsAnnotation("note", type, manifestWorkletUuid);
 
 				// And if they're stopping, cease processing
 				if (bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
@@ -1436,6 +1579,11 @@ public final class BenchmarkManifest
 					m_processing = false;
 				}
 			}
+			if (bp.getLastWorkletResult().equalsIgnoreCase("success"))
+			{	// We're good, it was a success
+				m_controlLastWorkletFinished.setText("yes");
+			}
+
 // End
 //////////
 
@@ -1449,9 +1597,76 @@ public final class BenchmarkManifest
 							   bp.getLastWorkletResult(),
 							   bp.getLastWorkletScore());
 
+			// Update our statistics
+			runExecuteUpdateStatistics();
+
 		} else {
 			// It's a flow-control directive, it will update where we move from here
 			setError("Error: Flow control directives not yet been supported in manifest benchmarks");
+		}
+	}
+
+	/**
+	 * Updates the statistics portion of the manifest
+	 *		<statistics>
+	 *			<runtime>
+	 *				<began>Tue Aug 16 16:39:51 CDT 2011 1313530812950</began>
+	 *				<ended>Tue Aug 16 16:39:51 CDT 2011 1313530812950</ended>
+	 *				<harness>00:00</harness>
+	 *				<scripts>00:00</scripts>
+	 *			</runtime>
+	 *			<successes>00</successes>
+	 *			<failures>00</failures>
+	 *			<retries>00</retries>
+	 *		</statistics>
+	 */
+	public void runExecuteUpdateStatistics()
+	{
+		String began, ended, count;
+
+		// Set the runtime
+		began = m_statisticsRuntimeBegan.getText();
+		ended = m_statisticsRuntimeEnded.getText();
+		if (!began.isEmpty() && !ended.isEmpty())
+		{	// There is a time here, we can compute the difference
+			m_statisticsRuntimeHarness.setText(Utils.convertMillisecondDifferenceToHHMMSS(began.substring(29), ended.substring(29)));
+		}
+
+		// Successes or failures
+		if (m_bm.getBP().getLastWorkletResult().equalsIgnoreCase("success"))
+		{	// Increases successes
+			count = m_statisticsSuccesses.getText();
+			if (count.isEmpty())
+			{	// First entry
+				m_statisticsSuccesses.setText("1");
+			} else {
+				// Add to the existing count
+				m_statisticsSuccesses.setText(Integer.toString(Integer.valueOf(count) + 1));
+			}
+
+		} else {
+			// Increase failures
+			count = m_statisticsFailures.getText();
+			if (count.isEmpty())
+			{	// First entry
+				m_statisticsFailures.setText("1");
+			} else {
+				// Add to the existing count
+				m_statisticsFailures.setText(Integer.toString(Integer.valueOf(count) + 1));
+			}
+		}
+
+		// Retries
+		if (m_bm.getBP().getLastWorkletRetries() != 0)
+		{	// Increase retries
+			count = m_statisticsRetries.getText();
+			if (count.isEmpty())
+			{	// First entry
+				m_statisticsRetries.setText(Integer.toString(m_bm.getBP().getLastWorkletRetries()));
+			} else {
+				// Add to the existing count
+				m_statisticsRetries.setText(Integer.toString(Integer.valueOf(count) + m_bm.getBP().getLastWorkletRetries()));
+			}
 		}
 	}
 
@@ -1501,6 +1716,7 @@ public final class BenchmarkManifest
 	private Xml							m_controlLastRunUuid;
 	private Xml							m_controlLastTagUuid;
 	private Xml							m_controlLastWorkletUuid;
+	private Xml							m_controlLastWorkletFinished;
 	private Xml							m_controlLastResultUuid;
 	private Xml							m_controlLastAnnotationUuid;
 	private	Xml							m_run;		// Updated each pass through runMoveToNext()

@@ -1161,7 +1161,7 @@ public class BenchmarksAtom
 									Xml		xmlRun_RunFailure)
 	{
 		int i, retryCount;
-		Xml options, xmlType, xmlError;
+		Xml options, xmlType, xmlError, xmlRetry;
 		Xml xmlOutput, xmlCommand;
 		Process process;
 		ProcessBuilder builder;
@@ -1281,6 +1281,14 @@ public class BenchmarksAtom
 								xmlError	= null;
 								xmlType		= null;
 
+							}
+
+							// If this is a retry attempt, tag it as such
+							if (retryCount != 0)
+							{	// Add [this="#" max="#"] for the retryCount and m_bp.retryAttempts
+								xmlRetry = xmlType.appendChild(new Xml("retry"));
+								xmlRetry.appendAttribute(new Xml("this", Integer.toString(retryCount)));
+								xmlRetry.appendAttribute(new Xml("max", Integer.toString(m_bp.m_retryAttempts)));
 							}
 
 							// Clear off any previous "process" that may be hanging on out there for garbage collection
@@ -1403,7 +1411,7 @@ public class BenchmarksAtom
 							}
 
 							// Now, based on the state of this run, we append its information to the appropriate place
-							if (failure && retryCount != m_bp.m_retryAttempts)
+							if (failure /* the old system stored one of the failures in the "success" so the rseults viewer parser could process the failure, the benchmark manifest does not handle it the same way && retryCount != m_bp.m_retryAttempts*/)
 							{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
 								if (record)
 									xmlRun_RunFailure.appendChild(xmlType);

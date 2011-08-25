@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -271,12 +272,95 @@ public class Utils
 	/**
 	 * Returns time in the format Tue Aug 16 16:39:51 CDT 2011 1313530812950
 	 *                            Day Mmm DD HH MM SS TZ- YYYY Millisecond--
+	 *                            000000000011111111112222222222333333333344
+	 *                            012345678901234567890123456789012345678901
+	 * Code to access components:
+
+		String timestamp = Utils.getTimestamp();
+		String dow, month, day, time, tz, year, ms;
+
+ 		dow		= timestamp.substring(0,3);
+ 		month	= timestamp.substring(4,7);
+ 		day		= timestamp.substring(8,10);
+ 		time	= timestamp.substring(11,19);
+ 		tz		= timestamp.substring(20,23);
+ 		year	= timestamp.substring(24,28);
+ 		ms		= timestamp.substring(29);
+
+		System.out.println("  dow = \"" + dow	+ "\"");
+		System.out.println("month = \"" + month	+ "\"");
+		System.out.println("  day = \"" + day	+ "\"");
+		System.out.println(" time = \"" + time	+ "\"");
+		System.out.println("   tz = \"" + tz	+ "\"");
+		System.out.println(" year = \"" + year	+ "\"");
+		System.out.println("   ms = \"" + ms	+ "\"");
+		System.out.println(timestamp);
+
 	 * @return time
 	 */
 	public static String getTimestamp()
 	{
 		Calendar cal = Calendar.getInstance();
 		return(cal.getTime().toString() + " " + Long.toString(cal.getTimeInMillis()));
+	}
+
+	public static String convertMillisecondDifferenceToHHMMSS(String	timestampBegan,
+															  String	timestampEnded)
+	{
+		String msBegan, msEnded;
+		long began, ended;
+
+		msBegan = timestampBegan.substring(29);
+		msEnded = timestampEnded.substring(29);
+
+		began	= Long.valueOf(msBegan);
+		ended	= Long.valueOf(msEnded);
+
+		return(convertMillisecondDifferenceToHHMMSS(began, ended));
+	}
+
+	/**
+	 * Converts the two milliseconds to HHMMSS as the time between
+	 */
+	public static String convertMillisecondDifferenceToHHMMSS(long		began,
+															  long		ended)
+	{
+		long diff;
+
+		diff = (ended - began) / 1000;
+		return(convertMillisecondsToHHMMSS(diff));
+	}
+
+	/**
+	 * Converts the specified milliseconds into HHMMSS
+	 */
+	public static String convertMillisecondsToHHMMSS(long diff)
+	{
+		String hhmmssf, hh, mm, ss;
+		double hours, minutes, seconds, fraction;
+		NumberFormat nfi1 = NumberFormat.getIntegerInstance();
+		NumberFormat nfi2 = NumberFormat.getNumberInstance();
+
+		hours		= (double)diff / (60.0f * 60.0f * 1000.0f);
+		minutes		= (double)diff % (60.0f * 60.0f * 1000.0f);
+		seconds		= minutes % (60.0f * 1000.0f);
+		fraction	= seconds % 1.0f;
+		minutes		-= seconds;
+		seconds		-= fraction;
+
+		// We want a format like "00:00:00.0"
+		nfi1.setMaximumIntegerDigits(2);
+		nfi1.setMinimumIntegerDigits(2);
+		nfi2.setMaximumIntegerDigits(1);
+		nfi2.setMinimumIntegerDigits(1);
+		nfi2.setMinimumFractionDigits(1);
+		nfi2.setMaximumFractionDigits(1);
+
+		// Create the format
+		hhmmssf = nfi1.format(hours) + ":" + nfi1.format(minutes) + ":" + nfi1.format(seconds) + "." + nfi2.format(fraction).substring(2);
+
+		// Return the value
+		return(hhmmssf);
 	}
 
 	public static Xml processExecutableLine(String	tag,
