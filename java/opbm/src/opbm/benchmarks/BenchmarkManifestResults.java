@@ -880,6 +880,10 @@ public class BenchmarkManifestResults
 
 						} else if (point.equalsIgnoreCase("beginscenario")) {
 							// The beginning of a results viewer scenario-level set of entries
+							if (lastSuiteXml == null)
+							{	// Add a placeholder scenario
+								lastSuiteXml = addPlaceholderSuite(resultXml);
+							}
 							lastScenarioXml = lastSuiteXml.appendChild(new Xml("scenario"));
 							lastScenarioXml.appendAttribute(new Xml("name",			child.getAttribute("name")));
 							lastScenarioXml.appendAttribute(new Xml("shortname",	Utils.getShortName(child.getAttribute("name"), 6)));
@@ -893,6 +897,14 @@ public class BenchmarkManifestResults
 
 						} else if (point.equalsIgnoreCase("beginmolecule")) {
 							// The beginning of a results viewer molecule-level set of entries
+							if (lastSuiteXml == null)
+							{	// Add a placeholder scenario
+								lastSuiteXml = addPlaceholderSuite(resultXml);
+							}
+							if (lastScenarioXml == null)
+							{	// Add a placeholder scenario
+								lastScenarioXml = addPlaceholderScenario(lastSuiteXml);
+							}
 							lastMoleculeXml = lastScenarioXml.appendChild(new Xml("molecule"));
 							lastMoleculeXml.appendAttribute(new Xml("name",			child.getAttribute("name")));
 							lastMoleculeXml.appendAttribute(new Xml("shortname",	Utils.getShortName(child.getAttribute("name"), 6)));
@@ -905,6 +917,18 @@ public class BenchmarkManifestResults
 
 						} else if (point.equalsIgnoreCase("beginatom")) {
 							// The beginning of a results viewer atom-level set of entries
+							if (lastSuiteXml == null)
+							{	// Add a placeholder scenario
+								lastSuiteXml = addPlaceholderSuite(resultXml);
+							}
+							if (lastScenarioXml == null)
+							{	// Add a placeholder scenario
+								lastScenarioXml = addPlaceholderScenario(lastSuiteXml);
+							}
+							if (lastMoleculeXml == null)
+							{	// Add a placeholder molecule
+								lastMoleculeXml = addPlaceholderMolecule(lastScenarioXml);
+							}
 							lastAtomXml = lastMoleculeXml.appendChild(new Xml("atom"));
 							lastAtomXml.appendAttribute(new Xml("name",				child.getAttribute("name")));
 							lastAtomXml.appendAttribute(new Xml("shortname",		Utils.getShortName(child.getAttribute("name"), 6)));
@@ -1038,6 +1062,87 @@ public class BenchmarkManifestResults
 		// Save results.xml
 		rootXml.saveNode(Opbm.getHarnessXMLDirectory() + "results.xml");
 		Utils.writeTerminatedLinesToFile(Opbm.getHarnessCSVDirectory() + "results.csv", csvLines);
+	}
+
+	/**
+	 * For the results viewer, there is a rigid structure that must be adhered
+	 * to which is an xml tree representation of the logical OPBM entity
+	 * relationship, which is suites, scenarios, molecules and atoms.
+	 *
+	 * If something is missing in a particular run, we add a placeholder to
+	 * hold its position for the items which were physically present.  This
+	 * will occur if a user runs a single atom, molecule or scenario, for
+	 * example.
+	 *
+	 * @param root node in which to add
+	 * @return the new xml that was appended
+	 */
+	public Xml addPlaceholderSuite(Xml root)
+	{
+		Xml newXml;
+
+		newXml = root.appendChild(new Xml("suite"));
+		newXml.appendAttribute(new Xml("name",			"Suite"));
+		newXml.appendAttribute(new Xml("shortname",		"Suite"));
+		newXml.appendAttribute(new Xml("tags",			""));
+		newXml.appendAttribute(new Xml("tested",		"yes"));
+		newXml.appendAttribute(new Xml("status",		"success"));
+		newXml.appendAttribute(new Xml("score",			""));
+		return(newXml);
+	}
+
+	/**
+	 * For the results viewer, there is a rigid structure that must be adhered
+	 * to which is an xml tree representation of the logical OPBM entity
+	 * relationship, which is suites, scenarios, molecules and atoms.
+	 *
+	 * If something is missing in a particular run, we add a placeholder to
+	 * hold its position for the items which were physically present.  This
+	 * will occur if a user runs a single atom, molecule or scenario, for
+	 * example.
+	 *
+	 * @param root node in which to add
+	 * @return the new xml that was appended
+	 */
+	public Xml addPlaceholderScenario(Xml root)
+	{
+		Xml newXml;
+
+		newXml = root.appendChild(new Xml("scenario"));
+		newXml.appendAttribute(new Xml("name",			"Scenario"));
+		newXml.appendAttribute(new Xml("shortname",		"Scenario"));
+		newXml.appendAttribute(new Xml("tags",			""));
+		newXml.appendAttribute(new Xml("tested",		"yes"));
+		newXml.appendAttribute(new Xml("status",		"success"));
+		newXml.appendAttribute(new Xml("score",			""));
+		return(newXml);
+	}
+
+	/**
+	 * For the results viewer, there is a rigid structure that must be adhered
+	 * to which is an xml tree representation of the logical OPBM entity
+	 * relationship, which is suites, scenarios, molecules and atoms.
+	 *
+	 * If something is missing in a particular run, we add a placeholder to
+	 * hold its position for the items which were physically present.  This
+	 * will occur if a user runs a single atom, molecule or scenario, for
+	 * example.
+	 *
+	 * @param root node in which to add
+	 * @return the new xml that was appended
+	 */
+	public Xml addPlaceholderMolecule(Xml root)
+	{
+		Xml newXml;
+
+		newXml = root.appendChild(new Xml("molecule"));
+		newXml.appendAttribute(new Xml("name",			"Molecule"));
+		newXml.appendAttribute(new Xml("shortname",		"Molecule"));
+		newXml.appendAttribute(new Xml("tags",			""));
+		newXml.appendAttribute(new Xml("tested",		"yes"));
+		newXml.appendAttribute(new Xml("status",		"success"));
+		newXml.appendAttribute(new Xml("score",			""));
+		return(newXml);
 	}
 
 	BenchmarkManifest		m_bm;						// Parent this results processor relates back to

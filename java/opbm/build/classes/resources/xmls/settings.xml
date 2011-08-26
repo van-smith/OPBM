@@ -14,6 +14,7 @@
 				<attempts>5</attempts>
 			</retry>
 			<stopIfFailure>Yes</stopIfFailure>
+			<rebootBeforeEachPass>Yes</rebootBeforeEachPass>
 		</benchmarks>
 		<skin>developer</skin>
 	</settings>

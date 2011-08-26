@@ -18,6 +18,7 @@
  *		#12					<attempts>5</attempts>
  *						</retry>
  *		#13				<stopIfFailure>yes</stopIfFailure>
+ *		#15				<rebootBeforeEachPass>yes</rebootBeforeEachPass>
  *					</benchmarks>
  *		#14			<skin>developer</skin>
  *				</settings>
@@ -280,6 +281,23 @@ public final class Settings
 		}
 
 //////////
+// REBOOT BEFORE EACH PASS
+		m_rebootBeforeEachPassXml = m_benchmarksXml.getChildNode("rebootBeforeEachPass");
+		if (m_rebootBeforeEachPassXml == null)
+		{	// #15 - Create it and set default value
+			++updateCount;
+			m_rebootBeforeEachPassXml = new Xml("rebootBeforeEachPass");
+			m_benchmarksXml.appendChild(m_rebootBeforeEachPassXml);
+			// "stopIfFailure" goes on benchmarks node
+			m_rebootBeforeEachPassXml.setText("yes");
+			m_rebootBeforeEachPass = true;
+
+		} else {
+			// #11 - Grab value
+			m_rebootBeforeEachPass = m_opbm.getMacroMaster().parseMacros(m_rebootBeforeEachPassXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
 // SKIN
 		m_skinXml = m_settingsXml.getChildNode("skin");
 		if (m_skinXml == null)
@@ -348,6 +366,7 @@ public final class Settings
 		m_retryEnabledXml.setText(Utils.evaluateLogicalToYesOrNo(m_retryEnabled));
 		m_retryAttemptsXml.setText(Integer.toString(m_retryAttempts));
 		m_stopIfFailureXml.setText(Utils.evaluateLogicalToYesOrNo(m_stopIfFailure));
+		m_rebootBeforeEachPassXml.setText(Utils.evaluateLogicalToYesOrNo(m_rebootBeforeEachPass));
 		m_skinXml.setText(m_skin);
 
 		// Save the Xml to the local user's settings directory
@@ -416,6 +435,11 @@ public final class Settings
 	public boolean benchmarkStopsIfRetriesFail()
 	{
 		return(m_stopIfFailure);
+	}
+
+	public boolean benchmarkRebootBeforeEachPass()
+	{
+		return(m_rebootBeforeEachPass);
 	}
 
 	public boolean getHUDVisible()
@@ -536,6 +560,9 @@ public final class Settings
 		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.stopIfFailure")) {
 			// They want offset to this node
 			return(m_stopIfFailureXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.rebootBeforeEachPass")) {
+			// They want offset to this node
+			return(m_rebootBeforeEachPassXml);
 		} else if (element.equalsIgnoreCase("opbm.settings.skin")) {
 			// They want offset to this node
 			return(m_skinXml);
@@ -556,7 +583,7 @@ public final class Settings
 		boolean isValid;
 		String translucency, count;
 		double value;
-		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml;
+		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml, rebootBeforeEachPassXml;
 
 		isValid = false;
 		if (isFullSettings)
@@ -570,7 +597,7 @@ public final class Settings
 //////////
 // DEBUGGER
 				debuggerXml = settingsXml.getAttributeOrChildNode("debugger");
-				if (m_debuggerXml == null)
+				if (debuggerXml == null)
 				{	// #4 - fail
 					break;
 				}
@@ -578,7 +605,7 @@ public final class Settings
 //////////
 // SINGLE-STEP
 				singleStepXml = settingsXml.getAttributeOrChildNode("singleStep");
-				if (m_singleStepXml == null)
+				if (singleStepXml == null)
 				{	// #5 - fail
 					break;
 				}
@@ -586,7 +613,7 @@ public final class Settings
 //////////
 // HUD
 				hudXml = settingsXml.getAttributeOrChildNode("hud");
-				if (m_hudXml == null)
+				if (hudXml == null)
 				{	// #6 - fail
 					break;
 				}
@@ -594,7 +621,7 @@ public final class Settings
 //////////
 // HUD VISIBLE
 				hudVisibleXml = hudXml.getAttributeOrChildNode("hud.visible");
-				if (m_hudVisibleXml == null)
+				if (hudVisibleXml == null)
 				{	// #7 - failed
 					break;
 				}
@@ -602,7 +629,7 @@ public final class Settings
 //////////
 // HUD TRANSLUCENCY
 				hudTranslucencyXml = hudXml.getAttributeOrChildNode("hud.translucency");
-				if (m_hudTranslucencyXml == null)
+				if (hudTranslucencyXml == null)
 				{	// #8 - failed
 					break;
 
@@ -619,7 +646,7 @@ public final class Settings
 //////////
 // HUD DEBUG INFO
 				hudDebugInfoXml = hudXml.getAttributeOrChildNode("hud.debuginfo");
-				if (m_hudDebugInfoXml == null)
+				if (hudDebugInfoXml == null)
 				{	// #9 - fail
 					break;
 				}
@@ -627,7 +654,7 @@ public final class Settings
 //////////
 // RETRY
 				retryXml = settingsXml.getAttributeOrChildNode("retry");
-				if (m_retryXml == null)
+				if (retryXml == null)
 				{	// #10 - Create it
 					break;
 				}
@@ -635,7 +662,7 @@ public final class Settings
 //////////
 // RETRY ENABLED
 				retryEnabledXml = retryXml.getAttributeOrChildNode("retryEnabled");
-				if (m_retryEnabledXml == null)
+				if (retryEnabledXml == null)
 				{	// #11 - fail
 					break;
 				}
@@ -643,7 +670,7 @@ public final class Settings
 //////////
 // RETRY ATTEMPTS
 				retryAttemptsXml = retryXml.getAttributeOrChildNode("retryAttempts");
-				if (m_retryAttemptsXml == null)
+				if (retryAttemptsXml == null)
 				{	// #12 - fail
 					break;
 
@@ -664,8 +691,16 @@ public final class Settings
 //////////
 // STOP IF FAILURE
 				stopIfFailureXml = settingsXml.getAttributeOrChildNode("stopIfFailure");
-				if (m_stopIfFailureXml == null)
+				if (stopIfFailureXml == null)
 				{	// #11 - fail
+					break;
+				}
+
+//////////
+// REBOOT BEFORE EACH PASS
+				rebootBeforeEachPassXml = settingsXml.getAttributeOrChildNode("rebootBeforeEachPass");
+				if (m_rebootBeforeEachPassXml == null)
+				{	// #15 - fail
 					break;
 				}
 
@@ -688,6 +723,7 @@ public final class Settings
 	private boolean		m_retryEnabled;
 	private int			m_retryAttempts;
 	private boolean		m_stopIfFailure;
+	private boolean		m_rebootBeforeEachPass;
 	private String		m_skin;
 
 	// Tags to reach the entries in the Xml tree
@@ -704,5 +740,6 @@ public final class Settings
 	private	Xml			m_retryEnabledXml;
 	private	Xml			m_retryAttemptsXml;
 	private	Xml			m_stopIfFailureXml;
+	private	Xml			m_rebootBeforeEachPassXml;
 	private	Xml			m_skinXml;
 }

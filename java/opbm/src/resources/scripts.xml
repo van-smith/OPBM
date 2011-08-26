@@ -374,9 +374,7 @@
 			</molecule>
 			<molecule name="Compute IE">
 				<atom name="IE SunSpider" sourcename="IE SunSpider"></atom>
-<!--
 				<atom name="IE Kraken" sourcename="IE Kraken"></atom>
--->
 				<atom name="IE Google V8" sourcename="IE Google V8"></atom>
 			</molecule>
 			<molecule name="Compute Chrome">
@@ -404,15 +402,11 @@
 				<atom name="Install Safari" sourcename="Install Safari"></atom>
 			</scenario>
 			<scenario name="Compute Browsers">
-<!--
 				<molecule name="Compute Chrome" sourcename="Compute Chrome"></molecule>
 				<molecule name="Compute Firefox" sourcename="Compute Firefox"></molecule>
--->
 				<molecule name="Compute IE" sourcename="Compute IE"></molecule>
-<!--
 				<molecule name="Compute Opera" sourcename="Compute Opera"></molecule>
 				<molecule name="Compute Safari" sourcename="Compute Safari"></molecule>
--->
 			</scenario>
 			<scenario name="Un(hyphen)install Adobe">
 				<molecule name="Un(hyphen)install Adobe" sourcename="Un(hyphen)install Adobe"></molecule>
@@ -425,21 +419,17 @@
 			</scenario>
 		</scenarios>
 		<suites>
-<!--
 			<suite name="Install">
 				<scenario name="Install Adobe" sourcename="Install Adobe"></scenario>
 				<scenario name="Install Browsers" sourcename="Install Browsers"></scenario>
 			</suite>
--->
 			<suite name="Browsers">
 				<scenario name="Compute" sourcename="Compute Browsers"></scenario>
 			</suite>
-<!--
 			<suite name="Un(hyphen)Install">
 				<scenario name="Un(hyphen)install Adobe" sourcename="Un(hyphen)install Adobe"></scenario>
 				<scenario name="Un(hyphen)install Browsers" sourcename="Un(hyphen)install Browsers"></scenario>
 			</suite>
--->
 		</suites>
 	</scriptdata>
 	<metadata>

@@ -193,9 +193,14 @@ public final class BenchmarkManifest
 	public void buildFinalize()
 	{
 		setPassMaxValues();
-//		insertAutoRebootCommands();
+
+		if (m_opbm.getSettingsMaster().benchmarkRebootBeforeEachPass())
+			insertAutoRebootCommands();
+
 		assignUUIDs();
+
 		m_bmr.createResultsdataFramework();
+
 		saveManifest();
 
 		// Clean up by removing the uuids that were temporarily assigned in the build process
@@ -252,21 +257,21 @@ public final class BenchmarkManifest
 				}
 
 			} else if (type.equalsIgnoreCase("scenario")) {
-				if (addScenarioByName(name, count) != 1)
+				if (addScenarioByName(name, count) == 0)
 				{	// The scenario wasn't found
 					setError("Fatal Error: Unable to add scenario named \"" + name + "\": does not exist");
 					return(false);
 				}
 
 			} else if (type.equalsIgnoreCase("molecule")) {
-				if (addMoleculeByName(name, count) != 1)
+				if (addMoleculeByName(name, count) == 0)
 				{	// The molecule wasn't found
 					setError("Fatal Error: Unable to add molecule named \"" + name + "\": does not exist");
 					return(false);
 				}
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				if (addAtomByName(name, count) != 1)
+				if (addAtomByName(name, count) == 0)
 				{	// The atom wasn't found
 					setError("Fatal Error: Unable to add atom named \"" + name + "\": does not exist");
 					return(false);
@@ -1803,6 +1808,17 @@ public final class BenchmarkManifest
 	public Xml getManifestRoot()
 	{
 		return(m_manifest);
+	}
+
+	/**
+	 * Indicates whether or not the compilation is empty.  Used for testing
+	 * whether or not a buildCompilation() should be called after command-line
+	 * processing
+	 * @returns true if there are entries compiled ready to attempt for running
+	 */
+	public boolean isCompilationEmpty()
+	{
+		return(m_compilation.isEmpty());
 	}
 
 	// Error conditions

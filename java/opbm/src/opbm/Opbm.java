@@ -19,8 +19,6 @@
 
 package opbm;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import opbm.common.Xml;
 import opbm.common.Macros;
 import opbm.common.Settings;
@@ -45,6 +43,7 @@ import java.util.List;
 import java.util.ArrayList;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+import opbm.benchmarks.BenchmarkManifest;
 import opbm.benchmarks.BenchmarkParams;
 import opbm.common.ModalApp;
 import opbm.dialogs.DeveloperWindow;
@@ -197,6 +196,7 @@ public final class Opbm extends	ModalApp
 						Xml target;
 						String line, name, digits;
 						int i, j, iterations, runCount;
+						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "");
 
 						// Load the command line options, including those from files, into the execution sequence
 						// Arguments get loaded into "List<String> args" rather than m_args[]
@@ -274,8 +274,8 @@ public final class Opbm extends	ModalApp
 										{
 											// This is the benchmark they want to run
 											++runCount;
-											System.out.println("OPBM command line: Executing Atom \"" + name + "\" for " + digits + " iterations");
-											benchmarkRunAtom(target, iterations, false, null, m_opbm, m_macroMaster, m_settingsMaster, "", "", "", "", "", "", "", "", "", "");
+											System.out.println("OPBM command line: Adding Atom \"" + name + "\" for " + digits + " iterations to compilation");
+											bm.addToCompiledList("atom", name, iterations);
 										}
 									}
 
@@ -300,8 +300,167 @@ public final class Opbm extends	ModalApp
 										{
 											// This is the benchmark they want to run
 											++runCount;
-											System.out.println("OPBM command line: Executing Atom \"" + name + "\"");
-											benchmarkRunAtom(target, 1, false, null, m_opbm, m_macroMaster, m_settingsMaster, "", "", "", "", "", "", "", "", "", "");
+											System.out.println("OPBM command line: Adding Atom \"" + name + "\" to compilation");
+											bm.addToCompiledList("atom", name, 1);
+										}
+									}
+
+								} else {
+									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
+									System.exit(-1);
+								}
+
+							} else if (line.toLowerCase().startsWith("-molecule("))
+							{	// It's an iterative molecule count, at least it's supposed to be
+								m_executingFromCommandLine = true;
+								digits		= Utils.extractOnlyNumbers(line.substring(10));
+								iterations	= Integer.valueOf(digits);
+								list.clear();
+								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
+								if (!list.isEmpty())
+								{
+									for (j = 0; j < list.size(); j++)
+									{
+										target	= list.get(j);
+										name	= target.getAttribute("name");
+										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
+										{
+											// This is the benchmark they want to run
+											++runCount;
+											System.out.println("OPBM command line: Adding Molecule \"" + name + "\" for " + digits + " iterations to compilation");
+											bm.addToCompiledList("molecule", name, iterations);
+										}
+									}
+
+								} else {
+									System.out.println("OPBM command line: Error loading scripts.xml");
+									System.exit(-1);
+								}
+
+							} else if (line.toLowerCase().startsWith("-molecule:")) {
+								// It's an iterative molecule count
+								// Grab all of the molecules and iterate to find the name of the one we're after
+								m_executingFromCommandLine = true;
+								list.clear();
+								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
+								if (!list.isEmpty())
+								{
+									for (j = 0; j < list.size(); j++)
+									{
+										target	= list.get(j);
+										name	= target.getAttribute("name");
+										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
+										{
+											// This is the benchmark they want to run
+											++runCount;
+											System.out.println("OPBM command line: Adding Molecule \"" + name + "\" to compilation");
+											bm.addToCompiledList("molecule", name, 1);
+										}
+									}
+
+								} else {
+									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
+									System.exit(-1);
+								}
+
+							} else if (line.toLowerCase().startsWith("-scenario(")) {
+								// It's an iterative scenario count, at least it's supposed to be
+								m_executingFromCommandLine = true;
+								digits		= Utils.extractOnlyNumbers(line.substring(10));
+								iterations	= Integer.valueOf(digits);
+								list.clear();
+								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
+								if (!list.isEmpty())
+								{
+									for (j = 0; j < list.size(); j++)
+									{
+										target	= list.get(j);
+										name	= target.getAttribute("name");
+										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
+										{
+											// This is the benchmark they want to run
+											++runCount;
+											System.out.println("OPBM command line: Adding Scenario \"" + name + "\" for " + digits + " iterations to compilation");
+											bm.addToCompiledList("scenario", name, iterations);
+										}
+									}
+
+								} else {
+									System.out.println("OPBM command line: Error loading scripts.xml");
+									System.exit(-1);
+								}
+
+							} else if (line.toLowerCase().startsWith("-scenario:")) {
+								// It's a scenario
+								// Grab all of the scenarios and iterate to find the name of the one we're after
+								m_executingFromCommandLine = true;
+								list.clear();
+								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
+								if (!list.isEmpty())
+								{
+									for (j = 0; j < list.size(); j++)
+									{
+										target	= list.get(j);
+										name	= target.getAttribute("name");
+										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
+										{
+											// This is the benchmark they want to run
+											++runCount;
+											System.out.println("OPBM command line: Adding Scenario \"" + name + "\" to compilation");
+											bm.addToCompiledList("scenario", name, 1);
+										}
+									}
+
+								} else {
+									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
+									System.exit(-1);
+								}
+
+							} else if (line.toLowerCase().startsWith("-suite(")) {
+								// It's an iterative scenario count, at least it's supposed to be
+								m_executingFromCommandLine = true;
+								digits		= Utils.extractOnlyNumbers(line.substring(7));
+								iterations	= Integer.valueOf(digits);
+								list.clear();
+								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.suites.suite", false);
+								if (!list.isEmpty())
+								{
+									for (j = 0; j < list.size(); j++)
+									{
+										target	= list.get(j);
+										name	= target.getAttribute("name");
+										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
+										{
+											// This is the benchmark they want to run
+											++runCount;
+											System.out.println("OPBM command line: Adding Suite \"" + name + "\" for " + digits + " iterations to compilation");
+											bm.addToCompiledList("suite", name, iterations);
+										}
+									}
+
+								} else {
+									System.out.println("OPBM command line: Error loading scripts.xml");
+									System.exit(-1);
+								}
+
+							} else if (line.toLowerCase().startsWith("-suite:")) {
+								// It's a scenario
+								// Grab all of the scenarios and iterate to find the name of the one we're after
+								m_executingFromCommandLine = true;
+								list.clear();
+								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.suites.suite", false);
+								if (!list.isEmpty())
+								{
+									for (j = 0; j < list.size(); j++)
+									{
+										target	= list.get(j);
+										name	= target.getAttribute("name");
+										if (name.replace(" ", "").equalsIgnoreCase(line.substring(7)))
+										{
+											// This is the benchmark they want to run
+											++runCount;
+											System.out.println("OPBM command line: Adding Suite \"" + name + "\" to compilation");
+											bm.addToCompiledList("suite", name, 1);
 										}
 									}
 
@@ -343,6 +502,16 @@ public final class Opbm extends	ModalApp
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
 							}
 						}
+
+						// They may have added items to the benchmark compilaiton to execute
+						if (!bm.isCompilationEmpty())
+						{	// There is a compilation, try to run it
+							if (bm.buildCompilation())
+								bm.run();
+							else
+								System.out.println("Fatal Error: Unable to run the prepared compilation.");
+						}
+
 						if (!m_noExit && runCount != 0)
 						{	// If we get here, they don't want us to exit, or we did a run without any errors and we're ready to exit
 							System.exit(0);
@@ -1749,6 +1918,177 @@ public final class Opbm extends	ModalApp
 		m_benchmarkMaster.benchmarkLaunchOfficialRun(automated);
 	}
 
+	public void benchmarkRunSuite(Xml				suite,
+								  int				iterations,
+								  boolean			openInNewThread,
+								  PanelRightItem	pri,
+								  Opbm				opbm,
+								  Macros			macroMaster,
+								  Settings			settingsMaster,
+								  String			p1,
+								  String			p2,
+								  String			p3,
+								  String			p4,
+								  String			p5,
+								  String			p6,
+								  String			p7,
+								  String			p8,
+								  String			p9,
+								  String			p10)
+	{
+		if (m_bm == null)
+			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
+
+		m_bm_suite			= suite;
+		m_bm_iterations		= iterations;
+		m_bm_pri			= pri;
+		m_bm_opbm			= opbm;
+		m_bm_macroMaster	= macroMaster;
+		m_bm_settingsMaster	= settingsMaster;
+		m_bm_p1				= p1;
+		m_bm_p2				= p2;
+		m_bm_p3				= p3;
+		m_bm_p4				= p4;
+		m_bm_p5				= p5;
+		m_bm_p6				= p6;
+		m_bm_p7				= p7;
+		m_bm_p8				= p8;
+		m_bm_p9				= p9;
+		m_bm_p10			= p10;
+
+		if (openInNewThread)
+		{
+			// Since the benchmark uses an overlay heads-up-display,
+			// it needs to be off the EDT thread, so we give it its own thread.
+			Thread t = new Thread("OPBM_Benchmark_Thread")
+			{
+				@Override
+				public void run()
+				{
+					runSuite();
+				}
+			};
+			t.start();
+
+		} else {
+			runSuite();
+		}
+	}
+
+	public void benchmarkRunScenario(Xml			scenario,
+									 int			iterations,
+									 boolean		openInNewThread,
+									 PanelRightItem	pri,
+									 Opbm			opbm,
+									 Macros			macroMaster,
+									 Settings		settingsMaster,
+									 String			p1,
+									 String			p2,
+									 String			p3,
+									 String			p4,
+									 String			p5,
+									 String			p6,
+									 String			p7,
+									 String			p8,
+									 String			p9,
+									 String			p10)
+	{
+		if (m_bm == null)
+			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
+
+		m_bm_scenario		= scenario;
+		m_bm_iterations		= iterations;
+		m_bm_pri			= pri;
+		m_bm_opbm			= opbm;
+		m_bm_macroMaster	= macroMaster;
+		m_bm_settingsMaster	= settingsMaster;
+		m_bm_p1				= p1;
+		m_bm_p2				= p2;
+		m_bm_p3				= p3;
+		m_bm_p4				= p4;
+		m_bm_p5				= p5;
+		m_bm_p6				= p6;
+		m_bm_p7				= p7;
+		m_bm_p8				= p8;
+		m_bm_p9				= p9;
+		m_bm_p10			= p10;
+
+		if (openInNewThread)
+		{
+			// Since the benchmark uses an overlay heads-up-display,
+			// it needs to be off the EDT thread, so we give it its own thread.
+			Thread t = new Thread("OPBM_Benchmark_Thread")
+			{
+				@Override
+				public void run()
+				{
+					runScenario();
+				}
+			};
+			t.start();
+
+		} else {
+			runScenario();
+		}
+	}
+
+	public void benchmarkRunMolecule(Xml			molecule,
+									 int			iterations,
+									 boolean		openInNewThread,
+									 PanelRightItem	pri,
+									 Opbm			opbm,
+									 Macros			macroMaster,
+									 Settings		settingsMaster,
+									 String			p1,
+									 String			p2,
+									 String			p3,
+									 String			p4,
+									 String			p5,
+									 String			p6,
+									 String			p7,
+									 String			p8,
+									 String			p9,
+									 String			p10)
+	{
+		if (m_bm == null)
+			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
+
+		m_bm_molecule		= molecule;
+		m_bm_iterations		= iterations;
+		m_bm_pri			= pri;
+		m_bm_opbm			= opbm;
+		m_bm_macroMaster	= macroMaster;
+		m_bm_settingsMaster	= settingsMaster;
+		m_bm_p1				= p1;
+		m_bm_p2				= p2;
+		m_bm_p3				= p3;
+		m_bm_p4				= p4;
+		m_bm_p5				= p5;
+		m_bm_p6				= p6;
+		m_bm_p7				= p7;
+		m_bm_p8				= p8;
+		m_bm_p9				= p9;
+		m_bm_p10			= p10;
+
+		if (openInNewThread)
+		{
+			// Since the benchmark uses an overlay heads-up-display,
+			// it needs to be off the EDT thread, so we give it its own thread.
+			Thread t = new Thread("OPBM_Benchmark_Thread")
+			{
+				@Override
+				public void run()
+				{
+					runMolecule();
+				}
+			};
+			t.start();
+
+		} else {
+			runMolecule();
+		}
+	}
+
 	public void benchmarkRunAtom(Xml			atom,
 								 int			iterations,
 								 boolean		openInNewThread,
@@ -1767,6 +2107,9 @@ public final class Opbm extends	ModalApp
 								 String			p9,
 								 String			p10)
 	{
+		if (m_bm == null)
+			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
+
 		m_bm_atom			= atom;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -1803,38 +2146,58 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
+	BenchmarkManifest	m_bm = null;
+	Xml					m_bm_atom;
+	Xml					m_bm_molecule;
+	Xml					m_bm_scenario;
+	Xml					m_bm_suite;
+	int					m_bm_iterations;
+	PanelRightItem		m_bm_pri;
+	Opbm				m_bm_opbm;
+	Macros				m_bm_macroMaster;
+	Settings			m_bm_settingsMaster;
+	String				m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5;
+	String				m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10;
+
 	public void runAtom()
 	{
-		m_benchmarkMaster.benchmarkInitialize(m_bm_macroMaster,
-											  m_bm_settingsMaster);
-
-		if (m_bm_atom == null && m_bm_pri != null)
-		{
-			m_bm_atom = m_benchmarkMaster.loadAtomFromPanelRightItem(m_bm_pri,
-																	 m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
-																	 m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
-		}
-
-		m_benchmarkMaster.benchmarkRunAtom(m_bm_atom, m_bm_iterations);
-		m_benchmarkMaster.benchmarkShutdown();
+		m_bm_atom = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
+																  m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
+																  m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
+		m_bm.addToCompiledList("atom", m_bm_atom.getAttribute("name"), m_bm_iterations);
+		if (m_bm.buildCompilation())
+			m_bm.run();
 	}
 
-	Xml				m_bm_atom;
-	int				m_bm_iterations;
-	PanelRightItem	m_bm_pri;
-	Opbm			m_bm_opbm;
-	Macros			m_bm_macroMaster;
-	Settings		m_bm_settingsMaster;
-	String			m_bm_p1;
-	String			m_bm_p2;
-	String			m_bm_p3;
-	String			m_bm_p4;
-	String			m_bm_p5;
-	String			m_bm_p6;
-	String			m_bm_p7;
-	String			m_bm_p8;
-	String			m_bm_p9;
-	String			m_bm_p10;
+	public void runMolecule()
+	{
+		m_bm_molecule = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
+																	  m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
+																	  m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
+		m_bm.addToCompiledList("molecule", m_bm_molecule.getAttribute("name"), m_bm_iterations);
+		if (m_bm.buildCompilation())
+			m_bm.run();
+	}
+
+	public void runScenario()
+	{
+		m_bm_scenario = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
+																	  m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
+																	  m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
+		m_bm.addToCompiledList("scenario", m_bm_scenario.getAttribute("name"), m_bm_iterations);
+		if (m_bm.buildCompilation())
+			m_bm.run();
+	}
+
+	public void runSuite()
+	{
+		m_bm_suite = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
+																   m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
+																   m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
+		m_bm.addToCompiledList("suite", m_bm_suite.getAttribute("name"), m_bm_iterations);
+		if (m_bm.buildCompilation())
+			m_bm.run();
+	}
 
 	/** Calls <code>Macros.parseMacros()</code>
 	 *
@@ -2395,6 +2758,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.26 12:33am";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.26 02:04am";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

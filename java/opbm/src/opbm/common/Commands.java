@@ -294,6 +294,12 @@ public class Commands
 // BENCHMARKS
 		} else if (command.equals("run_atom_sequence")) {
 			m_opbm.benchmarkRunAtom(null, 1, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		} else if (command.equals("run_molecule_sequence")) {
+			m_opbm.benchmarkRunMolecule(null, 1, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		} else if (command.equals("run_scenario_sequence")) {
+			m_opbm.benchmarkRunScenario(null, 1, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		} else if (command.equals("run_suite_sequence")) {
+			m_opbm.benchmarkRunSuite(null, 1, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 		} else if (command.equals("launch_trial_run")) {
 			m_opbm.benchmarkLaunchTrialRun(/*not automated*/false);
 		} else if (command.equals("launch_official_run")) {
