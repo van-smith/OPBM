@@ -130,10 +130,16 @@ public class BenchmarkParams
 	public String getLastWorkletEnd()				{	return(m_lastWorkletEnd);			}
 
 	/**
-	 * Score as assigned by the script
+	 * Score, as assigned by the geometric mean from data provided for by the script
 	 * @return
 	 */
 	public String getLastWorkletScore()				{	return(m_lastWorkletScore);			}
+
+	/**
+	 * Raw timing data lines as provided for by the script
+	 * @return
+	 */
+	public Tuple getLastWorkletTimingData()			{	return(m_lastWorkletTimingData);	}
 
 	/**
 	 * Return the number of milliseconds between the end and start of the last
@@ -191,6 +197,12 @@ public class BenchmarkParams
 	public void setLastWorkletScore(String s)		{	m_lastWorkletScore = s;				}
 
 	/**
+	 * When the score is computed, these are/were the timing lines it used
+	 * @param t
+	 */
+	public void setLastWorkletTimingData(Tuple t)	{	m_lastWorkletTimingData = t;		}
+
+	/**
 	 * Points to the output data captured, which should hold timing data
 	 *		<outputs>
 	 *			<output date="Wed Aug 24 16:06:10 CDT 2011" millisecond="1314219970772">timing,Launch Adobe Acrobat 10.1 Installer, 11.5386581878518, 72.3408759520074</output>
@@ -244,6 +256,7 @@ public class BenchmarkParams
 		nf.setMinimumFractionDigits(5);
 		nf.setMaximumFractionDigits(5);
 		setLastWorkletScore(nf.format(score));
+		setLastWorkletTimingData(timingData);
 	}
 
 	/**
@@ -349,6 +362,7 @@ public class BenchmarkParams
 	private String				m_lastWorkletStart;					// Tue Aug 16 16:39:51 CDT 2011 1313530812950
 	private String				m_lastWorkletEnd;					// Tue Aug 16 16:39:51 CDT 2011 1313530812950
 	private String				m_lastWorkletScore;					// Computed at the end of each script executed for the timing points contained within
+	private Tuple				m_lastWorkletTimingData;			// Computed at the end of each script executed for the timing points contained within
 	private long				m_lastWorkletAccumulationTotal;		// Holds an accumulation during retries of the time between scripts
 
 // REMEMBER Data derived from CPUID library will go here

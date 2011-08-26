@@ -110,7 +110,7 @@ public class Xml
 	 * @return the top-level Xml object that was created (if any)
 	 */
 	public static Xml processW3cNodesIntoXml(Xml		root,
-								   NodeList	nl)
+											 NodeList	nl)
 	{
 		String name, value;
 		short type;
@@ -242,6 +242,61 @@ public class Xml
 			int i = 5;
 		}
 		return(xmlTop);
+	}
+
+	/**
+	 * Non-static version of <code>getNodeListContainingThisAttributeName()</code> method.
+	 *
+	 * @param nodes ArrayList to update
+	 * @param attributeName name of the attribute the node must have
+	 * @param onlyOneLevel should only the current sibling be searched?
+	 */
+	public void getNodeListContainingThisAttributeName(List<Xml>	nodes,
+													   String		attributeName,
+													   boolean		onlyOneLevel)
+	{
+		getNodeListContainingThisAttributeName(nodes, this, attributeName, onlyOneLevel);
+	}
+
+	/**
+	 * Static version of <code>getNodeListContainingThisAttributeName()</code> method.
+	 * Searches through the entire tree and siblings from root down (if !onlyOneLevel)
+	 * or from the current sibling (if onlyOneLevel) to find all nodes which contain
+	 * an attribute with the specified name.
+	 *
+	 * @param nodes ArrayList to update
+	 * @param attributeName name of the attribute the node must have
+	 * @param onlyOneLevel should only the current sibling be searched?
+	 */
+	public static void getNodeListContainingThisAttributeName(List<Xml>		nodes,
+															  Xml			root,
+															  String		attributeName,
+															  boolean		onlyOneLevel)
+	{
+		Xml attributeNode;
+
+		while (root != null)
+		{
+			// See if this entry has an attribute with this name
+			attributeNode = root.getAttributeNode(attributeName);
+			if (attributeNode != null)
+			{	// It was found, add this node
+				nodes.add(root);
+			}
+
+			// Check if any of this item's children have it
+			getNodeListContainingThisAttributeName(nodes, root.getFirstChild(), attributeName, false);
+
+			// Move to next sibling
+			if (!onlyOneLevel)
+			{	// We are continuing
+				root = root.getNext();
+			} else {
+				// We're done, simulate the condition for the failure
+				root = null;
+			}
+		}
+		// Done
 	}
 
 	/** Non-static version of the static <code>getNodeList()</code> method.

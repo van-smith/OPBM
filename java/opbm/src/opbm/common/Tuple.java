@@ -55,6 +55,26 @@ public class Tuple
 {
 	/**
 	 * Constructor, creates a UUID for unique reference to the created tuple.
+	 * If needed through global access throughout the system, also pass a
+	 * reference to the Opbm class, so a callback can be made to register it
+	 * globally.  This constructor is only used for local uses, not global.
+	 */
+	public Tuple()
+	{
+		m_opbm				= null;
+		m_uuid				= Utils.getUUID();
+		m_first				= new ArrayList<String>(0);
+		m_second			= new ArrayList<Object>(0);
+		m_third				= new ArrayList<Object>(0);
+		m_fourth			= new ArrayList<Object>(0);
+		m_fifth				= new ArrayList<Object>(0);
+		m_sixth				= new ArrayList<Object>(0);
+		m_seventh			= new ArrayList<Object>(0);
+		m_triggerCommand	= new ArrayList<String>(0);
+		m_triggerFilters	= new ArrayList<String>(0);
+	}
+	/**
+	 * Constructor, creates a UUID for unique reference to the created tuple.
 	 * This is necessary for an external <code>List<Tuple></code> to maintain
 	 * the global state, hence the callback to the Opbm class, and its
 	 * <code>add</code> function.
@@ -64,8 +84,6 @@ public class Tuple
 	@SuppressWarnings("LeakingThisInConstructor")
 	public Tuple(Opbm opbm)
 	{
-		int i;
-
 		m_opbm				= opbm;
 		m_uuid				= Utils.getUUID();
 		m_first				= new ArrayList<String>(0);
@@ -854,18 +872,21 @@ public class Tuple
 			triggerCommand = m_triggerCommand.get(item);
 			if (triggerCommand != null && !triggerCommand.isEmpty())
 			{	// There is a command
-				m_opbm.getCommandMaster().processCommand(m_uuid,
-														 triggerCommand,
-														 m_first.get(item),
-														 m_second.get(item),
-														 m_third.get(item),
-														 m_fourth.get(item),
-														 m_fifth.get(item),
-														 m_sixth.get(item),
-														 m_seventh.get(item),
-														 Integer.toString(item),	/* item user asked to trigger the command */
-														 "--forced--",				/* indicate execution was forced */
-														 "--forced--");				/* indicate execution was forced */
+				if (m_opbm != null)
+				{
+					m_opbm.getCommandMaster().processCommand(m_uuid,
+															 triggerCommand,
+															 m_first.get(item),
+															 m_second.get(item),
+															 m_third.get(item),
+															 m_fourth.get(item),
+															 m_fifth.get(item),
+															 m_sixth.get(item),
+															 m_seventh.get(item),
+															 Integer.toString(item),	/* item user asked to trigger the command */
+															 "--forced--",				/* indicate execution was forced */
+															 "--forced--");				/* indicate execution was forced */
+				}
 			}
 		}
 	}

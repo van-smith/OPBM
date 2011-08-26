@@ -193,7 +193,7 @@ public final class BenchmarkManifest
 	public void buildFinalize()
 	{
 		setPassMaxValues();
-		insertAutoRebootCommands();
+//		insertAutoRebootCommands();
 		assignUUIDs();
 		m_bmr.createResultsdataFramework();
 		saveManifest();
@@ -1329,7 +1329,24 @@ public final class BenchmarkManifest
 		m_bmr.appendResultsAnnotation("shutdown", Utils.getTimestamp(), "");
 
 		// Save the final/current result
+// REMEMBER The save is done three times right now until the code is well-tested, and there are no exceptions thrown in the compute algorithms.
+//          In the future it can be moved below this if..loop and saved only once.
 		saveManifest();
+
+		// If we are finished, then compute the aggregate totals
+		if (m_controlLastWorklet.getAttribute("uuid").equalsIgnoreCase("finished"))
+		{	// We are finished, so tally up!
+			m_bmr.computeAggregateTotals();
+
+			// Save the new results
+			saveManifest();
+
+			// Compute the ResultsViewer totals and generate CSV files
+			m_bmr.computeResultsViewerTotalsAndGenerateCSVs();
+
+			// Save the new results
+			saveManifest();
+		}
 
 		// Finish up, show the results viewer
 		m_benchmarksMaster.benchmarkShutdown();
@@ -1634,7 +1651,7 @@ public final class BenchmarkManifest
 	public void runExecute()
 	{
 		Xml success, failures;
-		String manifestWorkletUuid, type;
+		String manifestWorkletUuid, manifestAtomUuid, type;
 
 		saveManifest();
 		m_macroMaster.SystemOutPrintln("Pass #" + m_run.getAttribute("this") + " of #" + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
@@ -1646,6 +1663,7 @@ public final class BenchmarkManifest
 
 			// Grab some pointers
 			manifestWorkletUuid	= m_controlLastWorkletUuid.getText();
+			manifestAtomUuid	= m_worklet.getAttribute("atomuuid");
 
 //////////
 // Physically conduct the work of the atom
@@ -1674,10 +1692,12 @@ public final class BenchmarkManifest
 
 			// Add the result line
 			m_bmr.appendResult(manifestWorkletUuid,
+							   manifestAtomUuid,
 							   m_bp.getLastWorkletStart(),
 							   m_bp.getLastWorkletEnd(),
 							   m_bp.getLastWorkletResult(),
-							   m_bp.getLastWorkletScore());
+							   m_bp.getLastWorkletScore(),
+							   m_bp.getLastWorkletTimingData());
 
 			// Update our statistics
 			runExecuteUpdateStatistics();
@@ -1774,6 +1794,15 @@ public final class BenchmarkManifest
 			// Add to the existing count
 			m_statisticsRuntimeScripts.setText(Long.toString(Integer.valueOf(count) + m_bp.getMillisecondsRunningLastWorklet()));
 		}
+	}
+
+	/**
+	 * Returns the root node of the <manifest> tag
+	 * @returns <code>Xml</code> to manifest node
+	 */
+	public Xml getManifestRoot()
+	{
+		return(m_manifest);
 	}
 
 	// Error conditions
