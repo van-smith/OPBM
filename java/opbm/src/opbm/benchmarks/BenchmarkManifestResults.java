@@ -56,6 +56,7 @@ package opbm.benchmarks;
 
 import java.util.ArrayList;
 import java.util.List;
+import opbm.Opbm;
 import opbm.common.Tuple;
 import opbm.common.Utils;
 import opbm.common.Xml;
@@ -809,8 +810,7 @@ public class BenchmarkManifestResults
 	}
 
 	/**
-	 * Computes the results viewer totals
-	 *
+	 * Computes the results viewer totals, of this form:
 	 *		<result datetime="Aug 25, 2011 at 10:56AM" name="OPBM Benchmark" shortname="unnamed" tags="" tested="yes" status="success" score="0">
 	 *			<suite name="Suite Name" shortname="sun" tags="" tested="yes" status="success" score="0">
 	 *				<scenario name="Scenario Name" shortname="scn" tags="" tested="yes" status="success" score="0">
@@ -824,12 +824,223 @@ public class BenchmarkManifestResults
 	 *			</suite>
 	 *		</result>
 	 */
-	public void computeResultsViewerTotalsAndGenerateCSVs()
+	public void computeResultsViewerTotalsAndGenerateCSVFile()
 	{
+		String point, sourcename, manifestworkletuuid, atomuuid, datetime;
+		Xml run, child, rootXml, resultsDataXml, resultXml;
+		Xml lastSuiteXml, lastScenarioXml, lastMoleculeXml, lastAtomXml;
+		Xml worklet, result, timing, newWorklet, instanceResult;
+		List<String> csvLines = new ArrayList<String>(0);
 
+		rootXml				= new Xml("opbm");									// opbm
+		resultsDataXml		= rootXml.appendChild(new Xml("resultsdata"));		// opbm.resultsdata
+		resultXml			= resultsDataXml.appendChild(new Xml("result"));	// opbm.resultsdata.results
+		lastSuiteXml		= null;												// opbm.resultsdata.results.suite
+		lastScenarioXml		= null;												// opbm.resultsdata.results.suite.scenario
+		lastMoleculeXml		= null;												// opbm.resultsdata.results.suite.scenario.molecule
+		lastAtomXml			= null;												// opbm.resultsdata.results.suite.scenario.molecule.atom
+		worklet				= null;												// opbm.resultsdata.results.suite.scenario.molecule.atom.worklet
+
+		datetime = Utils.getDateTimeAs_Mmm_DD__YYYY_at_HH_MMampm();
+		resultXml.appendAttribute(new Xml("datetime",	datetime));
+		resultXml.appendAttribute(new Xml("name",		"OPBM Benchmark"));
+		resultXml.appendAttribute(new Xml("tested",		"yes"));
+		resultXml.appendAttribute(new Xml("status",		"success"));
+		resultXml.appendAttribute(new Xml("score",		""));
+
+		csvLines.add("OPBM Benchmark");
+		csvLines.add("Date: " + datetime);
+		csvLines.add("");
+
+		// Iterate through the opbm.benchmarks.manifest.run entries to build the results.xml structure
+		run = m_bm.getManifestRoot().getFirstChild();
+		while (run != null)
+		{	// We're looking for "run" entries, ignoring other ones
+			if (run.getName().equalsIgnoreCase("run"))
+			{	// We have a run entry, begin outlining the results.xml structure
+				child = run.getFirstChild();
+				while (child != null)
+				{	// Looking for the structure of the results.xml file, which will have been dictated by the order in which BenchmarkManifest built the class
+					if (child.getName().equalsIgnoreCase("tag"))
+					{	// It's control information, tagging the level
+						point = child.getAttribute("point");
+						if (point.equalsIgnoreCase("beginsuite"))
+						{	// The beginning of a results viewer suite-level set of entries
+							lastSuiteXml = resultXml.appendChild(new Xml("suite"));
+							lastSuiteXml.appendAttribute(new Xml("name",			child.getAttribute("name")));
+							lastSuiteXml.appendAttribute(new Xml("shortname",		Utils.getShortName(child.getAttribute("name"), 6)));
+							lastSuiteXml.appendAttribute(new Xml("tags",			""));
+							lastSuiteXml.appendAttribute(new Xml("tested",			"yes"));
+							lastSuiteXml.appendAttribute(new Xml("status",			"success"));
+							lastSuiteXml.appendAttribute(new Xml("score",			""));
+							lastScenarioXml	= null;
+							lastMoleculeXml	= null;
+							lastAtomXml		= null;
+							csvLines.add("Suite," + child.getAttribute("name"));
+
+						} else if (point.equalsIgnoreCase("beginscenario")) {
+							// The beginning of a results viewer scenario-level set of entries
+							lastScenarioXml = lastSuiteXml.appendChild(new Xml("scenario"));
+							lastScenarioXml.appendAttribute(new Xml("name",			child.getAttribute("name")));
+							lastScenarioXml.appendAttribute(new Xml("shortname",	Utils.getShortName(child.getAttribute("name"), 6)));
+							lastScenarioXml.appendAttribute(new Xml("tags",			""));
+							lastScenarioXml.appendAttribute(new Xml("tested",		"yes"));
+							lastScenarioXml.appendAttribute(new Xml("status",		"success"));
+							lastScenarioXml.appendAttribute(new Xml("score",		""));
+							lastMoleculeXml	= null;
+							lastAtomXml		= null;
+							csvLines.add("Scenario," + child.getAttribute("name"));
+
+						} else if (point.equalsIgnoreCase("beginmolecule")) {
+							// The beginning of a results viewer molecule-level set of entries
+							lastMoleculeXml = lastScenarioXml.appendChild(new Xml("molecule"));
+							lastMoleculeXml.appendAttribute(new Xml("name",			child.getAttribute("name")));
+							lastMoleculeXml.appendAttribute(new Xml("shortname",	Utils.getShortName(child.getAttribute("name"), 6)));
+							lastMoleculeXml.appendAttribute(new Xml("tags",			""));
+							lastMoleculeXml.appendAttribute(new Xml("tested",		"yes"));
+							lastMoleculeXml.appendAttribute(new Xml("status",		"success"));
+							lastMoleculeXml.appendAttribute(new Xml("score",		""));
+							lastAtomXml		= null;
+							csvLines.add("Molecule," + child.getAttribute("name"));
+
+						} else if (point.equalsIgnoreCase("beginatom")) {
+							// The beginning of a results viewer atom-level set of entries
+							lastAtomXml = lastMoleculeXml.appendChild(new Xml("atom"));
+							lastAtomXml.appendAttribute(new Xml("name",				child.getAttribute("name")));
+							lastAtomXml.appendAttribute(new Xml("shortname",		Utils.getShortName(child.getAttribute("name"), 6)));
+							lastAtomXml.appendAttribute(new Xml("tags",				""));
+							lastAtomXml.appendAttribute(new Xml("tested",			"yes"));
+							lastAtomXml.appendAttribute(new Xml("status",			"success"));
+							lastAtomXml.appendAttribute(new Xml("score",			""));
+							csvLines.add("Atom," + child.getAttribute("name"));
+
+						}// else, we ignore it, it's not one of our known entries
+
+					} else if (child.getName().equalsIgnoreCase("abstract")) {
+						// It's an abstract command
+						sourcename = child.getAttribute("sourcename");
+						if (!sourcename.toLowerCase().startsWith("reboot"))
+						{	// We ignore reboot commands, but everything else we process
+//////////
+// REMEMBER The following code can be used if it is desired to record the instance times, rather than the average
+// times for multiple passes.  Be sure also to remove the "break" below, which will allow each pass to be included
+// in the results (GUIDANCE#1).  A settings.xml setting should be advised here.
+// BEGIN
+//							// Lookup the timing data for this instance of the run in rawResults, and load in the "timing" worklets
+//							// Grab the uuid, which is also the manifestworkletuuid
+//							manifestworkletuuid = child.getAttribute("uuid");
+//							result = Xml.getNodeByAttributeNameEqualsValue(m_rawResults, "manifestworkletuuid", manifestworkletuuid, false);
+//							if (result != null)
+//							{	// Add the timing elements
+//								timing = result.getFirstChild();
+//								while (timing != null)
+//								{	// These are the raw instance results for this test
+//									worklet = lastAtomXml.appendChild(new Xml("worklet"));
+//									worklet.appendAttribute(new Xml("name",			timing.getAttribute("name")));
+//									worklet.appendAttribute(new Xml("score",		timing.getAttribute("score")));
+//									worklet.appendAttribute(new Xml("time",			timing.getAttribute("time")));
+//									worklet.appendAttribute(new Xml("shortname",	timing.getAttribute("name")));
+//									worklet.appendAttribute(new Xml("tags",			""));
+//									worklet.appendAttribute(new Xml("tested",		"yes"));
+//									worklet.appendAttribute(new Xml("status",		"success"));
+//
+//									csvLines.add(",,Worklet,"	+ timing.getAttribute("name"));
+//									csvLines.add(",,,score,"	+ timing.getAttribute("score"));
+//									csvLines.add(",,,time,"		+ timing.getAttribute("time"));
+//
+//									// Move to next sibling
+//									timing = timing.getNext();
+//								}
+//							}
+// END
+//////////
+
+//////////
+// The following code uses the aggregate totals byAtom, to record the min, max, avg, geomean and cv for timing and scores
+// BEGIN
+							// Lookup the timing data for this instance of the run in rawResults, and load in the "timing" worklets
+							// Grab the uuid, which is also the manifestworkletuuid
+							atomuuid = child.getAttribute("atomuuid");
+							result = Xml.getNodeByAttributeNameEqualsValue(m_aggregateByAtom, "atomuuid", atomuuid, false);
+							if (result != null)
+							{	// Add the timing elements
+								manifestworkletuuid = child.getAttribute("uuid");
+								instanceResult = Xml.getNodeByAttributeNameEqualsValue(m_rawResults, "manifestworkletuuid", manifestworkletuuid, false);
+
+								worklet = result.getFirstChild();
+								while (worklet != null)
+								{	// These are the raw instance results for this test
+									newWorklet = lastAtomXml.appendChild(new Xml("worklet"));
+									newWorklet.appendAttribute(new Xml("name",			worklet.getAttribute("description")));
+									newWorklet.appendAttribute(new Xml("instances",		worklet.getAttribute("instances")));
+									newWorklet.appendAttribute(new Xml("score",			worklet.getAttribute("avgScore")));
+									newWorklet.appendAttribute(new Xml("time",			worklet.getAttribute("avgTime")));
+									newWorklet.appendAttribute(new Xml("shortname",		Utils.getShortName(worklet.getAttribute("description"), 6)));
+									newWorklet.appendAttribute(new Xml("minTime",		worklet.getAttribute("minTime")));
+									newWorklet.appendAttribute(new Xml("maxTime",		worklet.getAttribute("maxTime")));
+									newWorklet.appendAttribute(new Xml("avgTime",		worklet.getAttribute("avgTime")));
+									newWorklet.appendAttribute(new Xml("geoTime",		worklet.getAttribute("geoTime")));
+									newWorklet.appendAttribute(new Xml("cvTime",		worklet.getAttribute("cvTime")));
+									newWorklet.appendAttribute(new Xml("minScore",		worklet.getAttribute("minScore")));
+									newWorklet.appendAttribute(new Xml("maxScore",		worklet.getAttribute("maxScore")));
+									newWorklet.appendAttribute(new Xml("avgScore",		worklet.getAttribute("avgScore")));
+									newWorklet.appendAttribute(new Xml("geoScore",		worklet.getAttribute("geoScore")));
+									newWorklet.appendAttribute(new Xml("cvScore",		worklet.getAttribute("cvScore")));
+									newWorklet.appendAttribute(new Xml("tags",			""));
+									newWorklet.appendAttribute(new Xml("tested",		"yes"));
+
+									csvLines.add(",Worklet,"		+ worklet.getAttribute("description"));
+									csvLines.add(",,,time,"			+ worklet.getAttribute("avgTime"));
+									csvLines.add(",,,score,"		+ worklet.getAttribute("avgScore"));
+									csvLines.add(",,instances,"		+ worklet.getAttribute("instances"));
+									csvLines.add(",,minTime,"		+ worklet.getAttribute("minTime"));
+									csvLines.add(",,maxTime,"		+ worklet.getAttribute("maxTime"));
+									csvLines.add(",,avgTime,"		+ worklet.getAttribute("avgTime"));
+									csvLines.add(",,geoTime,"		+ worklet.getAttribute("geoTime"));
+									csvLines.add(",,cvTime,"		+ worklet.getAttribute("cvTime"));
+									csvLines.add(",,minScore,"		+ worklet.getAttribute("minScore"));
+									csvLines.add(",,maxScore,"		+ worklet.getAttribute("maxScore"));
+									csvLines.add(",,avgScore,"		+ worklet.getAttribute("avgScore"));
+									csvLines.add(",,geoScore,"		+ worklet.getAttribute("geoScore"));
+									csvLines.add(",,cvScore,"		+ worklet.getAttribute("cvScore"));
+
+									if (instanceResult != null)
+									{
+										newWorklet.appendAttribute(new Xml("status",	instanceResult.getAttribute("status")));
+										csvLines.add(",,,status,"	+ instanceResult.getAttribute("status"));
+
+									} else {
+										newWorklet.appendAttribute(new Xml("status",	"success"));
+										csvLines.add(",,,status,success");
+									}
+
+									// Move to next sibling
+									worklet = worklet.getNext();
+								}
+							}
+// END
+//////////
+						}
+					}
+
+					// Move to next sibling
+					child = child.getNext();
+				}
+				// When we get here, we've processed one of the runs
+				// We're done
+				break;	// REMOVE THIS BREAK if you are following the GUIDANCE#1 instruction above
+			}
+
+			// Move to next sibling
+			run = run.getNext();
+		}
+
+		// Save results.xml
+		rootXml.saveNode(Opbm.getHarnessXMLDirectory() + "results.xml");
+		Utils.writeTerminatedLinesToFile(Opbm.getHarnessCSVDirectory() + "results.csv", csvLines);
 	}
 
-	BenchmarkManifest		m_bm;						// Parent this results processor relates to
+	BenchmarkManifest		m_bm;						// Parent this results processor relates back to
 	private boolean			m_isLoaded;					// When the results have been created or successfully loaded, this flag is raised high
 
 	private Xml				m_resultsdataRoot;			// opbm.resultsdata

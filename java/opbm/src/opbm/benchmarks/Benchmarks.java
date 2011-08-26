@@ -448,11 +448,15 @@ public class Benchmarks
 			m_bp.m_deb = null;
 		}
 
-		// Create a unique filename for this operation, based on the date and time
-		fileName = Opbm.getHarnessXMLDirectory() + "results_" + Utils.convertFilenameToLettersAndNumbersOnly(Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
+//		// Create a unique filename for this operation, based on the date and time
+//		fileName = Opbm.getHarnessXMLDirectory() + "results_" + Utils.convertFilenameToLettersAndNumbersOnly(Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
+//
+//		// Save the output
+//		m_bp.m_xmlRoot.saveNode(fileName);
 
-		// Save the output
-		m_bp.m_xmlRoot.saveNode(fileName);
+		// Introduced for the new BenchmarkManifest method of running benchmarks, output always goes to results.xml
+		// The filename for the generated out
+		fileName = Opbm.getHarnessXMLDirectory() + "results.xml";
 
 		// Close the benchmark run
 		m_bp.m_opbm.setRunFinished();

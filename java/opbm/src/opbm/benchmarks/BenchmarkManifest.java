@@ -1329,7 +1329,7 @@ public final class BenchmarkManifest
 		m_bmr.appendResultsAnnotation("shutdown", Utils.getTimestamp(), "");
 
 		// Save the final/current result
-// REMEMBER The save is done three times right now until the code is well-tested, and there are no exceptions thrown in the compute algorithms.
+// REMEMBER The save is done three times here for now until the code is well-tested, and there are no exceptions thrown in the compute algorithms preventing a single post-operation save from storing the results.
 //          In the future it can be moved below this if..loop and saved only once.
 		saveManifest();
 
@@ -1341,8 +1341,8 @@ public final class BenchmarkManifest
 			// Save the new results
 			saveManifest();
 
-			// Compute the ResultsViewer totals and generate CSV files
-			m_bmr.computeResultsViewerTotalsAndGenerateCSVs();
+			// Compute the ResultsViewer totals and generate a CSV file with all of the data
+			m_bmr.computeResultsViewerTotalsAndGenerateCSVFile();
 
 			// Save the new results
 			saveManifest();
