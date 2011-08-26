@@ -159,6 +159,13 @@
 					</options>
 				</abstract>
 			</atom>
+			<atom name="7(hyphen)zip Run Test">
+				<abstract name="7(hyphen)zip Run Test" sourcename="execute">
+					<options>
+						<executable>..(backslash)autoIT(backslash)7zip(backslash)runtest(backslash)7zipRunTest.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Un(hyphen)install 7(hyphen)zip">
 				<abstract name="Un(hyphen)install 7(hyphen)zip" sourcename="execute">
 					<options>
@@ -395,6 +402,9 @@
 				<atom name="Firefox Kraken" sourcename="Firefox Kraken"></atom>
 				<atom name="Firefox Google V8" sourcename="Firefox Google V8"></atom>
 			</molecule>
+			<molecule name="Compute 7(hyphen)zip">
+				<atom name="7(hyphen)zip Run Test" sourcename="7(hyphen)zip Run Test"></atom>
+			</molecule>
 			<molecule name="Un(hyphen)install 7(hyphen)zip">
 				<atom name="Un(hyphen)install 7(hyphen)zip" sourcename="Un(hyphen)install 7(hyphen)zip"></atom>
 			</molecule>
@@ -422,6 +432,9 @@
 				<molecule name="Compute Opera" sourcename="Compute Opera"></molecule>
 				<molecule name="Compute Safari" sourcename="Compute Safari"></molecule>
 			</scenario>
+			<scenario name="Compute Utilities">
+				<molecule name="7(hyphen)zip" sourcename="Compute 7(hyphen)zip"></molecule>
+			</scenario>
 			<scenario name="Un(hyphen)install 7(hyphen)zip">
 				<molecule name="Un(hyphen)install 7(hyphen)zip" sourcename="Un(hyphen)install 7(hyphen)zip"></molecule>
 			</scenario>
@@ -443,6 +456,9 @@
 			</suite>
 			<suite name="Browsers">
 				<scenario name="Compute" sourcename="Compute Browsers"></scenario>
+			</suite>
+			<suite name="Utilities">
+				<scenario name="Compute" sourcename="Compute Utilities"></scenario>
 			</suite>
 			<suite name="Un(hyphen)Install">
 				<scenario name="Un(hyphen)install 7(hyphen)zip" sourcename="Un(hyphen)install 7(hyphen)zip"></scenario>

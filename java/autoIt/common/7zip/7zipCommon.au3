@@ -16,6 +16,8 @@ Const $SEVENZIP_EXECUTABLE_I386					= $SEVENZIP_DIRECTORY_I386	&	"\7zFM.exe"
 Const $SEVENZIP_EXECUTABLE_X64					= $SEVENZIP_DIRECTORY_X64	&	"\7zFM.exe"
 Const $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH		= $SEVENZIP_DIRECTORY_I386	&	"\7zFM.exe " & $OPBM_SPLASH_ZIP
 Const $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH		= $SEVENZIP_DIRECTORY_X64	&	"\7zFM.exe " & $OPBM_SPLASH_ZIP
+Const $SEVENZIP_CMD_LINE_EXECUTABLE_I386		= $SEVENZIP_DIRECTORY_I386	&	"\7z.exe"
+Const $SEVENZIP_CMD_LINE_EXECUTABLE_X64			= $SEVENZIP_DIRECTORY_X64	&	"\7z.exe"
 
 ; Constants used throughout for various scripts
 Const $LAUNCH_SEVENZIP							= "Launch 7-Zip"
@@ -35,6 +37,10 @@ Const $SEVENZIP_INSTALLER_TITLE_X64				= "7-Zip 9.20 (x64 edition) Setup"
 Const $SEVENZIP_UNINSTALLER_TITLE_X64			= "7-Zip 9.20 (x64 edition) Setup"
 Const $SEVENZIP_INSTALLER_TITLE_I386			= "7-Zip 9.20 Setup"
 Const $SEVENZIP_UNINSTALLER_TITLE_I386			= "7-Zip 9.20 Uninstall"
+Const $SEVENZIP_UNARCHIVE_FIVE_TIMES			= "Unarchive to five separate directories"
+Const $SEVENZIP_ARCHIVE_FIVE_DIRECTORIES		= "Archive five directories to new archive"
+Const $SEVENZIP_TEST_ARCHIVE_INTEGRITY			= "Test archive integrity"
+
 
 ; Global declaration for timing constants
 Dim $gBaselineSize
@@ -42,9 +48,7 @@ $gBaselineSize = 10
 Dim $gBaselines[ $gBaselineSize ][2]
 $gBaselines[0][0] = $LAUNCH_SEVENZIP
 $gBaselines[0][1] = $LAUNCH_SEVENZIP_SCORE
-$gBaselines[1][0] = $CLOSE_SEVENZIP
-$gBaselines[1][1] = $CLOSE_SEVENZIP_SCORE
-For $i = 2 to $gBaselineSize - 1
+For $i = 1 to $gBaselineSize - 1
 	$gBaselines[ $i ][0]	= "--unused--"
 	$gBaselines[ $i ][1]	= 0.0
 Next
@@ -74,13 +78,15 @@ EndFunc
 Func Launch7Zip()
 	Local $executable, $executable_to_launch
 	
-	If FileExists( $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH ) Then
+	If FileExists( $SEVENZIP_EXECUTABLE_X64 ) Then
 		$executable				= $SEVENZIP_EXECUTABLE_X64
 		$executable_to_launch	= $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH
+		$is386Executable		= False
 		
-	ElseIf FileExists( $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH ) Then
+	ElseIf FileExists( $SEVENZIP_EXECUTABLE_I386 ) Then
 		$executable				= $SEVENZIP_EXECUTABLE_I386
 		$executable_to_launch	= $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH
+		$is386Executable		= True
 		
 	Else
 		ErrorHandle("7-Zip not found in " & $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH & " or " & $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH & ", unable to launch.")
@@ -92,22 +98,4 @@ Func Launch7Zip()
 	opbmWaitUntilProcessIdle( $gPID, 5, 200, 10000 )
 	opbmWinWaitActivate( $OPBM_SPLASH_ZIP_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_SEVENZIP )
-EndFunc
-
-Func Close7Zip( $title )
-	; Bring the window foreground (if it's not)
-	opbmWinWaitActivate( $title, "", $gTimeout, $ERROR_PREFIX & "WinWait: 7-Zip: Unable to find Window.")
-	
-	; Start the timer
-	TimerBegin()
-	
-	; Close it
-	WinActivate( $title )
-	WinClose( $title )
-	
-	; Wait until the sytem settles down
-	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
-	
-	; Take the ending timer
-	TimerEnd( $CLOSE_SEVENZIP )
 EndFunc
