@@ -269,7 +269,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(6 + digits.length() + 2)))
 										{
 											// This is the benchmark they want to run
@@ -295,7 +295,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(6)))
 										{
 											// This is the benchmark they want to run
@@ -322,7 +322,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
 										{
 											// This is the benchmark they want to run
@@ -348,7 +348,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
 										{
 											// This is the benchmark they want to run
@@ -375,7 +375,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
 										{
 											// This is the benchmark they want to run
@@ -401,7 +401,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
 										{
 											// This is the benchmark they want to run
@@ -428,7 +428,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
 										{
 											// This is the benchmark they want to run
@@ -454,7 +454,7 @@ public final class Opbm extends	ModalApp
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
-										name	= target.getAttribute("name");
+										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(7)))
 										{
 											// This is the benchmark they want to run
@@ -1936,9 +1936,7 @@ public final class Opbm extends	ModalApp
 								  String			p9,
 								  String			p10)
 	{
-		if (m_bm == null)
-			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
-
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
 		m_bm_suite			= suite;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -1993,9 +1991,7 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		if (m_bm == null)
-			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
-
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
 		m_bm_scenario		= scenario;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2050,9 +2046,7 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		if (m_bm == null)
-			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
-
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
 		m_bm_molecule		= molecule;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2107,9 +2101,7 @@ public final class Opbm extends	ModalApp
 								 String			p9,
 								 String			p10)
 	{
-		if (m_bm == null)
-			m_bm			= new BenchmarkManifest(opbm, "compilation", "");
-
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
 		m_bm_atom			= atom;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;

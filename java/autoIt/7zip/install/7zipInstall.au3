@@ -18,6 +18,9 @@
 
 Dim $CurrentLoop
 Dim $LoopLimit
+Dim $InstallerWindowTitle
+dim $is386Installer
+
 
 ; Begin at 2 (see adobeCommon for definition of 0 and 1)
 $gBaselines[2][0] = $LAUNCH_SEVENZIP_INSTALLER
@@ -42,16 +45,11 @@ outputDebug( "Launch7ZipInstaller()" )
 Launch7ZipInstaller()
 
 outputDebug( "AcceptAndInstall()" )
-AcceptAndInstall()
-
-outputDebug( "LaunchAcrobatReader()" )
-LaunchAcrobatReader()
-
-outputDebug( "AcceptLicenseAgreement()" )
-AcceptLicenseAgreement()
-
-outputDebug( "SetInitialSettings()" )
-SetInitialSettings()
+if not $is386Installer Then
+	AcceptAndInstallx64()
+Else
+	AcceptAndInstalli386()
+EndIf
 
 outputDebug( "FinalizeScript()" )
 opbmFinalizeScript( "7ZipInstallTimes.csv" )
@@ -66,9 +64,15 @@ Func Launch7ZipInstaller()
 	Local $installer
 	
 	If is64BitOS() Then
-		$installer = $SEVENZIP_INSTALLER_X64
+		$installer				= $SEVENZIP_INSTALLER_X64
+		$InstallerWindowTitle	= $SEVENZIP_INSTALLER_TITLE_X64
+		$is386Installer			= False
+		
 	Else
-		$installer = $SEVENZIP_INSTALLER_I386
+		$installer				= $SEVENZIP_INSTALLER_I386
+		$InstallerWindowTitle	= $SEVENZIP_INSTALLER_TITLE_I386
+		$is386Installer			= True
+		
 	EndIf
 	outputDebug( "Attempting to launch " & $installer )
 	
@@ -79,65 +83,79 @@ Func Launch7ZipInstaller()
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 	
 	; Wait until it is done uncompressing and begins with its dialog
-	opbmWinWaitActivate( $ACROBAT_READER_INSTALLER_WINDOW, $READY_TO_INSTALL, 120, $ERROR_PREFIX & "WinWait: Acrobat Reader Setup: Unable to find Window.")
-	TimerEnd( $LAUNCH_ACROBAT_READER_INSTALLER )
+	opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	TimerEnd( $LAUNCH_SEVENZIP_INSTALLER )
 	
 	; Wait for the system to settle down, as the windows flash for a moment here
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 EndFunc
 
-Func AcceptAndInstall()
+Func AcceptAndInstallx64()
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Welcome")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
 	TimerBegin()
-	; Click the "Install" button
-	WinActivate( $ACROBAT_READER_INSTALLER_WINDOW, $READY_TO_INSTALL )
+	; Click the "Next" button
+	Send("{Enter}")
+	Sleep(250)
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + License Agreement")
+	opbmWinWaitActivate( $InstallerWindowTitle, "License Agreement", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
+	; Click the "I accept the terms in the License Agreement" checkbox
+	ControlClick( $InstallerWindowTitle, "License Agreement", "[CLASS:Button, INSTANCE:1]" )
+	Send("!a")
+	Sleep(100)
+	; Send a plus sign to guarantee it's in the "clicked" position, this enables the "next" button
+	Send("+")
+	Sleep(100)
+	; Click the next button
+	Send("!n")
+	Sleep(250)
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Custom Setup")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Custom Setup", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
+	; Click the next button
+	Send("!n")
+	Sleep(250)
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Ready to Install")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Ready to Install", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
+	; Click the install button
 	Send("!i")
-	; Clicking that button immediately begins the install process
-	
-	; Acrobat's main installer algorithm is not always using the CPU heavy, but sometimes file copying
-	; It also takes a long time on slow systems, more than two minutes
-	opbmWinWaitActivate( $ACROBAT_READER_INSTALLER_WINDOW, $SETUP_COMPLETED, 240, $ERROR_PREFIX & "WinWait: Acrobat Reader Setup Completed: Unable to find Window.")
-	
-	; Click the "Finish" button
-	WinActivate( $ACROBAT_READER_INSTALLER_WINDOW, $SETUP_COMPLETED )
-	Send("!f")
-	
-	; The disk hammers away for a long time after the process ends, so wait for it to settle down for 2 seconds
-	outputDebug( "Waiting for hard disk to settle down" )
-	opbmWaitUntilSystemIdle( 10, 2000, 120000 )
-	
-	TimerEnd( $INSTALL_ACROBAT_READER )
-EndFunc
-
-Func AcceptLicenseAgreement()
-	opbmWinWaitActivate( $ACROBAT_READER_LICENSE_AGREEMENT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader License Agreement: Unable to find Window.")
-	ControlClick( $ACROBAT_READER_LICENSE_AGREEMENT, "", "[TEXT:Accept]", "left" )
-	Sleep(1000)
-EndFunc
-
-Func SetSecurityUpdatesToManual()
-	opbmWinWaitActivate( $ACROBAT_READER_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader: Unable to find Window.")
-	
-	; Send Alt-E for edit menu, then "n" for Prefere&nces
-	Send( "!en" )
-	Sleep(500)
-	
-	opbmWinWaitActivate( $PREFERENCES, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader Preferences: Unable to find Window.")
-	; We arrive on a list of categories, but we don't know where we might be
-	; Move to top of list
-	Send( "{end}" )
-	Sleep(100)
-	; This process takes a long time to load the first time
-	opbmWaitUntilSystemIdle( 10, 1000, $gTimeout )
-	
-	; Choose the "Do &not download or install updates automatically"
-	Send( "!n" )
-	Sleep(100)
-	
-	; Click the OK button
-	ControlClick( $PREFERENCES, "", "[TEXT:OK]", "left")
 	Sleep(250)
 	
-	opbmWinWaitActivate( $ACROBAT_READER_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader: Unable to find Window.")
-	; Close acrobat
-	Send( "!fx" )
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Finish Button")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Finish button", 90, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
+	; Click the finish button
+	Send("{Enter}")
+	Sleep(250)
+	
+	; Wait until everything is completed
+	opbmWaitUntilSystemIdle( 10, 500, $gTimeout )
+	
+	TimerEnd( $INSTALL_SEVENZIP )
+EndFunc
+
+
+Func AcceptAndInstalli386()
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Welcome")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Choose Install Location", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
+	TimerBegin()
+	; Click the "Install" button
+	Send("!i")
+	Sleep(250)
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Completing")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Completing", 60, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
+	; Click the finish button
+	Send("{Enter}")
+	Sleep(250)
+	
+	; Wait until everything is completed
+	outputDebug("Waiting for hard disk to settle down")
+	opbmWaitUntilSystemIdle( 10, 500, $gTimeout )
+	
+	TimerEnd( $INSTALL_SEVENZIP )
 EndFunc

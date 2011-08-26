@@ -6,14 +6,16 @@ Const $ROOT_DIR = @ScriptDir & "\..\.."
 Const $EXE_DIRECTORY							= @ScriptDir & "\exe"
 
 ; Executables used to install, uninstall, or execute Chrome
-Const $SEVENZIP_DIRECTORY_I386					= "C:\Program Files (x86)\7zip"
-Const $SEVENZIP_DIRECTORY_X64					= "C:\Program Files\7zip"
-Const $SEVENZIP_INSTALLER						= $EXE_DIRECTORY		&	"\7z.exe"
-Const $SEVENZIP_UNINSTALLER						= "MsiExec.exe /I{AC76BA86-7AD7-1033-7B44-AA1000000001}"
+Const $SEVENZIP_DIRECTORY_I386					= "C:\Program Files (x86)\7-zip"
+Const $SEVENZIP_DIRECTORY_X64					= "C:\Program Files\7-zip"
+Const $SEVENZIP_INSTALLER_I386					= $EXE_DIRECTORY						&	"\7z920-i386.exe"
+Const $SEVENZIP_INSTALLER_X64					= "MsiExec.exe /I " & $EXE_DIRECTORY	&	"\7z920-x64.msi"
+Const $SEVENZIP_UNINSTALLER_I386				= $SEVENZIP_DIRECTORY_I386				&	"\Uninstall.exe"
+Const $SEVENZIP_UNINSTALLER_X64					= "MsiExec.exe /I{23170F69-40C1-2702-0920-000001000000}"
 Const $SEVENZIP_EXECUTABLE_I386					= $SEVENZIP_DIRECTORY_I386	&	"\7zFM.exe"
-Const $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH		= $SEVENZIP_DIRECTORY_I386	&	"\7zFM.exe"
 Const $SEVENZIP_EXECUTABLE_X64					= $SEVENZIP_DIRECTORY_X64	&	"\7zFM.exe"
-Const $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH		= $SEVENZIP_DIRECTORY_X64	&	"\7zFM.exe"
+Const $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH		= $SEVENZIP_DIRECTORY_I386	&	"\7zFM.exe " & $OPBM_SPLASH_ZIP
+Const $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH		= $SEVENZIP_DIRECTORY_X64	&	"\7zFM.exe " & $OPBM_SPLASH_ZIP
 
 ; Constants used throughout for various scripts
 Const $LAUNCH_SEVENZIP							= "Launch 7-Zip"
@@ -29,6 +31,10 @@ Const $CLOSE_UNINSTALLER						= "Close Un-installer"
 Const $READY_TO_INSTALL							= "Ready to Install 7-Zip"
 Const $SETUP_COMPLETED							= "Setup Completed"
 Const $SEVENZIP_IS_NOT_INSTALLED				= "7-Zip is not installed"
+Const $SEVENZIP_INSTALLER_TITLE_X64				= "7-Zip 9.20 (x64 edition) Setup"
+Const $SEVENZIP_UNINSTALLER_TITLE_X64			= "7-Zip 9.20 (x64 edition) Setup"
+Const $SEVENZIP_INSTALLER_TITLE_I386			= "7-Zip 9.20 Setup"
+Const $SEVENZIP_UNINSTALLER_TITLE_I386			= "7-Zip 9.20 Uninstall"
 
 ; Global declaration for timing constants
 Dim $gBaselineSize
@@ -48,7 +54,9 @@ Next
 ;============================================================================================================================
 
 Func is7ZipAlreadyInstalled()
-	If FileExists( $SEVENZIP_EXECUTABLE ) Then
+	If FileExists( $SEVENZIP_EXECUTABLE_X64 ) Then
+		return True
+	ElseIf FileExists( $SEVENZIP_EXECUTABLE_I386 ) Then
 		return True
 	EndIf	
 	return False
@@ -66,18 +74,23 @@ EndFunc
 Func Launch7Zip()
 	Local $executable, $executable_to_launch
 	
-	If is64BitOS() Then
+	If FileExists( $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH ) Then
 		$executable				= $SEVENZIP_EXECUTABLE_X64
 		$executable_to_launch	= $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH
-	Else
+		
+	ElseIf FileExists( $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH ) Then
 		$executable				= $SEVENZIP_EXECUTABLE_I386
 		$executable_to_launch	= $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH
+		
+	Else
+		ErrorHandle("7-Zip not found in " & $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH & " or " & $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH & ", unable to launch.")
 	EndIf
 	outputDebug( "Attempting to launch " & $executable )
 	
 	TimerBegin()
 	$gPID = Run( $executable_to_launch, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 200, 10000 )
+	opbmWinWaitActivate( $OPBM_SPLASH_ZIP_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_SEVENZIP )
 EndFunc
 

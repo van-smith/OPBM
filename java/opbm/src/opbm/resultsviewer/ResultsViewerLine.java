@@ -53,21 +53,23 @@ import opbm.common.Xml;
  */
 public final class ResultsViewerLine implements MouseListener, MouseWheelListener
 {
-	public ResultsViewerLine(ResultsViewer	parent,
-							 JLayeredPane	pan,
-							 JLabel			lblBottom,
-							 AlphaImage		imgBackground,
-							 JLabel			lblGraphInternal,
-							 AlphaImage		imgGraphInternal,
-							 AlphaImage		imgGraphMask,
-							 int			level,
-							 boolean		visible,
-							 boolean		expanded,
-							 boolean		selected,
-							 Xml			node)
+	public ResultsViewerLine(Opbm				opbm,
+							 ResultsViewer		parent,
+							 JLayeredPane		pan,
+							 JLabel				lblBottom,
+							 AlphaImage			imgBackground,
+							 JLabel				lblGraphInternal,
+							 AlphaImage			imgGraphInternal,
+							 AlphaImage			imgGraphMask,
+							 int				level,
+							 boolean			visible,
+							 boolean			expanded,
+							 boolean			selected,
+							 Xml				node)
 	{
 		String score;
 
+		m_opbm					= opbm;
 		m_parent				= parent;
 		m_pan					= pan;
 		m_lblBottom				= lblBottom;
@@ -110,8 +112,8 @@ public final class ResultsViewerLine implements MouseListener, MouseWheelListene
 
 			m_tested	= Utils.interpretBooleanAsYesNo(node.getAttributeOrChild("tested"), true).equalsIgnoreCase("Yes");
 			m_success	= node.getAttributeOrChild("status").equals("success");
-			m_name		= node.getAttributeOrChild("name");
-			m_shortname	= node.getAttributeOrChild("shortname");
+			m_name		= m_opbm.getMacroMaster().parseMacros(node.getAttributeOrChild("name"));
+			m_shortname	= m_opbm.getMacroMaster().parseMacros(node.getAttributeOrChild("shortname"));
 
 		} else {
 			m_tested	= false;
@@ -1823,6 +1825,7 @@ public final class ResultsViewerLine implements MouseListener, MouseWheelListene
 	public AlphaImage getSubcomponentImage()		{	return(m_subcomponentImage);		}
 	public int getCollpaseHeight()					{	return(m_imgCollapse.getHeight());	}
 
+	private Opbm							m_opbm;
 	private ResultsViewer					m_parent;			// Parent class for the results viewer itself
 	private JLayeredPane					m_pan;				// The pane labels are added to
 	private JLabel							m_lblBottom;		// The bottom area to extract images from

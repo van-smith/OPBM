@@ -10,9 +10,12 @@ Opt("SendKeyDelay", 25)
 Const $ERROR_PREFIX								= @ScriptName & ":" & @ScriptLineNumber & ": "
 Const $OPBM_DLL									= $ROOT_DIR & "\common\opbm\dll\opbm.dll"
 Const $OPBM_SPLASH_HTML							= $ROOT_DIR & "\common\opbm\html\opbm_splash.html"
+Const $OPBM_SPLASH_ZIP							= $ROOT_DIR & "\common\opbm\zip\opbm_test_archive.7z"
 Const $CPU_ACTIVITY_THRESHOLD					= 5
 Const $TIMER_MAX_INDEX_COUNT					= 100
+; When these splash/landing files are opened/launched, the title bar will contain this text:
 Const $OPBM_SPLASH_HTML_TITLE					= "OPBM Benchmark Splash"
+Const $OPBM_SPLASH_ZIP_TITLE					= "opbm_test_archive.7z"
 
 Global $gIterations
 Global $gPID

@@ -422,7 +422,7 @@ img.grayscale();
 		List<Xml> list = new ArrayList<Xml>(0);
 
 		// Grab all the top-level data items
-		m_rootRVL		= new ResultsViewerLine(this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 0, true, true, true, results.getChildNode("resultsdata").getChildNode("result"));
+		m_rootRVL		= new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 0, true, true, true, results.getChildNode("resultsdata").getChildNode("result"));
 		last			= null;
 		first			= null;
 		m_failureCount	= 0;
@@ -434,7 +434,7 @@ img.grayscale();
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 1, true, true, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 1, true, true, false, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -512,7 +512,7 @@ img.grayscale();
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 2, false, true, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 2, false, true, false, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -556,7 +556,7 @@ img.grayscale();
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 3, false, true, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 3, false, true, false, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -600,7 +600,7 @@ img.grayscale();
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 4, false, false, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 4, false, false, false, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -644,7 +644,7 @@ img.grayscale();
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 5, false, false, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 5, false, false, false, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;

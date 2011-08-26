@@ -18,6 +18,8 @@
 
 Dim $CurrentLoop
 Dim $LoopLimit
+Dim $InstallerWindowTitle
+Dim $is386Installer
 
 ; Begin at 2 (see adobeCommon for definition of 0 and 1)
 $gBaselines[2][0] = $LAUNCH_SEVENZIP_UNINSTALLER
@@ -30,19 +32,23 @@ outputDebug( "Starting up Adobe Acrobat Un-installer" )
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
 
-If not isAcrobatReaderAlreadyInstalled() Then
-	outputError( $ACROBAT_READER_IS_NOT_INSTALLED )
+If not is7ZipAlreadyInstalled() Then
+	outputError( $SEVENZIP_IS_NOT_INSTALLED )
 	Exit -1
 Endif
 
 outputDebug( "InitializeScript()" )
-InitializeAdobeScript()
+Initialize7ZipScript()
 
-outputDebug( "LaunchAcrobatReaderUninstaller()" )
-LaunchAcrobatReaderUninstaller()
+outputDebug( "Launch7ZipUninstaller()" )
+Launch7ZipUninstaller()
 
 outputDebug( "Uninstall()" )
-Uninstall()
+If not $is386Installer Then
+	Uninstallx64()
+Else
+	Uninstalli386()
+EndIf
 
 outputDebug( "FinalizeScript()" )
 opbmFinalizeScript( "acrobatReaderUninstallTimes.csv" )
@@ -53,43 +59,83 @@ Exit
 ;======================================================================================================================================
 ;======================================================================================================================================
 
-Func LaunchAcrobatReaderUninstaller()
-	outputDebug( "Attempting to launch " & $ACROBAT_READER_UNINSTALLER )
+Func Launch7ZipUninstaller()
+	Local $uninstaller
+	
+	If FileExists( $SEVENZIP_EXECUTABLE_X64 ) Then
+		$uninstaller			= $SEVENZIP_UNINSTALLER_X64
+		$InstallerWindowTitle	= $SEVENZIP_UNINSTALLER_TITLE_X64
+		$is386Installer			= False
+		
+	ElseIf FileExists( $SEVENZIP_EXECUTABLE_I386 ) Then
+		$uninstaller			= $SEVENZIP_UNINSTALLER_I386
+		$InstallerWindowTitle	= $SEVENZIP_UNINSTALLER_TITLE_I386
+		$is386Installer			= True
+		
+	EndIf	
+	outputDebug( "Attempting to launch 7-Zip uninstaller " & $uninstaller )
 	
 	; Begin the timer before we launch the installer
 	TimerBegin()
-	$gPID = Run( $ACROBAT_READER_UNINSTALLER, "C:\", @SW_SHOW )
-	
-	; Adobe's installer at startup is not always using the CPU heavy, but sometimes file copying, so we wait a few seconds
-	Sleep(3000)
+	$gPID = Run( $uninstaller, "C:\", @SW_SHOW )
 	
 	; Wait until it is done uncompressing and begins with its dialog
-	opbmWinWaitActivate( $ACROBAT_READER_INSTALLER_WINDOW, $ADOBE_READER_X_MAINTENANCE , 120, $ERROR_PREFIX & "WinWait: Acrobat Reader Setup: Unable to find Window.")
-	TimerEnd( $LAUNCH_ACROBAT_READER_UNINSTALLER )
+	If not $is386Installer Then
+		opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	Else
+		opbmWinWaitActivate( $InstallerWindowTitle, "Uninstall 7-Zip", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Uninstall: Unable to find Window.")
+	EndIf
+	TimerEnd( $LAUNCH_SEVENZIP_UNINSTALLER )
 	
 	; Wait for the system to settle down
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 EndFunc
 
-Func Uninstall()
+Func Uninstallx64()
 	TimerBegin()
-	; Click shift-tab to get the "Next" button, then press it
-	WinActivate( $ACROBAT_READER_INSTALLER_WINDOW, $ADOBE_READER_X_MAINTENANCE )
-	Send( "{Down}!n" )
+	; Click the next button
+	Send( "!n" )
 	Sleep(250)
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Modify, repair, or remove")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Modify, repair, or remove", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
 	
-	; Clicking that button immediately begins the uninstall process
-	; Acrobat's main installer algorithm is not always using the CPU heavy, but sometimes file copying
-	; It also takes a long time on slow systems, more than two minutes
-	opbmWinWaitActivate( $ACROBAT_READER_INSTALLER_WINDOW, $SETUP_COMPLETED, 240, $ERROR_PREFIX & "WinWait: Acrobat Reader Setup Completed: Unable to find Window.")
+	; Click the remove button
+	Send( "!r" )
+	Sleep(250)
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Remove 7-Zip")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Remove 7-Zip", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	
+	; Click the second remove button
+	Send( "!r" )
+	Sleep(250)
+	; Clicking this button immediately begins the uninstall process
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Completing")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Completing", 60, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+
+	; Click the "Finish" button
+	Send( "!f" )
+	Sleep(250)
+
+	; Wait for system to be idle
+	opbmWaitUntilSystemIdle( 10, 200, 10000 )
+	
+	TimerEnd( $UNINSTALL_SEVENZIP)
+EndFunc
+
+Func Uninstalli386()
+	TimerBegin()
+	; Click the uninstall button
+	Send( "!u" )
+	Sleep(250)
+	outputDebug("Waiting for " & $InstallerWindowTitle & " + Completing")
+	opbmWinWaitActivate( $InstallerWindowTitle, "Completing", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
 	
 	; Click the "Finish" button
-	WinActivate( $ACROBAT_READER_INSTALLER_WINDOW, $SETUP_COMPLETED)
 	Send( "!f" )
+	Sleep(250)
+
+	; Wait for system to be idle
+	opbmWaitUntilSystemIdle( 10, 200, 10000 )
 	
-	; The disk hammers away for a long time after the process ends, so wait for it to settle down for 2 seconds
-	outputDebug( "Waiting for hard disk to settle down" )
-	opbmWaitUntilSystemIdle( 10, 2000, 120000 )
-	
-	TimerEnd( $UNINSTALL_ACROBAT_READER )
+	TimerEnd( $UNINSTALL_SEVENZIP)
 EndFunc

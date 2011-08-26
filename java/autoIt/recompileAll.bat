@@ -1,4 +1,6 @@
 @echo off
+call recompile7zip.bat
+echo .
 call recompileAcrobatReader.bat
 echo .
 call recompileOffice2010.bat
