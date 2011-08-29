@@ -86,6 +86,22 @@ public class StreamGobbler extends Thread
 						m_hud.updateDebug(line.substring(6), line);		// Update the status display with this information
 				}
 
+// The following are not actually processed in any separate way at this stage,
+// though the HUD could be modified to show a list of tests conducted.  But
+// rather they are recorded for conveying information into manifest.xml and to
+// the results viewer.
+				if (line.toLowerCase().startsWith("overhead,"))
+				{	// Includes an overhead timing, not a timing time or score, but something to be totaled into the overhead grouping
+				}
+
+				if (line.toLowerCase().startsWith("filter,"))
+				{	// It is a list of filters for this atom
+				}
+
+				if (line.toLowerCase().startsWith("tags,"))
+				{	// It is a list of tags for the next timing entry alone (not the entire atom)
+				}
+
 				name = "Running " + m_hudPrefixText + " (" + Integer.toString(m_lineKnownCount) + ((m_lineKnownCount != m_lineTotalCount) ? " + " + Integer.toString(m_lineTotalCount - m_lineKnownCount) : "") + " events logged)";
 				if (m_hud != null)
 					m_hud.updateName(name, name);

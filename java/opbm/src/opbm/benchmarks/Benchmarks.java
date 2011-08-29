@@ -20,6 +20,8 @@
 package opbm.benchmarks;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import opbm.Opbm;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
@@ -108,6 +110,13 @@ public class Benchmarks
 			}
 		};
 		t.start();
+		if (automated)
+		{	// We have to wait for this to get completed
+			try {
+				t.join();
+			} catch (InterruptedException ex) {
+			}
+		}
 	}
 
 	/**
@@ -165,6 +174,13 @@ public class Benchmarks
 			}
 		};
 		t.start();
+		if (automated)
+		{
+			try {
+				t.join();
+			} catch (InterruptedException ex) {
+			}
+		}
 	}
 
 	/**

@@ -179,7 +179,10 @@ public class BenchmarkParams
 	 * End time upon worklet process completion
 	 * @param t end time
 	 */
-	public void setLastWorkletEnd(String t)			{	m_lastWorkletEnd = t;				}
+	public void setLastWorkletEnd(String t)
+	{
+		m_lastWorkletEnd = t;
+	}
 
 	/**
 	 * Computes the time between end and start, and adds it to an accumulation

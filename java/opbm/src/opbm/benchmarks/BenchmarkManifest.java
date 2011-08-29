@@ -406,7 +406,7 @@ public final class BenchmarkManifest
 					} else {
 						// This is an error
 						setError("Error:  Nothing to do.  No suites, scenarios, molecules or atoms were found in scripts.xml");
-						
+
 					}
 				}
 
@@ -1803,7 +1803,10 @@ public final class BenchmarkManifest
 
 //////////
 // Update the overall harness runtime
-		// Set the runtime
+		// Update our last end run time
+		setStatisticsRuntimeEnded(m_bp.getLastWorkletEnd());
+
+		// Compute the total runtime
 		began = m_statisticsRuntimeBegan.getText();
 		ended = m_statisticsRuntimeEnded.getText();
 		if (!began.isEmpty() && !ended.isEmpty())
@@ -1878,6 +1881,15 @@ public final class BenchmarkManifest
 	public Xml getManifestRoot()
 	{
 		return(m_manifest);
+	}
+
+	/**
+	 * Updates the time for the script ending
+	 * @param t time to use for the update
+	 */
+	public void setStatisticsRuntimeEnded(String t)
+	{
+		m_statisticsRuntimeEnded.setText(t);
 	}
 
 	/**

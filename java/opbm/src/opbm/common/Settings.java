@@ -592,7 +592,7 @@ public final class Settings
 
 		} else {
 			// Validate the BenchmarkManifest subset, which is everything from opbm.settings.benchmarks and deeper
-			while (true)
+			do
 			{
 //////////
 // DEBUGGER
@@ -707,7 +707,8 @@ public final class Settings
 				// If we get here, everything's acceptable
 				isValid = true;
 				break;
-			};
+				
+			} while (true);
 		}
 		return(isValid);
 	}
