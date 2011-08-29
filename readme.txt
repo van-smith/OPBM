@@ -8,8 +8,7 @@
 ***                                                                           *
 *** Scripts written in AutoIt by Van Smith (van@canalabs.com)                 *
 ***                    and Rick C. Hodgin (rick@canalabs.com)                 *
-*** Harness written in Java and C++ code by                                   *  
-***                        Rick C. Hodgin (rick@canalabs.com)  *
+*** Harness written in Java and C++ by Rick C. Hodgin (rick@canalabs.com)     *  
 ***                                                                           *
 *** Description: OPBM is a comprehensive, verifiable office application       *
 ***              benchmark that utilizes popular office productivity software.*
