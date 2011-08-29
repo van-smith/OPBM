@@ -330,19 +330,88 @@ public final class BenchmarkManifest
 		int i, j, count;
 		List<Xml> nodes = new ArrayList<Xml>(0);
 
+		// Lower our count so it will report an error if there's nothing to do
+		count = 0;
+
 		// Grab every suite by its name
 		Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.suites.suite", false);
-
-		// For each returned entry, add it to the list for the specified number of passes
-		m_passMax = passes;
-		count = 0;
-		for (i = 0; i < passes; i++)
-		{
-			setPass(i + 1);
-			for (j = 0; j < nodes.size(); j++)
-			{	// Add each suite
-				count += addSuite(nodes.get(j));
+		// If there are no suites, we move right to scenarios
+		if (!nodes.isEmpty())
+		{	// For each returned entry, add it to the list for the specified number of passes
+			m_passMax = passes;
+			count = 0;
+			for (i = 0; i < passes; i++)
+			{
+				setPass(i + 1);
+				for (j = 0; j < nodes.size(); j++)
+				{	// Add each suite
+					count += addSuite(nodes.get(j));
+				}
 			}
+
+		} else {
+			// Try scenarios
+			// Grab every scenario by its name
+			Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
+			// If there are no scenarios, we move right to molecules
+			if (!nodes.isEmpty())
+			{	// For each returned entry, add it to the list for the specified number of passes
+				m_passMax = passes;
+				count = 0;
+				for (i = 0; i < passes; i++)
+				{
+					setPass(i + 1);
+					for (j = 0; j < nodes.size(); j++)
+					{	// Add each scenario
+						count += addScenario(nodes.get(j));
+					}
+				}
+
+			} else {
+				// Try molecules
+				// Grab every molecule by its name
+				Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
+				// If there are no molecules, we move right to atoms
+				if (!nodes.isEmpty())
+				{	// For each returned entry, add it to the list for the specified number of passes
+					m_passMax = passes;
+					count = 0;
+					for (i = 0; i < passes; i++)
+					{
+						setPass(i + 1);
+						for (j = 0; j < nodes.size(); j++)
+						{	// Add each molecule
+							count += addMolecule(nodes.get(j));
+						}
+					}
+
+				} else {
+					// Try atoms
+					// Grab every atom by its name
+					Xml.getNodeList(nodes, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
+					// If there are no atoms, this is an error because there's nothing to do
+					if (!nodes.isEmpty())
+					{	// For each returned entry, add it to the list for the specified number of passes
+						m_passMax = passes;
+						count = 0;
+						for (i = 0; i < passes; i++)
+						{
+							setPass(i + 1);
+							for (j = 0; j < nodes.size(); j++)
+							{	// Add each atom
+								count += addAtom(nodes.get(j));
+							}
+						}
+
+					} else {
+						// This is an error
+						setError("Error:  Nothing to do.  No suites, scenarios, molecules or atoms were found in scripts.xml");
+						
+					}
+				}
+
+			}
+
 		}
 		return(count == 0);
 	}
@@ -1071,8 +1140,9 @@ public final class BenchmarkManifest
 		m_benchmarks.appendChild(m_discovery);			// opbm.benchmarks.discovery
 
 // REMEMBER for CPU-Z CPUZ stuff
-		m_root.saveNode(Opbm.getRunningDirectory() + "manifest.xml");
 		m_manifestIsLoaded = true;
+// Manifest is not saved to manifest.xml because it may not be used.
+// When a build*() method is called and a run is initiated, then it will be saved.
 	}
 
 	/**

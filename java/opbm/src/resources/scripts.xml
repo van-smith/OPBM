@@ -421,7 +421,7 @@
 				<molecule name="Spreadsheet" sourcename="Spreadsheet"></molecule>
 				<molecule name="JavaScript" sourcename="JavaScript"></molecule>
 				<molecule name="File Operations" sourcename="File Operations"></molecule>
-				<molecule name="Uninstall Applications" sourcename="Uninstall Applications"></molecule>                
+				<molecule name="Uninstall Applications" sourcename="Uninstall Applications"></molecule>
 			</scenario>
 		</scenarios>
 		<suites>

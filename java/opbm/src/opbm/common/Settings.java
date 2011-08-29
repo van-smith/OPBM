@@ -620,7 +620,7 @@ public final class Settings
 
 //////////
 // HUD VISIBLE
-				hudVisibleXml = hudXml.getAttributeOrChildNode("hud.visible");
+				hudVisibleXml = hudXml.getAttributeOrChildNode("visible");
 				if (hudVisibleXml == null)
 				{	// #7 - failed
 					break;
@@ -628,7 +628,7 @@ public final class Settings
 
 //////////
 // HUD TRANSLUCENCY
-				hudTranslucencyXml = hudXml.getAttributeOrChildNode("hud.translucency");
+				hudTranslucencyXml = hudXml.getAttributeOrChildNode("translucency");
 				if (hudTranslucencyXml == null)
 				{	// #8 - failed
 					break;
@@ -645,7 +645,7 @@ public final class Settings
 
 //////////
 // HUD DEBUG INFO
-				hudDebugInfoXml = hudXml.getAttributeOrChildNode("hud.debuginfo");
+				hudDebugInfoXml = hudXml.getAttributeOrChildNode("debuginfo");
 				if (hudDebugInfoXml == null)
 				{	// #9 - fail
 					break;
@@ -661,7 +661,7 @@ public final class Settings
 
 //////////
 // RETRY ENABLED
-				retryEnabledXml = retryXml.getAttributeOrChildNode("retryEnabled");
+				retryEnabledXml = retryXml.getAttributeOrChildNode("enabled");
 				if (retryEnabledXml == null)
 				{	// #11 - fail
 					break;
@@ -669,7 +669,7 @@ public final class Settings
 
 //////////
 // RETRY ATTEMPTS
-				retryAttemptsXml = retryXml.getAttributeOrChildNode("retryAttempts");
+				retryAttemptsXml = retryXml.getAttributeOrChildNode("attempts");
 				if (retryAttemptsXml == null)
 				{	// #12 - fail
 					break;
@@ -699,7 +699,7 @@ public final class Settings
 //////////
 // REBOOT BEFORE EACH PASS
 				rebootBeforeEachPassXml = settingsXml.getAttributeOrChildNode("rebootBeforeEachPass");
-				if (m_rebootBeforeEachPassXml == null)
+				if (rebootBeforeEachPassXml == null)
 				{	// #15 - fail
 					break;
 				}

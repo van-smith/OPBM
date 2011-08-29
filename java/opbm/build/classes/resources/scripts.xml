@@ -139,7 +139,7 @@
 		</abstracts>
 		<atoms>
 			<atom name="Excel Heat">
-				<abstract name="World Heat Calculation" sourcename="execute">
+				<abstract name="Surface Heat Simulation" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
 					</options>
@@ -152,22 +152,22 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install 7(hyphen)zip">
-				<abstract name="Install 7(hyphen)zip" sourcename="execute">
+			<atom name="Install 7zip">
+				<abstract name="Install 7zip" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)install(backslash)7zipInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
-			<atom name="7(hyphen)zip Run Test">
-				<abstract name="7(hyphen)zip Run Test" sourcename="execute">
+			<atom name="7zip Run Test">
+				<abstract name="7zip Run Test" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)runtest(backslash)7zipRunTest.exe</executable>
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install 7(hyphen)zip">
-				<abstract name="Un(hyphen)install 7(hyphen)zip" sourcename="execute">
+			<atom name="Uninstall 7zip">
+				<abstract name="Uninstall 7zip" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)uninstall(backslash)7zipUninstall.exe</executable>
 					</options>
@@ -180,8 +180,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install Opera">
-				<abstract name="Un(hyphen)install Opera" sourcename="execute">
+			<atom name="Uninstall Opera">
+				<abstract name="Uninstall Opera" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
 					</options>
@@ -215,8 +215,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install Safari">
-				<abstract name="Un(hyphen)install Safari" sourcename="execute">
+			<atom name="Uninstall Safari">
+				<abstract name="Uninstall Safari" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
 					</options>
@@ -271,8 +271,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install Chrome">
-				<abstract name="Un(hyphen)install Chrome" sourcename="execute">
+			<atom name="Uninstall Chrome">
+				<abstract name="Uninstall Chrome" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
 					</options>
@@ -306,8 +306,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install Firefox">
-				<abstract name="Un(hyphen)install Firefox" sourcename="execute">
+			<atom name="Uninstall Firefox">
+				<abstract name="Uninstall Firefox" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
 					</options>
@@ -341,8 +341,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Un(hyphen)install Acrobat Reader">
-				<abstract name="Un(hyphen)install Acrobat Reader" sourcename="execute">
+			<atom name="Uninstall Acrobat Reader">
+				<abstract name="Uninstall Acrobat Reader" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
@@ -371,99 +371,64 @@
 			</atom>
 		</atoms>
 		<molecules>
-			<molecule name="Install Adobe">
+			<molecule name="Install Applications">
+				<atom name="Install 7zip" sourcename="Install 7zip"></atom>
 				<atom name="Install Acrobat Reader" sourcename="Install Acrobat Reader"></atom>
-			</molecule>
-			<molecule name="Install 7(hyphen)zip">
-				<atom name="Install 7(hyphen)zip" sourcename="Install 7(hyphen)zip"></atom>
-			</molecule>
-			<molecule name="Compute Opera">
-				<atom name="Opera SunSpider" sourcename="Opera SunSpider"></atom>
-				<atom name="Opera Kraken" sourcename="Opera Kraken"></atom>
-				<atom name="Opera Google V8" sourcename="Opera Google V8"></atom>
-			</molecule>
-			<molecule name="Compute Safari">
-				<atom name="Safari SunSpider" sourcename="Safari SunSpider"></atom>
-				<atom name="Safari Kraken" sourcename="Safari Kraken"></atom>
-				<atom name="Safari Google V8" sourcename="Safari Google V8"></atom>
-			</molecule>
-			<molecule name="Compute IE">
-				<atom name="IE SunSpider" sourcename="IE SunSpider"></atom>
-				<atom name="IE Kraken" sourcename="IE Kraken"></atom>
-				<atom name="IE Google V8" sourcename="IE Google V8"></atom>
-			</molecule>
-			<molecule name="Compute Chrome">
-				<atom name="Chrome SunSpider" sourcename="Chrome SunSpider"></atom>
-				<atom name="Chrome Kraken" sourcename="Chrome Kraken"></atom>
-				<atom name="Chrome Google V8" sourcename="Chrome Google V8"></atom>
-			</molecule>
-			<molecule name="Compute Firefox">
-				<atom name="Firefox SunSpider" sourcename="Firefox SunSpider"></atom>
-				<atom name="Firefox Kraken" sourcename="Firefox Kraken"></atom>
-				<atom name="Firefox Google V8" sourcename="Firefox Google V8"></atom>
-			</molecule>
-			<molecule name="Compute 7(hyphen)zip">
-				<atom name="7(hyphen)zip Run Test" sourcename="7(hyphen)zip Run Test"></atom>
-			</molecule>
-			<molecule name="Un(hyphen)install 7(hyphen)zip">
-				<atom name="Un(hyphen)install 7(hyphen)zip" sourcename="Un(hyphen)install 7(hyphen)zip"></atom>
-			</molecule>
-			<molecule name="Un(hyphen)install Adobe">
-				<atom name="Un(hyphen)install Acrobat Reader" sourcename="Un(hyphen)install Acrobat Reader"></atom>
-			</molecule>
-		</molecules>
-		<scenarios>
-			<scenario name="Install Adobe">
-				<molecule name="Install Adobe" sourcename="Install Adobe"></molecule>
-			</scenario>
-			<scenario name="Install 7(hyphen)zip">
-				<molecule name="Install 7(hyphen)zip" sourcename="Install 7(hyphen)zip"></molecule>
-			</scenario>
-			<scenario name="Install Browsers">
 				<atom name="Install Chrome" sourcename="Install Chrome"></atom>
 				<atom name="Install Firefox" sourcename="Install Firefox"></atom>
 				<atom name="Install Opera" sourcename="Install Opera"></atom>
 				<atom name="Install Safari" sourcename="Install Safari"></atom>
-			</scenario>
-			<scenario name="Compute Browsers">
-				<molecule name="Compute Chrome" sourcename="Compute Chrome"></molecule>
-				<molecule name="Compute Firefox" sourcename="Compute Firefox"></molecule>
-				<molecule name="Compute IE" sourcename="Compute IE"></molecule>
-				<molecule name="Compute Opera" sourcename="Compute Opera"></molecule>
-				<molecule name="Compute Safari" sourcename="Compute Safari"></molecule>
-			</scenario>
-			<scenario name="Compute Utilities">
-				<molecule name="7(hyphen)zip" sourcename="Compute 7(hyphen)zip"></molecule>
-			</scenario>
-			<scenario name="Un(hyphen)install 7(hyphen)zip">
-				<molecule name="Un(hyphen)install 7(hyphen)zip" sourcename="Un(hyphen)install 7(hyphen)zip"></molecule>
-			</scenario>
-			<scenario name="Un(hyphen)install Adobe">
-				<molecule name="Un(hyphen)install Adobe" sourcename="Un(hyphen)install Adobe"></molecule>
-			</scenario>
-			<scenario name="Un(hyphen)install Browsers">
-				<atom name="Un(hyphen)install Chrome" sourcename="Un(hyphen)install Chrome"></atom>
-				<atom name="Un(hyphen)install Firefox" sourcename="Un(hyphen)install Firefox"></atom>
-				<atom name="Un(hyphen)install Opera" sourcename="Un(hyphen)install Opera"></atom>
-				<atom name="Un(hyphen)install Safari" sourcename="Un(hyphen)install Safari"></atom>
+			</molecule>
+			<molecule name="Spreadsheet">
+				<atom name="Excel Heat" sourcename="Excel Heat"></atom>
+			</molecule>
+			<molecule name="Word Processing">
+				<atom name="Word Alice" sourcename="Word Alice"></atom>
+			</molecule>
+			<molecule name="JavaScript">
+				<atom name="Chrome SunSpider" sourcename="Chrome SunSpider"></atom>
+				<atom name="Chrome Kraken" sourcename="Chrome Kraken"></atom>
+				<atom name="Chrome Google V8" sourcename="Chrome Google V8"></atom>
+				<atom name="Firefox SunSpider" sourcename="Firefox SunSpider"></atom>
+				<atom name="Firefox Kraken" sourcename="Firefox Kraken"></atom>
+				<atom name="Firefox Google V8" sourcename="Firefox Google V8"></atom>
+				<atom name="IE SunSpider" sourcename="IE SunSpider"></atom>
+				<atom name="IE Kraken" sourcename="IE Kraken"></atom>
+				<atom name="IE Google V8" sourcename="IE Google V8"></atom>
+				<atom name="Opera SunSpider" sourcename="Opera SunSpider"></atom>
+				<atom name="Opera Kraken" sourcename="Opera Kraken"></atom>
+				<atom name="Opera Google V8" sourcename="Opera Google V8"></atom>
+				<atom name="Safari SunSpider" sourcename="Safari SunSpider"></atom>
+				<atom name="Safari Kraken" sourcename="Safari Kraken"></atom>
+				<atom name="Safari Google V8" sourcename="Safari Google V8"></atom>
+			</molecule>
+			<molecule name="File Operations">
+				<atom name="7zip Run Test" sourcename="7zip Run Test"></atom>
+			</molecule>
+			<molecule name="Uninstall Applications">
+				<atom name="Uninstall 7zip" sourcename="Uninstall 7zip"></atom>
+				<atom name="Uninstall Acrobat Reader" sourcename="Uninstall Acrobat Reader"></atom>
+				<atom name="Uninstall Chrome" sourcename="Uninstall Chrome"></atom>
+				<atom name="Uninstall Firefox" sourcename="Uninstall Firefox"></atom>
+				<atom name="Uninstall Opera" sourcename="Uninstall Opera"></atom>
+				<atom name="Uninstall Safari" sourcename="Uninstall Safari"></atom>
+			</molecule>
+		</molecules>
+		<scenarios>
+			<scenario name="OPBM">
+				<molecule name="Install Applications" sourcename="Install Applications"></molecule>
+				<molecule name="Word Processing" sourcename="Word Processing"></molecule>
+				<molecule name="Spreadsheet" sourcename="Spreadsheet"></molecule>
+				<molecule name="JavaScript" sourcename="JavaScript"></molecule>
+				<molecule name="File Operations" sourcename="File Operations"></molecule>
+				<molecule name="Uninstall Applications" sourcename="Uninstall Applications"></molecule>
 			</scenario>
 		</scenarios>
 		<suites>
-			<suite name="Install">
-				<scenario name="Install 7(hyphen)zip" sourcename="Install 7(hyphen)zip"></scenario>
-				<scenario name="Install Adobe" sourcename="Install Adobe"></scenario>
-				<scenario name="Install Browsers" sourcename="Install Browsers"></scenario>
-			</suite>
-			<suite name="Browsers">
-				<scenario name="Compute" sourcename="Compute Browsers"></scenario>
-			</suite>
-			<suite name="Utilities">
-				<scenario name="Compute" sourcename="Compute Utilities"></scenario>
-			</suite>
-			<suite name="Un(hyphen)Install">
-				<scenario name="Un(hyphen)install 7(hyphen)zip" sourcename="Un(hyphen)install 7(hyphen)zip"></scenario>
-				<scenario name="Un(hyphen)install Adobe" sourcename="Un(hyphen)install Adobe"></scenario>
-				<scenario name="Un(hyphen)install Browsers" sourcename="Un(hyphen)install Browsers"></scenario>
+			<suite name="Official Run">
+				<scenario name="OPBM" sourcename="OPBM"></scenario>
+				<scenario name="OPBM" sourcename="OPBM"></scenario>
+				<scenario name="OPBM" sourcename="OPBM"></scenario>
 			</suite>
 		</suites>
 	</scriptdata>
