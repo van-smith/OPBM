@@ -96,7 +96,8 @@ public final class BenchmarkManifest
 	 */
 	public BenchmarkManifest(Opbm		opbm,
 							 String		type,
-							 String		manifestPathName)
+							 String		manifestPathName,
+							 boolean	automated)
 	{
 		m_isManifestInError		= false;
 		m_opbm					= opbm;
@@ -119,6 +120,7 @@ public final class BenchmarkManifest
 		m_compilation			= new Tuple(opbm);
 
 		m_manifestIsLoaded		= false;
+		m_automated				= automated;
 												// In manifest.xml, access to these nodes:
 		m_root					= null;			//		opbm
 		m_benchmarks			= null;			//		opbm.benchmarks
@@ -236,8 +238,8 @@ public final class BenchmarkManifest
 		}
 
 		// Try to add the things they've build
-		count = 0;
-		error = false;
+		count	= 0;
+		error	= false;
 		for (i = 0; i < m_compilation.size(); i++)
 		{	// Extract this item, find out what it is
 			type		= m_compilation.getFirst(i);
@@ -1084,6 +1086,7 @@ public final class BenchmarkManifest
 		// Set the initial control values
 		m_controlRun.appendAttribute("type", m_type);
 		m_controlRun.appendAttribute("name", m_name);
+		m_controlRun.appendAttribute("automatedRun", (m_automated ? "Yes" : "No"));
 		m_controlLastRun.appendAttribute(m_controlLastRunUuid);
 		m_controlLastTag.appendAttribute(m_controlLastTagUuid);
 		m_controlLastWorklet.appendAttribute(m_controlLastWorkletUuid);
@@ -1314,6 +1317,18 @@ public final class BenchmarkManifest
 		{	// The resultsdata section is not right
 			System.out.print("Error:  Unable to re-load manifest. Resultsdata is not correct.");
 			return;
+		}
+
+		// Reload the automated run condition
+		// Determines whether or not the results viewer is displayed at the end
+		Xml automated = m_controlRun.getAttributeNode("automatedRun");
+		m_automated = false;
+		if (automated != null)
+		{	// The attribute is present
+			if (Utils.interpretBooleanAsYesNo(automated.getText(), false).equalsIgnoreCase("yes"))
+			{	// And it says it is automated
+				m_automated = true;
+			}
 		}
 
 		// If we get here, we found everything, everything looks good, etc.
@@ -1729,7 +1744,7 @@ public final class BenchmarkManifest
 		String manifestWorkletUuid, manifestAtomUuid, type;
 
 		saveManifest();
-		m_macroMaster.SystemOutPrintln("Pass #" + m_run.getAttribute("this") + " of #" + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
+		m_macroMaster.SystemOutPrintln("Pass " + m_run.getAttribute("this") + " of " + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
 
 		if (m_worklet.getName().equalsIgnoreCase("abstract"))
 		{	// Create the area to store results from our execute atom
@@ -1903,6 +1918,24 @@ public final class BenchmarkManifest
 		return(m_compilation.isEmpty());
 	}
 
+	/**
+	 * Reads the control section on "automatedRun" and returns yes or no based
+	 * on its value
+	 * @return yes or no based on opbm.benchmarks.control.run.#automated
+	 */
+	public boolean didOriginallyLaunchFromCommandLine()
+	{
+		Xml node = m_controlLastRun.getAttributeNode("automatedRun");
+		if (node != null)
+		{
+			if (Utils.interpretBooleanAsYesNo(node.getText(), false).equalsIgnoreCase("yes"))
+			{	// It is an automated run
+				return(true);
+			}
+		}
+		return(false);
+	}
+
 	// Error conditions
 	private boolean						m_isManifestInError;
 	private String						m_error;
@@ -1928,6 +1961,7 @@ public final class BenchmarkManifest
 	private String						m_name;
 	private BenchmarkManifestResults	m_bmr;
 	private boolean						m_processing;			// Used in all of the run*() methods
+	private boolean						m_automated;			// Set by the launcher, was this an automated run or not?
 
 	// Root-level Xml entries
 	private boolean						m_manifestIsLoaded;

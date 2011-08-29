@@ -98,13 +98,14 @@ public class Benchmarks
 			m_opbm.setRunName("Trial Run");
 		}
 		// Create a non-edt thread to allow the GUI to continue starting up and displaying while processing
+		m_launchTrialRunIsAutomated = automated;
 		Thread t = new Thread("OPBM_BenchmarkManifest_runExecute")
 		{
 			@Override
 			public void run()
 			{
 				System.out.println("Beginning trial run named \"" + m_opbm.getRunName() + "\"");
-				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "");
+				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "", m_launchTrialRunIsAutomated);
 				if (bm.build())
 					bm.run();
 			}
@@ -162,13 +163,14 @@ public class Benchmarks
 			m_opbm.setRunName("Official Run");
 		}
 		// Create a non-edt thread to allow the GUI to continue starting up and displaying while processing
+		m_launchOfficialRunIsAutomated = automated;
 		Thread t = new Thread("OPBM_BenchmarkManifest_runExecute")
 		{
 			@Override
 			public void run()
 			{
 				System.out.println("Beginning official run named \"" + m_opbm.getRunName() + "\"");
-				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "");
+				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "", m_launchOfficialRunIsAutomated);
 				if (bm.build())
 					bm.run();
 			}
@@ -188,7 +190,7 @@ public class Benchmarks
 	 */
 	public void benchmarkManifestRestart()
 	{
-		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "", Opbm.getRunningDirectory() + "manifest.xml");
+		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "", Opbm.getRunningDirectory() + "manifest.xml", true);
 		if (!bm.isManifestInError())
 			bm.run();
 	}
@@ -790,4 +792,9 @@ public class Benchmarks
 	private Opbm				m_opbm;
 	private boolean				m_userNotYetWarnedAboutUAC;
 	private BenchmarkParams		m_bp;
+
+	// Used during the launch process, tells BenchmarkManifest if the launch was
+	// automated, or the result of user interaction
+	public static boolean m_launchTrialRunIsAutomated;
+	public static boolean m_launchOfficialRunIsAutomated;
 }

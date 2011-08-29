@@ -196,7 +196,7 @@ public final class Opbm extends	ModalApp
 						Xml target;
 						String line, name, digits;
 						int i, j, iterations, runCount;
-						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "");
+						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "", true);
 
 						// Load the command line options, including those from files, into the execution sequence
 						// Arguments get loaded into "List<String> args" rather than m_args[]
@@ -1936,7 +1936,7 @@ public final class Opbm extends	ModalApp
 								  String			p9,
 								  String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
 		m_bm_suite			= suite;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -1991,7 +1991,7 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
 		m_bm_scenario		= scenario;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2046,7 +2046,7 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
 		m_bm_molecule		= molecule;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2101,7 +2101,7 @@ public final class Opbm extends	ModalApp
 								 String			p9,
 								 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "");
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
 		m_bm_atom			= atom;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2584,10 +2584,12 @@ public final class Opbm extends	ModalApp
 	 */
 	public boolean willTerminateAfterRun()
 	{
-		if (m_executingFromCommandLine)
-			return(!m_noExit);
-		else
+		if (m_bm != null && m_bm.didOriginallyLaunchFromCommandLine())
+		{
+			return(true);
+		} else {
 			return(false);
+		}
 	}
 
 	/**
