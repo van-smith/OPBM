@@ -1289,15 +1289,6 @@ public class PanelRightListbox
 		}
 	}
 
-	/**
-	 * Not used but required for override
-	 *
-	 * @param e mouse event
-	 */
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
 	public void listBoxAddCommand() {
 		Xml xmlEntry;
 		try {
@@ -1424,6 +1415,15 @@ public class PanelRightListbox
 	}
 
 	/**
+	 * Not used but required for override
+	 *
+	 * @param e mouse event
+	 */
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	/**
 	 * When the mouse button is pressed down on an add, delete or clone button.
 	 *
 	 * @param e mouse event
@@ -1442,20 +1442,25 @@ public class PanelRightListbox
 				// see how long it's been since the last down click.  If it's less
 				// than .4 second, we execute the dblClick command
 				now = Utils.getMillisecondTimer();
-				if (now - m_lastMillisecond <= 400)
-				{	// It's less than .4 second, so we issue the double click
-					m_commandMaster.processCommand(m_parentPRI,
-												   m_dblClickCommand,
-												   m_dblClickP1,
-												   m_dblClickP2,
-												   m_dblClickP3,
-												   m_dblClickP4,
-												   m_dblClickP5,
-												   m_dblClickP6,
-												   m_dblClickP7,
-												   m_dblClickP8,
-												   m_dblClickP9,
-												   m_dblClickP10);
+				if (m_lastMillisecond != 0)
+				{
+					if (now - m_lastMillisecond <= 800)
+					{	// It's less than .4 second, so we issue the double click
+						m_commandMaster.processCommand(m_parentPRI,
+													   m_dblClickCommand,
+													   m_dblClickP1,
+													   m_dblClickP2,
+													   m_dblClickP3,
+													   m_dblClickP4,
+													   m_dblClickP5,
+													   m_dblClickP6,
+													   m_dblClickP7,
+													   m_dblClickP8,
+													   m_dblClickP9,
+													   m_dblClickP10);
+					} else {
+						System.out.println("Recorded " + Long.toString(now - m_lastMillisecond) + " milliseconds between clicks, needs to be 400 or less (0.4 seconds)");
+					}
 				}
 				m_lastMillisecond = now;
 
