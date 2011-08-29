@@ -75,7 +75,7 @@ public final class ResultsViewer implements KeyListener,
 
 	public boolean load(String filename)
 	{
-		Xml results = Opbm.loadXml(filename);
+		Xml results = Opbm.loadXml(filename, m_opbm);
 		if (results != null)
 		{	// No error, proceed like normal
 			populate(results);

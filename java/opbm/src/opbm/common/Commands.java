@@ -181,12 +181,14 @@ public class Commands
 			m_opbm.navigateBack();
 
 		} else if (command.equals("edit_close") || command.equals("edit_back")) {
-			// Saving the current contents of the active rawedit, and returning to the previous panel
+			// Saving the current contents of the active edit, and returning to the previous panel
+			m_opbm.editSave();
 			m_opbm.editClose();
 			m_opbm.navigateBack();
 
 		} else if (command.equals("edit_home")) {
 			// Navigating back through chain
+			m_opbm.editSave();
 			m_opbm.editClose();
 			m_opbm.navigateHome();
 

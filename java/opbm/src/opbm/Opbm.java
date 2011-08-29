@@ -1114,7 +1114,7 @@ public final class Opbm extends	ModalApp
 	 */
 	private boolean loadPanelsXml()
 	{
-		m_panelXml = loadXml("panels.xml");
+		m_panelXml = loadXml("panels.xml", this);
 		return(m_panelXml != null);
 	}
 
@@ -1127,7 +1127,7 @@ public final class Opbm extends	ModalApp
 	 */
 	private boolean loadEditsXml()
 	{
-		m_editXml = loadXml("edits.xml");
+		m_editXml = loadXml("edits.xml", this);
 		return(m_editXml != null);
 	}
 
@@ -1140,7 +1140,7 @@ public final class Opbm extends	ModalApp
 	 */
 	private boolean loadScriptsXml()
 	{
-		m_scriptXml = loadXml("scripts.xml");
+		m_scriptXml = loadXml("scripts.xml", this);
 		return(m_scriptXml != null);
 	}
 
@@ -1151,7 +1151,8 @@ public final class Opbm extends	ModalApp
 	 *
 	 * @return valid or null if the file was loaded
 	 */
-	public static Xml loadXml(String fileName)
+	public static Xml loadXml(String	fileName,
+							  Opbm		opbm)
 	{
 		Xml root;
 		File panelsXmlFile;
@@ -1172,7 +1173,7 @@ public final class Opbm extends	ModalApp
 			docPanelsXml	= bldPanelsXml.parse(fileToProcess);
 
 			// Convert Java's w3c dom model to something more straight-forward and usable
-			root			= Xml.processW3cNodesIntoXml(null, docPanelsXml.getChildNodes());
+			root			= Xml.processW3cNodesIntoXml(null, docPanelsXml.getChildNodes(), opbm);
 
 		} catch (ParserConfigurationException ex) {
 			m_lastStaticError = ex.getMessage();
@@ -2475,7 +2476,7 @@ public final class Opbm extends	ModalApp
 					candidate	= new File(fileName);
 					if (candidate.exists() && candidate.isFile() && candidate.canRead())
 					{	// Try to load as an Xml
-						results = loadXml(fileName);
+						results = loadXml(fileName, this);
 						if (results != null)
 						{	// Process its data elements
 							++totalFiles;
@@ -2752,6 +2753,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.29 08:49am";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.29 10:16am";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

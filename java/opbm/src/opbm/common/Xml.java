@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.w3c.dom.*;
 import java.util.List;
+import opbm.Opbm;
 
 /** Handles all items related to Xml processing. Note that this class is used
  * for easier navigation and instrumentation on simple XML files, such as those
@@ -102,6 +103,19 @@ public class Xml
 	}
 
 	/**
+	 * A version of the processW3cNodesIntoXml() that does not expand common
+	 * macros when loaded (such as turning '(hyphen)' into '-' for display.
+	 * @param root
+	 * @param nl
+	 * @return
+	 */
+	public static Xml processW3cNodesIntoXml(Xml		root,
+											 NodeList	nl)
+	{
+		return(processW3cNodesIntoXml(root, nl, null));
+	}
+
+	/**
 	 * During instantiation, process nodes from a given root level in the java
 	 * w3c dom model into this Xml structure.
 	 *
@@ -110,7 +124,8 @@ public class Xml
 	 * @return the top-level Xml object that was created (if any)
 	 */
 	public static Xml processW3cNodesIntoXml(Xml		root,
-											 NodeList	nl)
+											 NodeList	nl,
+											 Opbm		opbm)
 	{
 		String name, value;
 		short type;
@@ -174,7 +189,75 @@ public class Xml
 		}
 		catch (Exception ex) {
 		}
+
+		if (opbm != null)
+		{	// Process macros on all of the text items
+			decodeAllCommonMacros(xmlTop);
+		}
+
 		return(xmlTop);
+	}
+
+	/**
+	 * Decodes all of the (hyphen)-like macros
+	 * @param node
+	 */
+	public static void decodeAllCommonMacros(Xml node)
+	{
+		while (node != null)
+		{
+			if (!node.getText().isEmpty())
+			{	// Swap the text for this item if any macros are there
+				node.setText(Macros.decodeCommonMacrosNoDollarSign(node.getText()));
+			}
+
+			// Adjust the attributes
+			if (node.getFirstAttribute() != null)
+			{	// Do the same for the attributes
+				decodeAllCommonMacros(node.getFirstAttribute());
+			}
+
+			// Adjust the children
+			if (node.getFirstChild() != null)
+			{	// Do the same for the attributes
+
+				decodeAllCommonMacros(node.getFirstChild());
+			}
+
+			// Move to next sibling
+			node = node.getNext();
+		}
+	}
+
+	/**
+	 * Decodes all of the (hyphen)-like macros
+	 * @param node
+	 */
+	public static void encodeAllCommonMacros(Xml node)
+	{
+		while (node != null)
+		{
+			if (!node.getText().isEmpty())
+			{	// Swap the text for this item if any macros are there
+				node.setText(Macros.encodeCommonMacros(node.getText()));
+			}
+
+			// Adjust the attributes
+			if (node.getFirstAttribute() != null)
+			{	// Do the same for the attributes
+				encodeAllCommonMacros(node.getFirstAttribute());
+			}
+
+			// Adjust the children
+			if (node.getFirstChild() != null)
+			{	// Do the same for the attributes
+
+				encodeAllCommonMacros(node.getFirstChild());
+			}
+
+			// Move to next sibling
+			node = node.getNext();
+		}
 	}
 
 	/** Processes attributes for a given node.
@@ -1989,20 +2072,28 @@ public class Xml
 	{
 		boolean result = false;
 
-		try {
-			File f;
-			FileOutputStream fo;
+		if (root != null)
+		{	// Encode all of the common macros to their "innocuous form"
+			encodeAllCommonMacros(root);
+			try
+			{
+				File f;
+				FileOutputStream fo;
 
-			f = new File(fileName);
-			fo = new FileOutputStream(f);
-			DataOutputStream dos = new DataOutputStream(fo);
-			dos.writeBytes("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-			writeNode(root, dos, 0);
-			result = true;
-			dos.close();
+				f = new File(fileName);
+				fo = new FileOutputStream(f);
+				DataOutputStream dataOut = new DataOutputStream(fo);
+				dataOut.writeBytes("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 
-		} catch (FileNotFoundException ex) {
-		} catch (IOException ex) {
+				writeNode(root, dataOut, 0);
+
+				result = true;
+				dataOut.close();
+
+			} catch (FileNotFoundException ex) {
+			} catch (IOException ex) {
+			}
+			decodeAllCommonMacros(root);
 		}
 		return(result);
 	}

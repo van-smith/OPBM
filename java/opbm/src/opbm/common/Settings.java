@@ -49,7 +49,7 @@ public final class Settings
 
 		// See if we can set real values
 		m_settingsFilename	= Opbm.locateFile("settings.xml");
-		m_settingsRootXml	= Opbm.loadXml(m_settingsFilename);
+		m_settingsRootXml	= Opbm.loadXml(m_settingsFilename, opbm);
 		if (m_settingsRootXml == null)
 		{	// Use defaults
 			System.out.println("Unable to locate settings.xml");
@@ -707,7 +707,7 @@ public final class Settings
 				// If we get here, everything's acceptable
 				isValid = true;
 				break;
-				
+
 			} while (true);
 		}
 		return(isValid);

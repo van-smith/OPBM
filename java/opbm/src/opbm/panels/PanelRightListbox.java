@@ -917,7 +917,7 @@ public class PanelRightListbox
 
 		} else {
 			// We must load the specified file
-			m_listBoxXml = Opbm.loadXml(m_listBoxFileName);
+			m_listBoxXml = Opbm.loadXml(m_listBoxFileName, m_opbm);
 			if (m_listBoxXml == null)
 			{
 				m_listBoxXml = failedLoad();

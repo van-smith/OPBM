@@ -355,7 +355,6 @@
 				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
 			</atom>
 			<atom name="Simulate Failure">
-				<executable></executable>
 				<abstract name="Simulate Failure" sourcename="execute">
 					<options>
 						<executable>..(backslash)autoIT(backslash)tests(backslash)failure(backslash)failure.exe</executable>
@@ -424,8 +423,7 @@
 				<molecule name="Uninstall Applications" sourcename="Uninstall Applications"></molecule>
 			</scenario>
 		</scenarios>
-		<suites>
-		</suites>
+		<suites></suites>
 	</scriptdata>
 	<metadata>
 		<keywords>

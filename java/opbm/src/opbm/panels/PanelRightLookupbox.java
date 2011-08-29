@@ -1060,7 +1060,7 @@ public class PanelRightLookupbox
 
 			} else {
 				// We must load the specified file
-				m_lookupboxXml = Opbm.loadXml(m_lookupboxFileName);
+				m_lookupboxXml = Opbm.loadXml(m_lookupboxFileName, m_opbm);
 				if (m_lookupboxXml == null) {
 					m_lookupboxXml = failedLoad();
 					m_lookupboxSource = "root.error";

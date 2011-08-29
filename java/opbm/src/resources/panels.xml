@@ -102,6 +102,7 @@
 				<tooltip></tooltip>
 			</menu>
 			<spacer/>
+<!--
 			<heading>
 				<text fgcolor="7f7f3f">Definitions:</text>
 			</heading>
@@ -116,6 +117,7 @@
 				<tooltip></tooltip>
 			</menu>
 			<spacer/>
+-->
 			<heading>
 				<text fgcolor="7f7f3f">Maintenance:</text>
 			</heading>
@@ -287,6 +289,7 @@
 			</menu>
 		</left>
 
+<!--
 		<left name="Edit Flows" bgcolor="fff4e2">
 			<navigation>
 				<text>Back</text>
@@ -302,22 +305,6 @@
 			<heading>
 				<text fgcolor="7f7f3f">Flow Control</text>
 			</heading>
-			<spacer/>
-			<menu>
-				<text>Save</text>
-				<command>edit_save</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
-			</menu>
-			<menu>
-				<text>Save and Close</text>
-				<command>edit_save_and_close</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
-			</menu>
-			<menu>
-				<text>Close</text>
-				<command>edit_close</command>
-				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
-			</menu>
 			<spacer/>
 			<spacer/>
 			<text>Flow control directives handle</text>
@@ -341,22 +328,6 @@
 				<text fgcolor="7f7f3f">Abstracts</text>
 			</heading>
 			<spacer/>
-			<menu>
-				<text>Save</text>
-				<command>edit_save</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
-			</menu>
-			<menu>
-				<text>Save and Close</text>
-				<command>edit_save_and_close</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
-			</menu>
-			<menu>
-				<text>Close</text>
-				<command>edit_close</command>
-				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
-			</menu>
-			<spacer/>
 			<spacer/>
 			<text>Abstracts provide an in-between</text>
 			<text>programming layer, addressing a</text>
@@ -364,6 +335,7 @@
 			<text>underlying commands to carry out</text>
 			<text>the work.</text>
 		</left>
+-->
 
 		<left name="Edit Atoms" bgcolor="fff4e2">
 			<navigation>
@@ -381,23 +353,6 @@
 				<text fgcolor="7f7f3f">Atoms</text>
 			</heading>
 			<spacer/>
-			<menu>
-				<text>Save</text>
-				<command>edit_save</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
-			</menu>
-			<menu>
-				<text>Save and Close</text>
-				<command>edit_save_and_close</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
-			</menu>
-			<menu>
-				<text>Close</text>
-				<command>edit_close</command>
-				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
-			</menu>
-			<spacer/>
-			<spacer/>
 			<text>Atoms are single operations. They</text>
 			<text>conduct a single task, and capture</text>
 			<text>results at that level.</text>
@@ -414,27 +369,6 @@
 				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
-			<spacer/>
-			<heading>
-				<text fgcolor="7f7f3f">Molecules</text>
-			</heading>
-			<spacer/>
-			<menu>
-				<text>Save</text>
-				<command>edit_save</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
-			</menu>
-			<menu>
-				<text>Save and Close</text>
-				<command>edit_save_and_close</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
-			</menu>
-			<menu>
-				<text>Close</text>
-				<command>edit_close</command>
-				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
-			</menu>
-			<spacer/>
 			<spacer/>
 			<text>Molecules are groups of related</text>
 			<text>operations, conducting a larger</text>
@@ -457,23 +391,6 @@
 				<text fgcolor="7f7f3f">Scenarios</text>
 			</heading>
 			<spacer/>
-			<menu>
-				<text>Save</text>
-				<command>edit_save</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
-			</menu>
-			<menu>
-				<text>Save and Close</text>
-				<command>edit_save_and_close</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
-			</menu>
-			<menu>
-				<text>Close</text>
-				<command>edit_close</command>
-				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
-			</menu>
-			<spacer/>
-			<spacer/>
 			<text>Scenarios are groups of related</text>
 			<text>tests, conducting a large, data</text>
 			<text>set captured across a type of</text>
@@ -495,23 +412,6 @@
 			<heading>
 				<text fgcolor="7f7f3f">Suites</text>
 			</heading>
-			<spacer/>
-			<menu>
-				<text>Save</text>
-				<command>edit_save</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version.</tooltip>
-			</menu>
-			<menu>
-				<text>Save and Close</text>
-				<command>edit_save_and_close</command>
-				<tooltip>Immediately save current contents to disk, overwriting prior version, and return to $previous_panel$.</tooltip>
-			</menu>
-			<menu>
-				<text>Close</text>
-				<command>edit_close</command>
-				<tooltip>Ignore any changes and close the file, return to $previous_panel$.</tooltip>
-			</menu>
-			<spacer/>
 			<spacer/>
 			<text>Suites are groups of tests used</text>
 			<text>to accomplish a particular goal,</text>

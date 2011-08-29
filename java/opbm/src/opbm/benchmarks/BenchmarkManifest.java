@@ -1156,7 +1156,7 @@ public final class BenchmarkManifest
 	 */
 	public void reloadManifest(String pathName)
 	{
-		m_root = Opbm.loadXml(pathName);
+		m_root = Opbm.loadXml(pathName, m_opbm);
 		if (m_root == null)
 		{	// Did not load successfully
 			setError("Error: Unable to reload " + pathName + " manifest file, cannot restart.");
