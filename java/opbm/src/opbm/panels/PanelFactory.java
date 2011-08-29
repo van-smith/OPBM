@@ -676,6 +676,14 @@ public class PanelFactory {
 							setFont(child, pri, macroMaster, textFont);
 							setColors(child, pri, macroMaster);
 							setDefault(child, pri, macroMaster);
+
+							readOnly = child.getAttribute("readonly");
+							if (readOnly.equalsIgnoreCase("true") || readOnly.equalsIgnoreCase("yes"))
+							{
+								// It's a read-only rawEdit--which I suppose really makes it a rawView, doesn't it. :-) Oh, I crack myself up. :-)
+								pri.setReadOnly(true);
+							}
+
 							pri.setText(macroMaster.parseMacros(Xml.getAttributeOrChild(child, "text")));
 							pri.setField(Xml.getAttributeOrChild(child, "field"));
 							pri.setTooltip(macroMaster.parseMacros(Xml.getAttributeOrChild(child, "tooltip")));
@@ -697,6 +705,14 @@ public class PanelFactory {
 							setFont(child, pri, macroMaster, textFont);
 							setColors(child, pri, macroMaster);
 							setDefault(child, pri, macroMaster);
+
+							readOnly = child.getAttribute("readonly");
+							if (readOnly.equalsIgnoreCase("true") || readOnly.equalsIgnoreCase("yes"))
+							{
+								// It's a read-only rawEdit--which I suppose really makes it a rawView, doesn't it. :-) Oh, I crack myself up. :-)
+								pri.setReadOnly(true);
+							}
+
 							pri.setText(Xml.getAttributeOrChild(child, "text"));
 							pri.setField(Xml.getAttributeOrChild(child, "field"));
 							pri.setTooltip(macroMaster.parseMacros(Xml.getAttributeOrChild(child, "tooltip")));
@@ -719,6 +735,14 @@ public class PanelFactory {
 							setFont(child, pri, macroMaster, textFont);
 							setColors(child, pri, macroMaster);
 							setDefault(child, pri, macroMaster);
+
+							readOnly = child.getAttribute("readonly");
+							if (readOnly.equalsIgnoreCase("true") || readOnly.equalsIgnoreCase("yes"))
+							{
+								// It's a read-only rawEdit--which I suppose really makes it a rawView, doesn't it. :-) Oh, I crack myself up. :-)
+								pri.setReadOnly(true);
+							}
+
 							pri.setText(Xml.getAttributeOrChild(child, "text"));
 							pri.setField(Xml.getAttributeOrChild(child, "field"));
 							pri.setTooltip(macroMaster.parseMacros(Xml.getAttributeOrChild(child, "tooltip")));

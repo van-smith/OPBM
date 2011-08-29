@@ -171,7 +171,7 @@
 				</abstract>
 			</atom>
 			<atom name="7zip Run Test">
-				<abstract atomuuid="73f240df(hyphen)3f11(hyphen)49a8(hyphen)a6d1(hyphen)72424422dcbb" name="7zip Run Test" sourcename="execute">
+				<abstract name="7zip Run Test" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>

@@ -336,7 +336,7 @@
 		<edit name="execute atoms">
 			<precommand p1="Execute Atoms">leftpanel</precommand>
 			<label width="250" text="Atom Description:"/>
-			<textbox width="250" field="#name"/>
+			<textbox readonly="yes" width="250" field="#name"/>
 			<label width="250" text="Atoms Listing:"/>
 			<listbox name="atom">
 				<onselect p1="elements">lookupbox_update</onselect>
@@ -347,7 +347,7 @@
 				<listby p1="#name"/>
 			</listbox>
 			<label width="250" text="Sequence Description:"/>
-			<textbox width="250" field="elements.#name"/>
+			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations:"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
@@ -377,7 +377,7 @@
 		<edit name="execute molecules">
 			<precommand p1="Execute Molecules">leftpanel</precommand>
 			<label width="250" text="Molecule Description:"/>
-			<textbox width="250" field="#name"/>
+			<textbox readonly="yes" width="250" field="#name"/>
 			<label width="250" text="Molecule Listing:"/>
 			<listbox name="molecule">
 				<onselect p1="elements">lookupbox_update</onselect>
@@ -388,7 +388,7 @@
 				<listby p1="#name"/>
 			</listbox>
 			<label width="250" text="Sequence Description:"/>
-			<textbox width="250" field="elements.#name"/>
+			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations:"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
@@ -418,7 +418,7 @@
 		<edit name="execute scenarios">
 			<precommand p1="Execute Scenarios">leftpanel</precommand>
 			<label width="250" text="Scenario Description:"/>
-			<textbox width="250" field="#name"/>
+			<textbox readonly="yes" width="250" field="#name"/>
 			<label width="250" text="Scenario Listing:"/>
 			<listbox name="scenario">
 				<onselect p1="elements">lookupbox_update</onselect>
@@ -429,7 +429,7 @@
 				<listby p1="#name"/>
 			</listbox>
 			<label width="250" text="Sequence Description:"/>
-			<textbox width="250" field="elements.#name"/>
+			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations:"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
@@ -459,7 +459,7 @@
 		<edit name="execute suites">
 			<precommand p1="Execute Suites">leftpanel</precommand>
 			<label width="250" text="Suite Description:"/>
-			<textbox width="250" field="#name"/>
+			<textbox readonly="yes" width="250" field="#name"/>
 			<label width="250" text="Suite Listing:"/>
 			<listbox name="suite">
 				<onselect p1="elements">lookupbox_update</onselect>
@@ -470,7 +470,7 @@
 				<listby p1="#name"/>
 			</listbox>
 			<label width="250" text="Sequence Description:"/>
-			<textbox width="250" field="elements.#name"/>
+			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations:"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
