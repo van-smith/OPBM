@@ -1160,15 +1160,20 @@ public class BenchmarksAtom
 									Xml		xmlRun_RunSuccess,
 									Xml		xmlRun_RunFailure)
 	{
-		int i, retryCount;
+		int i, retryCount, retryAttempts, intValue;
 		Xml options, xmlType, xmlError, xmlRetry;
 		Xml xmlOutput, xmlCommand;
 		Process process;
 		ProcessBuilder builder;
-		String exception, exception2, name, curDir, counter, sourcename, result;
+		String exception, exception2, name, curDir, counter, sourcename, result, value;
 		String command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
 		List<String> commandsAndParameters = new ArrayList<String>(0);
-		boolean record, failure;
+		boolean record, failure, retryEnabled, stopIfFailure, boolValue;
+
+		// Set our initial values
+		retryEnabled	= m_bp.m_retry;
+		retryAttempts	= m_bp.m_retryAttempts;
+		stopIfFailure	= m_bp.m_settingsMaster.benchmarkStopsIfRetriesFail();
 
 		// See what our command is
 		sourcename = thisCommand.getAttributeOrChild("sourcename");
@@ -1200,9 +1205,44 @@ public class BenchmarksAtom
 				// Executing with no parameters
 				options = thisCommand.getChildNode("options");
 				if (options != null)
-				{	// It appears to be a properly formatted atom command, so we'll run it
+				{	// It appears to be a properly formatted atom command
 
-					while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount <= m_bp.m_retryAttempts)
+					// See if they have override options for:
+					// retryEnabled
+					value = options.getAttributeOrChild("retryEnabled");
+					if (value != null && !value.isEmpty())
+					{
+						boolValue = Utils.interpretBooleanAsYesNo(value, m_bp.m_retry).equalsIgnoreCase("yes");
+						if (retryEnabled != boolValue)
+						{	// They have an override
+							System.out.println("Overriding default retryEnabled=\"" + Utils.evaluateLogicalToYesOrNo(retryEnabled) + "\" with \"" + Utils.evaluateLogicalToYesOrNo(boolValue) + "\", per atom override");
+							retryEnabled = boolValue;
+						}
+					}
+					// retryAttempts
+					value = options.getAttributeOrChild("retryAttempts");
+					if (value != null && !value.isEmpty())
+					{
+						intValue = Utils.getValueOf(value, retryAttempts);
+						if (retryAttempts != intValue)
+						{	// They have an override
+							System.out.println("Overriding default retry attempt count of \"" + Integer.toString(retryAttempts) + "\" with \"" + Integer.toString(intValue) + "\", per atom override");
+							retryAttempts = intValue;
+						}
+					}
+					// stopIfFailure
+					value = options.getAttributeOrChild("stopIfFailure");
+					if (value != null && !value.isEmpty())
+					{
+						boolValue = Utils.interpretBooleanAsYesNo(value, stopIfFailure).equalsIgnoreCase("yes");
+						if (stopIfFailure != boolValue)
+						{	// They have an override
+							System.out.println("Overriding default stopIfFailure=\"" + Utils.evaluateLogicalToYesOrNo(stopIfFailure) + "\" with \"" + Utils.evaluateLogicalToYesOrNo(boolValue) + "\", per atom override");
+							stopIfFailure = boolValue;
+						}
+					}
+
+					while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount <= retryAttempts)
 					{	// Process repepatedly until we have a success, or our on-failure retry count is reached, or the user forces a stop
 						// Prepare for this run
 						m_bp.m_wui.prepareBeforeScriptExecution();
@@ -1250,7 +1290,7 @@ public class BenchmarksAtom
 							if (retryCount != 0)
 							{	// Indicate we are retrying after a failure
 								if (m_bp.m_hud != null)
-									m_bp.m_hud.updateError("Error, retry #" + Integer.toString(retryCount) + " of #" + Integer.toString(m_bp.m_retryAttempts));
+									m_bp.m_hud.updateError("Error, retry #" + Integer.toString(retryCount) + " of #" + Integer.toString(retryAttempts));
 							}
 
 							// Change the current directory to the directory of the executable, and get this command's user-readable name
@@ -1288,7 +1328,7 @@ public class BenchmarksAtom
 							{	// Add [this="#" max="#"] for the retryCount and m_bp.retryAttempts
 								xmlRetry = xmlType.appendChild(new Xml("retry"));
 								xmlRetry.appendAttribute(new Xml("this", Integer.toString(retryCount)));
-								xmlRetry.appendAttribute(new Xml("max", Integer.toString(m_bp.m_retryAttempts)));
+								xmlRetry.appendAttribute(new Xml("max", Integer.toString(retryAttempts)));
 							}
 
 							// Clear off any previous "process" that may be hanging on out there for garbage collection
@@ -1412,7 +1452,7 @@ public class BenchmarksAtom
 							}
 
 							// Now, based on the state of this run, we append its information to the appropriate place
-							if (failure /* the old system stored one of the failures in the "success" so the rseults viewer parser could process the failure, the benchmark manifest does not handle it the same way && retryCount != m_bp.m_retryAttempts*/)
+							if (failure /* the old system stored one of the failures in the "success" so the rseults viewer parser could process the failure, the benchmark manifest does not handle it the same way && retryCount != retryAttempts*/)
 							{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
 								if (record)
 									xmlRun_RunFailure.appendChild(xmlType);
@@ -1436,7 +1476,7 @@ public class BenchmarksAtom
 							m_bp.m_wui.cleanupAfterScriptExecution();
 
 							// If there's a failure,
-							if (failure && retryCount < m_bp.m_retryAttempts)
+							if (failure && retryCount < retryAttempts)
 							{	// stop extraneous processes, and pause briefly before retrying
 								Opbm.stopProcesses();
 							}
@@ -1448,7 +1488,7 @@ public class BenchmarksAtom
 				{
 					m_bp.setLastWorkletResult("failure");
 					++m_failureCounter;
-					if (m_bp.m_settingsMaster.benchmarkStopsIfRetriesFail())
+					if (stopIfFailure)
 					{	// We have to force the stop now
 						m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
 					}

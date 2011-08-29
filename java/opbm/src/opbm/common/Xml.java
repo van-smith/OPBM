@@ -235,11 +235,14 @@ public class Xml
 	 */
 	public static void encodeAllCommonMacros(Xml node)
 	{
+		String text;
+
 		while (node != null)
 		{
-			if (!node.getText().isEmpty())
+			text = node.getText();
+			if (text != null && !text.isEmpty())
 			{	// Swap the text for this item if any macros are there
-				node.setText(Macros.encodeCommonMacros(node.getText()));
+				node.setText(Macros.encodeCommonMacros(text));
 			}
 
 			// Adjust the attributes

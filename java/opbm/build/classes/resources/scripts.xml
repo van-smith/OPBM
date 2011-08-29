@@ -115,10 +115,12 @@
 			<abstract name="execute">
 				<logical>execute</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace)</real>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="executeParams">
 				<logical>execute_params</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace) (leftbrace)(colon)p1, First parameter(colon)(rightbrace) (leftbrace)(colon)p2, Second parameter(colon)(rightbrace) (leftbrace)(colon)p3, Third parameter(colon)(rightbrace) (leftbrace)(colon)p4, Fourth parameter(colon)(rightbrace) (leftbrace)(colon)p5, Fifth parameter(colon)(rightbrace) (leftbrace)(colon)p6, Sixth parameter(colon)(rightbrace) (leftbrace)(colon)p7, Seventh parameter(colon)(rightbrace) (leftbrace)(colon)p8, Eighth parameter(colon)(rightbrace) (leftbrace)(colon)p9, Ninth parameter(colon)(rightbrace) (leftbrace)(colon)p10, Tenth parameter(colon)(rightbrace)</real>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="rebootAndTerminate">
 				<logical>reboot_and_terminate</logical>
@@ -141,6 +143,9 @@
 			<atom name="Excel Heat">
 				<abstract name="Surface Heat Simulation" sourcename="execute">
 					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
 					</options>
 				</abstract>
@@ -155,13 +160,19 @@
 			<atom name="Install 7zip">
 				<abstract name="Install 7zip" sourcename="execute">
 					<options>
+						<stopIfFailure>no</stopIfFailure>
+						<retryAttempts>5</retryAttempts>
+						<retryEnabled>no</retryEnabled>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)install(backslash)7zipInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="7zip Run Test">
-				<abstract name="7zip Run Test" sourcename="execute">
+				<abstract name="7zip Run Test" sourcename="execute" atomuuid="73f240df(hyphen)3f11(hyphen)49a8(hyphen)a6d1(hyphen)72424422dcbb">
 					<options>
+						<retryEnabled>no</retryEnabled>
+						<stopIfFailure>no</stopIfFailure>
+						<retryAttempts>14</retryAttempts>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)runtest(backslash)7zipRunTest.exe</executable>
 					</options>
 				</abstract>
@@ -169,6 +180,9 @@
 			<atom name="Uninstall 7zip">
 				<abstract name="Uninstall 7zip" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)uninstall(backslash)7zipUninstall.exe</executable>
 					</options>
 				</abstract>
