@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <opbm>
 	<scriptdata>
-		<comment>Flows are flow control operations usable in scripting atoms, molecules, scenarios or suites</comment>
-		<comment>Abstracts are definitions between our internal set of commands, and the underlying harness (and ultimately a scripting engine)</comment>
-		<comment>Atoms are the smallest autonomous item, do a single thing</comment>
-		<comment>Molecules are smallest group of autonomous item, does a sequence of things</comment>
-		<comment>Scenarios are smallest group of sequences, does multiple sequences of things</comment>
-		<comment>Suites are largest group of multiple sequences, does an entire range of things</comment>
+<!--
+		<templates>
+			<flow name="newFlow(dollarsign)unique_number(dollarsign)">
+				<variables></variables>
+			</flow>
+			<atom name="newAtom(dollarsign)unique_number(dollarsign)">
+				<abstract name="newAbstract(dollarsign)unique_number(dollarsign)" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable></executable>
+					</options>
+				</abstract>
+			</atom>
+			<molecule name="newMolecule(dollarsign)unique_number(dollarsign)">
+				<atom name="newAtom(dollarsign)unique_number(dollarsign)" sourcename="(dollarsign)unique_number(dollarsign)"></atom>
+			</molecule>
+			<scenario name="newScenario(dollarsign)unique_number(dollarsign)"></scenario>
+			<suite name="newSuite(dollarsign)unique_number(dollarsign)"></suite>
+		</templates>
+-->
 		<flows>
 			<flow name="call">
 				<variables>(leftbrace)(colon)function, FUNCTION(colon)(rightbrace)</variables>

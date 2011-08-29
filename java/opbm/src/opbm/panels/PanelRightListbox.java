@@ -1080,7 +1080,7 @@ public class PanelRightListbox
 	public Xml getListboxFirstChildNode()
 	{
 		// See if there's an active Xml list and a selected item
-		if (m_xmlListboxMaster != null)
+		if (m_xmlListboxMaster != null && m_xmlListboxMaster.size() > 0)
 		{
 			if (m_lastIndex >= 0 && m_lastIndex < m_xmlListboxMaster.size())
 			{

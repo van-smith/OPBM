@@ -1220,7 +1220,7 @@ public class PanelRightLookupbox
 	public Xml getLookupboxFirstChildNode()
 	{
 		// This is it, see if there's an active Xml list and a selected item
-		if (m_xmlLookupboxMaster != null)
+		if (m_xmlLookupboxMaster != null && m_xmlLookupboxMaster.size() > 0)
 		{
 			if (m_lastIndex >= 0 && m_lastIndex < m_xmlLookupboxMaster.size())
 				return(m_xmlLookupboxMaster.get(m_lastIndex).getFirstChild());
