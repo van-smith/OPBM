@@ -204,11 +204,14 @@ public class Xml
 	 */
 	public static void decodeAllCommonMacros(Xml node)
 	{
+		String text;
+
 		while (node != null)
 		{
-			if (!node.getText().isEmpty())
+			text = node.getText();
+			if (text != null && !text.isEmpty())
 			{	// Swap the text for this item if any macros are there
-				node.setText(Macros.decodeCommonMacrosNoDollarSign(node.getText()));
+				node.setText(Macros.decodeCommonMacrosNoDollarSign(text));
 			}
 
 			// Adjust the attributes

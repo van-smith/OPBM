@@ -1453,7 +1453,8 @@ public final class BenchmarkManifest
 		{	// We're processing an abstract
 			if (m_worklet.getAttribute("sourcename").toLowerCase().startsWith("reboot"))
 			{	// And it IS a reboot command
-				m_controlLastWorkletFinished.setText("yes");
+				// Indicate it's finished
+				setLastWorkletFinished();
 				// Save it to disk for the restart
 				saveManifest();
 				// If the reboot fails, it will report a failed reboot
@@ -1571,7 +1572,7 @@ public final class BenchmarkManifest
 		m_controlLastRunUuid.setText(m_run == null ? "" : m_run.getAttribute("uuid"));
 		m_controlLastTagUuid.setText(m_tag == null ? "" : m_tag.getAttribute("uuid"));
 		m_controlLastWorkletUuid.setText(m_worklet == null ? "" : m_worklet.getAttribute("uuid"));
-		m_controlLastWorkletFinished.setText("no");
+		setLastWorkletNotFinished();
 		// Note:  We don't save our new manifest state to disk just yet, because
 		//        OPBM leaves everything in memory until such time as it begins
 		//        an execute* abstract.  Then, as part of the pre-processing for
@@ -1772,7 +1773,18 @@ public final class BenchmarkManifest
 			}
 			if (m_bp.getLastWorkletResult().equalsIgnoreCase("success"))
 			{	// We're good, it was a success
-				m_controlLastWorkletFinished.setText("yes");
+				setLastWorkletFinished();
+
+			} else {
+				// If it was a failure, it will have already been set to "yes" or "no"
+				// for "finished" based on failure logic in BenchmarksAtom().  And if
+				// it is set to "yes", we continue, otherwise we're done here.
+				if (!m_controlLastWorkletFinished.getText().equalsIgnoreCase("yes"))
+				{	// We're finished
+					m_processing = false;
+				} else {
+					// We're good, that failure did not knock us down
+				}
 			}
 // End
 //////////
@@ -1934,6 +1946,22 @@ public final class BenchmarkManifest
 			}
 		}
 		return(false);
+	}
+
+	/**
+	 * Sets the currently executing worklet as finished
+	 */
+	public void setLastWorkletFinished()
+	{
+		m_controlLastWorkletFinished.setText("yes");
+	}
+
+	/**
+	 * Sets the currently executing worklet as not finished
+	 */
+	public void setLastWorkletNotFinished()
+	{
+		m_controlLastWorkletFinished.setText("no");
 	}
 
 	// Error conditions

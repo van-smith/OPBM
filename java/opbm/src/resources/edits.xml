@@ -84,7 +84,7 @@
 			<precommand p1="Edit Atoms">leftpanel</precommand>
 			<label width="250" text="Atom Name/Description:"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Atoms Listing:"/>
+			<label width="250" text="Atom Listing:"/>
 			<listbox name="atom">
 				<add>listbox_add</add>
 				<delete>listbox_delete</delete>
@@ -337,7 +337,7 @@
 			<precommand p1="Execute Atoms">leftpanel</precommand>
 			<label width="250" text="Atom Description:"/>
 			<textbox readonly="yes" width="250" field="#name"/>
-			<label width="250" text="Atoms Listing:"/>
+			<label width="250" text="Atom Listing:"/>
 			<listbox name="atom">
 				<onselect p1="elements">lookupbox_update</onselect>
 				<dblclick p1="atom">run_atom_sequence</dblclick>

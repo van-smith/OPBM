@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <opbm>
 	<panels>
-		<left name="Main">
+		<left name="Main" bgcolor="ffffff">
 			<navigation>
 				<text>Quit</text>
 				<command>quit</command>
@@ -419,7 +419,7 @@
 			<text>or a range of workloads.</text>
 		</left>
 
-		<left name="Execute Atoms">
+		<left name="Execute Atoms" bgcolor="ffffff">
 			<navigation>
 				<text>Back</text>
 				<command>edit_back</command>
@@ -434,7 +434,7 @@
 			<heading>
 				<text>Run Atoms:</text>
 			</heading>
-			<text>1) Select item in Suites Listing</text>
+			<text>1) Select item in Atom Listing</text>
 			<text>2) Double-click to run sequence</text>
 			<text>3) Options below change the HUD</text>
 			<spacer/>
@@ -468,7 +468,7 @@
 			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
 		</left>
 
-		<left name="Execute Molecules">
+		<left name="Execute Molecules" bgcolor="ffffff">
 			<navigation>
 				<text>Back</text>
 				<command>edit_back</command>
@@ -483,7 +483,7 @@
 			<heading>
 				<text>Run Molecules:</text>
 			</heading>
-			<text>1) Select item in Suites Listing</text>
+			<text>1) Select item in Molecule Listing</text>
 			<text>2) Double-click to run sequence</text>
 			<text>3) Options below change the HUD</text>
 			<spacer/>
@@ -517,7 +517,7 @@
 			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
 		</left>
 
-		<left name="Execute Scenarios">
+		<left name="Execute Scenarios" bgcolor="ffffff">
 			<navigation>
 				<text>Back</text>
 				<command>edit_back</command>
@@ -532,7 +532,7 @@
 			<heading>
 				<text>Run Scenarios:</text>
 			</heading>
-			<text>1) Select item in Suites Listing</text>
+			<text>1) Select item in Scenario Listing</text>
 			<text>2) Double-click to run sequence</text>
 			<text>3) Options below change the HUD</text>
 			<spacer/>
@@ -566,7 +566,7 @@
 			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
 		</left>
 
-		<left name="Execute Suites">
+		<left name="Execute Suites" bgcolor="ffffff">
 			<navigation>
 				<text>Back</text>
 				<command>edit_back</command>
@@ -581,7 +581,7 @@
 			<heading>
 				<text>Run Suites:</text>
 			</heading>
-			<text>1) Select item in Suites Listing</text>
+			<text>1) Select item in Suite Listing</text>
 			<text>2) Double-click to run sequence</text>
 			<text>3) Options below change the HUD</text>
 			<spacer/>

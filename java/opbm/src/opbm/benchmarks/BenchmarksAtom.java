@@ -1215,7 +1215,7 @@ public class BenchmarksAtom
 						boolValue = Utils.interpretBooleanAsYesNo(value, m_bp.m_retry).equalsIgnoreCase("yes");
 						if (retryEnabled != boolValue)
 						{	// They have an override
-							System.out.println("Overriding default retryEnabled=\"" + Utils.evaluateLogicalToYesOrNo(retryEnabled) + "\" with \"" + Utils.evaluateLogicalToYesOrNo(boolValue) + "\", per atom override");
+							System.out.println("retryEnabled=\"" + Utils.evaluateLogicalToYesOrNo(retryEnabled) + "\" overridden to \"" + Utils.evaluateLogicalToYesOrNo(boolValue) + "\", per atom overrides");
 							retryEnabled = boolValue;
 						}
 					}
@@ -1226,7 +1226,7 @@ public class BenchmarksAtom
 						intValue = Utils.getValueOf(value, retryAttempts);
 						if (retryAttempts != intValue)
 						{	// They have an override
-							System.out.println("Overriding default retry attempt count of \"" + Integer.toString(retryAttempts) + "\" with \"" + Integer.toString(intValue) + "\", per atom override");
+							System.out.println("retryAttempts=\"" + Integer.toString(retryAttempts) + "\" overridden to \"" + Integer.toString(intValue) + "\", per atom overrides");
 							retryAttempts = intValue;
 						}
 					}
@@ -1237,10 +1237,14 @@ public class BenchmarksAtom
 						boolValue = Utils.interpretBooleanAsYesNo(value, stopIfFailure).equalsIgnoreCase("yes");
 						if (stopIfFailure != boolValue)
 						{	// They have an override
-							System.out.println("Overriding default stopIfFailure=\"" + Utils.evaluateLogicalToYesOrNo(stopIfFailure) + "\" with \"" + Utils.evaluateLogicalToYesOrNo(boolValue) + "\", per atom override");
+							System.out.println("stopIfFailure=\"" + Utils.evaluateLogicalToYesOrNo(stopIfFailure) + "\" overridden to \"" + Utils.evaluateLogicalToYesOrNo(boolValue) + "\", per atom overrides");
 							stopIfFailure = boolValue;
 						}
 					}
+
+					// If we are not retrying, set the retry attempts to 0
+					if (!retryEnabled)
+						retryAttempts = 0;
 
 					while (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && failure && retryCount <= retryAttempts)
 					{	// Process repepatedly until we have a success, or our on-failure retry count is reached, or the user forces a stop
@@ -1491,6 +1495,11 @@ public class BenchmarksAtom
 					if (stopIfFailure)
 					{	// We have to force the stop now
 						m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
+					} else {
+						// We mark this entry as finished, because we're not stopping if it fails
+						if (m_bp.m_bm != null)
+							m_bp.m_bm.setLastWorkletFinished();
+
 					}
 
 				} else {
@@ -1505,8 +1514,11 @@ public class BenchmarksAtom
 				if (!(m_bp.m_debuggerActive && m_bp.m_singleStepping))
 					m_bp.m_wui.pauseAfterScriptExecution();
 
-				// For this statement, we simply proceed on to the next
-				return(thisCommand.getNext());
+				// For this statement, we simply proceed on to the next if we're good, otherwise, we're done
+				if (failure && stopIfFailure)
+					return(null);
+				else
+					return(thisCommand.getNext());
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndTerminate")) {
 				// Rebooting, and terminating the benchmark test (will restart the system and leave it in its natural state)
