@@ -1,0 +1,11 @@
+Set Windows to automatically log you in when booting:
+
+1. Log into Windows 7 using an administrator account.
+
+2. Click "Start" and type "netplwiz" in the search field. Click "netplwiz" in the list above to run the program.
+
+3. Click the user name to be logged in automatically.
+
+4. Uncheck "Users must enter a user name and password to use this computer".
+
+5. Click "Apply" and enter your password in both empty fields if you are asked for it. Click "OK" to accept changes.
