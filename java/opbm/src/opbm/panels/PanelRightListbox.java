@@ -1431,6 +1431,7 @@ public class PanelRightListbox
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
+		int nowItem;
 		long now;
 
 		try {
@@ -1441,8 +1442,9 @@ public class PanelRightListbox
 				// We don't do anything when the user clicks down on here, except
 				// see how long it's been since the last down click.  If it's less
 				// than .4 second, we execute the dblClick command
-				now = Utils.getMillisecondTimer();
-				if (m_lastMillisecond != 0)
+				now		= Utils.getMillisecondTimer();
+				nowItem	= m_listBox.getSelectedIndex();
+				if (m_lastItem == nowItem && m_lastMillisecond != 0)
 				{
 					if (now - m_lastMillisecond <= 800)
 					{	// It's less than .4 second, so we issue the double click
@@ -1462,7 +1464,8 @@ public class PanelRightListbox
 						System.out.println("Recorded " + Long.toString(now - m_lastMillisecond) + " milliseconds between clicks, needs to be 400 or less (0.4 seconds)");
 					}
 				}
-				m_lastMillisecond = now;
+				m_lastItem			= nowItem;
+				m_lastMillisecond	= now;
 
 //////////
 // ADD
@@ -1571,15 +1574,6 @@ public class PanelRightListbox
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		if (m_parentPRI.getAutoUpdate())
-		{
-			if (m_lastIndex >= 0 && m_lastIndex < m_xmlListboxMaster.size())
-			{
-				m_listBox.setSelectedIndex(m_lastIndex);
-				m_parentPR.loadData(m_xmlListboxMaster.get(m_lastIndex));
-			}
-		}
-		m_listBox.requestFocusInWindow();
 	}
 
 	/**
@@ -1623,6 +1617,7 @@ public class PanelRightListbox
 	private int				m_y;
 	private boolean			m_isMovingUpOrDown;		// Is moving up or down overrides save operations
 	private long			m_lastMillisecond;		// The last millisecond when the mouse button was clicked down within the listbox (used to catch double-clicks)
+	private int				m_lastItem;				// The last item they clicked on in the listbox, used with lastMillisecond to determine if the double-click should be recognized
 
 	private String			m_listBoxButtons;		// Contains any combination of "+" "-" and "c" as in "+-c" or "+c-" or "c-+", etc.
 	private JButton			m_listBoxAdd;			// Add button for listboxes

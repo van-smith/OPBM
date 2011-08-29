@@ -153,6 +153,9 @@
 			<atom name="Word Alice">
 				<abstract name="Alice in Wonderland" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
 					</options>
 				</abstract>
@@ -160,19 +163,19 @@
 			<atom name="Install 7zip">
 				<abstract name="Install 7zip" sourcename="execute">
 					<options>
-						<stopIfFailure>no</stopIfFailure>
-						<retryAttempts>5</retryAttempts>
-						<retryEnabled>no</retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)install(backslash)7zipInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="7zip Run Test">
-				<abstract name="7zip Run Test" sourcename="execute" atomuuid="73f240df(hyphen)3f11(hyphen)49a8(hyphen)a6d1(hyphen)72424422dcbb">
+				<abstract atomuuid="73f240df(hyphen)3f11(hyphen)49a8(hyphen)a6d1(hyphen)72424422dcbb" name="7zip Run Test" sourcename="execute">
 					<options>
-						<retryEnabled>no</retryEnabled>
-						<stopIfFailure>no</stopIfFailure>
-						<retryAttempts>14</retryAttempts>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)runtest(backslash)7zipRunTest.exe</executable>
 					</options>
 				</abstract>
@@ -190,6 +193,9 @@
 			<atom name="Install Opera">
 				<abstract name="Install Opera" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
 					</options>
 				</abstract>
@@ -197,6 +203,9 @@
 			<atom name="Uninstall Opera">
 				<abstract name="Uninstall Opera" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
 					</options>
 				</abstract>
@@ -204,6 +213,9 @@
 			<atom name="Opera SunSpider">
 				<abstract name="Opera SunSpider" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
 					</options>
 				</abstract>
@@ -211,6 +223,9 @@
 			<atom name="Opera Kraken">
 				<abstract name="Opera Kraken" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
 					</options>
 				</abstract>
@@ -218,6 +233,9 @@
 			<atom name="Opera Google V8">
 				<abstract name="Opera Google V8" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
 					</options>
 				</abstract>
@@ -225,6 +243,9 @@
 			<atom name="Install Safari">
 				<abstract name="Install Safari" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
 					</options>
 				</abstract>
@@ -232,6 +253,9 @@
 			<atom name="Uninstall Safari">
 				<abstract name="Uninstall Safari" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
 					</options>
 				</abstract>
@@ -239,6 +263,9 @@
 			<atom name="Safari SunSpider">
 				<abstract name="Safari SunSpider" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
 					</options>
 				</abstract>
@@ -246,6 +273,9 @@
 			<atom name="Safari Kraken">
 				<abstract name="Safari Kraken" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
 					</options>
 				</abstract>
@@ -253,6 +283,9 @@
 			<atom name="Safari Google V8">
 				<abstract name="Safari Google V8" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
 					</options>
 				</abstract>
@@ -260,6 +293,9 @@
 			<atom name="IE SunSpider">
 				<abstract name="IE SunSpider" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
 					</options>
 				</abstract>
@@ -267,6 +303,9 @@
 			<atom name="IE Kraken">
 				<abstract name="IE Kraken" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
 					</options>
 				</abstract>
@@ -274,6 +313,9 @@
 			<atom name="IE Google V8">
 				<abstract name="IE Google V8" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
 					</options>
 				</abstract>
@@ -281,6 +323,9 @@
 			<atom name="Install Chrome">
 				<abstract name="Install Chrome" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
 					</options>
 				</abstract>
@@ -288,6 +333,9 @@
 			<atom name="Uninstall Chrome">
 				<abstract name="Uninstall Chrome" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
 					</options>
 				</abstract>
@@ -295,6 +343,9 @@
 			<atom name="Chrome SunSpider">
 				<abstract name="Chrome SunSpider" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
 					</options>
 				</abstract>
@@ -302,6 +353,9 @@
 			<atom name="Chrome Kraken">
 				<abstract name="Chrome Kraken" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
 					</options>
 				</abstract>
@@ -309,6 +363,9 @@
 			<atom name="Chrome Google V8">
 				<abstract name="Chrome Google V8" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
 					</options>
 				</abstract>
@@ -316,6 +373,9 @@
 			<atom name="Install Firefox">
 				<abstract name="Install Firefox" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
 					</options>
 				</abstract>
@@ -323,6 +383,9 @@
 			<atom name="Uninstall Firefox">
 				<abstract name="Uninstall Firefox" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
 					</options>
 				</abstract>
@@ -330,6 +393,9 @@
 			<atom name="Firefox SunSpider">
 				<abstract name="Firefox SunSpider" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
 					</options>
 				</abstract>
@@ -337,6 +403,9 @@
 			<atom name="Firefox Kraken">
 				<abstract name="Firefox Kraken" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
 					</options>
 				</abstract>
@@ -344,6 +413,9 @@
 			<atom name="Firefox Google V8">
 				<abstract name="Firefox Google V8" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
 					</options>
 				</abstract>
@@ -351,6 +423,9 @@
 			<atom name="Install Acrobat Reader">
 				<abstract name="Install Acrobat Reader" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
 					</options>
 				</abstract>
@@ -358,6 +433,9 @@
 			<atom name="Uninstall Acrobat Reader">
 				<abstract name="Uninstall Acrobat Reader" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
 					</options>
 				</abstract>
@@ -371,6 +449,9 @@
 			<atom name="Simulate Failure">
 				<abstract name="Simulate Failure" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)tests(backslash)failure(backslash)failure.exe</executable>
 					</options>
 				</abstract>
