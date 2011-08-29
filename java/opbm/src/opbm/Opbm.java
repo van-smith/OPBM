@@ -593,6 +593,8 @@ public final class Opbm extends	ModalApp
 					m_rv = new ResultsViewer(m_opbm, 800, 556, true);
 					--m_rvsync;
 
+// REMEMBER the new "filter," tag from the scripts will create a compiled list of entries that are dynamic and based on scripts
+// REMEMBER this hard-coded list needs to be removed
 					// Add the filter tags
 					m_rv.addFilterTag("Internet",	"No");
 					m_rv.addFilterTag("Disk",		"No");
@@ -2753,6 +2755,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.29 12:08am";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.29 12:34am";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

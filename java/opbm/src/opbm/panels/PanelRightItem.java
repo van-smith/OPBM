@@ -23,6 +23,7 @@
 
 package opbm.panels;
 
+import java.awt.event.KeyEvent;
 import opbm.common.Utils;
 import java.awt.Font;
 import java.awt.Color;
@@ -34,6 +35,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -56,8 +58,9 @@ import opbm.common.Xml;
  * which back into their own PanelListbox* class.
  */
 public class PanelRightItem
-		implements MouseListener,
-				   FocusListener
+					implements MouseListener,
+							   KeyListener,
+							   FocusListener
 {
 	/** Constructor creates default size, <code>JLabel</code> object (and
 	 * links object to panelParent), stores variables related to panelParent.
@@ -327,6 +330,7 @@ public class PanelRightItem
 				{
 					m_label = new JLabel();
 					m_label.addMouseListener(this);
+					m_label.addKeyListener(this);
 					m_label.addFocusListener(this);
 					m_label.setVisible(false);
 					if (type == _TYPE_LINK)
@@ -341,6 +345,7 @@ public class PanelRightItem
 				{
 					m_button = new JButton();
 					m_button.addMouseListener(this);
+					m_button.addKeyListener(this);
 					m_button.addFocusListener(this);
 					m_button.setVisible(false);
 					m_panelParent.add(m_button);
@@ -353,6 +358,7 @@ public class PanelRightItem
 				{
 					m_checkbox = new JCheckBox();
 					m_checkbox.addMouseListener(this);
+					m_checkbox.addKeyListener(this);
 					m_checkbox.addFocusListener(this);
 					m_checkbox.setVisible(false);
 					m_panelParent.add(m_checkbox);
@@ -365,6 +371,7 @@ public class PanelRightItem
 				{
 					m_textbox = new JTextField();
 					m_textbox.addMouseListener(this);
+					m_textbox.addKeyListener(this);
 					m_textbox.addFocusListener(this);
 					m_textbox.setVisible(false);
 					m_panelParent.add(m_textbox);
@@ -380,6 +387,7 @@ public class PanelRightItem
 														  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED,
 														  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);*/
 					m_editbox.addMouseListener(this);
+					m_editbox.addKeyListener(this);
 					m_editbox.addFocusListener(this);
 					m_editbox.setVisible(false);
 					m_editbox.setLineWrap(true);
@@ -748,7 +756,8 @@ public class PanelRightItem
 	/**
 	 * Repaint the listbox after its related <code>Xml</code> items are updated.
 	 */
-	public void repaintListBox() {
+	public void repaintListBox()
+	{
 		if (m_type == _TYPE_LISTBOX && m_listbox != null)
 			m_listbox.repaintListBox();
 
@@ -2382,17 +2391,30 @@ public class PanelRightItem
 	@Override
 	public void focusLost(FocusEvent e)
 	{
-		Xml newXml;
+	}
 
+	@Override
+	public void keyTyped(KeyEvent e)
+	{
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
 		if (m_autoUpdate)
 		{
 			if (m_parentPR != null && m_source != null)
 			{
 				saveData(m_source);
-				m_parentPR.repaintListBox();
 			}
 		}
 	}
+
 
 	// Types supported for this class, each PanelRightItem can take on one of these identities at a time:
 	static final int _TYPE_LABEL		= 1;
