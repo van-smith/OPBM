@@ -425,11 +425,6 @@
 			</scenario>
 		</scenarios>
 		<suites>
-			<suite name="Official Run">
-				<scenario name="OPBM" sourcename="OPBM"></scenario>
-				<scenario name="OPBM" sourcename="OPBM"></scenario>
-				<scenario name="OPBM" sourcename="OPBM"></scenario>
-			</suite>
 		</suites>
 	</scriptdata>
 	<metadata>
