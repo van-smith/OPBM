@@ -556,6 +556,17 @@
 				<molecule name="Uninstall Applications" sourcename="Uninstall Applications"></molecule>
 			</scenario>
 		</scenarios>
-		<suites></suites>
+		<suites>
+			<suite name="New Suite">
+				<abstract sourcename="execute" name="execute">
+					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>test.exe</executable>
+					</options>
+				</abstract>
+			</suite>
+		</suites>
 	</scriptdata>
 </opbm>

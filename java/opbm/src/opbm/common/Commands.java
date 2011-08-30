@@ -2,13 +2,13 @@
  * OPBM - Office Productivity Benchmark
  *
  * This class is the top-level class for all Command processing.  The
- * main OPBM class creates a m_commandMaster member variale, which is
+ * main OPBM class creates an m_commandMaster member variale, which is
  * propagated throughout the system and currently is used as the sole
  * entity for processing, but in the future additional Commands class
- * items could be created which dynamically load commands from an XML
- * file, etc.
+ * items could be created which dynamically load commands from XML files
+ * for unique forms of procesing, etc.
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Aug 30, 2011
  *
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)

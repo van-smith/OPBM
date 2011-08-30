@@ -1836,6 +1836,8 @@ public class Xml
 				}
 			}
 		}
+		// Remove this node's parental affiliation
+		m_parent = null;
 	}
 
 	/**

@@ -73,7 +73,7 @@ public class PanelRightLookupbox
 							   Commands			commandMaster,
 							   Macros			macroMaster)
 	{
-		m_xmlLookupboxMaster	= new ArrayList<Xml>(0);
+		m_xmlLookupboxMaster	= null;
 		m_visible				= false;
 		m_opaque				= true;
 		m_foreground			= Color.BLACK;
@@ -1180,8 +1180,7 @@ public class PanelRightLookupbox
 		}
 
 		// Clear out any list that may already be there
-		if (!m_xmlLookupboxMaster.isEmpty())
-			m_xmlLookupboxMaster.clear();
+		m_xmlLookupboxMaster = new ArrayList<Xml>(0);
 
 		// Create the lookup box if it's not already created
 		Xml.getNodeList(m_xmlLookupboxMaster, m_lookupboxXml, m_lookupboxSource, false);
@@ -1710,8 +1709,10 @@ public class PanelRightLookupbox
 		{
 			if (command.equalsIgnoreCase("subtract"))
 				m_parentPR.lookupboxSubtractClicked(m_xmlLookupboxMaster.get(m_lastIndex));
+
 			else if (command.equalsIgnoreCase("up"))
 				moveSelectedUp();
+
 			else if (command.equalsIgnoreCase("down"))
 				moveSelectedDown();
 		}
@@ -1862,7 +1863,7 @@ public class PanelRightLookupbox
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
-		if (e.getSource().equals(m_lookupBox))
+		if (e.getSource().equals(m_lookupBox) || e.getSource().equals(m_lookupboxScroller))
 		{
 			if (e.getKeyCode() == KeyEvent.VK_ENTER)
 			{	// They pressed enter on this selection, execute its enter command

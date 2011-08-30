@@ -77,9 +77,7 @@ public class PanelRightListbox
 							 Commands		commandMaster,
 							 Macros			macroMaster)
 	{
-		//m_listBox.addMouseListener(this);
-		//m_panelParent.add(m_listBox);
-		m_xmlListboxMaster	= new ArrayList<Xml>(0);
+		m_xmlListboxMaster	= null;
 		m_visible			= false;
 		m_opaque			= true;
 		m_foreground		= Color.BLACK;
@@ -927,8 +925,7 @@ public class PanelRightListbox
 		}
 
 		// Clear out any list that may already be there
-		if (!m_xmlListboxMaster.isEmpty())
-			m_xmlListboxMaster.clear();
+		m_xmlListboxMaster = new ArrayList<Xml>(0);
 
 		// Locate all the nodes within the xml node space
 		Xml.getNodeList(m_xmlListboxMaster, m_listBoxXml, m_listBoxSource, false);
@@ -949,6 +946,7 @@ public class PanelRightListbox
 			m_listBoxScroller.setSize(m_width, m_height);
 			m_listBoxScroller.setLocation(m_x, m_y);
 			m_listBoxScroller.setVisible(true);
+			m_listBoxScroller.addKeyListener(this);
 			m_listBox.addListSelectionListener(this);
 			m_listBox.addMouseListener(this);
 			m_listBox.addKeyListener(this);
@@ -1420,9 +1418,17 @@ public class PanelRightListbox
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e)
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
 	{
-		if (e.getSource().equals(m_listBox))
+		if (e.getSource().equals(m_listBox) || e.getSource().equals(m_listBoxScroller))
 		{
 			if (e.getKeyCode() == KeyEvent.VK_ENTER)
 			{	// They pressed enter on this selection, execute its enter command
@@ -1440,14 +1446,6 @@ public class PanelRightListbox
 											   m_enterP10);
 			}
 		}
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
 	}
 
 	/**
