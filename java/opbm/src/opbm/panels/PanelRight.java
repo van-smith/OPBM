@@ -1118,6 +1118,8 @@ public class PanelRight
 			// will be saved there with their variable parameters.
 
 		} else {
+			saveCustomInputCommand(saveObjectList);
+/*
 			// Just add the record with no user-editable options
 			xmlNew = new Xml(xmlFrom.getName());
 			xmlNew.addAttribute("name", xmlFrom.getAttribute("name"));
@@ -1128,6 +1130,8 @@ public class PanelRight
 			m_opbm.updateEditListboxesAndLookupboxes();
 			// Note:  This function is not called locally, because the active
 			//        edit may not be this instance of PanelRight.
+
+ */
 		}
 	}
 
@@ -1151,13 +1155,18 @@ public class PanelRight
 			JFrame		fr			= (JFrame)t.getSecond("frame");
 			PanelRight	pr			= (PanelRight)t.getSecond("PanelRight");
 
-			// Call the associated PanelRight to write its contents
 			if (pr != null)
-				pr.saveCustomInputCommand(fr, whereTo, after, addName, whereFrom, xmlTo, xmlAfter, xmlFrom, xmlDelete, xmlParent);
+			{	// Call the associated PanelRight to write its contents
+				pr.saveCustomInputCommand(fr, pr, whereTo, after, addName, whereFrom, xmlTo, xmlAfter, xmlFrom, xmlDelete, xmlParent);
+
+			} else {
+				saveCustomInputCommand(fr, pr, whereTo, after, addName, whereFrom, xmlTo, xmlAfter, xmlFrom, xmlDelete, xmlParent);
+			}
 		}
 	}
 
 	public void saveCustomInputCommand(JFrame		fr,
+									   PanelRight	pr,
 									   String		addName,
 									   String		whereTo,
 									   String		after,
@@ -1186,17 +1195,20 @@ public class PanelRight
 		options = new Xml("options");
 		xmlNew.addChild(options);
 
-		// Add the options (if any)
-		for (i = 0; i < m_items.size(); i++)
-		{
-			xmlAdd = m_items.get(i).addFieldToOptions(options);
-			if (xmlAdd != null)
-				options.addChild(xmlAdd);
+		if (pr != null)
+		{	// Add the options (if any)
+			for (i = 0; i < m_items.size(); i++)
+			{
+				xmlAdd = m_items.get(i).addFieldToOptions(options);
+				if (xmlAdd != null)
+					options.addChild(xmlAdd);
+			}
 		}
 
 		// Append to the listing
 		xmlAfter.insertNodeAfter(xmlNew);
 		// When we get here, the entry has been added
+
 		// See if there's a node targeted for post-save deletion (deletes a temporary placeholder position)
 		if (xmlDelete != null)
 		{	// There is, delete it
@@ -1209,7 +1221,8 @@ public class PanelRight
 		//        edit may not be this instance of PanelRight.
 
 		// Close the frame
-		fr.dispose();
+		if (fr != null)
+			fr.dispose();
 	}
 
 	/**

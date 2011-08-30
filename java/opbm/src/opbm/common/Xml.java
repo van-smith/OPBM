@@ -1292,6 +1292,7 @@ public class Xml
 		} else {
 			// Appending to start of the chain, this will be the first item
 			setPrev(newNode);
+			newNode.setPrev(null);
 			newNode.setNext(this);
 
 			if (m_parent != null)
@@ -1341,6 +1342,7 @@ public class Xml
 			// Appending after this, will now be the last one (instead of this one being the last one)
 			setNext(newNode);
 			newNode.setPrev(this);
+			newNode.setNext(null);
 
 		}
 	}
@@ -1805,6 +1807,8 @@ public class Xml
 						m_parent.setFirstAttribute(m_next);
 					else
 						m_parent.setFirstChild(m_next);
+
+					m_next.setPrev(null);
 
 				} else {
 					// This is likely an error.

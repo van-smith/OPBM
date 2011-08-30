@@ -209,7 +209,7 @@
 				</abstract>
 			</atom>
 			<atom name="7zip Run Test">
-				<abstract name="7zip Run Test" sourcename="execute">
+				<abstract atomuuid="60a0f8ce(hyphen)9d4d(hyphen)4010(hyphen)83de(hyphen)539ff6160c53" name="7zip Run Test" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -556,17 +556,6 @@
 				<molecule name="Uninstall Applications" sourcename="Uninstall Applications"></molecule>
 			</scenario>
 		</scenarios>
-		<suites>
-			<suite name="New Suite">
-				<abstract sourcename="execute" name="execute">
-					<options>
-						<stopIfFailure></stopIfFailure>
-						<retryAttempts></retryAttempts>
-						<retryEnabled></retryEnabled>
-						<executable>test.exe</executable>
-					</options>
-				</abstract>
-			</suite>
-		</suites>
+		<suites></suites>
 	</scriptdata>
 </opbm>
