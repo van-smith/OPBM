@@ -644,9 +644,8 @@ public class PanelRightItem
 		{
 			m_listbox.fillOrRefillListBoxArray();
 			m_listbox.select(0);
-		}
-		else if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null)
-		{
+
+		} else if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null) {
 			m_lookupbox.fillOrRefillLookupBoxArray();
 			m_lookupbox.select(0);
 		}
@@ -703,6 +702,12 @@ public class PanelRightItem
 	{
 		if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null)
 			m_lookupbox.lookupboxAddCommand(source, whereTo, after, whereFrom);
+	}
+
+	public void lookupboxCloneCommand(PanelRightLookupbox source)
+	{
+		if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null)
+			m_lookupbox.lookupboxCloneCommand(source);
 	}
 
 	/**
@@ -1434,7 +1439,11 @@ public class PanelRightItem
 							   String p9,
 							   String p10)
 	{
-		m_listbox.setCloneButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		if (m_type == _TYPE_LISTBOX)
+			m_listbox.setCloneButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+
+		else if (m_type == _TYPE_LOOKUPBOX)
+			m_lookupbox.setCloneButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 	}
 
 	/**
@@ -1731,6 +1740,21 @@ public class PanelRightItem
 	}
 
 	/**
+	 * Specifies the relative path to the root node of the xml file to access
+	 * the template data element for the <code>_TYPE_LISTBOX</code> control.
+	 *
+	 * @param source dot source, as in <code>opbm.scriptdata.templates.flow</code>
+	 * @param relativeTo relative source, as when the related item changes, this
+	 * entry must be reloaded
+	 */
+	public void setTemplate(String	source,
+							String	relativeTo)
+	{
+		if (m_type == _TYPE_LISTBOX)
+			m_listbox.setTemplate(source, relativeTo);
+	}
+
+	/**
 	 * Return the currently selected node from the specified
 	 * <code>_TYPE_LISTBOX</code> or <code>_TYPE_LOOKUPBOX</code>
 	 * @return <code>Xml</code> for the selected item in the listbox or lookupbox
@@ -1762,6 +1786,31 @@ public class PanelRightItem
 
 		else
 			return(null);
+	}
+
+	/**
+	 * Return the currently selected node's source for the specified
+	 * <code>_TYPE_LISTBOX</code> or <code>_TYPE_LOOKUPBOX</code>
+	 * @return source in scripts.xml for the selected item in the listbox or lookupbox
+	 */
+	public String getListboxOrLookupboxSource()
+	{
+		if (m_type == _TYPE_LISTBOX)
+			return(m_listbox.getListboxSource());
+
+		else if (m_type == _TYPE_LOOKUPBOX)
+			return(m_lookupbox.getLookupboxSource());
+
+		else
+			return(null);
+	}
+
+	public String getListboxTemplate()
+	{
+		if (m_type == _TYPE_LISTBOX)
+			return(m_listbox.getListboxTemplate());
+		else
+			return("");
 	}
 
 	/**

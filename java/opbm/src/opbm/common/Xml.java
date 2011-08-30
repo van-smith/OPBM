@@ -903,8 +903,8 @@ public class Xml
 	 * @param searchMaster tag to search for
 	 * @return string of tag if found, empty string otherwise
 	 */
-	public Xml getAttributeOrChildNode(Xml		root,
-									   String	searchMaster)
+	public static Xml getAttributeOrChildNode(Xml		root,
+											  String	searchMaster)
 	{
 		Xml xml;
 		String search;
@@ -2378,6 +2378,48 @@ public class Xml
 		}
 		// If we get here, it wasn't found at this level through any attributes or children
 		return(root);
+	}
+
+	/**
+	 * Returns the parent location relative to the source
+	 * @param source something like opbm.scriptdata.atoms.atom
+	 * @return opbm.scriptdata.atoms -- though if no higher level is available,
+	 * returns an empty string
+	 */
+	public static String getParentLocationFromSourceLocation(String source)
+	{
+		int offset;
+
+		if (source.contains("."))
+		{	// There is at least one level, locate the parent
+			offset = source.lastIndexOf(".");
+			return(source.substring(0, offset));
+
+		} else {
+			// No higher level, return an empty string
+			return("");
+		}
+	}
+
+	/**
+	 * Returns the second-level location relative to the source
+	 * @param source something like opbm.scriptdata.atoms.atom
+	 * @return scriptdata.atoms.atom -- though if no second level is available,
+	 * returns an empty string
+	 */
+	public static String skipFirstLevelInSource(String source)
+	{
+		int offset;
+
+		if (source.contains("."))
+		{	// There is at least one level, locate the parent
+			offset = source.indexOf(".");
+			return(source.substring(offset + 1));
+
+		} else {
+			// No higher level, return an empty string
+			return("");
+		}
 	}
 
 	/**

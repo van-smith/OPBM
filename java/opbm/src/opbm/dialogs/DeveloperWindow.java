@@ -4,10 +4,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Label;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -21,17 +26,43 @@ import opbm.Opbm;
  *
  * @author rick
  */
-public class DeveloperWindow extends DroppableFrame
+public final class DeveloperWindow	extends DroppableFrame
+								 implements WindowListener
 {
 	public DeveloperWindow(Opbm		opbm,
 						   boolean	isZoomWindow)
 	{
 		super(opbm, isZoomWindow, true);	// Call DroppableFrame constructor
+		int i;
+		Dimension maxSize;
 
 		// Initialize our parent and size our window
 		m_opbm		= opbm;
+		// This is the minimum size we should make the developer window because of the definitions present in edits.xml, and the left-side panel menus defined in panels.xml
 		m_width		= 1100;
 		m_height	= 645;
+		// However, if it can be bigger, it is best to be around 1400 x 800
+		// So we check the size of the host video display to see if it can be bigger, and if so, then we make it bigger
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] gs = ge.getScreenDevices();
+
+		// Get size of each screen
+		maxSize = new Dimension(m_width, m_height);
+		for (i = 0; i < gs.length; i++)
+		{
+			DisplayMode dm = gs[i].getDisplayMode();
+			if (dm.getWidth() > maxSize.getWidth() && dm.getHeight() > maxSize.getHeight())
+			{	// Update the max
+				maxSize.setSize(dm.getWidth(), dm.getHeight());
+			}
+		}
+		// If we get here, and we're bigger than m_width and m_height, adjust m_width and m_height to 95% of the max size
+		if (maxSize.getWidth() * 0.90f > m_width)
+			m_width = Math.min((int)(maxSize.getWidth() * 0.90f), 1500);
+		if (maxSize.getHeight() * 0.90f > m_height)
+			m_height = Math.min((int)(maxSize.getHeight() * 0.90f), 750);
+
+		// Set the title to our hard-coded form, which includes the application name plus version number (which may be the date and time of the last build)
 		setTitle( Opbm.m_title );
 
 		// Compute the actual size we need for our window, so it's properly centered
@@ -68,6 +99,7 @@ public class DeveloperWindow extends DroppableFrame
 
         add(statusBar);
         setVisible(false);
+		addWindowListener(this);
 
 		// Create the header image
 		lblHeader = new JLabel();
@@ -208,6 +240,37 @@ public class DeveloperWindow extends DroppableFrame
 						 m_height - panRight.getY() - statusBar.getHeight());
 	}
 
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e)
+	{	// They are closing the window, save anything that might be open and not yet saved, for OPBM is a WYSIWYG app
+		m_opbm.getCommandMaster().processCommand(this, "rawedit_save",	null, null, null, null, null, null, null, null, null, null);
+		m_opbm.getCommandMaster().processCommand(this, "edit_save",		null, null, null, null, null, null, null, null, null, null);
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+	}
+
 	/**
 	 * Holds the status bar display of tooltip texts, system messages, etc.
 	 */
@@ -264,5 +327,4 @@ public class DeveloperWindow extends DroppableFrame
 	 * Preferred window size
 	 */
 	private Dimension				m_prefSize;
-
 }

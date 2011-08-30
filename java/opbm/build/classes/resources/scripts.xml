@@ -1,28 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <opbm>
 	<scriptdata>
-<!--
 		<templates>
-			<flow name="newFlow(dollarsign)unique_number(dollarsign)">
-				<variables></variables>
+			<flow>
+				<level1>
+					<flow name="New Flow"></flow>
+				</level1>
+				<level2>
+					<variables></variables>
+				</level2>
 			</flow>
-			<atom name="newAtom(dollarsign)unique_number(dollarsign)">
-				<abstract name="newAbstract(dollarsign)unique_number(dollarsign)" sourcename="execute">
-					<options>
-						<retryEnabled></retryEnabled>
-						<stopIfFailure></stopIfFailure>
-						<retryAttempts></retryAttempts>
-						<executable></executable>
-					</options>
-				</abstract>
+			<atom>
+				<level1>
+					<atom name="New Atom"></atom>
+				</level1>
+				<level2>
+					<abstract name="New Executable" sourcename="execute">
+						<options></options>
+					</abstract>
+				</level2>
 			</atom>
-			<molecule name="newMolecule(dollarsign)unique_number(dollarsign)">
-				<atom name="newAtom(dollarsign)unique_number(dollarsign)" sourcename="(dollarsign)unique_number(dollarsign)"></atom>
+			<molecule>
+				<level1>
+					<molecule name="New Molecule"></molecule>
+				</level1>
+				<level2>
+					<atom name="New Atom" sourcename="New Atom"></atom>
+				</level2>
 			</molecule>
-			<scenario name="newScenario(dollarsign)unique_number(dollarsign)"></scenario>
-			<suite name="newSuite(dollarsign)unique_number(dollarsign)"></suite>
+			<scenario>
+				<level1>
+					<scenario name="New Scenario"></scenario>
+				</level1>
+				<level2>
+					<molecule name="New Molecule" sourcename="New Molecule"></molecule>
+				</level2>
+			</scenario>
+			<suite>
+				<level1>
+					<suite name="New Suite"></suite>
+				</level1>
+				<level2>
+					<scenario name="New Scenario" sourcename="New Scenario"></scenario>
+				</level2>
+			</suite>
 		</templates>
--->
 		<flows>
 			<flow name="call">
 				<variables>(leftbrace)(colon)function, FUNCTION(colon)(rightbrace)</variables>
@@ -177,7 +199,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install 7zip">
-				<abstract atomuuid="670e7249(hyphen)0baf(hyphen)465c(hyphen)81f8(hyphen)a46e9a65fd99" name="Install 7zip" sourcename="execute">
+				<abstract name="Install 7zip" sourcename="execute">
 					<options>
 						<stopIfFailure>no</stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -227,7 +249,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera SunSpider">
-				<abstract atomuuid="0a41da18(hyphen)a2c4(hyphen)49eb(hyphen)9367(hyphen)0084ac82a940" name="Opera SunSpider" sourcename="execute">
+				<abstract name="Opera SunSpider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -237,7 +259,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera Kraken">
-				<abstract atomuuid="6f73a7bd(hyphen)4923(hyphen)4254(hyphen)87b0(hyphen)3cc3a170428e" name="Opera Kraken" sourcename="execute">
+				<abstract name="Opera Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -247,7 +269,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera Google V8">
-				<abstract atomuuid="e26bc540(hyphen)d286(hyphen)457c(hyphen)a80b(hyphen)ae2239884615" name="Opera Google V8" sourcename="execute">
+				<abstract name="Opera Google V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -277,7 +299,7 @@
 				</abstract>
 			</atom>
 			<atom name="Safari SunSpider">
-				<abstract atomuuid="65e3e54e(hyphen)b6d2(hyphen)4a9e(hyphen)babc(hyphen)2f77e4b196ee" name="Safari SunSpider" sourcename="execute">
+				<abstract name="Safari SunSpider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -287,7 +309,7 @@
 				</abstract>
 			</atom>
 			<atom name="Safari Kraken">
-				<abstract atomuuid="075e628a(hyphen)c62c(hyphen)4133(hyphen)b216(hyphen)5f28a8f6c9eb" name="Safari Kraken" sourcename="execute">
+				<abstract name="Safari Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -297,7 +319,7 @@
 				</abstract>
 			</atom>
 			<atom name="Safari Google V8">
-				<abstract atomuuid="92550ad6(hyphen)68a8(hyphen)40d1(hyphen)bab3(hyphen)1c251e38b6f0" name="Safari Google V8" sourcename="execute">
+				<abstract name="Safari Google V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -307,7 +329,7 @@
 				</abstract>
 			</atom>
 			<atom name="IE SunSpider">
-				<abstract atomuuid="1e6781b8(hyphen)fa38(hyphen)4a9a(hyphen)92f3(hyphen)8c8db753e6a8" name="IE SunSpider" sourcename="execute">
+				<abstract name="IE SunSpider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -317,7 +339,7 @@
 				</abstract>
 			</atom>
 			<atom name="IE Kraken">
-				<abstract atomuuid="4b342812(hyphen)25d6(hyphen)4c01(hyphen)9989(hyphen)754e0dce2cff" name="IE Kraken" sourcename="execute">
+				<abstract name="IE Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -327,7 +349,7 @@
 				</abstract>
 			</atom>
 			<atom name="IE Google V8">
-				<abstract atomuuid="a34a293c(hyphen)3bd7(hyphen)4706(hyphen)8fc3(hyphen)fb4290e366cd" name="IE Google V8" sourcename="execute">
+				<abstract name="IE Google V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -357,7 +379,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome SunSpider">
-				<abstract atomuuid="b02725e7(hyphen)fb17(hyphen)4112(hyphen)9b36(hyphen)baaeda1e4517" name="Chrome SunSpider" sourcename="execute">
+				<abstract name="Chrome SunSpider" sourcename="execute">
 					<options>
 						<stopIfFailure>no</stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -367,7 +389,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome Kraken">
-				<abstract atomuuid="702c9bdb(hyphen)10e5(hyphen)4c7d(hyphen)b73d(hyphen)dac3c8c687bb" name="Chrome Kraken" sourcename="execute">
+				<abstract name="Chrome Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -377,7 +399,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome Google V8">
-				<abstract atomuuid="11fd7a28(hyphen)43de(hyphen)4202(hyphen)8f7a(hyphen)0e7aa633d8a5" name="Chrome Google V8" sourcename="execute">
+				<abstract name="Chrome Google V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -407,7 +429,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox SunSpider">
-				<abstract atomuuid="7eb0c71e(hyphen)ceb5(hyphen)4070(hyphen)9947(hyphen)2fe18354c692" name="Firefox SunSpider" sourcename="execute">
+				<abstract name="Firefox SunSpider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -417,7 +439,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox Kraken">
-				<abstract atomuuid="93304d94(hyphen)25c2(hyphen)45cd(hyphen)8465(hyphen)446790ab07ca" name="Firefox Kraken" sourcename="execute">
+				<abstract name="Firefox Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -427,7 +449,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox Google V8">
-				<abstract atomuuid="5f77900d(hyphen)831b(hyphen)4417(hyphen)a47d(hyphen)47fe5a1e5e08" name="Firefox Google V8" sourcename="execute">
+				<abstract name="Firefox Google V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -536,32 +558,4 @@
 		</scenarios>
 		<suites></suites>
 	</scriptdata>
-	<metadata>
-		<keywords>
-			<keyword name="video">
-				<notes>Contains data related to video card performance</notes>
-			</keyword>
-			<keyword name="network">
-				<notes>Contains data related to network performance</notes>
-			</keyword>
-			<keyword name="vidmemory">
-				<notes>Contains data related to the gpu video memory performance</notes>
-			</keyword>
-			<keyword name="cache">
-				<notes>Contains data related to the cpu cache performance</notes>
-			</keyword>
-			<keyword name="usb">
-				<notes>Contains data related to the usb system performance</notes>
-			</keyword>
-			<keyword name="memory">
-				<notes>Contains data related to the memory system performance</notes>
-			</keyword>
-			<keyword name="cpu">
-				<notes>Contains data related to the cpu performance</notes>
-			</keyword>
-			<keyword name="audio">
-				<notes>Contains data related to the audio card</notes>
-			</keyword>
-		</keywords>
-	</metadata>
 </opbm>

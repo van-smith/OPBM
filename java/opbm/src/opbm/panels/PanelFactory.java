@@ -1224,6 +1224,7 @@ public class PanelFactory {
 		setListboxOrLookupboxEvents(root, pri, macroMaster);
 
 		pri.setSource(macroMaster.parseMacros(Xml.getAttributeOrChild(root, "source")), "");
+		pri.setTemplate(macroMaster.parseMacros(Xml.getAttributeOrChild(root, "template")), "");
 		pri.setFileName(macroMaster.parseMacros(Xml.getAttributeOrChild(root, "filename")));
 		pri.setLocation(macroMaster.parseMacros(Xml.getAttributeOrChild(root, "location")));
 		pri.setForEach(macroMaster.parseMacros(Xml.getAttributeOrChild(root, "foreach")));
@@ -1498,6 +1499,24 @@ public class PanelFactory {
 			p9	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p9"));
 			p10	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p10"));
 			pri.setSubtractButton(pc, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		}
+
+		// Clone
+		x = Xml.getChildNode(root, "clone");
+		if (x != null)
+		{
+			pc	= macroMaster.parseMacros(x.getText());
+			p1	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p1"));
+			p2	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p2"));
+			p3	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p3"));
+			p4	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p4"));
+			p5	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p5"));
+			p6	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p6"));
+			p7	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p7"));
+			p8	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p8"));
+			p9	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p9"));
+			p10	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p10"));
+			pri.setCloneButton(pc, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 		}
 
 		// Zoom

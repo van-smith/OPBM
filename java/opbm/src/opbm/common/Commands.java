@@ -166,6 +166,14 @@ public class Commands
 
 //////////
 // Edit related
+		} else if (command.equals("save_custom")) {
+			// Editing via zoom-windows, which send the command "save_custom" to save the user's changes when "Save" is clicked
+			m_opbm.saveCustom(p1);
+
+		} else if (command.equals("cancel_custom")) {
+			// Editing via zoom-windows, which send the command "cancel_custom" to cancel the edit when "Cancel" is clicked
+			m_opbm.cancelCustom(p1);
+
 		} else if (command.equals("edit")) {
 			// Raw editing (full-page edit box) of whatever file is specified
 			m_opbm.edit(m_opbm.expandMacros(p1));
@@ -219,26 +227,30 @@ public class Commands
 //////////
 // LOOKUPBOX BUTTONS
 		} else if (command.equals("lookupbox_add")) {
-			// User clicked on the "add" listbox button on the flow control input
+			// User clicked on the "add" lookupbox button on the flow control input
 			// p1 = whereTo
 			// p2 = after
 			// p3 = whereFrom
 			m_opbm.lookupboxAddCommand((PanelRightLookupbox)source, p1, p2, p3);
 
 		} else if (command.equals("lookupbox_subtract")) {
-			// User clicked on the "subtract" listbox button
+			// User clicked on the "subtract" lookupbox button
 			m_opbm.lookupboxCommand("subtract", (PanelRightLookupbox)source);
 
+		} else if (command.equals("lookupbox_clone")) {
+			// User clicked on the "clone" lookupbox button on the flow control input
+			m_opbm.lookupboxCloneCommand((PanelRightLookupbox)source);
+
 		} else if (command.equals("lookupbox_move_up")) {
-			// User clicked on the "Up" listbox button
+			// User clicked on the "Up" lookupbox button
 			m_opbm.lookupboxCommand("up", (PanelRightLookupbox)source);
 
 		} else if (command.equals("lookupbox_move_down")) {
-			// User clicked on the "Down" listbox button
+			// User clicked on the "Down" lookupbox button
 			m_opbm.lookupboxCommand("down", (PanelRightLookupbox)source);
 
 		} else if (command.equals("lookupbox_zoom")) {
-			// User clicked on the "zoom" listbox button
+			// User clicked on the "zoom" lookupbox button
 			// p1 = name of edit to use for display
 			// p2 = reference in "zoom" field in edit to only show those fields which contain that portion
 			// p3 = override for data source (if present)

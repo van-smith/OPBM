@@ -1488,6 +1488,12 @@ public final class Opbm extends	ModalApp
 			m_editActive.lookupboxAddCommand(source, whereTo, after, whereFrom);
 	}
 
+	public void lookupboxCloneCommand(PanelRightLookupbox source)
+	{
+		if (m_editActive != null)
+			m_editActive.lookupboxCloneCommand(source);
+	}
+
 	public void lookupboxCommand(String					command,
 								 PanelRightLookupbox	source)
 	{
@@ -1510,6 +1516,40 @@ public final class Opbm extends	ModalApp
 			return(m_editActive.getLookupboxSelectedItemByObject(source));
 		else
 			return(null);
+	}
+
+	/**
+	 * Called after a zoom window is created to input some custom data.  Saves
+	 * the input.
+	 * @param uuid uuid from when the zoom window was created
+	 */
+	public void saveCustom(String uuid)
+	{
+		Tuple t;
+
+		t = findTuple(uuid);
+		if (t != null)
+		{	// If this is a custom command, call it
+			if (m_editActive != null)
+				m_editActive.saveCustomInputCommand(t);
+		}
+	}
+
+	/**
+	 * Called after a zoom window is created to input some custom data.  Cancels
+	 * the input.
+	 * @param uuid uuid from when the zoom window was created
+	 */
+	public void cancelCustom(String uuid)
+	{
+		Tuple t;
+
+		t = findTuple(uuid);
+		if (t != null)
+		{	// If this is a custom command, call it
+			if (m_editActive != null)
+				m_editActive.cancelCustomInputCommand(t);
+		}
 	}
 
 	/**
@@ -2755,6 +2795,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.29 02:26pm";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.29 08:09am";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

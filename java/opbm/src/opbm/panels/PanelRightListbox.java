@@ -677,7 +677,7 @@ public class PanelRightListbox
 					m_listBoxAdd.addMouseListener(this);
 					m_parentPanel.add(m_listBoxAdd);
 				}
-				buttonWidth += 35;
+				buttonWidth += 30;
 				++count;
 			}
 
@@ -696,7 +696,7 @@ public class PanelRightListbox
 					m_listBoxDelete.addMouseListener(this);
 					m_parentPanel.add(m_listBoxDelete);
 				}
-				buttonWidth += 35;
+				buttonWidth += 30;
 				++count;
 			}
 
@@ -715,7 +715,7 @@ public class PanelRightListbox
 					m_listBoxClone.addMouseListener(this);
 					m_parentPanel.add(m_listBoxClone);
 				}
-				buttonWidth += 65;
+				buttonWidth += 55;
 				++count;
 			}
 
@@ -734,7 +734,7 @@ public class PanelRightListbox
 					m_listBoxUp.addMouseListener(this);
 					m_parentPanel.add(m_listBoxUp);
 				}
-				buttonWidth += 45;
+				buttonWidth += 40;
 				++count;
 			}
 
@@ -753,7 +753,7 @@ public class PanelRightListbox
 					m_listBoxDown.addMouseListener(this);
 					m_parentPanel.add(m_listBoxDown);
 				}
-				buttonWidth += 45;
+				buttonWidth += 40;
 				++count;
 			}
 
@@ -763,7 +763,7 @@ public class PanelRightListbox
 			left		= m_x + ((width - buttonWidth) / 2);
 			top			= m_y + m_height - 25;
 			if (add) {
-				d = new Dimension(35,25);
+				d = new Dimension(30,25);
 				m_listBoxAdd.setLocation(left, top);
 				m_listBoxAdd.setMinimumSize(d);
 				m_listBoxAdd.setMaximumSize(d);
@@ -773,7 +773,7 @@ public class PanelRightListbox
 			}
 
 			if (delete) {
-				d = new Dimension(35,25);
+				d = new Dimension(30,25);
 				m_listBoxDelete.setLocation(left, top);
 				m_listBoxDelete.setMinimumSize(d);
 				m_listBoxDelete.setMaximumSize(d);
@@ -783,7 +783,7 @@ public class PanelRightListbox
 			}
 
 			if (clone) {
-				d = new Dimension(65,25);
+				d = new Dimension(55,25);
 				m_listBoxClone.setLocation(left, top);
 				m_listBoxClone.setMinimumSize(d);
 				m_listBoxClone.setMaximumSize(d);
@@ -793,7 +793,7 @@ public class PanelRightListbox
 			}
 
 			if (up) {
-				d = new Dimension(45,25);
+				d = new Dimension(40,25);
 				m_listBoxUp.setLocation(left, top);
 				m_listBoxUp.setMinimumSize(d);
 				m_listBoxUp.setMaximumSize(d);
@@ -803,7 +803,7 @@ public class PanelRightListbox
 			}
 
 			if (down) {
-				d = new Dimension(45,25);
+				d = new Dimension(40,25);
 				m_listBoxDown.setLocation(left, top);
 				m_listBoxDown.setMinimumSize(d);
 				m_listBoxDown.setMaximumSize(d);
@@ -946,20 +946,17 @@ public class PanelRightListbox
 			if (prlr != null)
 				m_listBox.setCellRenderer(prlr);
 			m_listBox.setVisible(true);
-
 			m_listBoxScroller.setSize(m_width, m_height);
 			m_listBoxScroller.setLocation(m_x, m_y);
 			m_listBoxScroller.setVisible(true);
-
 			m_listBox.addListSelectionListener(this);
 			m_listBox.addMouseListener(this);
 			m_listBox.addKeyListener(this);
 			m_parentPanel.add(m_listBoxScroller);
 		}
+		m_listBox.setListData(m_xmlListboxMaster.toArray());
 		if (m_xmlListboxMaster != null)
 		{
-			m_listBox.setListData(m_xmlListboxMaster.toArray());
-
 			if (saveIndex != -1)
 				m_listBox.setSelectedIndex(saveIndex);
 			else
@@ -1063,6 +1060,19 @@ public class PanelRightListbox
 	}
 
 	/**
+	 * Specifies the relative path to the root node of the xml file to access
+	 * the template data element for the <code>_TYPE_LISTBOX</code> control.
+	 *
+	 * @param template dot source, as in <code>opbm.scriptdata.templates.flow</code>
+	 * @param relativeTo ignored
+	 */
+	public void setTemplate(String	template,
+							String	relativeTo)
+	{
+		m_listBoxTemplate = template;
+	}
+
+	/**
 	 * Assigns the name defined in edits.xml to the control
 	 * @param name
 	 */
@@ -1105,6 +1115,24 @@ public class PanelRightListbox
 			return(m_xmlListboxMaster.get(m_lastIndex));
 		}
 		return(null);
+	}
+
+	/**
+	 * Returns the source for this listbox, as in opbm.scriptdata.flows.flow
+	 * @return source to access data in scripts.xml
+	 */
+	public String getListboxSource()
+	{
+		return(m_listBoxSource);
+	}
+
+	/**
+	 * Returns the template source for this listbox, as in opbm.scriptdata.templates.flow
+	 * @return source to access template pattern data in scripts.xml
+	 */
+	public String getListboxTemplate()
+	{
+		return(m_listBoxTemplate);
 	}
 
 	/**
@@ -1289,9 +1317,12 @@ public class PanelRightListbox
 		}
 	}
 
-	public void listBoxAddCommand() {
+	public void listBoxAddCommand()
+	{
 		Xml xmlEntry;
-		try {
+
+		try
+		{
 			m_parentPR.saveChanges(m_xmlListboxMaster.get(m_lastIndex));
 
 			// Do the add
@@ -1307,8 +1338,10 @@ public class PanelRightListbox
 		}
 	}
 
-	public void listBoxDeleteCommand() {
-		try {
+	public void listBoxDeleteCommand()
+	{
+		try
+		{
 			m_parentPR.listBoxDelete(m_xmlListboxMaster.get(m_lastIndex));
 			m_xmlListboxMaster.remove(m_lastIndex);
 			updateListBoxArray();
@@ -1321,9 +1354,12 @@ public class PanelRightListbox
 		}
 	}
 
-	public void listBoxCloneCommand() {
+	public void listBoxCloneCommand()
+	{
 		Xml xmlEntry;
-		try {
+
+		try
+		{
 			m_parentPR.saveChanges(m_xmlListboxMaster.get(m_lastIndex));
 
 			// Do the clone
@@ -1460,8 +1496,6 @@ public class PanelRightListbox
 													   m_dblClickP8,
 													   m_dblClickP9,
 													   m_dblClickP10);
-					} else {
-						System.out.println("Recorded " + Long.toString(now - m_lastMillisecond) + " milliseconds between clicks, needs to be 400 or less (0.4 seconds)");
 					}
 				}
 				m_lastItem			= nowItem;
@@ -1626,6 +1660,7 @@ public class PanelRightListbox
 	private JButton			m_listBoxUp;			// Up button for lookupboxes
 	private JButton			m_listBoxDown;			// Down button for lookupboxes
 	private String			m_listBoxSource;		// Location to access nodes within the xml file
+	private String			m_listBoxTemplate;		// Location to access template nodes within the xml file
 	private String			m_listBoxName;			// Name given to this control in editx.xml
 	private String			m_listBoxFileName;		// Source filename of this control's xml file (file being edited)
 	private String			m_listBoxLocation;		// The location within the specified fileName (XML file) where the data is found

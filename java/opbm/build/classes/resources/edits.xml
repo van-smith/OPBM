@@ -37,8 +37,8 @@
 		</rawedit>
 	</rawedits>
 
-<!-- edits define what data is displayed or input for on-screen GUI "forms" -->
 	<edits>
+
 		<edit name="flows">
 			<precommand p1="Edit Flows">leftpanel</precommand>
 			<listbox zoom="main">
@@ -50,12 +50,17 @@
 				<source>opbm.scriptdata.flows.flow</source>
 				<foreach>flow</foreach>
 				<listby p1="#name"/>
+				<newRecordPattern>
+					<flow name="New Flow">
+						<variables>(leftbrace)(colon)example, Description of variable input field(colon)(rightbrace)</variables>
+					</flow>
+				</newRecordPattern>
 			</listbox>
 			<label zoom="main" text="Flow Control Directive Name:"/>
-			<textbox zoom="main" width="200" field="#name"/>
+			<textbox readonly="yes" zoom="main" width="200" field="#name"/>
 			<vspacer zoom="main" height="10"/>
 			<label zoom="main" text="Variable Prompts:"/>
-			<editbox zoom="main" field="variables"/>
+			<editbox readonly="yes" zoom="main" field="variables"/>
 		</edit>
 
 		<edit name="abstracts">
@@ -69,15 +74,22 @@
 				<source>opbm.scriptdata.abstracts.abstract</source>
 				<foreach>abstract</foreach>
 				<listby p1="#name"/>
+				<newRecordPattern>
+					<abstract name="New Abstract">
+						<logical>name</logical>
+						<real>(leftbrace)(colon)name, Description of the name entry(colon)(rightbrace)</real>
+						<variables>(leftbrace)(colon)field1, Description of variable input field(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace)</variables>
+					</abstract>
+				</newRecordPattern>
 			</listbox>
 			<label zoom="main" text="Abstraction Name / Description:"/>
-			<textbox zoom="main" field="#name"/>
+			<textbox readonly="yes" zoom="main" field="#name"/>
 			<vspacer zoom="main" height="10"/>
 			<label zoom="main" text="OPBM Command:"/>
-			<textbox zoom="main" width="350" field="logical"/>
+			<textbox readonly="yes" zoom="main" width="350" field="logical"/>
 			<vspacer zoom="main" height="10"/>
 			<label zoom="main" text="OPBM Variable Fields:"/>
-			<editbox zoom="main" height="max" field="real"/>
+			<editbox readonly="yes" zoom="main" height="max" field="real"/>
 		</edit>
 
 		<edit name="atoms">
@@ -86,11 +98,13 @@
 			<textbox width="250" field="#name"/>
 			<label width="250" text="Atom Listing:"/>
 			<listbox name="atom">
-				<add>listbox_add</add>
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
+				<up>listbox_move_up</up>
+				<down>listbox_move_down</down>
 				<onselect p1="elements">lookupbox_update</onselect>
 				<source>opbm.scriptdata.atoms.atom</source>
+				<template>opbm.scriptdata.templates.atom</template>
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
 			</listbox>
@@ -99,9 +113,10 @@
 			<label width="250" text="Sequence of Operations:"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
-				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
+				<clone>lookupbox_clone</clone>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
+				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<source relativeto="atom">[flow,abstract]</source>
 				<foreach>[flow,abstract]</foreach>
 				<relativeedits p1="flow=flows" p2="abstract=abstracts"/>
@@ -133,24 +148,29 @@
 			<precommand p1="Edit Molecules">leftpanel</precommand>
 			<label text="Molecule Name/Description:"/>
 			<textbox width="250" field="#name"/>
-			<label text="Molecules:"/>
+			<label text="Molecules:" width="250"/>
 			<listbox name="molecule">
-				<add>listbox_add</add>
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
+				<up>listbox_move_up</up>
+				<down>listbox_move_down</down>
 				<onselect p1="elements">lookupbox_update</onselect>
 				<source>opbm.scriptdata.molecules.molecule</source>
+				<template>opbm.scriptdata.templates.molecule</template>
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
 			</listbox>
 			<label text="Sequence Name/Description:"/>
 			<textbox width="250" field="elements.#name"/>
-			<label text="Sequence of Operations:"/>
+			<label text="Sequence of Operations:" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
+				<clone>lookupbox_clone</clone>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
 				<source relativeto="molecule">[flow,abstract,atom]</source>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts" p3="atom=atoms"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract" p3="atom=opbm.scripdata.atoms.atom"/>
 				<foreach>[flow,abstract,atom]</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
@@ -181,37 +201,43 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
+			<options relativeto="elements"/>
 		</edit>
 
 		<edit name="scenarios">
 			<precommand p1="Edit Scenarios">leftpanel</precommand>
 			<label text="Scenario Name/Description:"/>
 			<textbox width="250" field="#name"/>
-			<label text="Scenarios:"/>
+			<label text="Scenarios:" width="250"/>
 			<listbox name="scenario">
-				<add>listbox_add</add>
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
+				<up>listbox_move_up</up>
+				<down>listbox_move_down</down>
 				<onselect p1="elements">lookupbox_update</onselect>
 				<source>opbm.scriptdata.scenarios.scenario</source>
+				<template>opbm.scriptdata.templates.scenario</template>
 				<foreach>scenario</foreach>
 				<listby p1="#name"/>
 			</listbox>
 			<label text="Operation Name/Description:"/>
 			<textbox width="250" field="elements.#name"/>
-			<label text="Sequence of Operations:"/>
+			<label text="Sequence of Operations:" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
+				<clone>lookupbox_clone</clone>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
 				<source relativeto="scenario">[flow,abstract,atom,molecule]</source>
 				<foreach>[flow,abstract,atom,molecule]</foreach>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts" p3="atom=atoms" p4="molecule=molecules"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract" p3="atom=opbm.scripdata.atoms.atom" p4="molecule=opbm.scriptdata.molecules.molecule"/>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
 			<label text="Flow Control:"/>
 			<lookupbox name="flows" autoupdate="no">
-				<add p1="elements" p2="flows">lookupbox_add</add>
+				<add p1="scenario" p2="elements" p3="flows">lookupbox_add</add>
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.flows.flow</source>
 				<foreach>flow</foreach>
@@ -219,7 +245,7 @@
 			</lookupbox>
 			<label text="Command Abstracts:"/>
 			<lookupbox name="abstracts" autoupdate="no">
-				<add p1="elements" p2="abstracts">lookupbox_add</add>
+				<add p1="scenario" p2="elements" p3="abstracts">lookupbox_add</add>
 				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.abstracts.abstract</source>
 				<foreach>abstract</foreach>
@@ -228,7 +254,7 @@
 			<newcolumn/>
 			<label text="Atoms:"/>
 			<lookupbox name="atoms" autoupdate="no">
-				<add p1="elements" p2="atoms">lookupbox_add</add>
+				<add p1="scenario" p2="elements" p3="atoms">lookupbox_add</add>
 				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.atoms.atom</source>
 				<foreach>atom</foreach>
@@ -236,44 +262,50 @@
 			</lookupbox>
 			<label text="Molecules:"/>
 			<lookupbox name="molecules" autoupdate="no">
-				<add p1="elements" p2="molecules">lookupbox_add</add>
+				<add p1="scenario" p2="elements" p3="molecules">lookupbox_add</add>
 				<zoom p1="molecules" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.molecules.molecule</source>
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
+			<options relativeto="elements"/>
 		</edit>
 
 		<edit name="suites">
 			<precommand p1="Edit Suites">leftpanel</precommand>
 			<label text="Suite Name/Description:"/>
 			<textbox width="250" field="#name"/>
-			<label text="Suites:"/>
+			<label text="Suites:" width="250"/>
 			<listbox name="suite">
-				<add>listbox_add</add>
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
+				<up>listbox_move_up</up>
+				<down>listbox_move_down</down>
 				<onselect p1="elements">lookupbox_update</onselect>
 				<source>opbm.scriptdata.suites.suite</source>
+				<template>opbm.scriptdata.templates.suite</template>
 				<foreach>suite</foreach>
 				<listby p1="#name"/>
 			</listbox>
 			<label text="Operation Name/Description:"/>
 			<textbox width="250" field="elements.#name"/>
-			<label text="Sequence of Operations:"/>
+			<label text="Sequence of Operations:" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
+				<clone>lookupbox_clone</clone>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
 				<source relativeto="suite">[flow,abstract,atom,molecule,scenario]</source>
 				<foreach>[flow,abstract,atom,molecule,scenario]</foreach>
+				<relativeedits p1="flow=flows" p2="abstract=abstracts" p3="atom=atoms" p4="molecule=molecules" p5="scenario=scenarios"/>
+				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract" p3="atom=opbm.scripdata.atoms.atom" p4="molecule=opbm.scriptdata.molecules.molecule" p5="scenario=opbm.scriptdata.scenarios.scenario"/>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
 			<label text="Flow Control:"/>
 			<lookupbox name="flows" autoupdate="no">
-				<add p1="elements" p2="flows">lookupbox_add</add>
+				<add p1="suite" p2="elements" p3="flows">lookupbox_add</add>
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.flows.flow</source>
 				<foreach>flow</foreach>
@@ -281,7 +313,7 @@
 			</lookupbox>
 			<label text="Command Abstracts:"/>
 			<lookupbox name="abstracts" autoupdate="no">
-				<add p1="elements" p2="abstracts">lookupbox_add</add>
+				<add p1="suite" p2="elements" p3="abstracts">lookupbox_add</add>
 				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.abstracts.abstract</source>
 				<foreach>abstract</foreach>
@@ -290,7 +322,7 @@
 			<newcolumn/>
 			<label text="Atoms:"/>
 			<lookupbox name="atoms" autoupdate="no">
-				<add p1="elements" p2="atoms">lookupbox_add</add>
+				<add p1="suite" p2="elements" p3="atoms">lookupbox_add</add>
 				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.atoms.atom</source>
 				<foreach>atom</foreach>
@@ -298,7 +330,7 @@
 			</lookupbox>
 			<label text="Molecules:"/>
 			<lookupbox name="molecules" autoupdate="no">
-				<add p1="elements" p2="molecules">lookupbox_add</add>
+				<add p1="suite" p2="elements" p3="molecules">lookupbox_add</add>
 				<zoom p1="molecules" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.molecules.molecule</source>
 				<foreach>molecule</foreach>
@@ -306,13 +338,14 @@
 			</lookupbox>
 			<label text="Scenarios:"/>
 			<lookupbox name="scenarios" autoupdate="no">
-				<add p1="elements" p2="scenarios">lookupbox_add</add>
+				<add p1="suite" p2="elements" p3="scenarios">lookupbox_add</add>
 				<zoom p1="scenarios" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.scenarios.scenario</source>
 				<foreach>scenario</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
+			<options relativeto="elements"/>
 		</edit>
 
 		<edit name="keywords">

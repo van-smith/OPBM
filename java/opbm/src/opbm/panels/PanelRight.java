@@ -39,11 +39,13 @@ import opbm.common.Commands;
 import opbm.common.Macros;
 import opbm.Opbm;
 import opbm.common.Xml;
+import opbm.dialogs.OpbmDialog;
 
 /**
  * Handles the creation and display of right-side edit panel objects.
  */
-public class PanelRight {
+public class PanelRight
+{
 	/** Constructor creates <code>ArrayList</code> objects for items.
 	 * Creates new <code>JPanel</code> object, and adds it to the parent
 	 * <code>JFrame</code>.
@@ -282,6 +284,14 @@ public class PanelRight {
 			m_items.get(i).lookupboxAddCommand(source, whereTo, after, whereFrom);
 	}
 
+	public void lookupboxCloneCommand(PanelRightLookupbox source)
+	{
+		int i;
+
+		for (i = 0; i < m_items.size(); i++)
+			m_items.get(i).lookupboxCloneCommand(source);
+	}
+
 	public void lookupboxCommand(String					command,
 								 PanelRightLookupbox	source)
 	{
@@ -342,7 +352,8 @@ public class PanelRight {
 	/**
 	 * Called to update the contents of the listbox of any child properties (if any)
 	 */
-	public void updateListBox() {
+	public void updateListBox()
+	{
 		int i;
 
 		for (i = 0; i < m_items.size(); i++) {
@@ -877,6 +888,47 @@ public class PanelRight {
 	}
 
 	/**
+	 * Searches through <code>PanelRight</code>'s items to see if the specified
+	 * <code>_TYPE_LISTBOX</code> or <code>_TYPE_LOOKUPBOX</code> is identified
+	 * by name, and if so, then returns its currently selected node's parent, or
+	 * if there is no node, then the parent level of where the node should be.
+	 * @param name control name to find
+	 * @return <code>Xml</code> for the selected item's parent in the listbox
+	 * or lookupbox, or the parent node of where it should be
+	 */
+	public String getListboxOrLookupboxSource(String name)
+	{
+		int i;
+		String x = "";
+
+		for (i = 0; x.isEmpty() && i < m_items.size(); i++)
+		{
+			if (m_items.get(i).getName().equalsIgnoreCase(name)) {
+				// This control matches the named control
+				x = m_items.get(i).getListboxOrLookupboxSource();
+				break;
+			}
+		}
+		return(x);
+	}
+
+	public String getListboxTemplate(String name)
+	{
+		int i;
+		String x = "";
+
+		for (i = 0; x.isEmpty() && i < m_items.size(); i++)
+		{
+			if (m_items.get(i).getName().equalsIgnoreCase(name)) {
+				// This control matches the named control
+				x = m_items.get(i).getListboxTemplate();
+				break;
+			}
+		}
+		return(x);
+	}
+
+	/**
 	 * Called when a left-click is made on a Listbox's add button, to add
 	 * a new node BEFORE the specified one
 	 *
@@ -950,27 +1002,94 @@ public class PanelRight {
 									String		whereFrom)
 	{
 		List<Xml>customInputs = new ArrayList<Xml>(0);
-		Xml xmlTo, xmlAfter, xmlFrom, xmlNew;
+		Xml xmlTo, xmlAfter, xmlFrom, xmlNew, xmlParent, xmlTemplate, xmlLevel1, xmlLevel2, xmlDelete;
+		String source, sourceParent, sourceTemplate;
 		Tuple saveObjectList;
 
 		// Grab the references
 		xmlTo		= getListboxOrLookupboxNodeByName(whereTo);
 		xmlAfter	= getListboxOrLookupboxNodeByName(after);
 		xmlFrom		= getListboxOrLookupboxNodeByName(whereFrom);
+		xmlDelete	= null;
+		xmlParent	= null;
 
-		if (Utils.areAnyNull(xmlTo, xmlAfter, xmlFrom)) {
-			m_statusBar.setText("Unable to add. Please select an entry in " + whereTo + ", " + after + " and " + whereFrom);
+		if (xmlFrom == null)
+		{	// They haven't selected a from source, so it cannot work
+			m_statusBar.setText("Unable to add. Please select entries in 1:" + whereTo + ", 2:" + after + ", 3:" + whereFrom + ", and then try again.");
 			return;
+		}
+
+		// There must be data in existence to add to, if it's not there, we have to add the new/template records first
+		if (xmlTo == null || xmlAfter == null)
+		{	// There is no source record, which means this is the first record they're attempting to add to the primary listbox/lookupbox area
+			// So, we must append its default structure from the templates area, and add to it (the new record)
+			// This is a firstLevel add from the template for what we're doing
+			source			= getListboxOrLookupboxSource(whereTo);
+			sourceParent	= Xml.getParentLocationFromSourceLocation(source);
+			xmlParent		= Xml.getAttributeOrChildNode(m_opbm.getScriptsXml(), Xml.skipFirstLevelInSource(sourceParent));
+			if (xmlParent == null)
+			{	// Unable to locate the specified level in the source file.
+				// This is a pretty major error, but most likely just an improperly setup scripts.xml file.
+				// We need to tell the user to manually correct the error.
+				OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing data tags. It must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+				return;
+			}
+			// If we get here, we have the parent.  We need to lookup the template for this source.
+			sourceTemplate	= getListboxTemplate(whereTo);
+			xmlTemplate		= Xml.getAttributeOrChildNode(m_opbm.getScriptsXml(), Xml.skipFirstLevelInSource(sourceTemplate));
+			if (xmlTemplate == null)
+			{	// Unable to locate the specified template in the source file.
+				// This is a pretty major error, but most likely just an improperly setup scripts.xml file.
+				// We need to tell the user to manually correct the error.
+				OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing template data tags. It must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+				return;
+			}
+			// If we get here, we have setup our variables for the impending add
+
+			// See if it's the listbox entry, or one of its children
+			if (xmlTo == null)
+			{	// If we get here, we have our parent, we have our template, make sure it has a level1 node
+				xmlLevel1 = xmlTemplate.getChildNode("level1");
+				if (xmlLevel1 == null || xmlLevel1.getFirstChild() == null)
+				{	// If we get here, we don't have our opbm.scriptdata.templates.whatever.level1 tag
+					OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing template level1 data tags. Must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+					return;
+				}
+				// If we get here, we have our template
+				// Copy it to the parent node
+				xmlTo = xmlLevel1.getFirstChild().cloneNode(true);
+			}
+
+			// See if it's the lookupbox entry (one of the listbox entry's children)
+			if (xmlAfter == null)
+			{	// If we get here, we have our parent, we have our template, make sure it has a level2 node
+				xmlLevel2 = xmlTemplate.getChildNode("level2");
+				if (xmlLevel2 == null || xmlLevel2.getFirstChild() == null)
+				{	// If we get here, we don't have our opbm.scriptdata.templates.whatever.level2 tag
+					OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing template level2 data tags. Must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+					return;
+				}
+				// If we get here, we have our template
+				// Copy it to the parent node
+				xmlAfter		= xmlTo.addChild(xmlLevel2.getFirstChild().cloneNode(true));
+				// This item was added as a placeholder, and should be deleted when the save is completed
+				xmlDelete		= xmlAfter;
+			}
+
+			// When we get here, we've added our entries
+			// We have valid xmlTo and xmlAfter populated with the new template entries
 		}
 
 		// If we get here, we have our data
 		// Build the edit to see if there are any custom edit variables to populate ahead of time
 		saveObjectList = new Tuple(m_opbm);
 		saveObjectList.add("xmlTo",		xmlTo);
-		saveObjectList.add("xmlAfter",		xmlAfter);
-		saveObjectList.add("xmlFrom",		xmlFrom);
-		saveObjectList.add("addName",		addName);
-		saveObjectList.add("whereTo",		whereTo);
+		saveObjectList.add("xmlAfter",	xmlAfter);
+		saveObjectList.add("xmlFrom",	xmlFrom);
+		saveObjectList.add("xmlDelete",	xmlDelete);
+		saveObjectList.add("xmlParent",	xmlParent);
+		saveObjectList.add("addName",	addName);
+		saveObjectList.add("whereTo",	whereTo);
 		saveObjectList.add("after",		after);
 		saveObjectList.add("whereFrom",	whereFrom);
 		PanelFactory.buildCustomInputsFromEdit(m_opbm, customInputs, whereFrom, xmlFrom, m_macroMaster, saveObjectList.getUUID());
@@ -980,7 +1099,7 @@ public class PanelRight {
 			// Create the edit
 			JFrame fr = m_opbm.createZoomWindow(this, "Populate " + Utils.toProper(whereTo) + ", after " + Utils.toProper(after) + ", from " + Utils.toProper(whereFrom) + ":" + Utils.toProper(xmlFrom.getName()));
 			PanelRight	pr = PanelFactory.createRightPanelFromXmlCustomInputsArray(customInputs, m_opbm, m_macroMaster, m_commandMaster, m_panel, fr);
-			saveObjectList.add("frame",		fr);
+			saveObjectList.add("frame",			fr);
 			saveObjectList.add("PanelRight",	pr);
 
 			// Position and display the content pane
@@ -1014,26 +1133,28 @@ public class PanelRight {
 
 	/**
 	 * Saves the custom input data after the user clicks the save button.
-	 * @param tup
+	 * @param t
 	 */
-	public void saveCustomInputCommand(Tuple tup)
+	public void saveCustomInputCommand(Tuple t)
 	{
-		int i;
+		if (t != null)
+		{	// Retrieve variables from the tuple
+			Xml			xmlTo		= (Xml)t.getSecond("xmlTo");
+			Xml			xmlAfter	= (Xml)t.getSecond("xmlAfter");
+			Xml			xmlFrom		= (Xml)t.getSecond("xmlFrom");
+			Xml			xmlDelete	= (Xml)t.getSecond("xmlDelete");
+			Xml			xmlParent	= (Xml)t.getSecond("xmlParent");
+			String		addName		= (String)t.getSecond("addName");
+			String		whereTo		= (String)t.getSecond("whereTo");
+			String		after		= (String)t.getSecond("after");
+			String		whereFrom	= (String)t.getSecond("whereFrom");
+			JFrame		fr			= (JFrame)t.getSecond("frame");
+			PanelRight	pr			= (PanelRight)t.getSecond("PanelRight");
 
-		// Retrieve variables from the tuple
-		Xml			xmlTo		= (Xml)tup.getSecond("xmlTo");
-		Xml			xmlAfter	= (Xml)tup.getSecond("xmlAfter");
-		Xml			xmlFrom		= (Xml)tup.getSecond("xmlFrom");
-		String		addName		= (String)tup.getSecond("addName");
-		String		whereTo		= (String)tup.getSecond("whereTo");
-		String		after		= (String)tup.getSecond("after");
-		String		whereFrom	= (String)tup.getSecond("whereFrom");
-		JFrame		fr			= (JFrame)tup.getSecond("frame");
-		PanelRight	pr			= (PanelRight)tup.getSecond("PanelRight");
-
-		// Call the associated PanelRight to write its contents
-		if (pr != null)
-			pr.saveCustomInputCommand(fr, whereTo, after, addName, whereFrom, xmlTo, xmlAfter, xmlFrom);
+			// Call the associated PanelRight to write its contents
+			if (pr != null)
+				pr.saveCustomInputCommand(fr, whereTo, after, addName, whereFrom, xmlTo, xmlAfter, xmlFrom, xmlDelete, xmlParent);
+		}
 	}
 
 	public void saveCustomInputCommand(JFrame		fr,
@@ -1043,12 +1164,20 @@ public class PanelRight {
 									   String		whereFrom,
 									   Xml			xmlTo,
 									   Xml			xmlAfter,
-									   Xml			xmlFrom)
+									   Xml			xmlFrom,
+									   Xml			xmlDelete,
+									   Xml			xmlParent)
 	{
 		int i;
 		Xml options, xmlNew, xmlAdd;
 		// Build the Xml containing every field in this list
 		// Store it at the specified location
+
+		// If there wasn't a parent record to begin with, we need to add one now
+		if (xmlParent != null)
+		{	// Adds the new xmlTo record to its parent location
+			xmlParent.addChild(xmlTo);
+		}
 
 		// Create the entry
 		xmlNew = new Xml(xmlFrom.getName());
@@ -1068,11 +1197,33 @@ public class PanelRight {
 		// Append to the listing
 		xmlAfter.insertNodeAfter(xmlNew);
 		// When we get here, the entry has been added
+		// See if there's a node targeted for post-save deletion (deletes a temporary placeholder position)
+		if (xmlDelete != null)
+		{	// There is, delete it
+			xmlDelete.deleteNode(false);
+		}
 
 		// Update the Lookupbox (which now has one more addition)
 		m_opbm.updateEditListboxesAndLookupboxes();
 		// Note:  This function is not called locally, because the active
 		//        edit may not be this instance of PanelRight.
+
+		// Close the frame
+		fr.dispose();
+	}
+
+	/**
+	 * Cancels the custom input data after the user clicks the cancel button.
+	 * @param t
+	 */
+	public void cancelCustomInputCommand(Tuple t)
+	{
+		if (t != null)
+		{	// Retrieve variables from the tuple
+			JFrame		fr			= (JFrame)t.getSecond("frame");
+			PanelRight	pr			= (PanelRight)t.getSecond("PanelRight");
+			fr.dispose();
+		}
 	}
 
 	/**
@@ -1095,7 +1246,6 @@ public class PanelRight {
 	 */
 	public void lookupboxSubtractClicked(Xml actionSource)
 	{
-// REMEMBER, we need to make sure there is at least one item
 		actionSource.deleteNode(false);
 		updateEditListboxesAndLookupboxes();
 	}

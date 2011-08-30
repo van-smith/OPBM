@@ -43,7 +43,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -204,6 +203,27 @@ public class PanelRightLookupbox
 		m_onSelectP8			= "";
 		m_onSelectP9			= "";
 		m_onSelectP10			= "";
+
+		m_lookupboxOptions1		= "";
+		m_lookupboxOptions2		= "";
+		m_lookupboxOptions3		= "";
+		m_lookupboxOptions4		= "";
+		m_lookupboxOptions5		= "";
+		m_lookupboxOptions6		= "";
+		m_lookupboxOptions7		= "";
+		m_lookupboxOptions8		= "";
+		m_lookupboxOptions9		= "";
+		m_lookupboxOptions10	= "";
+		m_lookupboxOptions11	= "";
+		m_lookupboxOptions12	= "";
+		m_lookupboxOptions13	= "";
+		m_lookupboxOptions14	= "";
+		m_lookupboxOptions15	= "";
+		m_lookupboxOptions16	= "";
+		m_lookupboxOptions17	= "";
+		m_lookupboxOptions18	= "";
+		m_lookupboxOptions19	= "";
+		m_lookupboxOptions20	= "";
 	}
 
 	/**
@@ -213,13 +233,14 @@ public class PanelRightLookupbox
 	 */
 	public void updateLookupBox()
 	{
-		boolean add, subtract, zoom, up, down;
+		boolean add, subtract, clone, zoom, up, down;
 		int buttonWidth = 0;
 		int count = 0;
 		int width, left, top;
 		Insets inset;
 		boolean destroyAdd		= true;
 		boolean destroySubtract	= true;
+		boolean destroyClone	= true;
 		boolean destroyZoom		= true;
 		boolean destroyUp		= true;
 		boolean destroyDown		= true;
@@ -233,6 +254,7 @@ public class PanelRightLookupbox
 
 		add			= m_lookupboxButtons.contains("+");
 		subtract	= m_lookupboxButtons.contains("-");
+		clone		= m_lookupboxButtons.toLowerCase().contains("c");
 		zoom		= m_lookupboxButtons.toLowerCase().contains("z");
 		up			= m_lookupboxButtons.toLowerCase().contains("u");
 		down		= m_lookupboxButtons.toLowerCase().contains("d");
@@ -252,12 +274,12 @@ public class PanelRightLookupbox
 					m_lookupboxAdd.setMargin(inset);
 					m_parentPanel.add(m_lookupboxAdd);
 				}
-				buttonWidth += 35;
+				buttonWidth += 30;
 				++count;
 			}
 
 			if (subtract) {
-				// The delte button exists
+				// The delete button exists
 				destroySubtract = false;
 				if (m_lookupboxSubtract == null) {
 					m_lookupboxSubtract = new JButton("-");
@@ -269,7 +291,24 @@ public class PanelRightLookupbox
 					m_lookupboxSubtract.setMargin(inset);
 					m_parentPanel.add(m_lookupboxSubtract);
 				}
-				buttonWidth += 35;
+				buttonWidth += 30;
+				++count;
+			}
+
+			if (clone) {
+				// The clone button exists
+				destroyClone = false;
+				if (m_lookupboxClone == null) {
+					m_lookupboxClone = new JButton("Clone");
+					m_lookupboxClone.setFont(f);
+					m_lookupboxClone.addMouseListener(this);
+					inset = m_lookupboxClone.getInsets();
+					inset.left = 3;
+					inset.right = 3;
+					m_lookupboxClone.setMargin(inset);
+					m_parentPanel.add(m_lookupboxClone);
+				}
+				buttonWidth += 55;
 				++count;
 			}
 
@@ -286,7 +325,7 @@ public class PanelRightLookupbox
 					m_lookupboxZoom.setMargin(inset);
 					m_parentPanel.add(m_lookupboxZoom);
 				}
-				buttonWidth += 60;
+				buttonWidth += 55;
 				++count;
 			}
 
@@ -303,7 +342,7 @@ public class PanelRightLookupbox
 					m_lookupboxUp.setMargin(inset);
 					m_parentPanel.add(m_lookupboxUp);
 				}
-				buttonWidth += 45;
+				buttonWidth += 40;
 				++count;
 			}
 
@@ -320,7 +359,7 @@ public class PanelRightLookupbox
 					m_lookupboxDown.setMargin(inset);
 					m_parentPanel.add(m_lookupboxDown);
 				}
-				buttonWidth += 45;
+				buttonWidth += 40;
 				++count;
 			}
 
@@ -330,7 +369,7 @@ public class PanelRightLookupbox
 			left		= m_x + ((width - buttonWidth) / 2);
 			top			= m_y + m_height - 25;
 			if (add) {
-				d = new Dimension(35,25);
+				d = new Dimension(30,25);
 				m_lookupboxAdd.setLocation(left, top);
 				m_lookupboxAdd.setMinimumSize(d);
 				m_lookupboxAdd.setMaximumSize(d);
@@ -340,7 +379,7 @@ public class PanelRightLookupbox
 			}
 
 			if (subtract) {
-				d = new Dimension(35,25);
+				d = new Dimension(30,25);
 				m_lookupboxSubtract.setLocation(left, top);
 				m_lookupboxSubtract.setMinimumSize(d);
 				m_lookupboxSubtract.setMaximumSize(d);
@@ -349,8 +388,18 @@ public class PanelRightLookupbox
 				left += d.getWidth() + 5;
 			}
 
+			if (clone) {
+				d = new Dimension(55,25);
+				m_lookupboxClone.setLocation(left, top);
+				m_lookupboxClone.setMinimumSize(d);
+				m_lookupboxClone.setMaximumSize(d);
+				m_lookupboxClone.setPreferredSize(d);
+				m_lookupboxClone.setSize(d);
+				left += d.getWidth() + 5;
+			}
+
 			if (zoom) {
-				d = new Dimension(60,25);
+				d = new Dimension(55,25);
 				m_lookupboxZoom.setLocation(left, top);
 				m_lookupboxZoom.setMinimumSize(d);
 				m_lookupboxZoom.setMaximumSize(d);
@@ -360,7 +409,7 @@ public class PanelRightLookupbox
 			}
 
 			if (up) {
-				d = new Dimension(45,25);
+				d = new Dimension(40,25);
 				m_lookupboxUp.setLocation(left, top);
 				m_lookupboxUp.setMinimumSize(d);
 				m_lookupboxUp.setMaximumSize(d);
@@ -370,7 +419,7 @@ public class PanelRightLookupbox
 			}
 
 			if (down) {
-				d = new Dimension(45,25);
+				d = new Dimension(40,25);
 				m_lookupboxDown.setLocation(left, top);
 				m_lookupboxDown.setMinimumSize(d);
 				m_lookupboxDown.setMaximumSize(d);
@@ -399,6 +448,16 @@ public class PanelRightLookupbox
 				m_lookupboxSubtract = null;
 			} else {
 				m_lookupboxSubtract.setVisible(true);
+			}
+		}
+
+		// If the subtract button exists, remove it
+		if (m_lookupboxClone != null) {
+			if (destroyClone) {
+				m_parentPanel.remove(m_lookupboxClone);
+				m_lookupboxClone = null;
+			} else {
+				m_lookupboxClone.setVisible(true);
 			}
 		}
 
@@ -522,6 +581,52 @@ public class PanelRightLookupbox
 			m_lookupboxSubtractCommandP8		= p8;
 			m_lookupboxSubtractCommandP9		= p9;
 			m_lookupboxSubtractCommandP10		= p10;
+		}
+	}
+
+	/**
+	 * Specifies the add button is allowed on the <code>_TYPE_LOOKUPBOX</code>
+	 * control.
+	 *
+	 * @param command command to execute when the add button is clicked
+	 * @param p1 first parameter
+	 * @param p2 second parameter
+	 * @param p3 third parameter
+	 * @param p4 fourth parameter
+	 * @param p5 fifth parameter
+	 * @param p6 sixth parameter
+	 * @param p7 seventh parameter
+	 * @param p8 eighth parameter
+	 * @param p9 ninth parameter
+	 * @param p10 tenth parameter
+	 */
+	public void setCloneButton(String command,
+							   String p1,
+							   String p2,
+							   String p3,
+							   String p4,
+							   String p5,
+							   String p6,
+							   String p7,
+							   String p8,
+							   String p9,
+							   String p10)
+	{
+		// The m_lookupboxButtons string is used to identify which buttons are present, currently can be "+", "-" and "z" for "add, subtract and zoom"
+		if (!command.isEmpty()) {
+			m_lookupboxButtons			= m_lookupboxButtons.toLowerCase().replace("c", " ");
+			m_lookupboxButtons			+= "c";
+			m_lookupboxCloneCommand		= command;
+			m_lookupboxCloneCommandP1	= p1;
+			m_lookupboxCloneCommandP2	= p2;
+			m_lookupboxCloneCommandP3	= p3;
+			m_lookupboxCloneCommandP4	= p4;
+			m_lookupboxCloneCommandP5	= p5;
+			m_lookupboxCloneCommandP6	= p6;
+			m_lookupboxCloneCommandP7	= p7;
+			m_lookupboxCloneCommandP8	= p8;
+			m_lookupboxCloneCommandP9	= p9;
+			m_lookupboxCloneCommandP10	= p10;
 		}
 	}
 
@@ -1074,7 +1179,12 @@ public class PanelRightLookupbox
 
 		}
 
+		// Clear out any list that may already be there
+		if (!m_xmlLookupboxMaster.isEmpty())
+			m_xmlLookupboxMaster.clear();
+
 		// Create the lookup box if it's not already created
+		Xml.getNodeList(m_xmlLookupboxMaster, m_lookupboxXml, m_lookupboxSource, false);
 		if (m_lookupBox == null)
 		{
 			m_lookupBox = new JList();
@@ -1098,20 +1208,9 @@ public class PanelRightLookupbox
 			m_lookupBox.setVisible(true);
 			m_parentPanel.add(m_lookupboxScroller);
 		}
-
+		m_lookupBox.setListData(m_xmlLookupboxMaster.toArray());
 		if (m_xmlLookupboxMaster != null)
 		{
-			// Clear out any list that may already be there
-			if (!m_xmlLookupboxMaster.isEmpty())
-				m_xmlLookupboxMaster.clear();
-
-			// Locate all the nodes within this lookupbox's xml node space
-			if (m_lookupboxXml != null)
-				Xml.getNodeList(m_xmlLookupboxMaster, m_lookupboxXml, m_lookupboxSource, false);
-
-			if (!m_xmlLookupboxMaster.isEmpty())
-				m_lookupBox.setListData(m_xmlLookupboxMaster.toArray());
-
 			if (saveIndex != -1)
 				m_lookupBox.setSelectedIndex(saveIndex);
 			else
@@ -1160,6 +1259,9 @@ public class PanelRightLookupbox
 
 		if (m_lookupboxSubtract != null)
 			m_parentPanel.remove(m_lookupboxSubtract);
+
+		if (m_lookupboxClone != null)
+			m_parentPanel.remove(m_lookupboxClone);
 
 		if (m_lookupboxZoom != null)
 			m_parentPanel.remove(m_lookupboxZoom);
@@ -1243,6 +1345,17 @@ public class PanelRightLookupbox
 			return(m_xmlLookupboxMaster.get(m_lastIndex));
 		else
 			return(null);
+	}
+
+	/**
+	 * Searches through <code>PanelRight</code>'s items to see if the specified
+	 * <code>_TYPE_LOOKUPBOX</code> is identified by name, and if so, then returns
+	 * its currently selected node's source.
+	 * @return source for this lookupbox node
+	 */
+	public String getLookupboxSource()
+	{
+		return(m_lookupboxSource);
 	}
 
 	/**
@@ -1350,6 +1463,8 @@ public class PanelRightLookupbox
 		else if (m_lookupboxOptions20.toLowerCase().startsWith(name))
 			edit = m_lookupboxOptions20.substring(m_lookupboxOptions20.indexOf("="));
 
+		if (edit.isEmpty())
+			return(edit);
 		return(edit.substring(1));
 	}
 
@@ -1569,6 +1684,21 @@ public class PanelRightLookupbox
 										   whereFrom);
 	}
 
+	public void lookupboxCloneCommand(PanelRightLookupbox source)
+	{
+		Xml node;
+
+		if (source == this)
+		{	// We need to clone the current record, exactly as it is
+			node = m_xmlLookupboxMaster.get(m_lastIndex);
+			if (node != null && node.getParent() != null)
+			{	// We can clone this entry
+				node.insertNodeAfter(node.cloneNode(true));
+				m_opbm.updateEditListboxesAndLookupboxes();
+			}
+		}
+	}
+
 	/**
 	 * Called when user clicks the subtract button on a
 	 * <code>_TYPE_LOOKUPBOX</code>
@@ -1661,8 +1791,7 @@ public class PanelRightLookupbox
 
 		// See if there's already a window created / displayed
 		if (m_lookupboxZoomAutoPreviewFR == null)
-		{
-			// Create and populate the window
+		{	// Create and populate the window
 			fr = m_opbm.createZoomWindow(m_parentPR, Xml.getAttributeOrChild(node, "name"));
 			if (m_lookupboxZoomAutoPreview)
 				m_lookupboxZoomAutoPreviewFR = fr;
@@ -1799,8 +1928,6 @@ public class PanelRightLookupbox
 													   m_dblClickP8,
 													   m_dblClickP9,
 													   m_dblClickP10);
-					} else {
-						System.out.println("Recorded " + Long.toString(now - m_lastMillisecond) + " milliseconds between clicks, needs to be 400 or less (0.4 seconds)");
 					}
 				}
 				m_lastMillisecond = now;
@@ -1838,6 +1965,23 @@ public class PanelRightLookupbox
 											   m_lookupboxSubtractCommandP8,
 											   m_lookupboxSubtractCommandP9,
 											   m_lookupboxSubtractCommandP10);
+
+//////////
+// CLONE
+			} else if (e.getSource().equals(m_lookupboxClone)) {
+				// They clicked on the clone button on the specified entry
+				m_commandMaster.processCommand(this,
+											   m_lookupboxCloneCommand,
+											   m_lookupboxCloneCommandP1,
+											   m_lookupboxCloneCommandP2,
+											   m_lookupboxCloneCommandP3,
+											   m_lookupboxCloneCommandP4,
+											   m_lookupboxCloneCommandP5,
+											   m_lookupboxCloneCommandP6,
+											   m_lookupboxCloneCommandP7,
+											   m_lookupboxCloneCommandP8,
+											   m_lookupboxCloneCommandP9,
+											   m_lookupboxCloneCommandP10);
 
 
 //////////
@@ -1961,6 +2105,7 @@ public class PanelRightLookupbox
 	private String			m_lookupboxButtons;				// Contains any combination of "+" "-" and "zoom" as in "+-zoom" or "+zoom-" or "zoom-+", etc.
 	private JButton			m_lookupboxAdd;					// Add button for lookupboxes
 	private JButton			m_lookupboxSubtract;			// Subtract button for lookupboxes
+	private JButton			m_lookupboxClone;				// Clone button for lookupboxes
 	private JButton			m_lookupboxZoom;				// Zoom button for lookupboxes
 	private JButton			m_lookupboxUp;					// Up button for lookupboxes
 	private JButton			m_lookupboxDown;				// Down button for lookupboxes
@@ -2017,6 +2162,18 @@ public class PanelRightLookupbox
 	private String			m_lookupboxAddCommandP8;
 	private String			m_lookupboxAddCommandP9;
 	private String			m_lookupboxAddCommandP10;
+
+	private String			m_lookupboxCloneCommand;
+	private String			m_lookupboxCloneCommandP1;
+	private String			m_lookupboxCloneCommandP2;
+	private String			m_lookupboxCloneCommandP3;
+	private String			m_lookupboxCloneCommandP4;
+	private String			m_lookupboxCloneCommandP5;
+	private String			m_lookupboxCloneCommandP6;
+	private String			m_lookupboxCloneCommandP7;
+	private String			m_lookupboxCloneCommandP8;
+	private String			m_lookupboxCloneCommandP9;
+	private String			m_lookupboxCloneCommandP10;
 
 	private String			m_lookupboxSubtractCommand;
 	private String			m_lookupboxSubtractCommandP1;
