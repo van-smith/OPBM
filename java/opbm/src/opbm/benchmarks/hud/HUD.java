@@ -68,11 +68,13 @@ public final class HUD extends DroppableFrame
 		{	// We are showing debug information
 			m_width		= 320;
 			m_height	= 200;
+
 		} else {
 			// Just the status information
 			m_width		= 320;
 			m_height	= 117;
 		}
+		m_translucency = m_opbm.getSettingsMaster().getHUDTranslucency();
 
 		pack();
         Insets fi		= getInsets();
@@ -84,10 +86,15 @@ public final class HUD extends DroppableFrame
         setPreferredSize(size);
         setSize(size);
 		setAlwaysOnTop(true);
+		addMouseListener(this);
+
+		dispose();					// Necessary for translucency
+		setUndecorated(true);		// Necessary for translucency
+		setTranslucency(m_translucency);
+
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation(dim.width - actualWidth - 5, dim.height - actualHeight - 5);
-		setTransparency(m_opbm.getSettingsMaster().getHUDTranslucency());
-		setLayout(null);	// We handle all redraws
+		setLayout(null);			// We handle all redraws
 
 		Container c = getContentPane();
 
@@ -448,6 +455,7 @@ public final class HUD extends DroppableFrame
 	@Override
 	public void mouseEntered(MouseEvent e)
 	{
+		setTranslucency(1.0f);
 		if (e.getComponent().equals(m_stop))
 		{	// Came on top of the stop button
 			if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
@@ -461,6 +469,7 @@ public final class HUD extends DroppableFrame
 	@Override
 	public void mouseExited(MouseEvent e)
 	{
+		setTranslucency(m_translucency);
 		if (e.getComponent().equals(m_stop))
 		{	// Left the stop button
 			if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
@@ -473,6 +482,7 @@ public final class HUD extends DroppableFrame
 	private BenchmarkParams		m_bp;
 	private int					m_width;
 	private int					m_height;
+	private float				m_translucency;
 	private boolean				m_rebooting;
 	private JLabel				m_background;
 	private AlphaImage			m_backgroundImg;

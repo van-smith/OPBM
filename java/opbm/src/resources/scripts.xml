@@ -281,9 +281,9 @@
 			<atom name="Install 7zip">
 				<abstract name="Install 7zip" sourcename="execute">
 					<options>
-						<stopIfFailure>no</stopIfFailure>
+						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<retryEnabled>no</retryEnabled>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)7zip(backslash)install(backslash)7zipInstall.exe</executable>
 					</options>
 				</abstract>
@@ -461,9 +461,9 @@
 			<atom name="Chrome SunSpider">
 				<abstract name="Chrome SunSpider" sourcename="execute">
 					<options>
-						<stopIfFailure>no</stopIfFailure>
+						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<retryEnabled>no</retryEnabled>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
 					</options>
 				</abstract>

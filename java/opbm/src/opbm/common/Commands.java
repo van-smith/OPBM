@@ -23,9 +23,9 @@
 
 package opbm.common;
 
-import opbm.panels.PanelRightLookupbox;
-import opbm.panels.PanelRightListbox;
-import opbm.panels.PanelRightItem;
+import opbm.panels.right.PanelRightLookupbox;
+import opbm.panels.right.PanelRightListbox;
+import opbm.panels.right.PanelRightItem;
 import javax.swing.JOptionPane;
 import opbm.Opbm;
 

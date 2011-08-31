@@ -23,13 +23,13 @@ import opbm.common.Xml;
 import opbm.common.Macros;
 import opbm.common.Settings;
 import opbm.common.Commands;
-import opbm.resultsviewer.ResultsViewer;
-import opbm.panels.PanelRightLookupbox;
-import opbm.panels.PanelRight;
-import opbm.panels.PanelRightListbox;
-import opbm.panels.PanelLeft;
+import opbm.dialogs.resultsviewer.ResultsViewer;
+import opbm.panels.right.PanelRightLookupbox;
+import opbm.panels.right.PanelRight;
+import opbm.panels.right.PanelRightListbox;
+import opbm.panels.left.PanelLeft;
 import opbm.panels.PanelFactory;
-import opbm.panels.PanelRightItem;
+import opbm.panels.right.PanelRightItem;
 import opbm.dialogs.DroppableFrame;
 import opbm.benchmarks.Benchmarks;
 import opbm.common.Tuple;
@@ -50,6 +50,7 @@ import opbm.dialogs.DeveloperWindow;
 import opbm.dialogs.OpbmDialog;
 import opbm.dialogs.SimpleWindow;
 import org.xml.sax.SAXException;
+import static java.awt.GraphicsDevice.WindowTranslucency.*;
 
 
 /**
@@ -2659,9 +2660,16 @@ public final class Opbm extends	ModalApp
 	 */
     public static void main(String[] args)
 	{
+        GraphicsEnvironment	ge		= GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice		grfx	= ge.getDefaultScreenDevice();
+        if (!grfx.isWindowTranslucencySupported(TRANSLUCENT))
+		{	// Tell the user that translucency is not supported
+            System.out.println("Translucency is not supported by this graphical environment");
+        }
+
 		// Launch the system
 		Opbm o = new Opbm(args);
-    }
+	}
 
 	/**
 	 * Master instance created in main()
@@ -2795,6 +2803,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.29 01:51pm";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.31 02:15pm";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

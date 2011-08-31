@@ -26,7 +26,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import opbm.common.Tuple;
 import opbm.dialogs.SimpleWindow;
-import opbm.resultsviewer.ResultsViewer;
+import opbm.dialogs.resultsviewer.ResultsViewer;
 
 public final class JLabelHotTrack implements MouseListener
 {

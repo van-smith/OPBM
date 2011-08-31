@@ -31,7 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.*;
 import opbm.Opbm;
-import opbm.panels.PanelRightLookupbox;
+import opbm.panels.right.PanelRightLookupbox;
 
 public class DroppableFrame extends JFrame
 							implements	DropTargetListener,
@@ -48,6 +48,7 @@ public class DroppableFrame extends JFrame
 						  boolean	isZoomWindow,
 						  boolean	isResizeable)
 	{
+		super("JFrame");
 		m_dragSource	= DragSource.getDefaultDragSource();
 		m_dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
 		this.setDropTarget(new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this));
@@ -201,22 +202,51 @@ public class DroppableFrame extends JFrame
 	 * Allows the frame to become completely transparent to fully opaque.
 	 * @param opaquePercent of opaqueness
 	 */
-	public void setTransparency(float opaquePercent)
+	public void setTranslucency(float opaquePercent)
 	{
-		try {
-			Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
-			Method mSetWindowOpacity;
-			mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
-			if (mSetWindowOpacity != null)
-				mSetWindowOpacity.invoke(null, this, Float.valueOf(opaquePercent));
-// REMEMBER, since 1.7.0, this is generating an exception, needs to be looked at
+		int i = 0;
+
+		try
+		{
+			if (System.getProperty("java.version").compareTo("1.6") <= 0)
+			{	// Code for translucency works in 1.6, raises exception in 1.7
+				Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
+				Method mSetWindowOpacity;
+				mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
+				if (mSetWindowOpacity != null)
+					mSetWindowOpacity.invoke(null, this, opaquePercent);
+
+			} else {
+				// Try alternate method per http://download.oracle.com/javase/tutorial/uiswing/misc/trans_shaped_windows.html#uniform
+				// Note:  Their sample code on the web page fails if the frame is decorated (has a border, minimize, restore, close buttons, a menu, etc.)
+				// Note:  Their sample code is in error because the image they show for the translucency shows the border, as does their pixelated translucent window.
+				setOpacity(opaquePercent);		// This suggested method from Oracle's sample code, causes IllegalComponentStateException.
+				// A game developer found a workaround:
+				// The following lines must be run in succession:
+				//		dispose();
+				//		setUndecorated(true);
+				//		setTranslucency(0.5f);
+				// Refer to HUD.java for an implementation of this
+			}
 
 		} catch (NoSuchMethodException ex) {
+			i = 1;
 		} catch (SecurityException ex) {
+			i = 2;
 		} catch (ClassNotFoundException ex) {
+			i = 3;
 		} catch (IllegalAccessException ex) {
+			i = 4;
 		} catch (IllegalArgumentException ex) {
+			i = 5;
 		} catch (InvocationTargetException ex) {
+			i = 6;
+		} catch (IllegalComponentStateException ex) {
+			i = 7;
+		} finally {
+		}
+		if (i != 0)
+		{	// Unable to set translucency
 		}
 	}
 

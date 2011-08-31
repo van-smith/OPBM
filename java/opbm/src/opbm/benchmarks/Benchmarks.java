@@ -31,12 +31,12 @@ import opbm.common.Macros;
 import opbm.common.Utils;
 import opbm.common.Settings;
 import opbm.common.Xml;
-import opbm.panels.PanelRightItem;
+import opbm.panels.right.PanelRightItem;
 import java.util.ArrayList;
 import opbm.benchmarks.waituntilidle.WaitUntilIdle;
 import opbm.dialogs.OpbmDialog;
 import opbm.dialogs.OpbmInput;
-import opbm.resultsviewer.ResultsViewer;
+import opbm.dialogs.resultsviewer.ResultsViewer;
 
 /**
  *

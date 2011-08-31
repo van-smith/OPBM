@@ -4,7 +4,7 @@
  * This class is the top-level class for all panels (windows) that are created
  * dynamically at runtime based on real system parameters.
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Aug 30, 2011
  *
  * by Van Smith, Rick C. Hodgin
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -19,6 +19,10 @@
 
 package opbm.panels;
 
+import opbm.panels.right.PanelRightItem;
+import opbm.panels.right.PanelRight;
+import opbm.panels.left.PanelLeftItem;
+import opbm.panels.left.PanelLeft;
 import opbm.common.Utils;
 import java.awt.Font;
 import java.awt.Color;
