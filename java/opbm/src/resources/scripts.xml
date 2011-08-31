@@ -178,6 +178,86 @@
 			</abstract>
 		</abstracts>
 		<atoms>
+			<atom name="PowerPoint Open">
+				<abstract name="Open Microsoft PowerPoint 2010" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)powerpoint(backslash)powerpointOpen.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="PowerPoint War">
+				<abstract name="Open Microsoft PowerPoint War presentation" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)powerpoint(backslash)powerpointWar.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="PowerPoint Close">
+				<abstract name="Close Microsoft PowerPoint 2010" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)powerpoint(backslash)powerpointClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Publisher Open">
+				<abstract name="Open Microsoft Publisher 2010" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)publisher(backslash)publisherOpen.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Publisher Hedge">
+				<abstract name="Open Microsoft Publisher HEDGE flyer" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)publisher(backslash)publisherHedge.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Publisher Close">
+				<abstract name="Close Microsoft Publisher 2010" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)publisher(backslash)publisherClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Access Open">
+				<abstract name="Open Microsoft Access" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)access(backslash)accessOpen.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Access Close">
+				<abstract name="Close Microsoft Access" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)office2010(backslash)access(backslash)accessClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Excel Heat">
 				<abstract name="Surface Heat Simulation" sourcename="execute">
 					<options>
@@ -511,6 +591,20 @@
 				<atom name="Install Opera" sourcename="Install Opera"></atom>
 				<atom name="Install Safari" sourcename="Install Safari"></atom>
 			</molecule>
+			<molecule name="Presentation">
+				<atom name="PowerPoint Open" sourcename="PowerPoint Open"></atom>
+				<atom name="PowerPoint War" sourcename="PowerPoint War"></atom>
+				<atom name="PowerPoint Close" sourcename="PowerPoint Close"></atom>
+			</molecule>
+			<molecule name="Database">
+				<atom name="Access Open" sourcename="Access Open"></atom>
+				<atom name="Access Close" sourcename="Access Close"></atom>
+			</molecule>
+			<molecule name="Publish">
+				<atom name="Publisher Open" sourcename="Publisher Open"></atom>
+				<atom name="Publisher HEDGE" sourcename="Publisher HEDGE"></atom>
+				<atom name="Publisher Close" sourcename="Publisher Close"></atom>
+			</molecule>
 			<molecule name="Spreadsheet">
 				<atom name="Excel Heat" sourcename="Excel Heat"></atom>
 			</molecule>
@@ -549,6 +643,9 @@
 		<scenarios>
 			<scenario name="OPBM">
 				<molecule name="Install Applications" sourcename="Install Applications"></molecule>
+				<molecule name="Presentation" sourcename="Presentation"></molecule>
+				<molecule name="Database" sourcename="Database"></molecule>
+				<molecule name="Publish" sourcename="Publish"></molecule>                
 				<molecule name="Word Processing" sourcename="Word Processing"></molecule>
 				<molecule name="Spreadsheet" sourcename="Spreadsheet"></molecule>
 				<molecule name="JavaScript" sourcename="JavaScript"></molecule>
