@@ -82,9 +82,28 @@ Const $IE_RUN_KRAKEN_SCORE							= 113.8263685837
 Const $IE_TYPE_SUNSPIDER_URL_SCORE					= 2.089764483
 Const $IE_RUN_SUNSPIDER_SCORE						= 10.0216024462
 
+; accessCommon.au3
+Const $LAUNCH_MICROSOFT_ACCESS_SCORE				= 0.429270375614728			; placeholder
+Const $CLOSE_MICROSOFT_ACCESS_SCORE					= 0.592475265507243			; placeholder
+
 ; excelCommon.au3
 Const $LAUNCH_MICROSOFT_EXCEL_SCORE					= 0.5664435075
 Const $CLOSE_MICROSOFT_EXCEL_SCORE					= 0.16
+
+; powerpointCommon.au3
+Const $LAUNCH_MICROSOFT_POWERPOINT_SCORE			= 0.863637155266839			; placeholder
+Const $CLOSE_MICROSOFT_POWERPOINT_SCORE				= 0.902639997163701			; placeholder
+
+; powerpointWar.au3
+Const $WAR_OPEN_PRESENTATION_SCORE					= 3.77			; placeholder
+Const $WAR_PLAY_PRESENTATION_SCORE					= 100			; placeholder
+
+; publisherCommon.au3
+Const $LAUNCH_MICROSOFT_PUBLISHER_SCORE				= 0.467044571380233			; placeholder
+Const $CLOSE_MICROSOFT_PUBLISHER_SCORE				= 0.701625807157881			; placeholder
+
+; publisherHedge.au3
+Const $HEDGE_OPEN_FLYER_SCORE						= 3.30684143956256			; placeholder
 
 ; wordCommon.au3
 Const $LAUNCH_MICROSOFT_WORD_SCORE					= 0.5535907745
