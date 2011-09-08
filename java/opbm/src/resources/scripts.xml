@@ -12,7 +12,7 @@
 			</flow>
 			<atom>
 				<level1>
-					<atom name="New Atom"></atom>
+					<atom name="New Atom" shortname=""></atom>
 				</level1>
 				<level2>
 					<abstract name="New Executable" sourcename="execute">
@@ -22,26 +22,26 @@
 			</atom>
 			<molecule>
 				<level1>
-					<molecule name="New Molecule"></molecule>
+					<molecule name="New Molecule" shortname=""></molecule>
 				</level1>
 				<level2>
-					<atom name="New Atom" sourcename="New Atom"></atom>
+					<atom name="New Atom" shortname="" sourcename="New Atom"></atom>
 				</level2>
 			</molecule>
 			<scenario>
 				<level1>
-					<scenario name="New Scenario"></scenario>
+					<scenario name="New Scenario" shortname=""></scenario>
 				</level1>
 				<level2>
-					<molecule name="New Molecule" sourcename="New Molecule"></molecule>
+					<molecule name="New Molecule" shortname="" sourcename="New Molecule"></molecule>
 				</level2>
 			</scenario>
 			<suite>
 				<level1>
-					<suite name="New Suite"></suite>
+					<suite name="New Suite" shortname=""></suite>
 				</level1>
 				<level2>
-					<scenario name="New Scenario" sourcename="New Scenario"></scenario>
+					<scenario name="New Scenario" shortname="" sourcename="New Scenario"></scenario>
 				</level2>
 			</suite>
 		</templates>
@@ -178,8 +178,8 @@
 			</abstract>
 		</abstracts>
 		<atoms>
-			<atom name="PowerPoint Open">
-				<abstract name="Open Microsoft PowerPoint 2010" sourcename="execute">
+			<atom name="PowerPoint Open" shortname="PPoint">
+				<abstract atomuuid="eb92af8d(hyphen)1271(hyphen)4b17(hyphen)909d(hyphen)786d173a865e" name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -188,8 +188,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="PowerPoint War">
-				<abstract name="Open Microsoft PowerPoint War presentation" sourcename="execute">
+			<atom name="PowerPoint War" shortname="PPoint">
+				<abstract atomuuid="eb9026c0(hyphen)bf6f(hyphen)406d(hyphen)9157(hyphen)91afd3750170" name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -198,8 +198,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="PowerPoint Close">
-				<abstract name="Close Microsoft PowerPoint 2010" sourcename="execute">
+			<atom name="PowerPoint Close" shortname="PPoint">
+				<abstract atomuuid="18a230dd(hyphen)2d82(hyphen)46f8(hyphen)a8e6(hyphen)e24d662cac62" name="Close PowerPoint 2010" shortname="Close" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -208,8 +208,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Publisher Open">
-				<abstract name="Open Microsoft Publisher 2010" sourcename="execute">
+			<atom name="Publisher Open" shortname="Pub">
+				<abstract name="Open Publisher 2010" shortname="Open" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -218,8 +218,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Publisher Hedge">
-				<abstract name="Open Microsoft Publisher HEDGE flyer" sourcename="execute">
+			<atom name="Publisher Hedge" shortname="Pub">
+				<abstract name="Open Publisher 2010 HEDGE Flyer" shortname="Hedge" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -228,8 +228,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Publisher Close">
-				<abstract name="Close Microsoft Publisher 2010" sourcename="execute">
+			<atom name="Publisher Close" shortname="Pub">
+				<abstract name="Close Publisher 2010" shortname="Close" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -238,8 +238,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Access Open">
-				<abstract name="Open Microsoft Access" sourcename="execute">
+			<atom name="Access Open" shortname="Access">
+				<abstract atomuuid="303464a4(hyphen)304f(hyphen)40f9(hyphen)874f(hyphen)0e3b81ec6ec0" name="Open Microsoft Access" shortname="Open" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -248,8 +248,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Access Close">
-				<abstract name="Close Microsoft Access" sourcename="execute">
+			<atom name="Access Close" shortname="Access">
+				<abstract atomuuid="caba935d(hyphen)3e68(hyphen)4427(hyphen)900b(hyphen)aad679fc97ae" name="Close Microsoft Access" shortname="Close" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -258,8 +258,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Excel Heat">
-				<abstract name="Surface Heat Simulation" sourcename="execute">
+			<atom name="Excel Heat" shortname="Excel">
+				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -268,8 +268,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Word Alice">
-				<abstract name="Alice in Wonderland" sourcename="execute">
+			<atom name="Word Alice" shortname="Word">
+				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -278,8 +278,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install 7zip">
-				<abstract name="Install 7zip" sourcename="execute">
+			<atom name="Install 7zip" shortname="7zip">
+				<abstract atomuuid="cc934e1b(hyphen)d5d9(hyphen)4b5d(hyphen)a107(hyphen)05517b816502" name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -288,8 +288,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="7zip Run Test">
-				<abstract atomuuid="60a0f8ce(hyphen)9d4d(hyphen)4010(hyphen)83de(hyphen)539ff6160c53" name="7zip Run Test" sourcename="execute">
+			<atom name="7zip Run Test" shortname="7zip">
+				<abstract name="7zip Run Test" shortname="Run" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -298,8 +298,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Uninstall 7zip">
-				<abstract name="Uninstall 7zip" sourcename="execute">
+			<atom name="Uninstall 7zip" shortname="7zip">
+				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -308,8 +308,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install Opera">
-				<abstract name="Install Opera" sourcename="execute">
+			<atom name="Install Opera" shortname="Opera">
+				<abstract atomuuid="d680b58a(hyphen)d98f(hyphen)476c(hyphen)9e8f(hyphen)d6dc59661333" name="Install Opera" shortname="Install" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -318,8 +318,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Uninstall Opera">
-				<abstract name="Uninstall Opera" sourcename="execute">
+			<atom name="Uninstall Opera" shortname="Opera">
+				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -328,8 +328,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Opera SunSpider">
-				<abstract name="Opera SunSpider" sourcename="execute">
+			<atom name="Opera SunSpider" shortname="Opera">
+				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -338,8 +338,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Opera Kraken">
-				<abstract name="Opera Kraken" sourcename="execute">
+			<atom name="Opera Kraken" shortname="Opera">
+				<abstract name="Opera Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -348,8 +348,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Opera Google V8">
-				<abstract name="Opera Google V8" sourcename="execute">
+			<atom name="Opera Google V8" shortname="Opera">
+				<abstract name="Opera Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -358,8 +358,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install Safari">
-				<abstract name="Install Safari" sourcename="execute">
+			<atom name="Install Safari" shortname="Safari">
+				<abstract atomuuid="4bc4314b(hyphen)bedc(hyphen)4d4e(hyphen)926b(hyphen)88746abb2f1b" name="Install Safari" shortname="Install" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -368,8 +368,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Uninstall Safari">
-				<abstract name="Uninstall Safari" sourcename="execute">
+			<atom name="Uninstall Safari" shortname="Safari">
+				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -378,8 +378,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Safari SunSpider">
-				<abstract name="Safari SunSpider" sourcename="execute">
+			<atom name="Safari SunSpider" shortname="Safari">
+				<abstract name="Safari SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -388,8 +388,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Safari Kraken">
-				<abstract name="Safari Kraken" sourcename="execute">
+			<atom name="Safari Kraken" shortname="Safari">
+				<abstract name="Safari Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -398,8 +398,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Safari Google V8">
-				<abstract name="Safari Google V8" sourcename="execute">
+			<atom name="Safari Google V8" shortname="Safari">
+				<abstract name="Safari Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -408,8 +408,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="IE SunSpider">
-				<abstract name="IE SunSpider" sourcename="execute">
+			<atom name="IE SunSpider" shortname="IE9">
+				<abstract name="IE SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -418,8 +418,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="IE Kraken">
-				<abstract name="IE Kraken" sourcename="execute">
+			<atom name="IE Kraken" shortname="IE9">
+				<abstract name="IE Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -428,8 +428,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="IE Google V8">
-				<abstract name="IE Google V8" sourcename="execute">
+			<atom name="IE Google V8" shortname="IE9">
+				<abstract name="IE Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -438,8 +438,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install Chrome">
-				<abstract name="Install Chrome" sourcename="execute">
+			<atom name="Install Chrome" shortname="Chrome">
+				<abstract atomuuid="6cc9a0f1(hyphen)3d62(hyphen)44f4(hyphen)a1bc(hyphen)4f40dae4b5da" name="Install Chrome" shortname="Install" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -448,8 +448,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Uninstall Chrome">
-				<abstract name="Uninstall Chrome" sourcename="execute">
+			<atom name="Uninstall Chrome" shortname="Chrome">
+				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -458,8 +458,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Chrome SunSpider">
-				<abstract name="Chrome SunSpider" sourcename="execute">
+			<atom name="Chrome SunSpider" shortname="Chrome">
+				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -468,8 +468,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Chrome Kraken">
-				<abstract name="Chrome Kraken" sourcename="execute">
+			<atom name="Chrome Kraken" shortname="Chrome">
+				<abstract name="Chrome Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -478,8 +478,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Chrome Google V8">
-				<abstract name="Chrome Google V8" sourcename="execute">
+			<atom name="Chrome Google V8" shortname="Chrome">
+				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -488,8 +488,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install Firefox">
-				<abstract name="Install Firefox" sourcename="execute">
+			<atom name="Install Firefox" shortname="Firefox">
+				<abstract atomuuid="6e1294bf(hyphen)0c8f(hyphen)4c99(hyphen)bf79(hyphen)7eac4b605236" name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -498,8 +498,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Uninstall Firefox">
-				<abstract name="Uninstall Firefox" sourcename="execute">
+			<atom name="Uninstall Firefox" shortname="Firefox">
+				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -508,8 +508,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Firefox SunSpider">
-				<abstract name="Firefox SunSpider" sourcename="execute">
+			<atom name="Firefox SunSpider" shortname="Firefox">
+				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -518,8 +518,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Firefox Kraken">
-				<abstract name="Firefox Kraken" sourcename="execute">
+			<atom name="Firefox Kraken" shortname="Firefox">
+				<abstract name="Firefox Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -528,8 +528,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Firefox Google V8">
-				<abstract name="Firefox Google V8" sourcename="execute">
+			<atom name="Firefox Google V8" shortname="Firefox">
+				<abstract name="Firefox Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -538,8 +538,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Install Acrobat Reader">
-				<abstract name="Install Acrobat Reader" sourcename="execute">
+			<atom name="Install Acrobat Reader" shortname="Acrobat">
+				<abstract atomuuid="5ef8f96f(hyphen)82ce(hyphen)45cf(hyphen)8e48(hyphen)4b6053ee6864" name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -548,8 +548,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Uninstall Acrobat Reader">
-				<abstract name="Uninstall Acrobat Reader" sourcename="execute">
+			<atom name="Uninstall Acrobat Reader" shortname="Acrobat">
+				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -558,14 +558,14 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Reboot And Restart OPBM">
-				<abstract name="Reboot And Restart OPBM" sourcename="rebootAndRestart"></abstract>
+			<atom name="Reboot And Restart OPBM" shortname="OPBM">
+				<abstract name="Reboot And Restart OPBM" shortname="Restart" sourcename="rebootAndRestart"></abstract>
 			</atom>
-			<atom name="Reboot And Exit OPBM">
-				<abstract name="Reboot And Terminate" sourcename="rebootAndTerminate"></abstract>
+			<atom name="Reboot And Exit OPBM" shortname="OPBM">
+				<abstract name="Reboot And Terminate" shortname="Exit" sourcename="rebootAndTerminate"></abstract>
 			</atom>
-			<atom name="Simulate Failure">
-				<abstract name="Simulate Failure" sourcename="execute">
+			<atom name="Simulate Failure" shortname="Sim">
+				<abstract name="Simulate Failure" shortname="Fail" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -574,83 +574,44 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Simulate Success">
-				<abstract name="Simulate success" sourcename="execute">
+			<atom name="Simulate Success" shortname="Sim">
+				<abstract name="Simulate success" shortname="Succeed" sourcename="execute">
 					<options>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
 						<executable>..(backslash)autoIT(backslash)tests(backslash)success(backslash)success.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 		</atoms>
 		<molecules>
-			<molecule name="Install Applications">
-				<atom name="Install 7zip" sourcename="Install 7zip"></atom>
-				<atom name="Install Acrobat Reader" sourcename="Install Acrobat Reader"></atom>
-				<atom name="Install Chrome" sourcename="Install Chrome"></atom>
-				<atom name="Install Firefox" sourcename="Install Firefox"></atom>
-				<atom name="Install Opera" sourcename="Install Opera"></atom>
-				<atom name="Install Safari" sourcename="Install Safari"></atom>
+			<molecule name="Install Applications" shortname="Install">
+				<atom name="Install Acrobat Reader" shortname="Acrobat" sourcename="Install Acrobat Reader"></atom>
+				<atom name="Install Firefox" shortname="Firefox" sourcename="Install Firefox"></atom>
 			</molecule>
-			<molecule name="Presentation">
-				<atom name="PowerPoint Open" sourcename="PowerPoint Open"></atom>
-				<atom name="PowerPoint War" sourcename="PowerPoint War"></atom>
-				<atom name="PowerPoint Close" sourcename="PowerPoint Close"></atom>
+			<molecule name="Spreadsheet" shortname="Excel">
+				<atom name="Excel Heat" shortname="Heat" sourcename="Excel Heat"></atom>
 			</molecule>
-			<molecule name="Database">
-				<atom name="Access Open" sourcename="Access Open"></atom>
-				<atom name="Access Close" sourcename="Access Close"></atom>
+			<molecule name="Word Processing" shortname="Word">
+				<atom name="Word Alice" shortname="Alice" sourcename="Word Alice"></atom>
 			</molecule>
-			<molecule name="Publish">
-				<atom name="Publisher Open" sourcename="Publisher Open"></atom>
-				<atom name="Publisher HEDGE" sourcename="Publisher HEDGE"></atom>
-				<atom name="Publisher Close" sourcename="Publisher Close"></atom>
+			<molecule name="JavaScript" shortname="Browser">
+				<atom name="Firefox SunSpider" shortname="FSpider" sourcename="Firefox SunSpider"></atom>
+				<atom name="Firefox Kraken" shortname="FKraken" sourcename="Firefox Kraken"></atom>
+				<atom name="Firefox Google V8" shortname="FV8" sourcename="Firefox Google V8"></atom>
+				<atom name="IE SunSpider" shortname="ISpider" sourcename="IE SunSpider"></atom>
+				<atom name="IE Kraken" shortname="IKraken" sourcename="IE Kraken"></atom>
+				<atom name="IE Google V8" shortname="IV8" sourcename="IE Google V8"></atom>
 			</molecule>
-			<molecule name="Spreadsheet">
-				<atom name="Excel Heat" sourcename="Excel Heat"></atom>
-			</molecule>
-			<molecule name="Word Processing">
-				<atom name="Word Alice" sourcename="Word Alice"></atom>
-			</molecule>
-			<molecule name="JavaScript">
-				<atom name="Chrome SunSpider" sourcename="Chrome SunSpider"></atom>
-				<atom name="Chrome Kraken" sourcename="Chrome Kraken"></atom>
-				<atom name="Chrome Google V8" sourcename="Chrome Google V8"></atom>
-				<atom name="Firefox SunSpider" sourcename="Firefox SunSpider"></atom>
-				<atom name="Firefox Kraken" sourcename="Firefox Kraken"></atom>
-				<atom name="Firefox Google V8" sourcename="Firefox Google V8"></atom>
-				<atom name="IE SunSpider" sourcename="IE SunSpider"></atom>
-				<atom name="IE Kraken" sourcename="IE Kraken"></atom>
-				<atom name="IE Google V8" sourcename="IE Google V8"></atom>
-				<atom name="Opera SunSpider" sourcename="Opera SunSpider"></atom>
-				<atom name="Opera Kraken" sourcename="Opera Kraken"></atom>
-				<atom name="Opera Google V8" sourcename="Opera Google V8"></atom>
-				<atom name="Safari SunSpider" sourcename="Safari SunSpider"></atom>
-				<atom name="Safari Kraken" sourcename="Safari Kraken"></atom>
-				<atom name="Safari Google V8" sourcename="Safari Google V8"></atom>
-			</molecule>
-			<molecule name="File Operations">
-				<atom name="7zip Run Test" sourcename="7zip Run Test"></atom>
-			</molecule>
-			<molecule name="Uninstall Applications">
-				<atom name="Uninstall 7zip" sourcename="Uninstall 7zip"></atom>
-				<atom name="Uninstall Acrobat Reader" sourcename="Uninstall Acrobat Reader"></atom>
-				<atom name="Uninstall Chrome" sourcename="Uninstall Chrome"></atom>
-				<atom name="Uninstall Firefox" sourcename="Uninstall Firefox"></atom>
-				<atom name="Uninstall Opera" sourcename="Uninstall Opera"></atom>
-				<atom name="Uninstall Safari" sourcename="Uninstall Safari"></atom>
+			<molecule name="Uninstall Applications" shortname="Uninstall">
+				<atom name="Uninstall Acrobat Reader" shortname="Acrobat" sourcename="Uninstall Acrobat Reader"></atom>
+				<atom name="Uninstall Firefox" shortname="Firefox" sourcename="Uninstall Firefox"></atom>
 			</molecule>
 		</molecules>
 		<scenarios>
-			<scenario name="OPBM">
-				<molecule name="Install Applications" sourcename="Install Applications"></molecule>
-				<molecule name="Presentation" sourcename="Presentation"></molecule>
-				<molecule name="Database" sourcename="Database"></molecule>
-				<molecule name="Publish" sourcename="Publish"></molecule>                
-				<molecule name="Word Processing" sourcename="Word Processing"></molecule>
-				<molecule name="Spreadsheet" sourcename="Spreadsheet"></molecule>
-				<molecule name="JavaScript" sourcename="JavaScript"></molecule>
-				<molecule name="File Operations" sourcename="File Operations"></molecule>
-				<molecule name="Uninstall Applications" sourcename="Uninstall Applications"></molecule>
+			<scenario name="OPBM" shortname="OPBM">
+				<molecule name="Spreadsheet" shortname="Excel" sourcename="Spreadsheet"></molecule>
 			</scenario>
 		</scenarios>
 		<suites></suites>

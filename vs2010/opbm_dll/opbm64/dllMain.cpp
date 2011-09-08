@@ -20,6 +20,8 @@
 	#include "opbm64.h"
 	#include "..\common\opbm_common_extern.h"
 	#include "..\cpu\CPU.h"
+	#include <jawt.h>
+	#include <jawt_md.h>
 
 
 
@@ -34,6 +36,20 @@
 	// Used for snapshotProcesses() and stopProcesses()
 	DWORD	gProcIDs[2048];
 	DWORD	gProcIDsSize = 0;
+
+	// Used for setMinMaxResizeBoundaries()
+	struct SHwndMinMax
+	{
+		HWND	hwnd;
+		int		minWidth;
+		int		minHeight;
+		int		maxWidth;
+		int		maxHeight;
+		WNDPROC	prefWndProc;
+	};
+	SHwndMinMax gsHwndMinMax[2048];
+	int gsHwndMinMaxCount = 0;
+	LRESULT CALLBACK MinMaxWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
 
@@ -319,6 +335,165 @@
 		directory = env->NewStringUTF( dirname );
 		return(directory);
 	}
+
+
+
+
+//////////
+//
+// getComponentHWND()
+//
+// Called to return the HWND of the component, if it has one.
+//
+/////
+	// getComponentHWND()
+	JNIEXPORT jint JNICALL Java_opbm_Opbm_getComponentHWND(JNIEnv* env, jclass cls, jobject obj)
+	{
+		HWND hWnd = 0;
+		typedef jboolean (JNICALL *PJAWT_GETAWT)(JNIEnv*, JAWT*);
+		JAWT awt;
+		JAWT_DrawingSurface* ds;
+		JAWT_DrawingSurfaceInfo* dsi;
+		JAWT_Win32DrawingSurfaceInfo* dsi_win;
+		jboolean result;
+		jint lock;
+		HMODULE _hAWT = 0;
+
+		// Load AWT Library
+		if (!_hAWT)
+			_hAWT = LoadLibrary(L"jawt.dll");	// for Java 1.4+
+
+		if (!_hAWT)
+			_hAWT = LoadLibrary(L"awt.dll");	// for Java 1.3
+
+		if (_hAWT)
+		{
+			PJAWT_GETAWT JAWT_GetAWT = (PJAWT_GETAWT)GetProcAddress(_hAWT, "JAWT_GetAWT");
+			if (JAWT_GetAWT)
+			{
+				awt.version = JAWT_VERSION_1_4;		// Init here with JAWT_VERSION_1_3 or JAWT_VERSION_1_4
+				// Get AWT API Interface
+				result = JAWT_GetAWT(env, &awt);
+				if (result != JNI_FALSE)
+				{
+					ds = awt.GetDrawingSurface(env, obj);
+					if (ds != NULL)
+					{
+						lock = ds->Lock(ds);
+						if ((lock & JAWT_LOCK_ERROR) == 0)
+						{
+							dsi = ds->GetDrawingSurfaceInfo(ds);
+							if (dsi)
+							{
+								dsi_win = (JAWT_Win32DrawingSurfaceInfo*)dsi->platformInfo;
+								if (dsi_win)
+									hWnd = dsi_win->hwnd;
+								else
+									hWnd = (HWND) -1;	// Failed to obtain the handle (not running on Windows)
+
+								ds->FreeDrawingSurfaceInfo(dsi);
+
+							} else {
+								hWnd = (HWND)-2;	// Failed to get the drawing surface info block
+							}
+							ds->Unlock(ds);
+
+						} else {
+							hWnd = (HWND)-3;	// Failed to lock the drawing surface to obtain information about it
+						}
+						awt.FreeDrawingSurface(ds);
+
+					} else {
+						hWnd = (HWND)-4;	// Failed to get the drawing surface from the compoment
+					}
+				} else {
+					hWnd = (HWND)-5;	// Failed to obtain a proper result from _JAWT_GetAWT()
+				}
+			} else {
+				hWnd = (HWND)-6;	// Failed to find "_JAWT_GetAWT()" function
+			}
+		} else {
+			hWnd = (HWND)-7;	// Failed to load awt.dll
+		}
+		return (jint)hWnd;
+	}
+
+
+
+
+//////////
+//
+// setMinMaxResizeBoundaries()
+//
+// Sets the resize boundary window sizes, so the window will not be resized above/below that size
+//
+//////
+	// setMinMaxResizeBoundaries()
+	JNIEXPORT jint JNICALL Java_opbm_Opbm_setMinMaxResizeBoundaries(JNIEnv* env, jclass cls,
+																	jint hwnd,
+																	jint minWidth, jint minHeight,
+																	jint maxWidth, jint maxHeight)
+	{
+		// We create a hook for the window, and intercept the WM_GETMINMAXINFO message occurs, and update the info
+		if (IsWindow((HWND)hwnd))
+		{	// Let's add it
+			if (gsHwndMinMaxCount < 2048)
+			{	// We're good
+				gsHwndMinMax[gsHwndMinMaxCount].hwnd		= (HWND)hwnd;
+				gsHwndMinMax[gsHwndMinMaxCount].minWidth	= minWidth;
+				gsHwndMinMax[gsHwndMinMaxCount].minHeight	= minHeight;
+				gsHwndMinMax[gsHwndMinMaxCount].maxWidth	= maxWidth;
+				gsHwndMinMax[gsHwndMinMaxCount].maxHeight	= maxHeight;
+				gsHwndMinMax[gsHwndMinMaxCount].prefWndProc	= (WNDPROC)SetWindowLongPtr((HWND)hwnd, GWLP_WNDPROC, (LONG_PTR)&MinMaxWindowProc);
+				// Success
+				++gsHwndMinMaxCount;
+				return(0);
+
+			} else {
+				// Failuire, too many hooks
+				return(-2);
+			}
+
+		} else {
+			// Failure, HWND is not valid
+			return(-1);
+		}
+	}
+
+	LRESULT CALLBACK MinMaxWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+		int i;
+		MINMAXINFO* mmi;
+
+		for (i = 0; i < gsHwndMinMaxCount; i++)
+		{
+			if (hwnd == gsHwndMinMax[i].hwnd)
+			{	// This is our man, see if it's our message
+				if (msg == WM_GETMINMAXINFO)
+				{	// It is
+					// When maximized, window is at upper-left
+					mmi = (MINMAXINFO*)lParam;
+					mmi->ptMaxSize.x		= gsHwndMinMax[i].maxWidth;
+					mmi->ptMaxSize.y		= gsHwndMinMax[i].maxHeight;
+					mmi->ptMaxPosition.x	= 0;
+					mmi->ptMaxPosition.y	= 0;
+					// Set the minimum and maximum tracking size (when the user is resizing, what's the smallest and biggest window they see)
+					mmi->ptMinTrackSize.x	= gsHwndMinMax[i].minWidth;
+					mmi->ptMinTrackSize.y	= gsHwndMinMax[i].minHeight;
+					mmi->ptMaxTrackSize.x	= gsHwndMinMax[i].maxWidth;
+					mmi->ptMaxTrackSize.y	= gsHwndMinMax[i].maxHeight;
+					return(DefWindowProc(hwnd, msg, wParam, lParam));
+
+				} else {
+					// Nope, pass it on
+					return(CallWindowProc(gsHwndMinMax[i].prefWndProc, hwnd, msg, wParam, lParam));
+				}
+			}
+		}
+		return(0);
+	}
+
+
 
 
 

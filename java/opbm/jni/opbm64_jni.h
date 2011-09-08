@@ -81,6 +81,22 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_getCSIDLDirectory
 
 /*
  * Class:     opbm_Opbm
+ * Method:    getComponentHWND
+ * Signature: (Ljava/awt/Component;)I
+ */
+JNIEXPORT jint JNICALL Java_opbm_Opbm_getComponentHWND
+  (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    setMinMaxResizeBoundaries
+ * Signature: (IIIII)I
+ */
+JNIEXPORT jint JNICALL Java_opbm_Opbm_setMinMaxResizeBoundaries
+  (JNIEnv *, jclass, jint, jint, jint, jint, jint);
+
+/*
+ * Class:     opbm_Opbm
  * Method:    snapshotProcesses
  * Signature: ()V
  */

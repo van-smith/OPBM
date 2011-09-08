@@ -7,13 +7,12 @@
  *
  * Last Updated:  Aug 18, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -29,7 +28,6 @@ import opbm.common.Utils;
  * WaitUntilIdle interface with Windows DLL for monitoring total system CPU
  * activity, allows the system to be "calmed down" between benchmark runs.
  * Called from the benchmark engine in <code>Benchmarks</code>
- * @author Rick C. Hodgin
  */
 public class WaitUntilIdle
 {

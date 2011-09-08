@@ -8,7 +8,6 @@
 ; Written July 2011 by:
 ; ---------------------
 ;	Van Smith
-;	Rick C. Hodgin
 ;
 ; Usage:	ieKraken [ repeat_count ]
 ;

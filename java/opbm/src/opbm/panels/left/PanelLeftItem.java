@@ -12,13 +12,12 @@
  *
  * Last Updated:  Aug 21, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */

@@ -8,7 +8,6 @@
 ; Written July 2011 by:
 ; ---------------------
 ;	Van Smith
-;	Rick C. Hodgin
 ;
 ; Usage:	firefoxSpider [ repeat_count ]
 ;

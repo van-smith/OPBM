@@ -8,13 +8,12 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -1744,6 +1743,11 @@ public final class AlphaImage
 	public void nameify(String	name)
 	{
 // REMEMBER going to do this to allow the image to be populated with text all about
+	}
+
+	public static Color convertARGBtoColor(int argb)
+	{
+		return(new Color(getRed(argb), getGrn(argb), getBlu(argb)));
 	}
 
 	public int getUserValue()				{	return(m_userValue);		}

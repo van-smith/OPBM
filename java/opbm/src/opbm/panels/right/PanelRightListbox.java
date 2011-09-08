@@ -12,21 +12,18 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
 
 package opbm.panels.right;
 
-import opbm.panels.right.PanelRightItem;
-import opbm.panels.right.PanelRight;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;

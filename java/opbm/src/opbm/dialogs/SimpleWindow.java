@@ -13,10 +13,6 @@ import opbm.Opbm;
 import opbm.graphics.JLabelHotTrack;
 import opbm.graphics.AlphaImage;
 
-/**
- *
- * @author rick
- */
 public class SimpleWindow extends DroppableFrame
 {
 	public SimpleWindow(Opbm		opbm,

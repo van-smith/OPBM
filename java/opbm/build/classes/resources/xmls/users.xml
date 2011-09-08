@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<opbm>
-	<userdata>
-		<users>
-			<user id="van" name="Van Smith" testsrun="0"/>
-			<user id="rick" name="Rick C. Hodgin" testsrun="0"/>
-		</users>
-	</userdata>
-</opbm>

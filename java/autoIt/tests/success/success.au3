@@ -7,7 +7,7 @@
 ;
 ; Written August 2011 by:
 ; ----------------------
-;	Rick C. Hodgin
+;	Van Smith
 ;
 ; Usage:	success
 ;

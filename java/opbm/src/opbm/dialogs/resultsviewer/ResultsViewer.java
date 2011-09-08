@@ -6,19 +6,19 @@
  *
  * Last Updated:  August 30, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
 
 package opbm.dialogs.resultsviewer;
 
+import java.awt.event.AdjustmentEvent;
 import java.awt.event.WindowEvent;
 import opbm.graphics.JLabelHotTrack;
 import opbm.dialogs.DroppableFrame;
@@ -31,10 +31,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowListener;
@@ -45,40 +48,56 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 import opbm.Opbm;
 import opbm.dialogs.OpbmDialog;
 import opbm.common.Xml;
+import opbm.graphics.AnimateImageTask;
 
-public final class ResultsViewer implements KeyListener,
-											MouseWheelListener,
-											ComponentListener,
-											WindowListener
+public final class ResultsViewer
+							implements KeyListener,
+									   MouseListener,
+									   MouseWheelListener,
+									   ComponentListener,
+									   WindowListener,
+									   AdjustmentListener
 
 {
 	public ResultsViewer(Opbm		opbm,
-						 int		width,
-						 int		height,
 						 boolean	visible)
 	{
-		m_opbm			= opbm;
-		m_rootRVL		= null;
-		m_width			= width;
-		m_height		= height;
-		m_actual_width	= width;
-		m_actual_height	= height;
-		m_filterTags	= new Tuple(opbm);
-		m_graphThread	= null;
-		m_graphLine		= null;
-		createResultsViewer(visible);
+		m_opbm					= opbm;
+		m_rootRVL				= null;
+		m_filterTags			= new Tuple(opbm);
+		m_visible				= visible;
+		m_rvlList				= new ArrayList<ResultsViewerLine>(0);
+		m_renderList			= new ArrayList<ResultsViewerLine>(0);
 	}
 
+	/**
+	 * Loads the specified filename and creates the physical Results Viewer canvas / screen /image
+	 * @param filename
+	 * @return
+	 */
 	public boolean load(String filename)
 	{
+		// Build the physical viewer
+		createResultsViewer(m_visible);
+
+		// Load the specified xml
 		Xml results = Opbm.loadXml(filename, m_opbm);
 		if (results != null)
 		{	// No error, proceed like normal
 			populate(results);
+
+			// Setup initial state of everything
+			computeInitialTimesAndScores();
+
+			// Begin at the top
+			m_renderListTop = 0;
+
+			// Success
 			return(true);
 
 		} else {
@@ -88,19 +107,54 @@ public final class ResultsViewer implements KeyListener,
 		}
 	}
 
+	/**
+	 * Called once at startup, used to compute all of the initial times, scores,
+	 * successes, failures, etc., that occur at each level, so when items are
+	 * filtered and lesser results sets are viewed, the totals can be gathered.
+	 */
+	private void computeInitialTimesAndScores()
+	{
+		int i, level;
+
+		// Levels are 0=summary, 1=suite, 2=scenario, 3=molecule, 4=atom, 5=worklet
+		// Iterate backwards from worklet, to atom, to molecule, to scenario, to
+		// suite, to summary, thereby ensuring that the child's computed values
+		// are set at each level
+		for (level = ResultsViewerLine._WORKLET;
+			 level >= ResultsViewerLine._SUMMARY;
+			 level--)
+		{
+			for (i = 0; i < m_rvlList.size(); i++)
+			{	// Compute every entry at this level in our list
+				if (m_rvlList.get(i).getLevel() == level)
+				{	// Compute this one
+					m_rvlList.get(i).computedChildScoresTimesEtc(false, null);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Called to physically render the components.  They were created during
+	 * the createResultsViewer() method, but are not physically updated / drawn-
+	 * with-datauntil they are rendered.
+	 */
 	public void render()
 	{
 		renderScoreboard();
-		renderFilters();
 		renderBottom();
-		renderGraph();		// We renderHotTrackChange the graph last because it requires some information obtained from the bottom section
+		if (m_splashTask != null)
+		{	// Turn off splash-screen animation
+			m_splashTask.stop();
+			m_splashTask = null;
+		}
 	}
 
 	public void renderScoreboard()
 	{
 		int switchX;
-		double half, diff;
-		String score;
+		double half, diff, height;
+		String score, time, successes, failures;
 		AlphaImage img;
 		Rectangle rect;
 		Font font;
@@ -119,249 +173,68 @@ public final class ResultsViewer implements KeyListener,
 		img.applyAlphaMask(m_imgScoreboardInternal1Mask);
 
 		// 1b) Render the rainbow gauge
-		half = (((double)img.getHeight() - 83.0) / 2.0);
-		diff = 100.0 - m_rootRVL.getScore();
+		height	= (double)img.getHeight() - 83.0;
+		half = (height / 2.0);
+		diff = (Utils.between(m_rootRVL.getComputedScore(), 0.0, 200.0) - 100.0) / 100.0;
 		// We make the entire rainbow spectrum only show variations of 33 points
-		switchX = (int)Utils.roundAwayFromZero(half * diff / 33.0);
-		img.rainbowRectangle(1, 83, img.getWidth() - 2, img.getHeight() - 1, Math.min(Math.max((int)half + switchX - 6, 0), img.getHeight() - 83));
+		switchX = (int)Utils.roundAwayFromZero(half + (half * diff));
+		img.rainbowRectangle(1, 83, img.getWidth() - 2, img.getHeight() - 1, (int)height - switchX - 6);
 
 		// Score
 		font	= new Font("Calibri", Font.BOLD, 64);
 		rect	= new Rectangle(0, 0, img.getWidth(), 20);
-		score	= Integer.toString((int)m_rootRVL.getScore());
+		score	= Integer.toString((int)m_rootRVL.getComputedScore());
 		if (score.length() > 3)
 			score = "999";
 		img.drawStringInRectangle(rect, score, Color.WHITE, font, 255, true);
 
 		if (m_failureCount != 0)
-		{	// Make the background red
-			img.recolorize(AlphaImage.makeARGB(255, 255, 0, 0));
-		}
+			img.recolorize(AlphaImage.makeARGB(255, 255, 0, 0));				// Make the background red
 
+		// Mask off the image to fit in its display area, and display it
 		img.applyAlphaMask(m_imgScoreboardInternal2Mask);
 		m_lblScoreboard.setIcon(new ImageIcon(img.getBufferedImage()));
-	}
 
-	public void renderBottomButtons()
-	{
-		Rectangle rect;
-		AlphaImage img, mask;
-		JLabelHotTrack excel, word, notepad;
-		JLabel labelUnselectedNeutral, labelUnselectedOver;
+		// Update the time and score portions
+		time		= Utils.convertSecondsToHHMMSSff(m_rootRVL.getComputedTime());
+		successes	= Integer.toString(m_rootRVL.getComputedSuccesses());
+		failures	= Integer.toString(m_rootRVL.getComputedFailures());
 
-		// Excel icon
-		excel = new JLabelHotTrack(this);
-		excel.setType(JLabelHotTrack.CLICK_ACTION);
-		excel.setIdentifier("excel");
-		labelUnselectedNeutral = new JLabel();
-		labelUnselectedNeutral.setVisible(false);
-		labelUnselectedNeutral.setToolTipText("Open results.csv file");
-		m_pan.add(labelUnselectedNeutral);
-		m_pan.moveToFront(labelUnselectedNeutral);
-		labelUnselectedOver = new JLabel();
-		labelUnselectedOver.setVisible(false);
-		labelUnselectedOver.setToolTipText("Open results.csv file");
-		m_pan.add(labelUnselectedOver);
-		m_pan.moveToFront(labelUnselectedOver);
-		excel.setUnselectedNeutral(labelUnselectedNeutral);
-		excel.setUnselectedOver(labelUnselectedOver);
+		m_lblScoreboardRunTime.setText(time);
+		m_lblScoreboardRunResultsSuccesses.setText(successes);
+		m_lblScoreboardRunResultsSuccesses.setToolTipText("There were " + successes + " successful " + Utils.singularOrPlural(m_rootRVL.getComputedSuccesses(), "test", "tests"));
+		m_lblScoreboardRunResultsFailures.setText(failures);
+		m_lblScoreboardRunResultsFailures.setToolTipText("There " + Utils.singularOrPlural(m_rootRVL.getComputedFailures(), "was", "were") + " " + failures + " " + Utils.singularOrPlural(m_rootRVL.getComputedFailures(), "failure", "failures"));
 
-		// Create all the buttons for the various forms of activity
-		mask	= new AlphaImage(Opbm.locateFile("icon_mask.png"));
-		img		= new AlphaImage(Opbm.locateFile("excel_icon_neutral.png"));
-		img.applyAlphaMask(mask);
-		labelUnselectedNeutral.setIcon(new ImageIcon(img.getBufferedImage()));
-		img		= new AlphaImage(Opbm.locateFile("excel_icon_over.png"));
-		img.applyAlphaMask(mask);
-		labelUnselectedOver.setIcon(new ImageIcon(img.getBufferedImage()));
-		rect = m_lblBottom.getBounds();
-		excel.setBounds(rect.x + 4, rect.y + 44, img.getWidth(), img.getHeight());
-		excel.renderHotTrackChange();
-
-		// Notepad icon
-		notepad = new JLabelHotTrack(this);
-		notepad.setType(JLabelHotTrack.CLICK_ACTION);
-		notepad.setIdentifier("notepad");
-		labelUnselectedNeutral = new JLabel();
-		labelUnselectedNeutral.setToolTipText("Export results to text file");
-		labelUnselectedNeutral.setVisible(false);
-		m_pan.add(labelUnselectedNeutral);
-		m_pan.moveToFront(labelUnselectedNeutral);
-		labelUnselectedOver = new JLabel();
-		labelUnselectedOver.setToolTipText("Export results to text file");
-		labelUnselectedOver.setVisible(false);
-		m_pan.add(labelUnselectedOver);
-		m_pan.moveToFront(labelUnselectedOver);
-		notepad.setUnselectedNeutral(labelUnselectedNeutral);
-		notepad.setUnselectedOver(labelUnselectedOver);
-
-		// Create all the buttons for the various forms of activity
-		mask	= new AlphaImage(Opbm.locateFile("icon_mask.png"));
-		img		= new AlphaImage(Opbm.locateFile("notepad_icon_neutral.png"));
-		img.applyAlphaMask(mask);
-		labelUnselectedNeutral.setIcon(new ImageIcon(img.getBufferedImage()));
-		img		= new AlphaImage(Opbm.locateFile("notepad_icon_over.png"));
-		img.applyAlphaMask(mask);
-		labelUnselectedOver.setIcon(new ImageIcon(img.getBufferedImage()));
-		rect = m_lblBottom.getBounds();
-		notepad.setBounds(rect.x + 4, rect.y + 100, img.getWidth(), img.getHeight());
-		notepad.renderHotTrackChange();
-	}
-
-	public void renderFilters()
-	{
-		int i, top, left;
-		String tag;
-		boolean selected;
-		JLabelHotTrack label;
-		JLabel labelSelectedNeutral, labelSelectedOver, labelUnselectedNeutral, labelUnselectedOver;
-		AlphaImage img, button;
-		Rectangle rect, filterRect;
-		Font font;
-
-		// Determine the size of the filter area
-		filterRect = m_lblFilter.getBounds();
-
-		// 5) Render the filter buttons
-		font	= new Font("Calibri", Font.BOLD, 14);
-		top		= 10;
-		left	= 30;
-		for (i = 0; i < m_filterTags.size(); i++)
-		{
-			tag		= m_filterTags.getFirst(i);
-			// Determine where the button will go logically
-			rect = new Rectangle(left, top, AlphaImage.getButtonWidth(tag, font), AlphaImage.getButtonHeight(tag, font));
-			if (left + rect.width >= filterRect.getWidth() - 15)
-			{
-				left = 30;
-				top += AlphaImage.getButtonHeight(tag, font) + 10;
-				rect.setBounds(left, top, AlphaImage.getButtonWidth(tag, font), AlphaImage.getButtonHeight(tag, font));
-			}
-
-			// Grab the controls for the button
-			selected	= ((String)m_filterTags.getSecond(i)).equalsIgnoreCase("Yes");
-			label		= (JLabelHotTrack)m_filterTags.getThird(i);
-			if (label == null)
-			{
-				label = new JLabelHotTrack(this);
-				label.setTupleToUpdateByMouseActivity(m_filterTags, i);
-
-				labelSelectedNeutral = new JLabel();
-				labelSelectedNeutral.setVisible(false);
-				m_pan.add(labelSelectedNeutral);
-				m_pan.moveToFront(labelSelectedNeutral);
-
-				labelSelectedOver = new JLabel();
-				labelSelectedOver.setVisible(false);
-				m_pan.add(labelSelectedOver);
-				m_pan.moveToFront(labelSelectedOver);
-
-				labelUnselectedNeutral = new JLabel();
-				labelUnselectedNeutral.setVisible(false);
-				m_pan.add(labelUnselectedNeutral);
-				m_pan.moveToFront(labelUnselectedNeutral);
-
-				labelUnselectedOver = new JLabel();
-				labelUnselectedOver.setVisible(false);
-				m_pan.add(labelUnselectedOver);
-				m_pan.moveToFront(labelUnselectedOver);
-
-				label.setSelectedNeutral(labelSelectedNeutral);
-				label.setSelectedOver(labelSelectedOver);
-				label.setUnselectedNeutral(labelUnselectedNeutral);
-				label.setUnselectedOver(labelUnselectedOver);
-
-				// Create all the buttons for the various forms of activity
-				button = AlphaImage.createButton(tag, font, AlphaImage.makeARGB(255, 64, 255, 64), Color.WHITE);
-				labelSelectedNeutral.setIcon(new ImageIcon(button.getBufferedImage()));
-
-				button = AlphaImage.createButton(tag, font, AlphaImage.makeARGB(255, 128, 255, 128), Color.WHITE);
-				labelSelectedOver.setIcon(new ImageIcon(button.getBufferedImage()));
-
-				button = AlphaImage.createButton(tag, font, AlphaImage.makeARGB(255, 255, 64, 64), Color.WHITE);
-				labelUnselectedNeutral.setIcon(new ImageIcon(button.getBufferedImage()));
-
-				button = AlphaImage.createButton(tag, font, AlphaImage.makeARGB(255, 255, 128, 128), Color.WHITE);
-				labelUnselectedOver.setIcon(new ImageIcon(button.getBufferedImage()));
-
-				// Add the hot track label
-				m_filterTags.setThird(i, label);
-
-			} else {
-				labelSelectedNeutral	= label.getSelectedNeutral();
-				labelSelectedOver		= label.getSelectedOver();
-				labelUnselectedNeutral	= label.getUnselectedNeutral();
-				labelUnselectedOver		= label.getUnselectedOver();
-
-			}
-
-			// Position the label (in case its position has changed)
-			label.setSelected(selected);
-			label.setBounds(filterRect.x + rect.x, filterRect.y + rect.y, rect.width, rect.height);
-			label.renderHotTrackChange();
-
-			// Move over for the next button
-			left += rect.width + 15;
-		}
-	}
-
-	public void renderBottomAndGraph()
-	{
-		renderBottom();
-		renderGraph();
-		try {
-			if (m_bottomThread != null)
-				m_bottomThread.join();
-
-			if (m_graphThread != null)
-				m_graphThread.join();
-
-		} catch (InterruptedException ex) {
-		}
-		m_bottomThread	= null;
-		m_graphThread	= null;
+		m_lblRunName.setText(m_runName);
 	}
 
 	public void renderBottom()
 	{
-		// Create in a separate thread, as this task may take a few seconds
-		// as it renders both the bottom and the graph
-		m_bottomThread	= new Thread("cell_area_worker")
-		{
-			@Override
-			public void run()
-			{
-				m_rootRVL.render(new Dimension(53, 6));
-				renderBottomButtons();
-			}
-		};
-		m_bottomThread.start();
-	}
+		int i;
+		ResultsViewerLine rvl;
 
-	/**
-	 * Iterate through every entry until we find the m_lineSelectedGraph entry,
-	 * and then draw its graph.  If one of its children is selected with the
-	 * m_graphLeg entry, then we highlight that line and portion.  Note:  The
-	 * graph leg must be its immediate child, not its grand child or great
-	 * grand child, etc.
-	 */
-	public void renderGraph()
-	{
-		if (m_graphLine != null)
+		// Build a list of everything that should be displayed in the bottom
+		buildRenderList();
+
+		// Go through everything
+		for (i = 0; i < m_rvlList.size(); i++)
 		{
-			m_graphThread	= new Thread("cells_worker")
-			{
-				@Override
-				public void run()
-				{
-					m_graphLine.renderGraph();
+			rvl = m_rvlList.get(i);
+			if (rvl.isAboutToBeVisible())
+			{	// It's one that's about to be made visible, so make it visible
+				rvl.setVisible(true);
+				rvl.render(m_displayMode);
+
+			} else {
+				if (rvl.isVisible())
+				{	// It was previously shown, hide it
+					rvl.setVisible(false);
+					rvl.render(m_displayMode);
 				}
-			};
-			m_graphThread.start();
-
-		} else {
-			m_graphLine = null;
+			}
 		}
+		i = 5;
 	}
 
 	/**
@@ -373,10 +246,19 @@ public final class ResultsViewer implements KeyListener,
 		int i;
 		Xml item;
 		ResultsViewerLine line, last, child, first;
+		Xml result;
 		List<Xml> list = new ArrayList<Xml>(0);
 
+		// Initialize for processing
+		m_rvlList.clear();
+		result			= results.getChildNode("resultsdata").getChildNode("result");
+		m_rootRVL		= new ResultsViewerLine(m_opbm, this, m_pan, 0, result);
+		m_rvlList.add(m_rootRVL);
+
 		// Grab all the top-level data items
-		m_rootRVL		= new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 0, true, true, true, results.getChildNode("resultsdata").getChildNode("result"));
+		m_runName		= result.getAttributeOrChild("name");
+
+		// Initialize all local variables
 		last			= null;
 		first			= null;
 		m_failureCount	= 0;
@@ -388,14 +270,19 @@ public final class ResultsViewer implements KeyListener,
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 1, true, true, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, 1, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
 				m_failureCount += line.wasSuccessful() ? 0 : 1;
+
 			} else {
 				++m_untestedCount;
+
 			}
+
+			// Append it to our master list
+			m_rvlList.add(line);
 
 			if (last != null)
 				last.setNext(line);
@@ -406,12 +293,13 @@ public final class ResultsViewer implements KeyListener,
 			// Add its children
 			child = populateScenarios(item, line);
 			line.setChild(child);
+			line.calculateRolledUpRunTabs();
 
 			last = line;
 		}
 		m_rootRVL.setChild(first);
+		m_rootRVL.calculateRolledUpRunTabs();
 		recomputeScores();
-		assignIterativeColorNumbers(m_rootRVL);
 	}
 
 	public void recomputeScores()
@@ -430,19 +318,9 @@ public final class ResultsViewer implements KeyListener,
 				recomputeScores(thisOne.getChild());
 
 			// All children at this level are computed, sum at this level
-			thisOne.sumChildren(areAnyFilterTagsPopulated(), m_filterTags);
+			thisOne.computedChildScoresTimesEtc(areAnyFilterTagsPopulated(), m_filterTags);
 
 			thisOne = thisOne.getNext();
-		}
-	}
-
-	public void assignIterativeColorNumbers(ResultsViewerLine rvl)
-	{
-		while (rvl != null)
-		{
-			rvl.assignIterativeColorNumber();
-			assignIterativeColorNumbers(rvl.getChild());
-			rvl = rvl.getNext();
 		}
 	}
 
@@ -466,7 +344,7 @@ public final class ResultsViewer implements KeyListener,
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 2, false, true, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, 2, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -474,6 +352,9 @@ public final class ResultsViewer implements KeyListener,
 			} else {
 				++m_untestedCount;
 			}
+
+			// Append it to our master list
+			m_rvlList.add(line);
 
 			if (last != null)
 				last.setNext(line);
@@ -484,6 +365,7 @@ public final class ResultsViewer implements KeyListener,
 			// Add its children
 			child = populateMolecules(item, line);
 			line.setChild(child);
+			line.calculateRolledUpRunTabs();
 
 			last = line;
 		}
@@ -510,7 +392,7 @@ public final class ResultsViewer implements KeyListener,
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 3, false, true, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, 3, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -518,6 +400,9 @@ public final class ResultsViewer implements KeyListener,
 			} else {
 				++m_untestedCount;
 			}
+
+			// Append it to our master list
+			m_rvlList.add(line);
 
 			if (last != null)
 				last.setNext(line);
@@ -528,6 +413,7 @@ public final class ResultsViewer implements KeyListener,
 			// Add its children
 			child = populateAtoms(item, line);
 			line.setChild(child);
+			line.calculateRolledUpRunTabs();
 
 			last = line;
 		}
@@ -554,7 +440,7 @@ public final class ResultsViewer implements KeyListener,
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 4, false, false, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, 4, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -562,6 +448,9 @@ public final class ResultsViewer implements KeyListener,
 			} else {
 				++m_untestedCount;
 			}
+
+			// Append it to our master list
+			m_rvlList.add(line);
 
 			if (last != null)
 				last.setNext(line);
@@ -572,6 +461,7 @@ public final class ResultsViewer implements KeyListener,
 			// Add its children
 			child = populateWorklets(item, line);
 			line.setChild(child);
+			line.calculateRolledUpRunTabs();
 
 			last = line;
 		}
@@ -598,7 +488,7 @@ public final class ResultsViewer implements KeyListener,
 			item = list.get(i);
 
 			// Create the entry for this level
-			line = new ResultsViewerLine(m_opbm, this, m_pan, m_lblBottom, m_imgBackground, m_lblGraphInternal, m_imgGraphInternal, m_imgGraphInternalMask, 5, false, false, false, item);
+			line = new ResultsViewerLine(m_opbm, this, m_pan, 5, item);
 			if (line.wasTested())
 			{	// This line was tested
 				++m_testCount;
@@ -607,11 +497,17 @@ public final class ResultsViewer implements KeyListener,
 				++m_untestedCount;
 			}
 
+			// Append it to our master list
+			m_rvlList.add(line);
+
 			if (last != null)
 				last.setNext(line);
 
 			if (first == null)
 				first = line;
+
+			// At the worklet level, we need to load individual run times
+			line.loadRuns(item, item.getFirstChild());
 
 			last = line;
 		}
@@ -698,35 +594,37 @@ public final class ResultsViewer implements KeyListener,
 	 */
 	public void createResultsViewer(boolean visible)
 	{
-		Dimension prefSize;
+		Dimension minSize, maxSize;
 
-		m_frame = new DroppableFrame(m_opbm, false, false);
+		m_frame = new DroppableFrame(m_opbm, false, true);
 		m_opbm.addResultsViewerToQueue(m_frame);
 		m_frame.setTitle("OPBM - Results Viewer");
 
 		// Compute the actual size we need for our window, so it's properly centered
 		m_frame.pack();
+		m_width			= 1000;
+		m_height		= 566;
 		Insets fi		= m_frame.getInsets();
 		m_actual_width	= m_width  + fi.left + fi.right;
 		m_actual_height	= m_height + fi.top  + fi.bottom;
-		m_frame.setSize(m_width  + fi.left + fi.right,
-						m_height + fi.top  + fi.bottom);
+		minSize = new Dimension(m_width  + fi.left + fi.right,
+								m_height + fi.top  + fi.bottom);
+		maxSize = new Dimension(1000 + fi.left + fi.right,
+								1050 + fi.top  + fi.bottom);
+		m_frame.setSize(minSize);
+		m_frame.setMinimumSize(minSize);
+		m_frame.setPreferredSize(minSize);
+		m_frame.setMaximumSize(maxSize);
+		m_frame.setMinMaxResizeBoundaries(m_actual_width, m_actual_height, m_actual_width, 1050 + fi.top + fi.bottom);
+		m_frame.pack();
 
-		prefSize = new Dimension(m_width  + fi.left + fi.right,
-								 m_height + fi.top  + fi.bottom);
-		m_frame.setMinimumSize(prefSize);
-		m_frame.setPreferredSize(prefSize);
-
-		prefSize = new Dimension(m_width  + fi.left + fi.right,
-								 m_height + fi.top  + fi.bottom);
-		m_frame.setMinimumSize(prefSize);
 		m_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        m_frame.setSize(m_width, m_height);
-		m_frame.setLocationRelativeTo(null);  // Center window
+		m_frame.setLocationRelativeTo(null);	// Center window
 		m_frame.setLayout(null);				// We handle all redraws
 		m_frame.addKeyListener(this);
 		m_frame.addMouseWheelListener(this);
 		m_frame.addComponentListener(this);
+		m_frame.addWindowListener(this);
 		m_frame.addWindowListener(this);
 
 		Container c = m_frame.getContentPane();
@@ -735,7 +633,7 @@ public final class ResultsViewer implements KeyListener,
 
 		m_pan = new JLayeredPane();
 		m_pan.setLayout(null);
-		m_pan.setBounds(0, 0, m_width, m_height);
+		m_pan.setBounds(0, 0, maxSize.width, maxSize.height);
 		m_pan.setVisible(true);
 		m_pan.setBorder(BorderFactory.createEmptyBorder());
 		m_pan.addKeyListener(this);
@@ -743,52 +641,39 @@ public final class ResultsViewer implements KeyListener,
 
 		// Set the background image
 		m_lblBackground = new JLabel();
-		m_lblBackground.setBounds(0, 0, m_width, m_height);
+		m_lblBackground.setBounds(0, 0, maxSize.width, maxSize.height);
 		m_lblBackground.setHorizontalAlignment(JLabel.LEFT);
 		m_lblBackground.setVerticalAlignment(JLabel.TOP);
 		m_imgBackground = new AlphaImage(Opbm.locateFile("results_viewer_background.png"));		// Granite
 		m_pan.add(m_lblBackground);
 		m_pan.moveToFront(m_lblBackground);
 
-		extractBottom();
 		extractScoreboard();
-		extractGraph();
-		extractThisSystem();
-		extractReferenceSystem();
-		extractFilter();
+		extractBottom();
 
 		m_lblBackground.setIcon(new ImageIcon(m_imgBackground.getBufferedImage()));
 		m_lblBackground.setVisible(true);
+
+		// This process now takes a moment
+		// Create a thread to indicate to the user that the rest of the process (the results.xml file) is loading
+		m_splashThread	= new Thread("loadResultsXmlSplash")
+		{
+			@Override
+			public void run()
+			{	// In the thread we render the bottom section
+				m_imgSplash1 = new AlphaImage(Opbm.locateFile("rvsplash1.png"));
+				m_imgSplash2 = new AlphaImage(Opbm.locateFile("rvsplash2.png"));
+				m_imgSplash3 = new AlphaImage(Opbm.locateFile("rvsplash3.png"));
+				m_splashTask = new AnimateImageTask();
+				m_splashTask.add(m_imgSplash1);		// "Loading-.."
+				m_splashTask.add(m_imgSplash2);		// "Loading.-."
+				m_splashTask.add(m_imgSplash3);		// "Loading..-"
+				m_splashTask.add(m_imgSplash2);		// "Loading.-."
+				m_splashTask.animateAtBounds(28, 129, 122, 28, m_pan, 333);
+			}
+		};
+		m_splashThread.start();
 		m_frame.setVisible(visible);
-	}
-
-	/**
-	 * Create the skinned components of the background image, using the various masks, etc.
-	 */
-	private void extractBottom()
-	{
-		m_imgBottom = m_imgBackground.extractImage(0, m_height - 193, m_width, m_height);
-		m_imgBottom.applyAlphaMask(Opbm.locateFile("bottom.png"));
-		m_imgBackground.darkenByAlphaMask(Opbm.locateFile("bottom_background.png"), 0, m_height - 193, m_width, m_height);
-		m_imgBottom.recolorize(AlphaImage.makeARGB(255, 255, 255, 255));
-		m_imgBottom.scaleContrast(0.75);
-		m_imgBottom.scaleBrightness(0.75);
-		m_lblBottom = new JLabel();
-		m_lblBottom.setBounds(0, m_height - 193, m_width, 193);
-		m_lblBottom.setIcon(new ImageIcon(m_imgBottom.getBufferedImage()));
-		m_lblBottom.setVisible(true);
-		m_pan.add(m_lblBottom);
-		m_pan.moveToFront(m_lblBottom);
-
-		// Add an input field for selected cell movement left/right/up/down, and single-digit commands
-		m_txtInput = new JTextField();
-		// Position off-screen:
-		m_txtInput.setBounds(25, m_height + 100, 16, 24);
-		m_txtInput.setVisible(true);
-		m_txtInput.addKeyListener(this);
-		m_pan.add(m_txtInput);
-		m_pan.moveToFront(m_txtInput);
-		m_txtInput.requestFocusInWindow();
 	}
 
 	/**
@@ -817,244 +702,297 @@ public final class ResultsViewer implements KeyListener,
 		m_imgScoreboardInternal1Mask = new AlphaImage(Opbm.locateFile("scoreboard_internal1.png"));
 		m_imgScoreboardInternal2Mask = new AlphaImage(Opbm.locateFile("scoreboard_internal2.png"));
 		m_imgBackground.darkenByAlphaMask(m_imgScoreboardInternal1Mask, 26, 74, 26+126, 74+159);
+
+		// Create the name space text, which isn't really on the scoreboard, but is updated in the same method
+		m_lblRunName = new JLabel();
+		m_lblRunName.setBounds(790, 0, 210, 48);
+		m_lblRunName.setHorizontalAlignment(JLabel.CENTER);
+		m_lblRunName.setVerticalAlignment(JLabel.CENTER);
+		m_lblRunName.setForeground(Color.white);
+		m_lblRunName.setFont(new Font("Calibri", Font.BOLD, 24));
+		m_lblRunName.setOpaque(false);
+		m_lblRunName.setVisible(true);
+		m_pan.add(m_lblRunName);
+		m_pan.moveToFront(m_lblRunName);
+
+		// Extract the label behind the middle part of the scoreboard, which is colorized in various areas for the background
+		m_imgScoreboardMiddleBackground = m_imgScoreboard.extractImage(15, 66, 15+122, 66+29);
+		m_imgScoreboardMiddleBackground.scaleBrightness(0.95, 0, 12, 67+28+27, 28);
+//		m_imgMiddleBackground.recolorize(AlphaImage.makeARGB(255, 235, 235, 235),     0,  0,      122, 12);		// top light gray area
+		m_imgScoreboardMiddleBackground.recolorize(AlphaImage.makeARGB(255, 255, 255, 255),     0, 12,       67, 28);		// lower-left white area
+		m_imgScoreboardMiddleBackground.recolorize(AlphaImage.makeARGB(255,  32, 255,  32),    67, 12,    67+28, 28);		// success green area
+		m_imgScoreboardMiddleBackground.recolorize(AlphaImage.makeARGB(255, 255,  32,  32), 67+28, 12, 67+28+27, 28);		// failure red area
+		m_imgScoreboardMiddleBackground.darkenByAlphaMask(Opbm.locateFile("scoreboard_middle.png"));
+		JLabel m_lblMiddleBackground = new JLabel();
+		m_lblMiddleBackground.setBounds(28, 129, 122, 29);
+		m_lblMiddleBackground.setIcon(new ImageIcon(m_imgScoreboardMiddleBackground.getBufferedImage()));
+		m_pan.add(m_lblMiddleBackground);
+		m_pan.moveToFront(m_lblMiddleBackground);
+
+		Font fHeader	= new Font("Calibri", Font.PLAIN, 11);
+		Font fData		= new Font("Calibri", Font.BOLD, 15);
+
+		// Create the "Run Time" text
+		m_lblScoreboardRunTimeHeader = new JLabel("Time");
+		m_lblScoreboardRunTimeHeader.setBounds(28, 130, 68, 13);
+		m_lblScoreboardRunTimeHeader.setHorizontalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunTimeHeader.setVerticalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunTimeHeader.setForeground(Color.black);
+		m_lblScoreboardRunTimeHeader.setFont(fHeader);
+		m_lblScoreboardRunTimeHeader.setOpaque(false);
+		m_lblScoreboardRunTimeHeader.setVisible(true);
+		m_pan.add(m_lblScoreboardRunTimeHeader);
+		m_pan.moveToFront(m_lblScoreboardRunTimeHeader);
+
+		// Create the area for the actual run time calculation
+		m_lblScoreboardRunTime = new JLabel();
+		m_lblScoreboardRunTime.setBounds(28, 142, 68, 16);
+		m_lblScoreboardRunTime.setHorizontalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunTime.setVerticalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunTime.setForeground(Color.black);
+		m_lblScoreboardRunTime.setFont(fData);
+		m_lblScoreboardRunTime.setOpaque(false);
+		m_lblScoreboardRunTime.setVisible(true);
+		m_pan.add(m_lblScoreboardRunTime);
+		m_pan.moveToFront(m_lblScoreboardRunTime);
+
+		// Create the "Run Results" text
+		m_lblScoreboardRunResultsHeader = new JLabel("Results");
+		m_lblScoreboardRunResultsHeader.setBounds(95, 130, 55, 13);
+		m_lblScoreboardRunResultsHeader.setHorizontalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunResultsHeader.setVerticalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunResultsHeader.setForeground(Color.black);
+		m_lblScoreboardRunResultsHeader.setFont(fHeader);
+		m_lblScoreboardRunResultsHeader.setOpaque(false);
+		m_lblScoreboardRunResultsHeader.setVisible(true);
+		m_pan.add(m_lblScoreboardRunResultsHeader);
+		m_pan.moveToFront(m_lblScoreboardRunResultsHeader);
+
+		// Create the background image for Success
+		m_lblScoreboardRunResultsSuccesses = new JLabel();
+		m_lblScoreboardRunResultsSuccesses.setBounds(95, 142, 28, 16);
+		m_lblScoreboardRunResultsSuccesses.setHorizontalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunResultsSuccesses.setVerticalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunResultsSuccesses.setForeground(Color.black);
+		m_lblScoreboardRunResultsSuccesses.setFont(fData);
+		m_lblScoreboardRunResultsSuccesses.setOpaque(false);
+		m_lblScoreboardRunResultsSuccesses.setVisible(true);
+		m_pan.add(m_lblScoreboardRunResultsSuccesses);
+		m_pan.moveToFront(m_lblScoreboardRunResultsSuccesses);
+
+		// Create the background image for Failure
+		m_lblScoreboardRunResultsFailures = new JLabel();
+		m_lblScoreboardRunResultsFailures.setBounds(124, 142, 27, 16);
+		m_lblScoreboardRunResultsFailures.setHorizontalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunResultsFailures.setVerticalAlignment(JLabel.CENTER);
+		m_lblScoreboardRunResultsFailures.setForeground(Color.white);
+		m_lblScoreboardRunResultsFailures.setFont(fData);
+		m_lblScoreboardRunResultsFailures.setOpaque(false);
+		m_lblScoreboardRunResultsFailures.setVisible(true);
+		m_pan.add(m_lblScoreboardRunResultsFailures);
+		m_pan.moveToFront(m_lblScoreboardRunResultsFailures);
 	}
 
-	/**
-	 * 175,63	- graph				- 610x183
-	 * 190,76	- graph internal	- 580x155
-	 */
-	private void extractGraph()
+	private void extractBottom()
 	{
-		m_imgGraph				= m_imgBackground.extractImage(175, 63, 175+610, 63+183);
-		m_imgGraphInternal		= m_imgBackground.extractImage(190, 77, 190+580, 77+155);
-		m_imgGraphInternalMask	= new AlphaImage(Opbm.locateFile("graph_internal_mask.png"));
-		m_imgGraphInternal.applyAlphaMask(m_imgGraphInternalMask);
-		m_imgGraphMask			= new AlphaImage(Opbm.locateFile("graph.png"));
-		m_imgBackground.darkenByAlphaMask(Opbm.locateFile("graph_background.png"), 175, 63, 175+610, 63+184);
-		m_imgGraph.applyAlphaMask(m_imgGraphMask);
-		m_imgGraph.scaleContrast(0.75);
-		m_imgGraph.scaleBrightness(0.75);
-		m_imgGraph.recolorize(AlphaImage.makeARGB(255, 255, 227, 174));
-		m_imgGraph.darkenByAlphaMask(Opbm.locateFile("graph2.png"));
-
-		m_lblGraph = new JLabel();
-		m_lblGraph.setBounds(175, 63, 610, 183);
-		m_lblGraph.setIcon(new ImageIcon(m_imgGraph.getBufferedImage()));
-		m_lblGraph.setVisible(true);
-		m_pan.add(m_lblGraph);
-		m_pan.moveToFront(m_lblGraph);
-
-		m_lblGraphInternal = new JLabel();
-		m_lblGraphInternal.setBounds(190, 76, 580, 154);
-		m_lblGraphInternal.setIcon(new ImageIcon(m_imgGraphInternal.getBufferedImage()));
-		m_lblGraphInternal.setVisible(true);
-		m_pan.add(m_lblGraphInternal);
-		m_pan.moveToFront(m_lblGraphInternal);
-
-		m_imgBackground.darkenByAlphaMask(Opbm.locateFile("graph_internal.png"), 188, 74, 188+584, 74+159);
-	}
-
-	/**
-	 * 13,255	- this system	- 152x40
-	 */
-	private void extractThisSystem()
-	{
-		Font font;
+		Font buttonFont, labelFont;
+		int foreSelectedNeutral, foreSelectedOver, foreUnselectedNeutral, foreUnselectedOver;
+		int backSelectedNeutral, backSelectedOver, backUnselectedNeutral, backUnselectedOver;
 		Rectangle rect;
 
-		m_imgThisSystemNeutral		= m_imgBackground.extractImage(13, 255, 13+152, 255+40);
-		m_imgThisSystemNeutralMask	= new AlphaImage(Opbm.locateFile("this_system.png"));
-		m_imgThisSystemOver			= new AlphaImage(m_imgThisSystemNeutral);
-		m_imgThisSystemOverMask		= new AlphaImage(Opbm.locateFile("this_system_over.png"));
+		m_imgBottom = m_imgBackground.extractImage(180, 50, m_imgBackground.getWidth(), m_imgBackground.getHeight());
+		m_imgBottom.scaleContrast(0.75);
+		m_imgBottom.scaleBrightness(0.75);
+		m_imgBottom.recolorize(AlphaImage.makeARGB(255, 255, 255, 255));
 
-		m_imgThisSystemNeutral.applyAlphaMask(m_imgThisSystemNeutralMask);
-		m_imgThisSystemNeutral.scaleContrast(0.75);
-		m_imgThisSystemNeutral.scaleBrightness(0.75);
-		m_imgThisSystemNeutral.recolorize(AlphaImage.makeARGB(255, 255, 227, 174)/*AlphaImage.makeARGB(255, 128, 255, 128)*/);
-		font	= new Font("Calibri", Font.BOLD, 20);
-		rect	= new Rectangle(20, 0, m_imgThisSystemNeutral.getWidth() - 20, (int)(m_imgThisSystemNeutral.getHeight() * 0.65));
-		m_imgThisSystemNeutral.drawStringInRectangle(rect, "This System", new Color(255,255,255), font, 255, true);
+		m_lblBottom = new JLabel();
+		m_lblBottom.setBounds(180, 50, m_imgBottom.getWidth(), m_imgBottom.getHeight());
+		m_lblBottom.setIcon(new ImageIcon(m_imgBottom.getBufferedImage()));
+		m_lblBottom.setHorizontalAlignment(JLabel.LEFT);
+		m_lblBottom.setVerticalAlignment(JLabel.TOP);
+		m_lblBottom.setVisible(true);
+		m_pan.add(m_lblBottom);
+		m_pan.moveToFront(m_lblBottom);
 
-		m_imgThisSystemOver.applyAlphaMask(m_imgThisSystemNeutralMask);
-		m_imgThisSystemOver.scaleContrast(0.75);
-		m_imgThisSystemOver.scaleBrightness(0.75);
-		m_imgThisSystemOver.recolorize(AlphaImage.makeARGB(255, 128, 255, 128));
-		m_imgThisSystemOver.copyByAlphaMask(m_imgThisSystemNeutral, m_imgThisSystemOverMask);
-		m_imgThisSystemOver.drawStringInRectangle(rect, "This System", new Color(255,255,255), font, 255, true);
+		m_scrollbarBottom = new JScrollBar(JScrollBar.VERTICAL);
+		m_scrollbarBottom.setBounds(m_lblBottom.getX() + m_lblBottom.getWidth() - 20,
+									m_lblBottom.getY(),
+									20,
+									m_lblBottom.getHeight());
+		m_scrollbarBottom.setVisible(true);
+		m_scrollbarBottom.addAdjustmentListener(this);
+		m_scrollbarBottom.addKeyListener(this);
+		m_pan.add(m_scrollbarBottom);
+		m_pan.moveToFront(m_scrollbarBottom);
 
-		m_lblThisSystem	= new JLabelHotTrack(this);
-		m_lblThisSystem.setType(JLabelHotTrack.CLICK_ACTION);
-		m_lblThisSystem.setBounds(13, 255, 152, 40);
-		m_lblThisSystem.setIdentifier("this_system");
+		// Add the buttons for showing the times or the scores
+		backSelectedNeutral		= AlphaImage.makeARGB(255, 64, 255, 64);		// brighter green
+		backSelectedOver		= AlphaImage.makeARGB(255, 0, 215, 0);			// darker green
+		backUnselectedOver		= AlphaImage.makeARGB(255, 255, 64, 64);		// red
+		backUnselectedNeutral	= AlphaImage.makeARGB(255, 215, 0, 0);			// darker red
+		foreSelectedNeutral		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
+		foreSelectedOver		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
+		foreUnselectedNeutral	= AlphaImage.makeARGB(255, 255, 255, 255);		// white
+		foreUnselectedOver		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
 
-		m_lblThisSystemNeutral = new JLabel();
-		m_lblThisSystemNeutral.setIcon(new ImageIcon(m_imgThisSystemNeutral.getBufferedImage()));
-		m_lblThisSystemNeutral.setVisible(true);
-		m_pan.add(m_lblThisSystemNeutral);
-		m_pan.moveToFront(m_lblThisSystemNeutral);
+		labelFont		= new Font("Calibri", Font.PLAIN, 18);
+		JLabel label	= new JLabel("Show by:");
+		label.setOpaque(false);
+		label.setFont(labelFont);
+		label.setForeground(Color.WHITE);
+		label.setBounds(53, 257+30, 100, 20);
+		label.setVisible(true);
+		m_pan.add(label);
+		m_pan.moveToFront(label);
 
-		m_lblThisSystemOver = new JLabel();
-		m_lblThisSystemOver.setIcon(new ImageIcon(m_imgThisSystemOver.getBufferedImage()));
-		m_lblThisSystemOver.setVisible(true);
-		m_pan.add(m_lblThisSystemOver);
-		m_pan.moveToFront(m_lblThisSystemOver);
+		buttonFont	= new Font("Calibri", Font.BOLD, 16);
+		rect = new Rectangle();
 
-		m_lblThisSystem.setUnselectedNeutral(m_lblThisSystemNeutral);
-		m_lblThisSystem.setUnselectedOver(m_lblThisSystemOver);
-		m_lblThisSystem.renderHotTrackChange();
+		rect.setBounds(55, 280+30, AlphaImage.getButtonWidth("Scores", buttonFont), AlphaImage.getButtonHeight("Scores", buttonFont));
+		m_scores = new JLabelHotTrack();
+		m_scores.setup(this, m_pan, "Scores", buttonFont, rect, backSelectedNeutral, backUnselectedNeutral, backSelectedOver, backUnselectedOver, foreSelectedNeutral, foreUnselectedNeutral, foreSelectedOver, foreUnselectedOver, true);
+		m_displayMode = _SCORES;
 
-		// Darken the background behind this control
-		m_imgBackground.darkenByAlphaMask(Opbm.locateFile("this_system_background.png"), 13, 255, 13+152, 255+40);
+		rect.setBounds(55, 305+30, AlphaImage.getButtonWidth("Times", buttonFont), AlphaImage.getButtonHeight("Times", buttonFont));
+		m_times = new JLabelHotTrack();
+		m_times.setup(this, m_pan, "Times", buttonFont, rect, backSelectedNeutral, backUnselectedNeutral, backSelectedOver, backUnselectedOver, foreSelectedNeutral, foreUnselectedNeutral, foreSelectedOver, foreUnselectedOver, false);
+
+		label = new JLabel("External Views:");
+		label.setOpaque(false);
+		label.setFont(labelFont);
+		label.setForeground(Color.WHITE);
+		label.setBounds(33, 377+30, 130, 20);
+		label.setVisible(true);
+		m_pan.add(label);
+		m_pan.moveToFront(label);
+
+		// CSV icon
+		m_csv = new JLabelHotTrack(this);
+		m_csv.setType(JLabelHotTrack.CLICK_ACTION);
+		m_csv.setIdentifier("csv");
+		JLabel labelUnselectedNeutral = new JLabel();
+		labelUnselectedNeutral.setVisible(false);
+		labelUnselectedNeutral.setToolTipText("View min, max, average, geometric mean, coefficient of variation by atom");
+		m_pan.add(labelUnselectedNeutral);
+		m_pan.moveToFront(labelUnselectedNeutral);
+
+		JLabel labelUnselectedOver = new JLabel();
+		labelUnselectedOver.setVisible(false);
+		labelUnselectedOver.setToolTipText("View min, max, average, geometric mean, coefficient of variation by atom");
+		m_pan.add(labelUnselectedOver);
+		m_pan.moveToFront(labelUnselectedOver);
+
+		m_csv.setUnselectedNeutral(labelUnselectedNeutral);
+		m_csv.setUnselectedOver(labelUnselectedOver);
+
+		// Create all the buttons for the various forms of activity
+		AlphaImage img	= new AlphaImage(Opbm.locateFile("csv.png"));
+		labelUnselectedNeutral.setIcon(new ImageIcon(img.getBufferedImage()));
+		img		= new AlphaImage(img);
+		img.scaleBrightness(0.5);
+		labelUnselectedOver.setIcon(new ImageIcon(img.getBufferedImage()));
+		m_csv.setBounds(60, 410+30, img.getWidth(), img.getHeight());
+		m_csv.renderHotTrackChange();
+
+/*
+		// Report icon
+		m_report = new JLabelHotTrack(this);
+		m_report.setType(JLabelHotTrack.CLICK_ACTION);
+		m_report.setIdentifier("csv");
+		labelUnselectedNeutral = new JLabel();
+		labelUnselectedNeutral.setVisible(false);
+		labelUnselectedNeutral.setToolTipText("View this report as a report");
+		m_pan.add(labelUnselectedNeutral);
+		m_pan.moveToFront(labelUnselectedNeutral);
+
+		labelUnselectedOver = new JLabel();
+		labelUnselectedOver.setVisible(false);
+		labelUnselectedOver.setToolTipText("View this data as a report");
+		m_pan.add(labelUnselectedOver);
+		m_pan.moveToFront(labelUnselectedOver);
+
+		m_report.setUnselectedNeutral(labelUnselectedNeutral);
+		m_report.setUnselectedOver(labelUnselectedOver);
+
+		// Create all the buttons for the various forms of activity
+		img	= new AlphaImage(Opbm.locateFile("report.png"));
+		labelUnselectedNeutral.setIcon(new ImageIcon(img.getBufferedImage()));
+		img	= new AlphaImage(img);
+		img.scaleBrightness(0.5);
+		labelUnselectedOver.setIcon(new ImageIcon(img.getBufferedImage()));
+		m_report.setBounds(65, 480, img.getWidth(), img.getHeight());
+		m_report.renderHotTrackChange();
+ */
+	}
+
+	public void buildRenderList()
+	{
+		// Rebuild the render list
+		populateRenderList(areAnyFilterTagsPopulated(), m_filterTags);
+
+		// Update the scrollbar position
+		m_scrollbarBottom.setBlockIncrement(10);
+		m_scrollbarBottom.setUnitIncrement(1);
+		m_scrollbarBottom.setMinimum(0);
+		m_scrollbarBottom.setMaximum(m_scrollbarBottom.getVisibleAmount() + m_renderList.size() - 1);
+		m_scrollbarBottom.setValue(m_renderListTop);
 	}
 
 	/**
-	 * 13,296	- ref system	- 152x40
+	 * Called to populate the render list with every visible entry, based on
+	 * filter criteria, whether the user has expanded a node, etc.
 	 */
-	private void extractReferenceSystem()
+	public void populateRenderList(boolean		byFilter,
+								   Tuple		filterTags)
 	{
-		Font font;
-		Rectangle rect;
+		int i, top, max;
+		ResultsViewerLine rvl;
 
-		m_imgRefSystemNeutral		= m_imgBackground.extractImage(13, 296, 13+152, 296+40);
-		m_imgRefSystemNeutralMask	= new AlphaImage(Opbm.locateFile("ref_system.png"));
-		m_imgRefSystemOver			= new AlphaImage(m_imgRefSystemNeutral);
-		m_imgRefSystemOverMask		= new AlphaImage(Opbm.locateFile("ref_system_over.png"));
+		// Clear out the old render list
+		m_renderList.clear();
 
-		m_imgRefSystemNeutral.applyAlphaMask(m_imgRefSystemNeutralMask);
-		m_imgRefSystemNeutral.scaleContrast(0.75);
-		m_imgRefSystemNeutral.scaleBrightness(0.75);
-		m_imgRefSystemNeutral.recolorize(AlphaImage.makeARGB(255, 255, 227, 174)/*AlphaImage.makeARGB(255, 128, 128, 255)*/);
-		font	= new Font("Calibri", Font.BOLD, 20);
-		rect	= new Rectangle(20, 0, m_imgRefSystemNeutral.getWidth() - 20, (int)(m_imgRefSystemNeutral.getHeight() * 0.65));
-		m_imgRefSystemNeutral.drawStringInRectangle(rect, "Baseline", new Color(255,255,255), font, 255, true);
-
-		m_imgRefSystemOver.applyAlphaMask(m_imgRefSystemNeutralMask);
-		m_imgRefSystemOver.scaleContrast(0.75);
-		m_imgRefSystemOver.scaleBrightness(0.75);
-		m_imgRefSystemOver.recolorize(AlphaImage.makeARGB(255, 128, 128, 255));
-		m_imgRefSystemOver.copyByAlphaMask(m_imgRefSystemNeutral, m_imgRefSystemOverMask);
-		m_imgRefSystemOver.drawStringInRectangle(rect, "Baseline", new Color(255,255,255), font, 255, true);
-
-		m_lblRefSystem	= new JLabelHotTrack(this);
-		m_lblRefSystem.setType(JLabelHotTrack.CLICK_ACTION);
-		m_lblRefSystem.setBounds(13, 296, 152, 40);
-		m_lblRefSystem.setIdentifier("ref_system");
-
-		m_lblRefSystemNeutral = new JLabel();
-		m_lblRefSystemNeutral.setIcon(new ImageIcon(m_imgRefSystemNeutral.getBufferedImage()));
-		m_lblRefSystemNeutral.setVisible(true);
-		m_pan.add(m_lblRefSystemNeutral);
-		m_pan.moveToFront(m_lblRefSystemNeutral);
-
-		m_lblRefSystemOver = new JLabel();
-		m_lblRefSystemOver.setIcon(new ImageIcon(m_imgRefSystemOver.getBufferedImage()));
-		m_lblRefSystemOver.setVisible(true);
-		m_pan.add(m_lblRefSystemOver);
-		m_pan.moveToFront(m_lblRefSystemOver);
-
-		m_lblRefSystem.setUnselectedNeutral(m_lblRefSystemNeutral);
-		m_lblRefSystem.setUnselectedOver(m_lblRefSystemOver);
-		m_lblRefSystem.renderHotTrackChange();
-
-		// Darken the background behind this control
-		m_imgBackground.darkenByAlphaMask(Opbm.locateFile("ref_system_background.png"), 13, 296, 13+152, 296+40);
-	}
-
-	/**
-	 * 167,255	- filter		- 618x81
-	 */
-	private void extractFilter()
-	{
-		m_imgFilterBackground	= m_imgBackground.extractImage(167, 255, 167+618, 255+81);
-		m_imgFilterMask			= new AlphaImage(Opbm.locateFile("filter.png"));
-		m_imgBackground.darkenByAlphaMask(Opbm.locateFile("filter_background.png"), 167, 255, 167+618, 255+81);
-		m_imgFilterBackground.applyAlphaMask(m_imgFilterMask);
-		m_imgFilterBackground.scaleContrast(0.75);
-		m_imgFilterBackground.scaleBrightness(0.75);
-		m_imgFilterBackground.recolorize(AlphaImage.makeARGB(255, 255, 255, 128));
-		m_lblFilter = new JLabel();
-		m_lblFilter.setBounds(167, 255, 618, 81);
-		m_lblFilter.setIcon(new ImageIcon(m_imgFilterBackground.getBufferedImage()));
-		m_lblFilter.setVisible(true);
-		m_pan.add(m_lblFilter);
-		m_pan.moveToFront(m_lblFilter);
-	}
-
-	public void setAllEntriesUnselectedForNavigation(ResultsViewerLine rvl)
-	{
-		if (rvl != null)
+		// Build the list of things that will be visible
+		top = getRunHeaderY() + ResultsViewerLine._BOX_HEIGHT;
+		max	= top + m_lblBottom.getHeight() - 5;
+		for (i = 0; i < m_rvlList.size(); i++)
 		{
-			// Set this one
-			rvl.setJustSelectedForNavigation(false);
-			// Set its children (if any)
-			if (rvl.getChild() != null)
-				setAllEntriesUnselectedForNavigation(rvl.getChild());
-			// Set its siblings (if any)
-			if (rvl.getNext() != null)
-				setAllEntriesUnselectedForNavigation(rvl.getNext());
-		}
-	}
+			rvl = m_rvlList.get(i);
+			if (!rvl.isIgnored() && (!byFilter || rvl.countIfTagMatch(filterTags)))
+			{	// This one is not filtered out or ignored
+				if (rvl.isVisible())
+				{	// This one is visible (it's not hidden by a collapsed node)
+					if (i >= m_renderListTop)
+					{	// We can position this one
+						if (top < max)
+						{	// There's room for this one
+							rvl.setTop(top);
+							top += rvl.getNameboxHeight();
+							rvl.setAboutToBeVisible(true);
 
-	public void setAllEntriesUnselectedForGraph(ResultsViewerLine rvl)
-	{
-		if (rvl != null)
-		{
-			// Set this one
-			rvl.setJustSelectedForGraph(false);
-			// Set its children (if any)
-			if (rvl.getChild() != null)
-				setAllEntriesUnselectedForGraph(rvl.getChild());
-			// Set its siblings (if any)
-			if (rvl.getNext() != null)
-				setAllEntriesUnselectedForGraph(rvl.getNext());
-		}
-	}
+						} else {
+							// No room
+							rvl.setAboutToBeVisible(false);
 
-	public void moveUpOneLine()
-	{
-		if (m_rootRVL.moveUp(m_navLine))
-			renderBottomAndGraph();
+						}
+					} else {
+						// Not yet one to be displayed
+						rvl.setAboutToBeVisible(false);
+					}
+				} else {
+					// Not visible (is hidden by its parent being collapsed)
+					rvl.setAboutToBeVisible(false);
+				}
+			} else {
+				// Ignored or filtered out
+				rvl.setAboutToBeVisible(false);
+			}
+			m_renderList.add(rvl);
 	}
-
-	public void moveDownOneLine()
-	{
-		if (m_rootRVL.moveDown(m_navLine))
-			renderBottomAndGraph();
-	}
-
-	public void moveLeftOneColumn()
-	{
-		if (m_navLine != null)
-		{
-			if (m_navLine.moveLeft())
-				renderBottomAndGraph();
-		} else {
-			// Reset to the top
-			setAllEntriesUnselectedForGraph(m_rootRVL);
-			m_navLine = m_rootRVL;
-		}
-	}
-
-	public void moveRightOneColumn()
-	{
-		if (m_navLine != null)
-		{
-			if (m_navLine.moveRight())
-				renderBottomAndGraph();
-		} else {
-			// Reset to the top
-			setAllEntriesUnselectedForNavigation(m_rootRVL);
-			m_navLine = m_rootRVL;
-		}
-	}
-
-	public void expandOrCollapse()
-	{
-		if (m_navLine != null)
-		{
-			m_navLine.toggleExpandedState();
-			renderBottomAndGraph();
-		}
+		// When we get here, every item that can be displayed has been
+		// processed, and all of those that will fit in the visible bottom
+		// portion are setup to be displayed.
+		// When we get here, m_renderList is populated with the items that
+		// will be rendered, everything else should/will be hidden.
 	}
 
 	@Override
@@ -1064,30 +1002,28 @@ public final class ResultsViewer implements KeyListener,
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			moveUpOneLine();
+			moveUp(1);
+			renderBottom();
+
+		} else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+			moveUp(((m_height - m_lblBottom.getY()) / ResultsViewerLine._BOX_HEIGHT) - 2);
+			renderBottom();
+
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			moveDownOneLine();
-		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			moveLeftOneColumn();
-		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			moveRightOneColumn();
+			moveDown(1);
+			renderBottom();
+
+		} else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+			moveDown(((m_height - m_lblBottom.getY()) / ResultsViewerLine._BOX_HEIGHT) - 2);
+			renderBottom();
+
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			m_frame.dispose();
-		} else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			expandOrCollapse();
+
 		} else if (e.getKeyCode() == KeyEvent.VK_D) {
 			Opbm.setBreakpointsEnabled(!Opbm.areBreakpointsEnabled());
-		} else if (e.getKeyCode() == KeyEvent.VK_I) {
-			getNavLineCurrentChild().toggleIgnored();
-			recomputeScores();
-			renderScoreboard();
-			renderBottomAndGraph();
+
 		}
-		// Reset/hide the input
-		m_txtInput.selectAll();
-		m_txtInput.cut();
-		m_txtInput.setText("");
-		m_txtInput.requestFocusInWindow();
 	}
 
 	@Override
@@ -1095,25 +1031,24 @@ public final class ResultsViewer implements KeyListener,
 	}
 
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent e)
+	public void componentResized(ComponentEvent e)
 	{
-		boolean scrollingUp;
+		Rectangle rect;
+		Insets inset;
 
-		// See which way we're scrolling
-		scrollingUp = ((e.getWheelRotation() < 0) ? true : false);
+		if (m_frame != null && e.getComponent().equals(m_frame))
+		{	// The window has resized
+			inset		= m_frame.getInsets();
+			m_height	= m_frame.getHeight()	- inset.top		- inset.bottom;
+			m_width		= m_frame.getWidth()	- inset.left	- inset.right;
 
-		// Scroll as many times as the wheel was moved
-		if (scrollingUp)
-		{	// Scrolling up
-			m_rootRVL.moveUp(m_navLine);
-		} else {
-			m_rootRVL.moveDown(m_navLine);
+			if (m_scrollbarBottom != null)
+			{	// Update the scrollbar
+				rect = m_scrollbarBottom.getBounds();
+				rect.height = m_height - rect.y;
+				m_scrollbarBottom.setBounds(rect);
+			}
 		}
-		renderBottomAndGraph();
-	}
-
-	@Override
-	public void componentResized(ComponentEvent e) {
 	}
 
 	@Override
@@ -1134,91 +1069,34 @@ public final class ResultsViewer implements KeyListener,
 		m_filterTags.add(tag, _boolean);
 	}
 
-	public void setGraphLeg(ResultsViewerLine leg)
-	{
-		m_graphLine = leg;
-	}
-
-	public void setNavigationLeg(ResultsViewerLine leg)
-	{
-		m_navLine = leg;
-
-	}
-
-	public ResultsViewerLine getGraphLine()
-	{
-		return(m_graphLine);
-	}
-
-	public ResultsViewerLine getGraphLineCurrentChild()
-	{
-		int count;
-		ResultsViewerLine child;
-
-		if (m_graphLine.getSelectedTab() == -1)
-			return(m_graphLine);
-
-		child	= m_graphLine.getChild();
-		count	= 0;
-		while (child != null)
-		{
-			if (count == m_graphLine.getSelectedTab())
-				return(child);
-
-			// Move to next sibling
-			child = child.getNext();
-			++count;
-		}
-		// If we get here, there's some error, just return the graph line
-		return(m_graphLine);
-	}
-
-	public ResultsViewerLine getNavLine()
-	{
-		return(m_navLine);
-	}
-
-	public ResultsViewerLine getNavLineCurrentChild()
-	{
-		int count;
-		ResultsViewerLine child;
-
-		if (m_navLine.getSelectedTab() == -1)
-			return(m_navLine);
-
-		child	= m_navLine.getChild();
-		count	= 0;
-		while (child != null)
-		{
-			if (count == m_navLine.getSelectedTab())
-				return(child);
-
-			// Move to next sibling
-			child = child.getNext();
-			++count;
-		}
-		// If we get here, there's some error, just return the nav line
-		return(m_navLine);
-	}
-
 	public int getFailureCount()
 	{
 		return(m_failureCount);
 	}
 
-	/**
-	 * Remove any previously generated images from the target lines
-	 * @param rvl
-	 */
-	public void resetAllSubcomponentRenderImagesAndCounts(ResultsViewerLine rvl)
+	public void toggleStateCallback(JLabelHotTrack jlht)
 	{
-		while (rvl != null)
-		{
-			rvl.setSubcomponentImage(null);
-			rvl.setRenderedLevelCount(0);
-			resetAllSubcomponentRenderImagesAndCounts(rvl.getChild());
-			rvl = rvl.getNext();
+		if (jlht.getIdentifier().equalsIgnoreCase("scores"))
+		{	// They clicked on "scores"
+			if (m_displayMode != _SCORES)
+			{	// Set it
+				m_displayMode = _SCORES;
+				renderBottom();
+			}
+
+		} else if (jlht.getIdentifier().equalsIgnoreCase("times")) {
+			// They clicked on "times"
+			if (m_displayMode != _TIMES)
+			{	// Set it
+				m_displayMode = _TIMES;
+				renderBottom();
+			}
 		}
+		// Update the on-screen buttons
+		m_scores.setSelected(m_displayMode == _SCORES);
+		m_scores.renderHotTrackChange();
+		m_times.setSelected(m_displayMode == _TIMES);
+		m_times.renderHotTrackChange();
 	}
 
 	public void clickActionCallback(JLabelHotTrack jlht)
@@ -1278,61 +1156,178 @@ public final class ResultsViewer implements KeyListener,
 	public void windowDeactivated(WindowEvent e) {
 	}
 
-	public DroppableFrame getDroppableFrame()	{	return(m_frame);		}
-	public ResultsViewerLine getRootRVL()		{	return(m_rootRVL);		}
-	public Tuple getFilterTags()				{	return(m_filterTags);	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+// Check here for possible use of single-click and double-click
+	}
 
-	private Opbm						m_opbm;				// The parent
-	private DroppableFrame				m_frame;			// The physical window
-	private JLayeredPane				m_pan;
-	private int							m_failureCount;
-	private int							m_testCount;
-	private int							m_untestedCount;
-	private JLabel						m_lblBackground;	// The background image
-	private AlphaImage					m_imgBackground;
-	private AlphaImage					m_imgBottom;
-	private AlphaImage					m_imgScoreboard;
-	private AlphaImage					m_imgScoreboardInternal1Mask;
-	private AlphaImage					m_imgScoreboardInternal2Mask;
-	private AlphaImage					m_imgGraph;
-	private AlphaImage					m_imgGraphInternal;
-	private AlphaImage					m_imgGraphInternalMask;
-	private AlphaImage					m_imgThisSystemNeutral;
-	private AlphaImage					m_imgThisSystemOver;
-	private AlphaImage					m_imgThisSystemNeutralMask;
-	private AlphaImage					m_imgThisSystemOverMask;
-	private AlphaImage					m_imgRefSystemNeutral;
-	private AlphaImage					m_imgRefSystemNeutralMask;
-	private AlphaImage					m_imgRefSystemOver;
-	private AlphaImage					m_imgRefSystemOverMask;
-	private AlphaImage					m_imgFilterBackground;
-	private AlphaImage					m_imgFilterMask;
-	private AlphaImage					m_imgGraphMask;
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+	}
+
+	/**
+	 * Searches the render list to determine which entry is the specified RVL.
+	 * @param rvl the RVL entry being searched for
+	 * @return the RVL number, or -1 if not found
+	 */
+	public int getRenderListNumber(ResultsViewerLine rvl)
+	{
+		int i;
+
+		for (i = 0; i < m_renderList.size(); i++)
+		{
+			if (m_renderList.get(i).equals(rvl))
+				return(i);
+		}
+		return(-1);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e)
+	{
+		int scroll;
+		boolean scrollingUp, result;
+
+		// See which way we're scrolling
+// BREAKPOINT for untested code
+		scroll		= e.getScrollAmount();
+		scrollingUp	= ((e.getWheelRotation() < 0) ? true : false);
+
+		// Scroll as many times as the wheel was moved
+		if (scrollingUp)
+			result = moveUp(scroll);		// Scrolling up
+		else
+			result = moveDown(scroll);	// Scrolling down
+
+		if (result)
+			renderBottom();
+	}
+
+	public boolean moveUp(int count)
+	{
+		if (m_renderListTop - count >= 0)
+		{	// We can move up one
+			m_renderListTop -= count;
+			return(true);
+
+		} else if (m_renderListTop > 0) {
+			// We can move back to the beginning
+			m_renderListTop = 0;
+			return(true);
+
+		} else {
+			// Nope, we're at the top
+			return(false);
+		}
+	}
+
+	public boolean moveDown(int count)
+	{
+		if (m_renderListTop < m_renderList.size() - count)
+		{	// We can move down the specified number
+			m_renderListTop += count;
+			return(true);
+
+		} else if (m_renderListTop < m_renderList.size() - 1) {
+			// We can move down at least a few, until we reach the end
+			m_renderListTop = m_renderList.size() - 1;
+			return(true);
+
+		} else {
+			// Nope, we're at the top
+			return(false);
+		}
+	}
+
+	@Override
+	public void adjustmentValueChanged(AdjustmentEvent e)
+	{
+		if (e.getValue() != m_renderListTop)
+		{	// Something has changed
+			m_renderListTop = e.getValue();
+			renderBottom();
+		}
+	}
+
+	public int m_renderListTop;
+
+	public DroppableFrame getDroppableFrame()	{	return(m_frame);				}
+	public ResultsViewerLine getRootRVL()		{	return(m_rootRVL);				}
+	public Tuple getFilterTags()				{	return(m_filterTags);			}
+	public int getRunHeaderY()					{	return(m_lblBottom.getY() + 5);	}
+
+	private Opbm						m_opbm;					// The parent
+	private DroppableFrame				m_frame;				// The physical window
+	private boolean						m_visible;				// Is the window initially visible?
+	private JLayeredPane				m_pan;					// The master pane holding all child items
+	private List<ResultsViewerLine>		m_rvlList;				// The master list of all ResultsViewerLine entries
+	private ResultsViewerLine			m_rootRVL;				// The root results viewer line, the primary entry which holds all children
+	private String						m_runName;				// The name of the run, from results.xml
+	private JScrollBar					m_scrollbarBottom;		// Scrollbar for the bottom portion
+
+	private int							m_failureCount;			// Determined at load time, the number of failures within
+	private int							m_testCount;			// Determined at load time, the number of items tested
+	private int							m_untestedCount;		// determined at load time, the number of items untested
+
+	private AlphaImage					m_imgBackground;		// The alpha image used for the background image
+	private JLabel						m_lblBackground;		// The background image holder/container used for the entire JFrame
+
+	private AlphaImage					m_imgBottom;			// The alpha image area extracted and colorized for the bottom portion
+	private JLabel						m_lblBottom;			// The background image holder/container used for the bottom portion
+
+	private AlphaImage					m_imgScoreboard;		// The alpha image area extracted and colorized for the scoreboard portion
+	private JLabel						m_lblScoreboard;		// The background image holder/container used for the scoreboard outer shape
+
+	private AlphaImage					m_imgScoreboardInternal1Mask;	// An alpha image used to mask out part of the scoreboard during extraction, and used subsequently each time the scoreboard is redrawn
+	private AlphaImage					m_imgScoreboardInternal2Mask;	// An alpha image used to mask out part of the scoreboard during extraction, and used subsequently each time the scoreboard is redrawn
 	private AlphaImage					m_imgScoreboardInternal;
-	private Thread						m_bottomThread;		// Renders the bottom section in the background
-	private Thread						m_graphThread;		// Renders graphs in the background
+	private	AlphaImage					m_imgScoreboardMiddleBackground;
+	private JLabel						m_lblScoreboardRunTimeHeader;
+	private JLabel						m_lblScoreboardRunTime;
+	private JLabel						m_lblScoreboardRunResultsHeader;
+	private JLabel						m_lblScoreboardRunResultsSuccesses;
+	private JLabel						m_lblScoreboardRunResultsFailures;
 
-	private JLabel						m_lblScoreboard;
-	private JLabel						m_lblGraph;
-	private JLabel						m_lblGraphInternal;
-	private JLabelHotTrack				m_lblThisSystem;
-	private JLabel						m_lblThisSystemNeutral;
-	private JLabel						m_lblThisSystemOver;
-	private JLabelHotTrack				m_lblRefSystem;
-	private JLabel						m_lblRefSystemNeutral;
-	private JLabel						m_lblRefSystemOver;
-	private JLabel						m_lblFilter;
-	private JLabel						m_lblBottom;
-	private JTextField					m_txtInput;
+	private AlphaImage					m_imgSplash1;			// Image used for splash screen animation during load
+	private AlphaImage					m_imgSplash2;			// Image used for splash screen animation during load
+	private AlphaImage					m_imgSplash3;			// Image used for splash screen animation during load
+	private AnimateImageTask			m_splashTask;			// Task switching images back and forth
 
-	private ResultsViewerLine			m_graphLine;		// The selected graph leg (if any) for rendering the graph
-	private ResultsViewerLine			m_navLine;			// The selected navigation leg (if any) for rendering the graph
-	private ResultsViewerLine			m_rootRVL;			// The root results viewer line
-	private ResultsViewerLine			m_highlighted;		// Current highlight
-	private Tuple						m_filterTags;
+	private JLabelHotTrack				m_times;				// "Times" button
+	private JLabelHotTrack				m_scores;				// "Scores" button
+	private JLabelHotTrack				m_csv;					// "CSV" button
+	private JLabelHotTrack				m_report;				// "Report" button
+
+	// Threads which are used to render the bottom and graph portions, as these sometimes take a few seconds
+	private Thread						m_splashThread;			// The initial takes a few seconds, so this thread gives it a "Loading..." message
+
+	// In the upper-right, the name of hte run
+	private JLabel						m_lblRunName;			// Holds the run name for the entire set of results
+
+	private List<ResultsViewerLine>		m_renderList;			// List of all rendered items
+	private Tuple						m_filterTags;			// Tags discovered at load for filters, and rendered into the lblFilter image
 
 	private int							m_width;
 	private int							m_height;
 	private int							m_actual_width;
 	private int							m_actual_height;
+
+	private int							m_displayMode = _SCORES;	// Default to score mode
+
+	// Constants used to determine what we're displaying
+	public final static int				_SCORES		= 1;
+	public final static int				_TIMES		= 2;
 }

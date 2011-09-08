@@ -7,13 +7,12 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -47,8 +46,6 @@ import opbm.Opbm;
 
 /**
  * Utility class handling static utility functions.
- *
- * @author Rick C. Hodgin
  */
 public class Utils
 {
@@ -108,7 +105,7 @@ public class Utils
 	public static String interpretBooleanAsYesNo(String		input,
 												 boolean	defaultIfEmpty)
 	{
-		if (input.isEmpty())
+		if (input == null || input.isEmpty())
 			return(defaultIfEmpty ? "yes" : "no");
 
 		if (input.toLowerCase().contains("yes") || input.toLowerCase().contains("true") ||  input.contains("1"))
@@ -304,8 +301,8 @@ public class Utils
 		return(cal.getTime().toString() + " " + Long.toString(cal.getTimeInMillis()));
 	}
 
-	public static String convertMillisecondDifferenceToHHMMSS(String	timestampBegan,
-															  String	timestampEnded)
+	public static String convertMillisecondDifferenceToHHMMSSff(String		timestampBegan,
+																String		timestampEnded)
 	{
 		String msBegan, msEnded;
 		long began, ended;
@@ -316,27 +313,27 @@ public class Utils
 		began	= Long.valueOf(msBegan);
 		ended	= Long.valueOf(msEnded);
 
-		return(convertMillisecondDifferenceToHHMMSS(began, ended));
+		return(convertMillisecondDifferenceToHHMMSSff(began, ended));
 	}
 
 	/**
-	 * Converts the two milliseconds to HHMMSS as the time between
+	 * Converts the two milliseconds to HH:MM:SS.ff as the time between
 	 */
-	public static String convertMillisecondDifferenceToHHMMSS(long		began,
-															  long		ended)
+	public static String convertMillisecondDifferenceToHHMMSSff(long	began,
+																long	ended)
 	{
 		long diff;
 
 		diff = (ended - began) / 1000;
-		return(convertMillisecondsToHHMMSS(diff));
+		return(convertMillisecondsToHHMMSSff(diff));
 	}
 
 	/**
-	 * Converts the specified milliseconds into HHMMSS
+	 * Converts the specified milliseconds into HH:MM:SS.ff
 	 */
-	public static String convertMillisecondsToHHMMSS(long diff)
+	public static String convertMillisecondsToHHMMSSff(long diff)
 	{
-		String hhmmssf, hh, mm, ss;
+		String hhmmssf;
 		double hours, minutes, seconds, fraction;
 		NumberFormat nfi1 = NumberFormat.getIntegerInstance();
 		NumberFormat nfi2 = NumberFormat.getNumberInstance();
@@ -382,6 +379,37 @@ public class Utils
 		ems		= Long.valueOf(msEnded);
 
 		return(ems - bms);
+	}
+
+	/**
+	 * Converts the specified fractional seconds into HH:MM:SS.ff
+	 * @param sourceSeconds number of seconds to convert, as in 1.292837
+	 */
+	public static String convertSecondsToHHMMSSff(double sourceSeconds)
+	{
+		String hhmmssf;
+		double hours, minutes, seconds, fraction;
+		NumberFormat nfi1 = NumberFormat.getIntegerInstance();
+		NumberFormat nfi2 = NumberFormat.getNumberInstance();
+
+		hours		= (int) (sourceSeconds / 3600.0);
+		minutes		= (int)((sourceSeconds - (hours * 3600.0)) / 60.0);
+		seconds		= (int) (sourceSeconds - (hours * 3600.0) - (minutes * 60.0));
+		fraction	=       (sourceSeconds - (hours * 3600.0) - (minutes * 60.0) - seconds);
+
+		// We want a format like "00:00:00.0"
+		nfi1.setMaximumIntegerDigits(2);
+		nfi1.setMinimumIntegerDigits(2);
+		nfi2.setMaximumIntegerDigits(1);
+		nfi2.setMinimumIntegerDigits(1);
+		nfi2.setMinimumFractionDigits(1);
+		nfi2.setMaximumFractionDigits(1);
+
+		// Create the format
+		hhmmssf = nfi1.format(hours) + ":" + nfi1.format(minutes) + ":" + nfi1.format(seconds) + "." + nfi2.format(fraction).substring(2);
+
+		// Return the value
+		return(hhmmssf);
 	}
 
 	public static Xml processExecutableLine(String	tag,
@@ -1034,19 +1062,39 @@ public class Utils
 	}
 
 	/**
-	 * Ask the user for a filename
+	 * Ask the user for a filename beginning in the current directory
 	 * @param extension filename extension, such as "xml" for name.xml
+	 * @param description selection description
 	 * @param title title to display in the window
+	 * @param opbm reference to find the main GUI frame to display relative to
+	 * @param directory directory chooser should launch in/from
 	 */
 	public static String promptForFilename(String	extension,
 										   String	description,
 										   String	title,
 										   Opbm		opbm)
 	{
+		return(promptForFilename(extension, description, title, opbm, getCurrentDirectory()));
+	}
+
+	/**
+	 * Ask the user for a filename beginning at the specified directory
+	 * @param extension filename extension, such as "xml" for name.xml
+	 * @param description selection description
+	 * @param title title to display in the window
+	 * @param opbm reference to find the main GUI frame to display relative to
+	 * @param directory directory chooser should launch in/from
+	 */
+	public static String promptForFilename(String	extension,
+										   String	description,
+										   String	title,
+										   Opbm		opbm,
+										   String	directory)
+	{
 		int returnVal;
 		File f;
 
-		JFileChooser fc = new JFileChooser(getCurrentDirectory());
+		JFileChooser fc = new JFileChooser(directory);
 		fc.setApproveButtonText("Select");
 		fc.addChoosableFileFilter(new OpbmFileFilter(extension, description));
 		fc.setAcceptAllFileFilterUsed(false);
@@ -1176,6 +1224,180 @@ public class Utils
 	public static String getUUID()
 	{
 		return(UUID.randomUUID().toString());
+	}
+
+	/**
+	 * Forces a value to be between the specified min/max range
+	 * @param value value to (potentially) adjust
+	 * @param min minimum value it should ever be
+	 * @param max maximum value it should ever be
+	 * @return
+	 */
+	public static double between(double		value,
+								 double		min,
+								 double		max)
+	{
+		if (value < min)
+			value = min;
+		if (value > max)
+			value = max;
+		return(value);
+	}
+
+	/**
+	 * Returns the value of the specified string as a double
+	 * @param inputValue the string input, as in "100.393"
+	 * @param valueIfEmpty a default value to use if the inputValue is empty
+	 * @return converted value of inputValue, or valueIfEmpty
+	 */
+	public static double doubleValueOf(String	inputValue,
+									   double	valueIfEmpty)
+	{
+		double value;
+
+		if (!inputValue.isEmpty())
+		{	// There is a value, convert it
+			try {
+				value	= Double.valueOf(inputValue);
+			} catch (Throwable t) {
+				value	= valueIfEmpty;
+			}
+		} else {
+			value	= valueIfEmpty;
+		}
+		return(value);
+	}
+
+	/**
+	 * Returns the value of the specified string as a float
+	 * @param inputValue the string input, as in "100.393"
+	 * @param valueIfEmpty a default value to use if the inputValue is empty
+	 * @return converted value of inputValue, or valueIfEmpty
+	 */
+	public static float floatValueOf(String	inputValue,
+									 float	valueIfEmpty)
+	{
+		float value;
+
+		if (!inputValue.isEmpty())
+		{	// There is a value, convert it
+			try {
+				value	= Float.valueOf(inputValue);
+			} catch (Throwable t) {
+				value	= valueIfEmpty;
+			}
+		} else {
+			value	= valueIfEmpty;
+		}
+		return(value);
+	}
+
+	/**
+	 * Returns the value of the specified string as an integer
+	 * @param inputValue the string input, as in "103"
+	 * @param valueIfEmpty a default value to use if the inputValue is empty
+	 * @return converted value of inputValue, or valueIfEmpty
+	 */
+	public static int integerValueOf(String		inputValue,
+									 int		valueIfEmpty)
+	{
+		int value;
+
+		if (!inputValue.isEmpty())
+		{	// There is a value, convert it
+			try {
+				value	= Integer.valueOf(inputValue);
+			} catch (Throwable t) {
+				value	= valueIfEmpty;
+			}
+		} else {
+			value	= valueIfEmpty;
+		}
+		return(value);
+	}
+
+	/**
+	 * Converts the double value to a string of the specified integer and
+	 * decimal precision
+	 * @param value the input value
+	 * @param integers number of integers, 3 for "100.x"
+	 * @param decimals number of decimals, 5 for "x.12345"
+	 * @return formated number string in the form "100.12345"
+	 */
+	public static String doubleToString(double	value,
+										int		integers,
+										int		decimals)
+	{
+		String s;
+		NumberFormat nf = NumberFormat.getNumberInstance();
+
+		nf.setMaximumIntegerDigits(integers);
+		nf.setMinimumIntegerDigits(integers);
+		nf.setMaximumFractionDigits(decimals);
+		nf.setMinimumFractionDigits(decimals);
+
+		s = nf.format(value);
+		return(s.trim());
+	}
+
+	/**
+	 * Removes the leading zeros from a string like "001" and returns "1"
+	 * @param number input, like "001"
+	 * @return "1"
+	 */
+	public static String removeLeadingZeros(String number)
+	{
+		int i;
+
+		// Skip forward until we find the first non-zero character
+		for (i = 0; i < number.length(); i++)
+		{
+			if (number.charAt(i) != '0')
+			{	// We've found our last entry
+				return(number.substring(i));
+			}
+		}
+		// If we get here, it's all zeros
+		return("0");
+	}
+
+	/**
+	 * Removes the leading zeros from a string like "00:00:05" and returns "5"
+	 * @param number input, like "00:00:05"
+	 * @return "5"
+	 */
+	public static String removeLeadingZeroTimes(String number)
+	{
+		int i;
+
+		// Skip forward until we find the first non-zero/non-colon character
+		for (i = 0; i < number.length(); i++)
+		{
+			if (number.charAt(i) != '0' && number.charAt(i) != ':')
+			{	// We've found our last entry
+				return(number.substring(i));
+			}
+		}
+		// If we get here, it's all zeros
+		return("0");
+	}
+
+	/**
+	 * Repeats the specified text count times
+	 * @param count number to replicate, as in 3
+	 * @param text text to replicate, as in "foo"
+	 * @return as in "foofoofoo"
+	 */
+	public static String replicate(int		count,
+								   String	text)
+	{
+		int i;
+		String s;
+
+		s = "";
+		for (i = 0; i < count; i++)
+			s += text;
+		return(s);
 	}
 
 	private static final String		errMsg = "Error attempting to launch web browser";

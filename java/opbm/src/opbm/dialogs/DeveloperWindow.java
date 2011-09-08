@@ -22,10 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import opbm.Opbm;
 
-/**
- *
- * @author rick
- */
 public final class DeveloperWindow	extends DroppableFrame
 								 implements WindowListener
 {
@@ -174,9 +170,9 @@ public final class DeveloperWindow	extends DroppableFrame
 // (c) 2011.
 //
 // Written by:
-//   Van Smith, Rick C. Hodgin
+//   Van Smith
 /////
-		l1 = new JLabel("<html><font size=\"+2\"><b>Developer Window</b><br><table><tr><td width=\"10\">&nbsp;</td><td width=\"20\"><font size=\"-1\"><b>Note:</b></td><td width=\"5\"><font size=\"-1\">&nbsp;</td><td width=\"180\"><font size=\"-1\"><i>Click the 'Skin' link (upper-left, by Quit) for a simple, skinned interface</i></td></tr></table><br><br><font size=\"+2\"><b>OPBM</b></font><br><i><font size=\"-1\">&nbsp;&nbsp;&nbsp;by Cana Labs,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cossatot Analytics Laboratories, LLC.<br><br>&nbsp;&nbsp;&nbsp;<i>(c) 2011.<br><br></i></font><b>Written by:</b><font size=\"-1\"><i><br>&nbsp;&nbsp;&nbsp;Van Smith, Rick C. Hodgin<br><br><br><br><br>&nbsp</i></font>");
+		l1 = new JLabel("<html><font size=\"+2\"><b>Developer Window</b><br><table><tr><td width=\"10\">&nbsp;</td><td width=\"20\"><font size=\"-1\"><b>Note:</b></td><td width=\"5\"><font size=\"-1\">&nbsp;</td><td width=\"180\"><font size=\"-1\"><i>Click the 'Skin' link (upper-left, by Quit) for a simple, skinned interface</i></td></tr></table><br><br><font size=\"+2\"><b>OPBM</b></font><br><i><font size=\"-1\">&nbsp;&nbsp;&nbsp;by Cana Labs,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cossatot Analytics Laboratories, LLC.<br><br>&nbsp;&nbsp;&nbsp;<i>(c) 2011.<br><br></i></font><b>Written by:</b><font size=\"-1\"><i><br>&nbsp;&nbsp;&nbsp;Van Smith<br><br><br><br><br>&nbsp</i></font>");
 		l1.setBounds(0, 0, panRight.getWidth(), panRight.getHeight());
 		l1.setBackground(panRight.getBackground());
 		l1.setForeground(panRight.getForeground());

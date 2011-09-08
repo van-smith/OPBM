@@ -6,13 +6,12 @@
  *
  * Last Updated:  Aug 30, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -42,8 +41,6 @@ import opbm.common.Xml;
  *
  * Follows a particular, known syntax from the panels.xml file, along with
  * edits.xml for the PanelRight class generation.
- *
- * @author Rick C. Hodgin
  */
 public class PanelFactory {
 	/** Create a Left pr object for every <panel> tag in the m_root Xml

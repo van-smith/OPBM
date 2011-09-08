@@ -6,13 +6,12 @@
  *
   * Last Updated:  Aug 21, 2011
 *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -20,8 +19,6 @@
 package opbm.benchmarks;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import opbm.Opbm;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
@@ -38,10 +35,6 @@ import opbm.dialogs.OpbmDialog;
 import opbm.dialogs.OpbmInput;
 import opbm.dialogs.resultsviewer.ResultsViewer;
 
-/**
- *
- * @author rick
- */
 public class Benchmarks
 {
 	/**
@@ -205,23 +198,27 @@ public class Benchmarks
 	public void benchmarkRunAtom(Xml	atom,
 								 int	iterations)
 	{
-		int i;
+		int i, count;
 		Xml child, xmlSuccess, xmlFailure, xmlIteration, xmlRun_Success, xmlRun_Failure;
 
 
 		// Warn user if User Account Control is not diabled
-		if (m_userNotYetWarnedAboutUAC && Opbm.isUACEnabled())
+		if (Opbm.isUACEnabled())
 		{	// It is enabled, tell the user it will not work this way
 			m_userNotYetWarnedAboutUAC = false;
-			OpbmDialog od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM will not run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "", "");
+			OpbmDialog od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM cannot run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "uac", "");
+//			count = 0;
 			try {
-				Thread.sleep(10000);
+//				while (count < 10)
+//				{	// We keep the dialog up for up to 10 seconds, in case they are running from the command line
+					Thread.sleep(10000);
+					// Check to see if they've clicked "cancel"
+//					if (!m_opbm.getDialogResponse("uac").isEmpty())
+//						break;
+//					++count;
+//				}
 			} catch (InterruptedException ex) {
 			}
-			return;
-
-		} else if (!m_userNotYetWarnedAboutUAC && Opbm.isUACEnabled()) {
-			// User has been warned, and it is enabled, cancel the test
 			return;
 		}
 

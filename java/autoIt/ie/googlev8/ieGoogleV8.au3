@@ -8,7 +8,6 @@
 ; Written July 2011 by:
 ; ---------------------
 ;	Van Smith
-;	Rick C. Hodgin
 ;
 ; Usage:	ieGoogleV8 [ repeat_count ]
 ;

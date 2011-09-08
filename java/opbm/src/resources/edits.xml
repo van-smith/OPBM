@@ -96,6 +96,8 @@
 			<precommand p1="Edit Atoms">leftpanel</precommand>
 			<label width="250" text="Atom Name/Description:"/>
 			<textbox width="250" field="#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="#shortname"/>
 			<label width="250" text="Atom Listing:"/>
 			<listbox name="atom">
 				<delete>listbox_delete</delete>
@@ -110,6 +112,8 @@
 			</listbox>
 			<label width="250" text="Operation Name/Description:"/>
 			<textbox width="250" field="elements.#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="elements.#shortname"/>
 			<label width="250" text="Sequence of Operations:"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
@@ -148,6 +152,8 @@
 			<precommand p1="Edit Molecules">leftpanel</precommand>
 			<label text="Molecule Name/Description:"/>
 			<textbox width="250" field="#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="#shortname"/>
 			<label text="Molecules:" width="250"/>
 			<listbox name="molecule">
 				<delete>listbox_delete</delete>
@@ -162,6 +168,8 @@
 			</listbox>
 			<label text="Sequence Name/Description:"/>
 			<textbox width="250" field="elements.#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="elements.#shortname"/>
 			<label text="Sequence of Operations:" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
@@ -208,6 +216,8 @@
 			<precommand p1="Edit Scenarios">leftpanel</precommand>
 			<label text="Scenario Name/Description:"/>
 			<textbox width="250" field="#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="#shortname"/>
 			<label text="Scenarios:" width="250"/>
 			<listbox name="scenario">
 				<delete>listbox_delete</delete>
@@ -222,6 +232,8 @@
 			</listbox>
 			<label text="Operation Name/Description:"/>
 			<textbox width="250" field="elements.#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="elements.#shortname"/>
 			<label text="Sequence of Operations:" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
@@ -276,6 +288,8 @@
 			<precommand p1="Edit Suites">leftpanel</precommand>
 			<label text="Suite Name/Description:"/>
 			<textbox width="250" field="#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="#shortname"/>
 			<label text="Suites:" width="250"/>
 			<listbox name="suite">
 				<delete>listbox_delete</delete>
@@ -290,6 +304,8 @@
 			</listbox>
 			<label text="Operation Name/Description:"/>
 			<textbox width="250" field="elements.#name"/>
+			<label width="250" text="Short Name (8 characters):"/>
+			<textbox width="100" field="elements.#shortname"/>
 			<label text="Sequence of Operations:" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>

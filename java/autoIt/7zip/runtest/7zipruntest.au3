@@ -8,7 +8,6 @@
 ; Written August 2011 by:
 ; -----------------------
 ;	Van Smith
-;	Rick C. Hodgin
 ;
 ; Usage:	7ZipRunTest [ repeat_count ]
 ;

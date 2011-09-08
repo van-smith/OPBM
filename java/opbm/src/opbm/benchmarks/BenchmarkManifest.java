@@ -55,13 +55,12 @@
  *
  * Last Updated:  Aug 23, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -76,10 +75,6 @@ import opbm.common.Utils;
 import opbm.common.Xml;
 import opbm.dialogs.OpbmDialog;
 
-/**
- *
- * @author rick
- */
 public final class BenchmarkManifest
 {
 	/**
@@ -1838,7 +1833,7 @@ public final class BenchmarkManifest
 		ended = m_statisticsRuntimeEnded.getText();
 		if (!began.isEmpty() && !ended.isEmpty())
 		{	// There is a time here, we can compute the difference
-			m_statisticsRuntimeHarness.setText(Utils.convertMillisecondDifferenceToHHMMSS(began, ended));
+			m_statisticsRuntimeHarness.setText(Utils.convertMillisecondDifferenceToHHMMSSff(began, ended));
 		}
 
 		// Successes or failures

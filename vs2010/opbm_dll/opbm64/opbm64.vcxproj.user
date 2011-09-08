@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommand>C:\Program Files\Java\jre7\bin\java.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommand>C:\Program Files\Java\jdk1.7.0\bin\java.exe</LocalDebuggerCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerCommandArguments>-jar dist\opbm.jar</LocalDebuggerCommandArguments>
@@ -13,7 +13,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommandArguments>-jar dist\opbm.jar</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommand>C:\Program Files (x86)\Java\jre6\bin\java.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommand>C:\Program Files (x86)\Java\jre7\bin\java.exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>c:\cana\java\opbm\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>

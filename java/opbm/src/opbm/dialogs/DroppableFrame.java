@@ -8,13 +8,12 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -22,10 +21,12 @@
 package opbm.dialogs;
 
 import java.awt.*;
+import java.awt.event.ComponentEvent;
 import java.io.*;
 import java.util.*;
 import java.awt.dnd.*;
 import java.awt.datatransfer.*;
+import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,7 +37,8 @@ import opbm.panels.right.PanelRightLookupbox;
 public class DroppableFrame extends JFrame
 							implements	DropTargetListener,
 										DragSourceListener,
-										DragGestureListener
+										DragGestureListener,
+										ComponentListener
 {
 	/** Constructor.  Initializes drag operation, hooks dropTarget, etc.
 	 *
@@ -52,6 +54,7 @@ public class DroppableFrame extends JFrame
 		m_dragSource	= DragSource.getDefaultDragSource();
 		m_dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
 		this.setDropTarget(new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this));
+		addComponentListener(this);
 
 		m_opbm			= opbm;
 		m_isZoomWindow	= isZoomWindow;
@@ -61,12 +64,59 @@ public class DroppableFrame extends JFrame
 		setResizable(isResizeable);
 	}
 
+	/**
+	 * Uses the jawt.dll function JAWT_GetAWT() to obtain information about the
+	 * canvas drawing info, which includes the host OS's HWND, among other
+	 * things.
+	 */
+	public int getHWND()
+	{
+		return(Opbm.getComponentHWND(this));
+	}
+
+	/**
+	 * Tells Windows how big the window can be, minimum and maximum, on
+	 * resizing, and makes the output very smooth.
+	 * @param minWidth
+	 * @param minHeight
+	 * @param maxWidth
+	 * @param maxHeight
+	 */
+	public void setMinMaxResizeBoundaries(int	minWidth,
+										  int	minHeight,
+										  int	maxWidth,
+										  int	maxHeight)
+	{
+		// Calls Win32 functions to intercept the WM_GETMINMAXINFO message, whereby it tells Windows how big the window can be
+		Opbm.setMinMaxResizeBoundaries(getHWND(), minWidth, minHeight, maxWidth, maxHeight);
+	}
+
 	/** Updates the status bar with the specified label (used to indicate drop operation)
 	 *
 	 * @param statusBar label object to update
 	 */
 	public void setStatusBar(Label statusBar) {
 		m_statusBar = statusBar;
+	}
+
+	@Override
+	public void paint(Graphics g)
+	{
+		Dimension d = getSize();
+		Dimension m = getMaximumSize();
+
+		boolean resize = d.width > m.width || d.height > m.height;
+		d.width = Math.min(m.width, d.width);
+		d.height = Math.min(m.height, d.height);
+		if (resize)
+		{
+			Point p = getLocation();
+			setVisible(false);
+			setSize(d);
+			setLocation(p);
+			setVisible(true);
+		}
+		super.paint(g);
 	}
 
 	/**
@@ -204,8 +254,6 @@ public class DroppableFrame extends JFrame
 	 */
 	public void setTranslucency(float opaquePercent)
 	{
-		int i = 0;
-
 		try
 		{
 			if (System.getProperty("java.version").compareTo("1.6") <= 0)
@@ -230,24 +278,46 @@ public class DroppableFrame extends JFrame
 			}
 
 		} catch (NoSuchMethodException ex) {
-			i = 1;
 		} catch (SecurityException ex) {
-			i = 2;
 		} catch (ClassNotFoundException ex) {
-			i = 3;
 		} catch (IllegalAccessException ex) {
-			i = 4;
 		} catch (IllegalArgumentException ex) {
-			i = 5;
 		} catch (InvocationTargetException ex) {
-			i = 6;
 		} catch (IllegalComponentStateException ex) {
-			i = 7;
 		} finally {
 		}
-		if (i != 0)
-		{	// Unable to set translucency
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e)
+	{
+		Dimension d = getSize();
+		Dimension m = getMaximumSize();
+
+		boolean resize = d.width > m.width || d.height > m.height;
+		d.width = Math.min(m.width, d.width);
+		d.height = Math.min(m.height, d.height);
+		if (resize)
+		{	// There is no good way in Java to keep a window from flashing wildly when resized beyond its intended maximum size
+			// I believe there is a win32 function to handle this though,
+//			Point p = getLocation();
+//			setVisible(false);
+			setSize(d);
+//			setLocation(p);
+//			setVisible(true);
 		}
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
 	}
 
 	@Override

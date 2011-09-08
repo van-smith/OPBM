@@ -398,7 +398,7 @@ Func opbmTypeURL( $url, $timerText, $open = "Attempting to open URL", $waitForWi
 	; Don't sleep afterward because the caller will handle all of that
 EndFunc
 
-; Rick C. Hodgin, August 12, 2011
+; August 12, 2011
 ; ! Used only by apps that launch Office2010 !
 ;
 ; Should be used at startup by calling these two in this order:

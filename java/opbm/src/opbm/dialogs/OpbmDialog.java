@@ -6,13 +6,12 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -37,10 +36,6 @@ import javax.swing.JLayeredPane;
 import opbm.Opbm;
 import opbm.graphics.AlphaImage;
 
-/**
- *
- * @author rick
- */
 public final class OpbmDialog
 					implements MouseListener,
 							   WindowListener

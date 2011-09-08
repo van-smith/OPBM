@@ -19,8 +19,16 @@
  *						<scenario name="Scenario Name" shortname="scn" tags="" tested="yes" status="success" score="0">
  *							<molecule name="Molecule Name" shortname="mon" tags="" tested="yes" status="success" score="0">
  *								<atom shortname="Atom Name" shortnamej="atn" tags="" tested="yes" score="0" name="Un-install Acrobat Reader" status="success">
- *									<worklet name="Launch Adobe Acrobat 10.1 Un-installer" shortname="LAdob" timing="3.29899172327516" score="99.8133294687674" tested="yes" status="success"></worklet>
- *									<worklet name="Un-install Adobe Acrobat 10.1" shortname="UnAdob" timing="13.6098921028247" score="50.3682532418995" tested="yes" status="success"></worklet>
+ *									<worklet name="Launch Adobe Acrobat 10.1 Installer" instances="1" score="74.9624054858326" time="11.135136809047" shortname="LAA101I" minTime="11.135136809047" maxTime="11.135136809047" avgTime="11.135136809047" geoTime="11.135136809047" cvTime="0.0" minScore="74.9624054858326" maxScore="74.9624054858326" avgScore="74.9624054858326" geoScore="74.9624054858326" cvScore="0.0" tags="" tested="yes" status="success">
+ *										<run1 time="11.1351368010471" score="74.9624054858326"></run1>
+ *										<run2 time="10.8131363098733" score="78.2190387358326"></run2>
+ *										<run3 time="12.3981368380873" score="70.3987194858326"></run3>
+ *									</worklet>
+ *									<worklet name="Install Adobe Acrobat 10.1" instances="1" score="51.2759799444718" time="56.5024453956312" shortname="IAA101" minTime="56.5024453956312" maxTime="56.5024453956312" avgTime="56.5024453956312" geoTime="56.5024453956312" cvTime="0.0" minScore="51.2759799444718" maxScore="51.2759799444718" avgScore="51.2759799444718" geoScore="51.2759799444718" cvScore="0.0" tags="" tested="yes" status="success">
+ *										<run1 time="61.1351368010475" score="54.9624054858326"></run1>
+ *										<run2 time="50.8131368090479" score="58.2190387358326"></run2>
+ *										<run3 time="56.5024453956312" score="51.2759799444718"></run3>
+ *									</worklet>
  *								</atom>
  *							</molecule>
  *						</scenario>
@@ -42,13 +50,12 @@
  *
  * Last Updated:  Aug 24, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -61,10 +68,6 @@ import opbm.common.Tuple;
 import opbm.common.Utils;
 import opbm.common.Xml;
 
-/**
- *
- * @author rick
- */
 public class BenchmarkManifestResults
 {
 	/**
@@ -733,9 +736,10 @@ public class BenchmarkManifestResults
 	public void addSummaryDataToAggregateByAtomTag(Tuple byAtom)
 	{
 		int i, j, k, instances;
-		Xml resultSource, timingSource, atom, worklet, abstractXml;
+		Xml resultSource, timingSource, atom, worklet, abstractXml, run;
 		String atomuuid, timinguuid, description, level;
 		Tuple sourceData, summaryTimeData, summaryScoreData;
+		List<String> uuids = new ArrayList<String>(0);
 
 		for (i = 0; i < byAtom.size(); i++)
 		{	// Grab this entry
@@ -800,7 +804,25 @@ public class BenchmarkManifestResults
 						worklet.appendAttribute(new Xml("cvScore",				Double.toString((Double)summaryScoreData.getSeventh(k))));
 						worklet.appendAttribute(new Xml("sourcetiminguuids",	summaryScoreData.getFirst(k)));
 
-						// Add to the result
+						// For each worklet, append all source times and scores for each run
+						uuids.clear();
+						Utils.extractCommaItems(uuids, summaryScoreData.getFirst(k));
+						for (i = 0; i < uuids.size(); i++)
+						{	// For every timing item, find its source in resultsdata.rawResults
+							timingSource = m_rawResults.getNodeByUUID(uuids.get(i), false);
+							if (timingSource != null)
+							{	// We have a timing source for this entry
+								run = new Xml("run" + Integer.toString(i + 1));
+								run.appendAttribute(new Xml("timinguuid",	uuids.get(i)));
+								run.appendAttribute(new Xml("time",			timingSource.getAttribute("time")));
+								run.appendAttribute(new Xml("score",		timingSource.getAttribute("score")));
+
+								// Add it to the worklet
+								worklet.appendChild(run);
+							}
+						}
+
+						// Add to the result to the atom
 						atom.appendChild(worklet);
 						break;
 					}
@@ -827,7 +849,7 @@ public class BenchmarkManifestResults
 	public void computeResultsViewerTotalsAndGenerateCSVFile()
 	{
 		String point, sourcename, manifestworkletuuid, atomuuid, datetime;
-		Xml run, child, rootXml, resultsDataXml, resultXml;
+		Xml run, child, rootXml, resultsDataXml, resultXml, runN, newRunN;
 		Xml lastSuiteXml, lastScenarioXml, lastMoleculeXml, lastAtomXml;
 		Xml worklet, result, timing, newWorklet, instanceResult;
 		List<String> csvLines = new ArrayList<String>(0);
@@ -1012,6 +1034,22 @@ public class BenchmarkManifestResults
 									newWorklet.appendAttribute(new Xml("cvScore",		worklet.getAttribute("cvScore")));
 									newWorklet.appendAttribute(new Xml("tags",			""));
 									newWorklet.appendAttribute(new Xml("tested",		"yes"));
+
+									// Append the runN data to the worklet (run1, run2, run3...)
+									runN = worklet.getFirstChild();
+									while (runN != null)
+									{
+										if (runN.getName().toLowerCase().startsWith("run"))
+										{	// Append this one, but we only need the time and score data, not the timinguuid
+											newRunN = new Xml(runN.getName());
+											newRunN.appendAttribute(new Xml("time",		runN.getAttribute("time")));
+											newRunN.appendAttribute(new Xml("score",	runN.getAttribute("score")));
+											newWorklet.appendChild(newRunN);
+										}
+										// Continue to next sibling
+										runN = runN.getNext();
+									}
+									// When we get here, all run data items are copied from the byAtom worklet data
 
 									csvLines.add(",Worklet,"		+ worklet.getAttribute("description"));
 									csvLines.add(",,,time,"			+ worklet.getAttribute("avgTime"));

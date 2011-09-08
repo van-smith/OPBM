@@ -10,13 +10,12 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -48,8 +47,6 @@ import opbm.Opbm;
  * complete at some point, assuming it was spawned in another thread, it can
  * go ahead and continue processing the rest of its operation by setting up a
  * command in the Commands class, and allowing it to proceed.
- *
- * @author Rick C. Hodgin
  */
 public class Tuple
 {
@@ -725,7 +722,7 @@ public class Tuple
 	public void setFirst(int		item,
 						 String		name)
 	{
-		if (item < m_second.size())
+		if (item < m_first.size())
 		{
 			m_first.set(item, name);
 			checkTrigger(item, "1");
@@ -790,6 +787,90 @@ public class Tuple
 			m_seventh.set(item, object);
 			checkTrigger(item, "7");
 		}
+	}
+
+	public void addSecondDouble(int		item,
+								Double	value)
+	{
+		if (item < m_second.size())
+			m_second.set(item, ((Double)m_second.get(item)) + value);
+	}
+
+	public void addThirdDouble(int		item,
+							   Double	value)
+	{
+		if (item < m_third.size())
+			m_third.set(item, ((Double)m_third.get(item)) + value);
+	}
+
+	public void addFourthDouble(int		item,
+								Double	value)
+	{
+		if (item < m_fourth.size())
+			m_fourth.set(item, ((Double)m_fourth.get(item)) + value);
+	}
+
+	public void addFifthDouble(int		item,
+							   Double	value)
+	{
+		if (item < m_fifth.size())
+			m_fifth.set(item, ((Double)m_fifth.get(item)) + value);
+	}
+
+	public void addSixthDouble(int		item,
+							   Double	value)
+	{
+		if (item < m_sixth.size())
+			m_sixth.set(item, ((Double)m_sixth.get(item)) + value);
+	}
+
+	public void addSeventhDouble(int		item,
+								 Double		value)
+	{
+		if (item < m_seventh.size())
+			m_seventh.set(item, ((Double)m_seventh.get(item)) + value);
+	}
+
+	public void addSecondInteger(int		item,
+								 Integer	value)
+	{
+		if (item < m_second.size())
+			m_second.set(item, ((Integer)m_second.get(item)) + value);
+	}
+
+	public void addThirdInteger(int			item,
+								Integer		value)
+	{
+		if (item < m_third.size())
+			m_third.set(item, ((Integer)m_third.get(item)) + value);
+	}
+
+	public void addFourthInteger(int		item,
+								 Integer	value)
+	{
+		if (item < m_fourth.size())
+			m_fourth.set(item, ((Integer)m_fourth.get(item)) + value);
+	}
+
+	public void addFifthInteger(int			item,
+								Integer		value)
+	{
+		if (item < m_fifth.size())
+			m_fifth.set(item, ((Integer)m_fifth.get(item)) + value);
+	}
+
+	public void addSixthInteger(int		item,
+							   Integer	value)
+	{
+		if (item < m_sixth.size())
+			m_sixth.set(item, ((Integer)m_sixth.get(item)) + value);
+	}
+
+	public void addSeventhInteger(int		item,
+								  Integer	value)
+	{
+		if (item < m_seventh.size())
+			m_seventh.set(item, ((Integer)m_seventh.get(item)) + value);
 	}
 
 	/**

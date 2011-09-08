@@ -7,13 +7,12 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -27,6 +26,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import opbm.benchmarks.hud.HUD;
 
 public class AnimateImageTask extends TimerTask
@@ -46,6 +46,20 @@ public class AnimateImageTask extends TimerTask
 	{
 		BufferedImage bi = img.getBufferedImage();
 		m_images.add(new ImageIcon(bi));
+	}
+
+	public void animateAtBounds(int				x,
+								int				y,
+								int				width,
+								int				height,
+								JLayeredPane	panel,
+								int				interval)
+	{
+		JLabel j = new JLabel();
+		j.setBounds(x, y, width, height);
+		panel.add(j);
+		panel.moveToFront(j);
+		animateComponent(j, interval);
 	}
 
 	public void animateComponent(JLabel		label,
@@ -86,9 +100,18 @@ public class AnimateImageTask extends TimerTask
 		m_paused = true;
 	}
 
+	public void stop()
+	{
+		m_paused = true;
+		if (m_label != null)
+			m_label.setVisible(false);
+	}
+
 	public void restart()
 	{
 		m_paused = false;
+		if (m_label != null)
+			m_label.setVisible(true);
 	}
 
 	public void setupCallback(Object	obj,

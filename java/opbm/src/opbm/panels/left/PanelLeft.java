@@ -6,13 +6,12 @@
  *
  * Last Updated:  Aug 21, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -28,9 +27,8 @@ import java.util.List;
 import opbm.common.Macros;
 import opbm.Opbm;
 
-/** Handles the left-side navigation panels.
- *
- * @author Rick C. Hodgin
+/**
+ * Handles the left-side navigation panels.
  */
 public class PanelLeft {
 	/** Constructor creates <code>ArrayList</code> objects for navigation and

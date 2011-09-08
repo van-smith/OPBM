@@ -7,13 +7,12 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -33,9 +32,7 @@ import opbm.Opbm;
 /** Handles all items related to Xml processing. Note that this class is used
  * for easier navigation and instrumentation on simple XML files, such as those
  * used in OPBM, rather than navigating Java's W3C DOM, which, while wholly
- * comprehensive, is just so very obscenely so. :-)
- *
- * @author Rick C. Hodgin
+ * comprehensive, is somewhat obtuse.
  */
 public class Xml
 {
@@ -152,8 +149,12 @@ public class Xml
 						break;
 					case Node.TEXT_NODE:						// Is a text node
 						if (root != null) {		// In Java's w3c dom model, text items are always stored as children
-							if (root.getText() == null || root.getText().isEmpty()) {
- 								root.setText(value);
+							if (root.getText() == null || root.getText().isEmpty())
+							{	// It may have content like "        \n"
+								if (value != null && value.trim().isEmpty())
+									root.setText("");
+								else
+									root.setText(value);
 							}
 						}
 						break;

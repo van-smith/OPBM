@@ -10,13 +10,12 @@
  *
  * Last Updated:  Aug 30, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -332,9 +331,9 @@ public class Commands
 			m_opbm.createAndShowResultsViewer("output.xml");
 
 		} else if (command.equals("prompt_run_results_viewer")) {
-			fileName = Utils.promptForFilename(".xml", "Results XML Files", "Please Select A Results File", m_opbm);
+			fileName = Utils.promptForFilename(".xml", "Results XML Files", "Please Select A Results File", m_opbm, Opbm.getHarnessXMLDirectory());
 			if (!fileName.isEmpty())
-				m_opbm.createAndShowResultsViewer( fileName );
+				m_opbm.createAndShowResultsViewer(fileName);
 
 //////////
 // SIMPLE WINDOW and DEVELOPER WINDOW

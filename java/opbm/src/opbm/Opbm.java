@@ -6,13 +6,12 @@
  *
  * Last Updated:  Aug 21, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
@@ -56,8 +55,6 @@ import static java.awt.GraphicsDevice.WindowTranslucency.*;
 /**
  * Primary Office Productivity Benchmark class deriving everything for the
  * OPBM application from an intelligent assembly of child classes.
- *
- * @author Rick C. Hodgin
  */
 public final class Opbm extends	ModalApp
 					 implements	AdjustmentListener,
@@ -93,6 +90,8 @@ public final class Opbm extends	ModalApp
 	public native static String	getRunningDirectory();						// Returns c:\\users\\user\\documents\\opbm\\running\\
 	public native static String	getCSIDLDirectory(String name);				// Returns directory specified by the CSIDL option
 	// End Note
+	public static native int	getComponentHWND(Component c);				// Returns the HWND for the specified component, or -1 if does not exist
+	public static native int	setMinMaxResizeBoundaries(int hwnd, int minWidth, int minHeight, int maxWidth, int maxHeight);	// Sets a window to never be resized above or below these minimum widths/heights
 	public native static void	snapshotProcesses();						// Takes a snapshot of the currently running processes
 	public native static void	stopProcesses();							// Stops all processes that were not running when the snapshot was taken
 	public native static String	GetRegistryKeyValue(String key);			// Requests the registry key value
@@ -591,23 +590,16 @@ public final class Opbm extends	ModalApp
 				@Override
 				public void run()
 				{
-					m_rv = new ResultsViewer(m_opbm, 800, 556, true);
+					m_rv = new ResultsViewer(m_opbm, true);
 					--m_rvsync;
 
 // REMEMBER the new "filter," tag from the scripts will create a compiled list of entries that are dynamic and based on scripts
 // REMEMBER this hard-coded list needs to be removed
 					// Add the filter tags
-					m_rv.addFilterTag("Internet",	"No");
-					m_rv.addFilterTag("Disk",		"No");
-					m_rv.addFilterTag("Video",		"No");
-					m_rv.addFilterTag("Audio",		"No");
-					m_rv.addFilterTag("Network",	"No");
-					m_rv.addFilterTag("2D",			"No");
-					m_rv.addFilterTag("3D",			"No");
-					m_rv.addFilterTag("Read",		"No");
-					m_rv.addFilterTag("Write",		"No");
+					m_rv.addFilterTag("Sample1",	"No");
+					m_rv.addFilterTag("Sample2",	"No");
 
-					// Attempt to render the file they specified
+					// Attempt to create the viewer window, load the Xml file they specified, and render everything
 					if (m_rv.load(m_rvFilename))
 						m_rv.render();
 				}
@@ -2803,6 +2795,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.08.31 02:15pm";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.08 06:30pm";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

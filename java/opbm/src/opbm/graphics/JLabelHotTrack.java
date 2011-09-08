@@ -7,23 +7,26 @@
  *
  * Last Updated:  Aug 01, 2011
  *
- * by Van Smith, Rick C. Hodgin
+ * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
  *
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @author Rick C. Hodgin
  * @version 1.0.2
  *
  */
 
 package opbm.graphics;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import opbm.common.Tuple;
 import opbm.dialogs.SimpleWindow;
 import opbm.dialogs.resultsviewer.ResultsViewer;
@@ -52,6 +55,73 @@ public final class JLabelHotTrack implements MouseListener
 		m_rv	= null;
 		m_sw	= sw;
 		init();
+	}
+
+	public JLabelHotTrack setup(ResultsViewer	rv,
+								JLayeredPane	pan,
+								String			text,
+								Font			font,
+								Rectangle		rect,
+								int				backcolorSelectedNeutral,
+								int				backcolorUnselectedNeutral,
+								int				backcolorSelectedOver,
+								int				backcolorUnselectedOver,
+								int				forecolorSelectedNeutral,
+								int				forecolorUnselectedNeutral,
+								int				forecolorSelectedOver,
+								int				forecolorUnselectedOver,
+								boolean			isSelected)
+	{
+		JLabel labelSelectedNeutral, labelSelectedOver, labelUnselectedNeutral, labelUnselectedOver;
+		AlphaImage button;
+
+		m_rv	= rv;
+		m_sw	= null;
+		init();
+
+		labelSelectedNeutral = new JLabel();
+		labelSelectedNeutral.setVisible(false);
+		pan.add(labelSelectedNeutral);
+		pan.moveToFront(labelSelectedNeutral);
+
+		labelSelectedOver = new JLabel();
+		labelSelectedOver.setVisible(false);
+		pan.add(labelSelectedOver);
+		pan.moveToFront(labelSelectedOver);
+
+		labelUnselectedNeutral = new JLabel();
+		labelUnselectedNeutral.setVisible(false);
+		pan.add(labelUnselectedNeutral);
+		pan.moveToFront(labelUnselectedNeutral);
+
+		labelUnselectedOver = new JLabel();
+		labelUnselectedOver.setVisible(false);
+		pan.add(labelUnselectedOver);
+		pan.moveToFront(labelUnselectedOver);
+
+		setSelectedNeutral(labelSelectedNeutral);
+		setSelectedOver(labelSelectedOver);
+		setUnselectedNeutral(labelUnselectedNeutral);
+		setUnselectedOver(labelUnselectedOver);
+
+		// Create all the buttons for the various forms of activity
+		button = AlphaImage.createButton(text, font, backcolorSelectedNeutral, AlphaImage.convertARGBtoColor(forecolorSelectedNeutral));
+		labelSelectedNeutral.setIcon(new ImageIcon(button.getBufferedImage()));
+
+		button = AlphaImage.createButton(text, font, backcolorSelectedOver, AlphaImage.convertARGBtoColor(forecolorSelectedOver));
+		labelSelectedOver.setIcon(new ImageIcon(button.getBufferedImage()));
+
+		button = AlphaImage.createButton(text, font, backcolorUnselectedNeutral, AlphaImage.convertARGBtoColor(forecolorUnselectedNeutral));
+		labelUnselectedNeutral.setIcon(new ImageIcon(button.getBufferedImage()));
+
+		button = AlphaImage.createButton(text, font, backcolorUnselectedOver, AlphaImage.convertARGBtoColor(forecolorUnselectedOver));
+		labelUnselectedOver.setIcon(new ImageIcon(button.getBufferedImage()));
+
+		setBounds(rect);
+		setIdentifier(text);
+		setSelected(isSelected);
+		renderHotTrackChange();
+		return(this);
 	}
 
 	public void init()
@@ -197,6 +267,11 @@ public final class JLabelHotTrack implements MouseListener
 		m_rect.setBounds(startX, startY, endX, endY);
 	}
 
+	public void setBounds(Rectangle rect)
+	{
+		m_rect.setBounds(rect);
+	}
+
 	public void mouseClicked(MouseEvent e) {
 	}
 
@@ -209,22 +284,16 @@ public final class JLabelHotTrack implements MouseListener
 		{
 			case TOGGLE_STATE:
 				if (m_rv != null)
-				{
-					m_rv.recomputeScores();
-					m_rv.renderScoreboard();
-					m_rv.renderBottomAndGraph();
-				}
+					m_rv.toggleStateCallback(this);
+
 				break;
 
 			case CLICK_ACTION:
 				if (m_rv != null)
-				{
 					m_rv.clickActionCallback(this);
-				}
+
 				if (m_sw != null)
-				{
 					m_sw.clickActionCallback(this);
-				}
 		}
 	}
 
