@@ -173,8 +173,6 @@ Const $SAFARI_RUN_SUNSPIDER_SCORE					= 8.1006120967
 Const $SAFARI_LAUNCH_SAFARI_UNINSTALLER_SCORE		= 0.4564898075
 Const $SAFARI_UNINSTALL_SAFARI_SCORE				= 3.2637693345
 
-; 7zipCommon.au3
-Const $LAUNCH_SEVENZIP_SCORE						= 0.66594147133		; Placeholder. Not officially assigned yet
 ; 7zipInstall.au3
 Const $LAUNCH_SEVENZIP_INSTALLER_SCORE				= 0.6922401247		; Placeholder. Not officially assigned yet
 Const $INSTALL_SEVENZIP_SCORE						= 14.154999042		; Placeholder. Not officially assigned yet
@@ -182,6 +180,9 @@ Const $INSTALL_SEVENZIP_SCORE						= 14.154999042		; Placeholder. Not officially
 Const $LAUNCH_SEVENZIP_UNINSTALLER_SCORE			= 0.4087737230		; Placeholder. Not officially assigned yet
 Const $UNINSTALL_SEVENZIP_SCORE						= 4.2507326948		; Placeholder. Not officially assigned yet
 ; 7zipRunTest.au3
-Const $SEVENZIP_UNARCHIVE_FIVE_TIMES_SCORE			= 19.1233798163		; Placeholder. Not officially assigned yet
-Const $SEVENZIP_ARCHIVE_FIVE_DIRECTORIES_SCORE		= 5.23226793036		; Placeholder. Not officially assigned yet
-Const $SEVENZIP_TEST_ARCHIVE_INTEGRITY_SCORE		= 1.24832271489		; Placeholder. Not officially assigned yet
+Const $SEVENZIP_CREATE_7Z_ARCHIVE_SCORE				= 33.5476015962212	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_CREATE_ZIP_ARCHIVE_SCORE			= 6.16176932537002	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES_SCORE		= 62.9195213389534	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES_SCORE		= 21.9216873653933	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY_SCORE		= 9.3687134761063	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY_SCORE	= 1.06837491898787	; Placeholder. Not officially assigned yet

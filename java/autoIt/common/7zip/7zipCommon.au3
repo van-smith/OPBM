@@ -1,4 +1,4 @@
-Const $ROOT_DIR = @ScriptDir & "\..\.."
+Dim $ROOT_DIR = @ScriptDir & "\..\.."
 
 #include <..\opbm\opbmCommon.au3>
 
@@ -20,8 +20,6 @@ Const $SEVENZIP_CMD_LINE_EXECUTABLE_I386		= $SEVENZIP_DIRECTORY_I386	&	"\7z.exe"
 Const $SEVENZIP_CMD_LINE_EXECUTABLE_X64			= $SEVENZIP_DIRECTORY_X64	&	"\7z.exe"
 
 ; Constants used throughout for various scripts
-Const $LAUNCH_SEVENZIP							= "Launch 7-Zip"
-Const $CLOSE_SEVENZIP							= "Close 7-Zip"
 Const $SEVENZIP_INSTALLER_WINDOW				= "7-Zip - Setup"
 Const $SEVENZIP_WINDOW							= "7-Zip"
 
@@ -37,18 +35,19 @@ Const $SEVENZIP_INSTALLER_TITLE_X64				= "7-Zip 9.20 (x64 edition) Setup"
 Const $SEVENZIP_UNINSTALLER_TITLE_X64			= "7-Zip 9.20 (x64 edition) Setup"
 Const $SEVENZIP_INSTALLER_TITLE_I386			= "7-Zip 9.20 Setup"
 Const $SEVENZIP_UNINSTALLER_TITLE_I386			= "7-Zip 9.20 Uninstall"
-Const $SEVENZIP_UNARCHIVE_FIVE_TIMES			= "Unarchive to five separate directories"
-Const $SEVENZIP_ARCHIVE_FIVE_DIRECTORIES		= "Archive five directories to new archive"
-Const $SEVENZIP_TEST_ARCHIVE_INTEGRITY			= "Test archive integrity"
+Const $SEVENZIP_CREATE_7Z_ARCHIVE				= "Create .7z archive"
+Const $SEVENZIP_CREATE_ZIP_ARCHIVE				= "Create .zip archive"
+Const $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES			= "Unarchive .7z five times"
+Const $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES		= "Unarchive .zip five times"
+Const $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY		= "Test .7z archive integrity"
+Const $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY		= "Test .zip archive integrity"
 
 
 ; Global declaration for timing constants
 Dim $gBaselineSize
 $gBaselineSize = 10
 Dim $gBaselines[ $gBaselineSize ][2]
-$gBaselines[0][0] = $LAUNCH_SEVENZIP
-$gBaselines[0][1] = $LAUNCH_SEVENZIP_SCORE
-For $i = 1 to $gBaselineSize - 1
+For $i = 0 to $gBaselineSize - 1
 	$gBaselines[ $i ][0]	= "--unused--"
 	$gBaselines[ $i ][1]	= 0.0
 Next
@@ -75,27 +74,11 @@ Func Initialize7ZipScript()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 EndFunc
 
-Func Launch7Zip()
-	Local $executable, $executable_to_launch
-	
-	If FileExists( $SEVENZIP_EXECUTABLE_X64 ) Then
-		$executable				= $SEVENZIP_EXECUTABLE_X64
-		$executable_to_launch	= $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH
-		$is386Executable		= False
-		
-	ElseIf FileExists( $SEVENZIP_EXECUTABLE_I386 ) Then
-		$executable				= $SEVENZIP_EXECUTABLE_I386
-		$executable_to_launch	= $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH
-		$is386Executable		= True
-		
-	Else
-		ErrorHandle("7-Zip not found in " & $SEVENZIP_EXECUTABLE_X64_TO_LAUNCH & " or " & $SEVENZIP_EXECUTABLE_I386_TO_LAUNCH & ", unable to launch.")
-	EndIf
-	outputDebug( "Attempting to launch " & $executable )
-	
-	TimerBegin()
-	$gPID = Run( $executable_to_launch, "C:\", @SW_SHOWMAXIMIZED )
-	opbmWaitUntilProcessIdle( $gPID, 5, 200, 10000 )
-	opbmWinWaitActivate( $OPBM_SPLASH_ZIP_TITLE, "", 30 )
-	TimerEnd( $LAUNCH_SEVENZIP )
+Func Report7ZipNotFoundAndTerminate()
+	ErrorHandle("7-Zip not found in " & $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " or " & $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & ", unable to launch")
+EndFunc
+
+Func Cleanup7ZipDirectories()
+	; Clean up before we begin, delete everything in the 7zipRunTest\ and further down
+	DirRemove( GetScriptTempDirectory() & "7zipRunTest\", 1 )
 EndFunc

@@ -88,6 +88,7 @@ Func InitializeGlobalVariables()
 	;		SetRegistryKeyString( $key, $stringValue )
 	;		SetRegistryKeyDword( $key, $dwordValue )
 	;		GetRegistryKey( $key )
+	;		FixupPathnames( $pathname )				; Converts "c:\some\dir\..\path\" to "c:\some\path" (removes "dir\..")
 	;		; The following DO include the trailing backslash
 	;		GetScriptCSVDirectory()					; Returns c:\users\user\documents\opbm\scriptOutput\
 	;		GetScriptTempDirectory()				; Returns c:\users\user\documents\opbm\scriptOutput\temp\

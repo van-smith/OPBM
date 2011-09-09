@@ -19,12 +19,18 @@ Dim $CurrentLoop
 Dim $LoopLimit
 Dim $is386Executable
 
-$gBaselines[2][0] = $SEVENZIP_UNARCHIVE_FIVE_TIMES
-$gBaselines[2][1] = $SEVENZIP_UNARCHIVE_FIVE_TIMES_SCORE
-$gBaselines[3][0] = $SEVENZIP_ARCHIVE_FIVE_DIRECTORIES
-$gBaselines[3][1] = $SEVENZIP_ARCHIVE_FIVE_DIRECTORIES_SCORE
-$gBaselines[4][0] = $SEVENZIP_TEST_ARCHIVE_INTEGRITY
-$gBaselines[4][1] = $SEVENZIP_TEST_ARCHIVE_INTEGRITY_SCORE
+$gBaselines[2][0] = $SEVENZIP_CREATE_7Z_ARCHIVE
+$gBaselines[2][1] = $SEVENZIP_CREATE_7Z_ARCHIVE_SCORE
+$gBaselines[3][0] = $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES
+$gBaselines[3][1] = $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES_SCORE
+$gBaselines[4][0] = $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY
+$gBaselines[4][1] = $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY_SCORE
+$gBaselines[5][0] = $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES
+$gBaselines[5][1] = $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES_SCORE
+$gBaselines[6][0] = $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY
+$gBaselines[6][1] = $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY_SCORE
+$gBaselines[7][0] = $SEVENZIP_CREATE_ZIP_ARCHIVE
+$gBaselines[7][1] = $SEVENZIP_CREATE_ZIP_ARCHIVE_SCORE
 
 outputDebug( "Starting up 7-Zip Run Test" )
 
@@ -39,92 +45,78 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "Initialize7ZipScript()" )
 	Initialize7ZipScript()
 	
-	outputDebug( "Launch7Zip()" )
-	Launch7Zip()
-	
-	outputDebug( "UnarchiveFiveTimes()" )
-	UnarchiveFiveTimes()
+	If not is7ZipAlreadyInstalled() Then
+		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+		Report7ZipNotFoundAndTerminate()
+	EndIf
 
-	outputDebug( "ArchiveFiveDirectories()" )
-	ArchiveFiveDirectories()
+	Cleanup7ZipDirectories()
+
+	outputDebug( "Create7zArchive()" )
+	create7zArchive()
 	
-	outputDebug( "TestArchiveIntegrity()" )
-	TestArchiveIntegrity()
+	outputDebug( "Test7zArchiveIntegrity()" )
+	Test7zArchiveIntegrity()
 	
+	outputDebug( "CreateZipArchive()" )
+	createZipArchive()
+	
+	outputDebug( "TestZipArchiveIntegrity()" )
+	TestZipArchiveIntegrity()
+	
+	outputDebug( "Unarchive7zFiveTimes()" )
+	Unarchive7zFiveTimes()
+	
+	outputDebug( "UnarchiveZipFiveTimes()" )
+	UnarchiveZipFiveTimes()
+
 	outputDebug( "FinalizeScript()" )
 	opbmFinalizeScript( "7ZipRunTestTimes.csv" )
 Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+Cleanup7ZipDirectories()
 Exit
 
 ;======================================================================================================================================
 ;======================================================================================================================================
 
-Func UnarchiveFiveTimes()
-	Local $i
-	Local $directory
-	
-	; Clean up before we begin, delete everything in the 7zipRunTest\ and further down
-	DirRemove( GetScriptTempDirectory() & "7zipRunTest\", 1 )
-	
-	; Start the timer for the benchmark
-	TimerBegin()
-	
-	For $i = 1 to 5
-		; Send F5 to bring up "Copy To" (extract) dialog box
-		Send( "{F5}" )
-		Sleep(250)
-		opbmWinWaitActivate( "Copy", "Copy To", 30, $ERROR_PREFIX & "WinWait: 7-Zip Copy Dialog: Unable to find Window.")
-		
-		; Send the filename
-		$directory = GetScriptTempDirectory() & "7zipRunTest\directory" & $i & "\"
-		Send( $directory )
-		Sleep(250)
-		opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
-		; Click the "OK" button
-		Send( "{Enter}" )
-		Sleep(250)
-		; Wait until it's done
-		opbmWaitUntilProcessIdle( $gPID, 10, 250, 30000 )
-	Next
-	
-	; Close the window
-	Send("!{F4}")
-	opbmWaitUntilProcessIdle( $gPID, 10, 250, 30000 )
-	
-	; Record ending time
-	TimerEnd( $SEVENZIP_UNARCHIVE_FIVE_TIMES )
-EndFunc
-
-Func ArchiveFiveDirectories()
+Func create7ZArchive()
 	Local $filename
-	Local $directory
+	Local $inputFiles
 	Local $cmd
 	
 	; Start the timer for the benchmark
 	TimerBegin()
 	
 	; Create a command like this:
-	; 7z a -r C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest.7z C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest\*
-	$filename	= GetScriptTempDirectory() & "7zipRunTest.7z"
-	$directory	= GetScriptTempDirectory() & "7zipRunTest\*"
-	If not $is386Executable Then
-		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " a -r " & $filename & " " & $directory
-	Else
-		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " a -r " & $filename & " " & $directory
-	EndIf
+	; 7z a C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest.7z [files]
+	$filename	= chr(34) & GetScriptTempDirectory() & "7zipRunTest\7zipRunTest.7z" & chr(34) & " "
 	
+	$inputFiles	= chr(34) & $ROOT_DIR & "\7zip\install\exe\7z920-i386.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\7zip\install\exe\7z920-x64.msi" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\acrobatReader\install\exe\AdbeRdr1010_en_US.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\chrome\install\exe\ChromeStandaloneSetup.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\firefox\install\exe\Firefox Setup 5.0.1.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\opera\install\exe\Opera_1150_int_Setup.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\safari\install\exe\SafariSetup.exe" & chr(34) & " "
+	
+	If not $is386Executable Then
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " a -r " & $filename & $inputFiles
+	Else
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " a -r " & $filename & $inputFiles
+	EndIf
+	outputDebug( "Attempting to run " & $cmd )
 	$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
-	If ProcessWaitClose( $gPID, 120 ) <> 1 Then
-		; An error occurred
-		ErrorHandle( $ERROR_TEXT & ": Unable to execute 7z command" )
+	If ProcessWaitClose( $gPID, 240 ) <> 1 Then
+		; An error occurred, or the process didn't complete after 4 minutes
+		ErrorHandle( $ERROR_TEXT & ": Error executing 7z command [" & $cmd & "]" )
 	EndIf
 	
 	; Record ending time
-	TimerEnd( $SEVENZIP_ARCHIVE_FIVE_DIRECTORIES )
+	TimerEnd( $SEVENZIP_CREATE_7Z_ARCHIVE )
 EndFunc
 
-Func TestArchiveIntegrity()
+Func Test7zArchiveIntegrity()
 	Local $filename
 	Local $directory
 	Local $cmd
@@ -134,7 +126,7 @@ Func TestArchiveIntegrity()
 	
 	; Create a command like this:
 	; 7z t C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest.7z
-	$filename	= GetScriptTempDirectory() & "7zipRunTest.7z"
+	$filename	= chr(34) & GetScriptTempDirectory() & "7zipRunTest\7zipRunTest.7z" & chr(34) & " "
 	If not $is386Executable Then
 		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " t " & $filename
 	Else
@@ -142,11 +134,136 @@ Func TestArchiveIntegrity()
 	EndIf
 	
 	$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
-	If ProcessWaitClose( $gPID, 120 ) <> 1 Then
+	If ProcessWaitClose( $gPID, 60 ) <> 1 Then
 		; An error occurred
 		ErrorHandle( $ERROR_TEXT & ": Unable to execute 7z command" )
 	EndIf
 	
 	; Record ending time
-	TimerEnd( $SEVENZIP_TEST_ARCHIVE_INTEGRITY )
+	TimerEnd( $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY )
+EndFunc
+
+Func createZipArchive()
+	Local $filename
+	Local $inputFiles
+	Local $cmd
+	
+	; Start the timer for the benchmark
+	TimerBegin()
+	
+	; Create a command like this:
+	; 7z a C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest.zip [files]
+	$filename	= chr(34) & GetScriptTempDirectory() & "7zipRunTest\7zipRunTest.zip" & chr(34) & " "
+	
+	$inputFiles	= chr(34) & $ROOT_DIR & "\7zip\install\exe\7z920-i386.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\7zip\install\exe\7z920-x64.msi" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\acrobatReader\install\exe\AdbeRdr1010_en_US.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\chrome\install\exe\ChromeStandaloneSetup.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\firefox\install\exe\Firefox Setup 5.0.1.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\opera\install\exe\Opera_1150_int_Setup.exe" & chr(34) & " "
+	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\safari\install\exe\SafariSetup.exe" & chr(34) & " "
+	
+	If not $is386Executable Then
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " a -r " & $filename & $inputFiles
+	Else
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " a -r " & $filename & $inputFiles
+	EndIf
+	outputDebug( "Attempting to run " & $cmd )
+	$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
+	If ProcessWaitClose( $gPID, 240 ) <> 1 Then
+		; An error occurred, or the process didn't complete after 4 minutes
+		ErrorHandle( $ERROR_TEXT & ": Error executing 7z command [" & $cmd & "]" )
+	EndIf
+	
+	; Record ending time
+	TimerEnd( $SEVENZIP_CREATE_ZIP_ARCHIVE )
+EndFunc
+
+Func TestZipArchiveIntegrity()
+	Local $filename
+	Local $directory
+	Local $cmd
+	
+	; Start the timer for the benchmark
+	TimerBegin()
+	
+	; Create a command like this:
+	; 7z t C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest.7z
+	$filename	= chr(34) & GetScriptTempDirectory() & "7zipRunTest\7zipRunTest.zip" & chr(34) & " "
+	If not $is386Executable Then
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " t " & $filename
+	Else
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " t " & $filename
+	EndIf
+	
+	$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
+	If ProcessWaitClose( $gPID, 60 ) <> 1 Then
+		; An error occurred
+		ErrorHandle( $ERROR_TEXT & ": Unable to execute 7z command" )
+	EndIf
+	
+	; Record ending time
+	TimerEnd( $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY )
+EndFunc
+
+Func Unarchive7zFiveTimes()
+	Local $i
+	Local $filename
+	Local $destination
+	Local $cmd
+	
+	; Start the timer for the benchmark
+	TimerBegin()
+	
+	For $i = 1 to 5
+		; Create a command like this:
+		; 7z t C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest.7z
+		$filename		= chr(34) & GetScriptTempDirectory() & "7zipRunTest\7zipRunTest.7z" & chr(34) & " "
+		$destination	= chr(34) & GetScriptTempDirectory() & "7zipRunTest\extract7z_" & $i & "\" & chr(34)
+		If not $is386Executable Then
+			$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " e " & $filename & " -o" & chr(34) & $destination & chr(34)
+		Else
+			$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " e " & $filename & " -o" & chr(34) & $destination & chr(34)
+		EndIf
+		
+		$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
+		If ProcessWaitClose( $gPID, 60 ) <> 1 Then
+			; An error occurred
+			ErrorHandle( $ERROR_TEXT & ": Unable to execute 7z command" )
+		EndIf
+	Next
+	
+	; Record ending time
+	TimerEnd( $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES )
+EndFunc
+
+Func UnarchiveZipFiveTimes()
+	Local $i
+	Local $filename
+	Local $destination
+	Local $cmd
+	
+	; Start the timer for the benchmark
+	TimerBegin()
+	
+	For $i = 1 to 5
+		; Create a command like this:
+		; 7z t C:\Users\rick\Documents\opbm\scriptOutput\temp\7zipruntest.7z
+		$filename		= chr(34) & GetScriptTempDirectory() & "7zipRunTest\7zipRunTest.zip" & chr(34) & " "
+		$destination	= chr(34) & GetScriptTempDirectory() & "7zipRunTest\extractzip_" & $i & "\" & chr(34)
+		If not $is386Executable Then
+			$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " e " & $filename & " -o" & chr(34) & $destination & chr(34)
+		Else
+			$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " e " & $filename & " -o" & chr(34) & $destination & chr(34)
+		EndIf
+		
+		$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
+		If ProcessWaitClose( $gPID, 60 ) <> 1 Then
+			; An error occurred
+			ErrorHandle( $ERROR_TEXT & ": Unable to execute 7z command" )
+		EndIf
+	Next
+	
+	; Record ending time
+	TimerEnd( $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES )
 EndFunc
