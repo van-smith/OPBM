@@ -146,6 +146,15 @@ public class Macros
 					m_settings	= m_opbm.getSettingsMaster();
 					macroSubstitution = greenRedEvaluation(m_settings.benchmarkStopsIfRetriesFail()).toUpperCase();
 
+	//////////
+	// UNINSTALL AFTER FAILURE
+				} else if (macro.equalsIgnoreCase("uninstall_after_failure")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = logicalEvaluation(m_settings.uninstallAfterFailure()).toUpperCase();
+				} else if (macro.equalsIgnoreCase("uninstall_after_failure_color")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = greenRedEvaluation(m_settings.uninstallAfterFailure()).toUpperCase();
+
 
 	//////////
 	// SCRIPTING ENGINE SORT

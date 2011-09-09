@@ -153,12 +153,12 @@
 			<abstract name="execute">
 				<logical>execute</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run this atom on failure(colon) (colon)(rightbrace)</variables>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="executeParams">
 				<logical>execute_params</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace) (leftbrace)(colon)p1, First parameter(colon)(rightbrace) (leftbrace)(colon)p2, Second parameter(colon)(rightbrace) (leftbrace)(colon)p3, Third parameter(colon)(rightbrace) (leftbrace)(colon)p4, Fourth parameter(colon)(rightbrace) (leftbrace)(colon)p5, Fifth parameter(colon)(rightbrace) (leftbrace)(colon)p6, Sixth parameter(colon)(rightbrace) (leftbrace)(colon)p7, Seventh parameter(colon)(rightbrace) (leftbrace)(colon)p8, Eighth parameter(colon)(rightbrace) (leftbrace)(colon)p9, Ninth parameter(colon)(rightbrace) (leftbrace)(colon)p10, Tenth parameter(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run this atom on failure(colon) (colon)(rightbrace)</variables>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="rebootAndTerminate">
 				<logical>reboot_and_terminate</logical>
@@ -314,6 +314,7 @@
 			<atom name="Uninstall 7zip" shortname="7zip">
 				<abstract atomuuid="588d19be(hyphen)a519(hyphen)436e(hyphen)9c96(hyphen)78a49b4d5b00" name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -335,6 +336,7 @@
 			<atom name="Uninstall Opera" shortname="Opera">
 				<abstract atomuuid="aa8214eb(hyphen)8c97(hyphen)4d8e(hyphen)be2e(hyphen)5d7c9ea78d5e" name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>

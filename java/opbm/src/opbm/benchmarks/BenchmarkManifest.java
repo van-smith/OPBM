@@ -19,7 +19,7 @@
  *
  * ----------
  *		2) Official run.  Execute this code:
- *			BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial");
+ *			BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official");
  *			if (bm.build())
  *				bm.run();
  *			else
@@ -53,7 +53,7 @@
  * ----------
  *
  *
- * Last Updated:  Aug 23, 2011
+ * Last Updated:  Sep 09, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -195,6 +195,9 @@ public final class BenchmarkManifest
 			insertAutoRebootCommands();
 
 		assignUUIDs();
+
+//		if (m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
+//			insertOnFailureAtoms();
 
 		m_bmr.createResultsdataFramework();
 
@@ -865,6 +868,15 @@ public final class BenchmarkManifest
 		m_macroMaster.SystemOutPrintln(getLevel());
 		m_macroMaster.SystemOutPrintln(m_error);
 		m_isManifestInError = true;
+	}
+
+	/**
+	 * Returns the last recorded error message
+	 * @return
+	 */
+	public String getError()
+	{
+		return(m_error);
 	}
 
 	/**

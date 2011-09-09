@@ -462,6 +462,12 @@
 				<command>toggle_halt_on_error</command>
 				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
 			</menu>
+			<menu>
+				<text fgcolor="$uninstall_after_failure_color$">Uninstall on failure?  $uninstall_after_failure$</text>
+				<command>toggle_uninstall_after_failure</command>
+				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
+			</menu>
+			<spacer/>
 			<spacer/>
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
@@ -516,6 +522,12 @@
 				<command>toggle_halt_on_error</command>
 				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
 			</menu>
+			<menu>
+				<text fgcolor="$uninstall_after_failure_color$">Uninstall on failure?  $uninstall_after_failure$</text>
+				<command>toggle_uninstall_after_failure</command>
+				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
+			</menu>
+			<spacer/>
 			<spacer/>
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
@@ -570,6 +582,12 @@
 				<command>toggle_halt_on_error</command>
 				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
 			</menu>
+			<menu>
+				<text fgcolor="$uninstall_after_failure_color$">Uninstall on failure?  $uninstall_after_failure$</text>
+				<command>toggle_uninstall_after_failure</command>
+				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
+			</menu>
+			<spacer/>
 			<spacer/>
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
@@ -624,6 +642,12 @@
 				<command>toggle_halt_on_error</command>
 				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
 			</menu>
+			<menu>
+				<text fgcolor="$uninstall_after_failure_color$">Uninstall on failure?  $uninstall_after_failure$</text>
+				<command>toggle_uninstall_after_failure</command>
+				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
+			</menu>
+			<spacer/>
 			<spacer/>
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>

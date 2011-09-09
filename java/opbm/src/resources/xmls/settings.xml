@@ -15,6 +15,7 @@
 			</retry>
 			<stopIfFailure>Yes</stopIfFailure>
 			<rebootBeforeEachPass>Yes</rebootBeforeEachPass>
+			<uninstallAfterFailure>Yes</uninstallAfterFailure>
 		</benchmarks>
 		<skin>developer</skin>
 	</settings>

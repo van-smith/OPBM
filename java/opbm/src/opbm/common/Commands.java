@@ -363,6 +363,10 @@ public class Commands
 		} else if (command.equals("toggle_halt_on_error")) {
 			m_settingsMaster.toggleBenchmarkStopsIfRetriesFail();
 			m_opbm.refreshLeftPanelsAfterMacroUpdate();
+		} else if (command.equals("toggle_uninstall_after_failure")) {
+			m_settingsMaster.toggleUninstallAfterFailure();
+			m_opbm.refreshLeftPanelsAfterMacroUpdate();
+
 
 
 //////////

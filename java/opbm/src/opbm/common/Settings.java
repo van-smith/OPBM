@@ -19,6 +19,7 @@
  *						</retry>
  *		#13				<stopIfFailure>yes</stopIfFailure>
  *		#15				<rebootBeforeEachPass>yes</rebootBeforeEachPass>
+ *		#16				<uninstallAfterFailure>yes</uninstallAfterFailure>
  *					</benchmarks>
  *		#14			<skin>developer</skin>
  *				</settings>
@@ -297,6 +298,23 @@ public final class Settings
 		}
 
 //////////
+// UNINSTALL AFTER FAILURE
+		m_uninstallAfterFailuresXml = m_benchmarksXml.getChildNode("uninstallAfterFailure");
+		if (m_uninstallAfterFailuresXml == null)
+		{	// #15 - Create it and set default value
+			++updateCount;
+			m_uninstallAfterFailuresXml = new Xml("rebootBeforeEachPass");
+			m_benchmarksXml.appendChild(m_uninstallAfterFailuresXml);
+			// "stopIfFailure" goes on benchmarks node
+			m_uninstallAfterFailuresXml.setText("yes");
+			m_uninstallAfterFailures = true;
+
+		} else {
+			// #11 - Grab value
+			m_uninstallAfterFailures = m_opbm.getMacroMaster().parseMacros(m_uninstallAfterFailuresXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
 // SKIN
 		m_skinXml = m_settingsXml.getChildNode("skin");
 		if (m_skinXml == null)
@@ -366,6 +384,7 @@ public final class Settings
 		m_retryAttemptsXml.setText(Integer.toString(m_retryAttempts));
 		m_stopIfFailureXml.setText(Utils.evaluateLogicalToYesOrNo(m_stopIfFailure));
 		m_rebootBeforeEachPassXml.setText(Utils.evaluateLogicalToYesOrNo(m_rebootBeforeEachPass));
+		m_uninstallAfterFailuresXml.setText(Utils.evaluateLogicalToYesOrNo(m_uninstallAfterFailures));
 		m_skinXml.setText(m_skin);
 
 		// Save the Xml to the local user's settings directory
@@ -439,6 +458,16 @@ public final class Settings
 	public boolean benchmarkRebootBeforeEachPass()
 	{
 		return(m_rebootBeforeEachPass);
+	}
+
+	public boolean benchmarkUninstallAfterFailures()
+	{
+		return(m_uninstallAfterFailures);
+	}
+
+	public boolean uninstallAfterFailure()
+	{
+		return(m_uninstallAfterFailures);
 	}
 
 	public boolean getHUDVisible()
@@ -517,6 +546,12 @@ public final class Settings
 		saveSettings();
 	}
 
+	public void toggleUninstallAfterFailure()
+	{
+		m_uninstallAfterFailures = !m_uninstallAfterFailures;
+		saveSettings();
+	}
+
 	/**
 	 * Returns Xml pointer to the raw data element by name.  Note:  any changes
 	 * made here will be overwritten by the Settings class if the user changes
@@ -568,6 +603,9 @@ public final class Settings
 		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.rebootBeforeEachPass")) {
 			// They want offset to this node
 			return(m_rebootBeforeEachPassXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.uninstallAfterFailure")) {
+			// They want offset to this node
+			return(m_uninstallAfterFailuresXml);
 		} else if (element.equalsIgnoreCase("opbm.settings.skin")) {
 			// They want offset to this node
 			return(m_skinXml);
@@ -588,7 +626,7 @@ public final class Settings
 		boolean isValid;
 		String translucency, count;
 		double value;
-		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml, rebootBeforeEachPassXml;
+		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml, rebootBeforeEachPassXml, uninstallAfterFailureXml;
 
 		isValid = false;
 		if (isFullSettings)
@@ -709,6 +747,14 @@ public final class Settings
 					break;
 				}
 
+//////////
+// UNINSTALL AFTER FAILURE
+				uninstallAfterFailureXml = settingsXml.getAttributeOrChildNode("uninstallAfterFailure");
+				if (uninstallAfterFailureXml == null)
+				{	// #16 - fail
+					break;
+				}
+
 				// If we get here, everything's acceptable
 				isValid = true;
 				break;
@@ -730,6 +776,7 @@ public final class Settings
 	private int			m_retryAttempts;
 	private boolean		m_stopIfFailure;
 	private boolean		m_rebootBeforeEachPass;
+	private boolean		m_uninstallAfterFailures;
 	private String		m_skin;
 
 	// Tags to reach the entries in the Xml tree
@@ -747,5 +794,6 @@ public final class Settings
 	private	Xml			m_retryAttemptsXml;
 	private	Xml			m_stopIfFailureXml;
 	private	Xml			m_rebootBeforeEachPassXml;
+	private	Xml			m_uninstallAfterFailuresXml;
 	private	Xml			m_skinXml;
 }
