@@ -33,11 +33,17 @@ Endif
 outputDebug( "InitializeChromeScript()" )
 InitializeChromeScript()
 
+KillChromeIfRunning()
+
 outputDebug( "Install()" )
 Install()
 
+KillChromeIfRunning()	; Will force-close if it is "resistant" to normal close attempts
+
 ; Close any instances of the browser which may have auto-launched
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+
+KillChromeIfRunning()
 
 outputDebug( "SetInitialSettings()" )
 SetInitialSettings()
@@ -55,7 +61,9 @@ Exit
 Func Install()
 	Local $error
 	outputDebug( "Attempting to launch " & $CHROME_INSTALLER )
-	
+
+	KillChromeIfRunning()
+
 	TimerBegin()
 	$gPID = Run($CHROME_INSTALLER, "C:\", @SW_MAXIMIZE)
 	Sleep(8000)
@@ -66,6 +74,8 @@ Func Install()
 	; Wait for a possible (optional?) post-launch window to arrive
 	Sleep(10000)
 	WinClose( "Google Chrome" )
+	
+	KillChromeIfRunning()
 EndFunc
 
 Func SetInitialSettings()

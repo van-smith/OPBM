@@ -36,11 +36,15 @@ Endif
 outputDebug( "InitializeScript()" )
 InitializeChromeScript()
 
+KillChromeIfRunning()
+
 outputDebug( "LaunchUninstaller()" )
 LaunchUninstaller()
 
 outputDebug( "Uninstall()" )
 Uninstall()
+
+KillChromeIfRunning()
 
 outputDebug( "CloseCallbackWindow()" )
 CloseCallbackWindow()
@@ -56,6 +60,8 @@ Exit
 Func LaunchUninstaller()
 	outputDebug( "Attempting to launch " & $CHROME_UNINSTALL_COMMAND)
 	
+	KillChromeIfRunning()
+	
 	TimerBegin()
 	$gPID = Run($CHROME_UNINSTALL_COMMAND, "C:\", @SW_MAXIMIZE)
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
@@ -66,14 +72,16 @@ EndFunc
 
 Func Uninstall()
 	outputDebug( "Bypassing 'Uninstall' buttons..." )
-	
+
+	KillChromeIfRunning()
+
 	; Click on the "Uninstall" button
 	TimerBegin()
 	ControlClick( "Uninstall Google Chrome", "", "[CLASS:Button; INSTANCE:1]", "left" )
 	; The uninstaller auto-launches a browser instance with the google.com "Why did you uninstall our wonderful browser?" link
 	opbmWaitUntilSystemIdle( 10, 500, 60000 )
 	
-	TimerEnd("Un-install Chrome 12.0.742.122")
+	TimerEnd( $UNINSTALL_CHROME )
 EndFunc
 
 Func CloseCallbackWindow()
@@ -81,4 +89,5 @@ Func CloseCallbackWindow()
 	Sleep(10000)
 	; Close it if/when it launches
 	WinClose( "google.com" )
+	KillChromeIfRunning()
 EndFunc

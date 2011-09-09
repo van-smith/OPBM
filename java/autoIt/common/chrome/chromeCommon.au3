@@ -72,6 +72,8 @@ Func InitializeChromeScript()
 	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
 	
+	KillChromeIfRunning()
+	
 	; Start script timer
 	$gScriptBeginTime = TimerInit()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
@@ -84,7 +86,9 @@ Func LaunchChrome()
 		outputError("Chrome is not installed.")
 		Exit -1
 	EndIf
-	
+
+	KillChromeIfRunning()
+
 	TimerBegin()
 	$gPID = Run( $CHROME_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
@@ -102,10 +106,16 @@ Func CloseChrome( $title )
 	; Close Chrome
 	WinActivate( $title )
 	WinClose( $title )
-	
+
+	KillChromeIfRunning()
+
 	; Wait until the sytem settles down
 	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
 	
 	; Take the ending timer
 	TimerEnd( $CLOSE_CHROME )
+EndFunc
+
+Func KillChromeIfRunning()
+	KillProcessByName( "chrome.exe" )
 EndFunc

@@ -427,6 +427,53 @@ Func opbmTypeURLSafari( $url, $timerText, $open = "Attempting to open URL", $wai
 	; Don't sleep afterward because the caller will handle all of that
 EndFunc
 
+Func KillProcessByName( $name )
+	Local $list
+	Local $i
+	Local $pid
+	Local $pname
+	Local $result
+	
+	; Attempt to close the process (or processes if there are multiple instances)
+	$list = ProcessList( $name )
+	For $i = 0 to $list[0][0]
+		$pname	= $list[$i][0]
+		$pid	= $list[$i][1]
+		$result	= ProcessClose( $pid )
+		If $result <> 1 Then
+			; An error occurred trying to close the process naturally, so use a tool to do it
+			TaskKillProcessByID( $pid, $pname )
+			; If we get here, then PsKill successfully closed the app
+		EndIf
+	Next
+EndFunc
+
+Func TaskKillProcessByID( $pid, $nameToDisplayIfError )
+	Local $key
+	Local $cmd
+	Local $pskillid
+	Local $exists
+	
+	If ProcessExists( $pid ) Then
+		$cmd		= $ROOT_DIR & "\common\opbm\exe\taskkill.exe /f /t /pid " & $pid
+		outputDebug( "Attempting " & $cmd )
+		$pskillid	= Run( $cmd, $ROOT_DIR, @SW_SHOWNORMAL)
+		If ProcessWait( $pskillid, 30 ) <> $pskillid Then
+			; An error occurred while processing the command
+			If ProcessExists( $pid ) Then
+				; The process should have been killed, but was not
+				ErrorHandle( "Unable to forcibly terminate " & $nameToDisplayIfError & ", pid " & $pid )
+			;Else
+			;We're good, the process is no longer in existence, even though pskill.exe failed
+			EndIf
+		;Else
+		; We're good, it was a success ($pid was killed properly)
+		EndIf
+	;Else
+	; We're good, it already doesn't exist
+	EndIf
+EndFunc
+
 ; August 12, 2011
 ; ! Used only by apps that launch Office2010 !
 ;

@@ -2664,6 +2664,7 @@ public final class Opbm extends	ModalApp
 	 */
     public static void main(String[] args)
 	{
+		// Switching to 1.7.0 changed the way translucency is handled
         GraphicsEnvironment	ge		= GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice		grfx	= ge.getDefaultScreenDevice();
         if (!grfx.isWindowTranslucencySupported(TRANSLUCENT))

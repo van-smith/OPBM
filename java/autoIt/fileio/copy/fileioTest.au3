@@ -28,6 +28,7 @@ EndIf
 For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
+	
 	; Start script timer
 	$gScriptBeginTime = TimerInit()
 	
