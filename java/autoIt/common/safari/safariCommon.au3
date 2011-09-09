@@ -18,7 +18,7 @@ Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 Const $SAFARI_INSTALLER					= $EXE_DIRECTORY		&	"\SafariSetup.exe"
 Const $SAFARI_UNINSTALLER				= $EXE_DIRECTORY		&	"\SafariSetup.exe"
 Const $SAFARI_EXECUTABLE				= $SAFARI_DIRECTORY		&	"\safari.exe"
-Const $SAFARI_EXECUTABLE_TO_LAUNCH		= $SAFARI_EXECUTABLE	&	" file:\\" & $OPBM_SPLASH_HTML
+Const $SAFARI_EXECUTABLE_TO_LAUNCH		= $SAFARI_EXECUTABLE	&	" file:///" & $OPBM_SPLASH_HTML
 Const $SAFARI_UNINSTALL_COMMAND			= $SAFARI_UNINSTALLER
 
 ; Constants used throughout for various scripts

@@ -374,7 +374,6 @@ Func opbmFinalizeScript($name)
 	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
 EndFunc
 
-
 Func opbmTypeURL( $url, $timerText, $open = "Attempting to open URL", $waitForWindow = " ", $waitForText = "" )
 	outputDebug( $open )
 	
@@ -386,6 +385,30 @@ Func opbmTypeURL( $url, $timerText, $open = "Attempting to open URL", $waitForWi
 	; Convert any "\" character to a "/" character
 	; Send the URL and capture the end timer
 	Send( "file://" & StringReplace( $url, "\", "/" ) & "{Enter}" )
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+
+	; See if we have to wait for a window to appear
+	If not StringIsSpace( $waitForWindow ) Then
+		; We have to wait for the window to appear
+		opbmWinWaitActivate( $waitForWindow, $waitForText, 30, "Unable to find " & $waitForWindow & " " & $waitForText )
+		; If we get here, then the window was found
+	EndIf
+	; Store our timing for this part
+	TimerEnd( $timerText )
+	; Don't sleep afterward because the caller will handle all of that
+EndFunc
+
+Func opbmTypeURLSafari( $url, $timerText, $open = "Attempting to open URL", $waitForWindow = " ", $waitForText = "" )
+	outputDebug( $open )
+	
+	; Begin the timer before we press Ctrl+L for the address bar
+	TimerBegin()
+	Send( "^l" )
+	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
+	
+	; Convert any "\" character to a "/" character
+	; Send the URL and capture the end timer
+	Send( "file:///" & StringReplace( $url, "\", "/" ) & "{Enter}" )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 
 	; See if we have to wait for a window to appear

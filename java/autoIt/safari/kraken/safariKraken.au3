@@ -39,7 +39,7 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "LaunchSafari()" )
 	LaunchSafari()
 	outputDebug( "TypeURL()" )
-	opbmTypeURL( $KRAKEN_URL, $TYPE_KRAKEN_URL, $OPEN_FILE_DIALOG_TITLE )
+	opbmTypeURLSafari( $KRAKEN_URL, $TYPE_KRAKEN_URL, $OPEN_FILE_DIALOG_TITLE )
 	
 	; Unique portions to this benchmark
 	outputDebug( "RunKraken()" )

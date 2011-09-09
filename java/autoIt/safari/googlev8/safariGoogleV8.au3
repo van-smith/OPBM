@@ -39,7 +39,7 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "LaunchSafari()" )
 	LaunchSafari()
 	outputDebug( "TypeURL()" )
-	opbmTypeURL( $GOOGLEV8_URL, $TYPE_GOOGLEV8_URL, $OPEN_FILE_DIALOG_TITLE )
+	opbmTypeURLSafari( $GOOGLEV8_URL, $TYPE_GOOGLEV8_URL, $OPEN_FILE_DIALOG_TITLE )
 	
 	; Unique portions to this benchmark
 	outputDebug( "RunGoogleV8()" )

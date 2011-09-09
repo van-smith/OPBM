@@ -39,7 +39,7 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "LaunchSafari()" )
 	LaunchSafari()
 	outputDebug( "TypeURL()" )
-	opbmTypeURL( $SUNSPIDER_URL, $TYPE_SUNSPIDER_URL )
+	opbmTypeURLSafari( $SUNSPIDER_URL, $TYPE_SUNSPIDER_URL )
 	
 	; Unique portions to this benchmark
 	outputDebug( "RunSunSpider()" )
