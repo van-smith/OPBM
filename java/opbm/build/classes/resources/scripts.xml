@@ -153,12 +153,12 @@
 			<abstract name="execute">
 				<logical>execute</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace)</variables>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run this atom on failure(colon) (colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="executeParams">
 				<logical>execute_params</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace) (leftbrace)(colon)p1, First parameter(colon)(rightbrace) (leftbrace)(colon)p2, Second parameter(colon)(rightbrace) (leftbrace)(colon)p3, Third parameter(colon)(rightbrace) (leftbrace)(colon)p4, Fourth parameter(colon)(rightbrace) (leftbrace)(colon)p5, Fifth parameter(colon)(rightbrace) (leftbrace)(colon)p6, Sixth parameter(colon)(rightbrace) (leftbrace)(colon)p7, Seventh parameter(colon)(rightbrace) (leftbrace)(colon)p8, Eighth parameter(colon)(rightbrace) (leftbrace)(colon)p9, Ninth parameter(colon)(rightbrace) (leftbrace)(colon)p10, Tenth parameter(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace)</variables>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run this atom on failure(colon) (colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="rebootAndTerminate">
 				<logical>reboot_and_terminate</logical>
@@ -181,6 +181,7 @@
 			<atom name="PowerPoint Open" shortname="PPoint">
 				<abstract atomuuid="e61f2c68(hyphen)c855(hyphen)44dc(hyphen)9996(hyphen)797d5b53499c" name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -271,6 +272,7 @@
 			<atom name="Word Alice" shortname="Word">
 				<abstract atomuuid="5d06a962(hyphen)bcef(hyphen)4acf(hyphen)bf91(hyphen)722ae46fae96" name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -281,6 +283,7 @@
 			<atom name="Install 7zip" shortname="7zip">
 				<abstract atomuuid="cdda829a(hyphen)e440(hyphen)4b2d(hyphen)a1fa(hyphen)d06955c15f66" name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnFailure>Uninstall 7zip</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -321,6 +324,7 @@
 			<atom name="Install Opera" shortname="Opera">
 				<abstract atomuuid="45ac00e1(hyphen)5a4f(hyphen)47f5(hyphen)8028(hyphen)0430b8133856" name="Install Opera" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnFailure>Uninstall Opera</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -371,6 +375,7 @@
 			<atom name="Install Safari" shortname="Safari">
 				<abstract atomuuid="47fe6899(hyphen)bf68(hyphen)43fb(hyphen)801b(hyphen)bc623987cf32" name="Install Safari" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnFailure>Uninstall Safari</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -451,6 +456,7 @@
 			<atom name="Install Chrome" shortname="Chrome">
 				<abstract atomuuid="ec1fee6f(hyphen)0357(hyphen)4504(hyphen)a917(hyphen)0c0802a699b4" name="Install Chrome" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnFailure>Uninstall Chrome</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -461,6 +467,7 @@
 			<atom name="Uninstall Chrome" shortname="Chrome">
 				<abstract atomuuid="e8532eac(hyphen)14ab(hyphen)4718(hyphen)bd07(hyphen)0009c14ae982" name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -481,6 +488,7 @@
 			<atom name="Chrome Kraken" shortname="Chrome">
 				<abstract atomuuid="1fd9850b(hyphen)4adf(hyphen)423a(hyphen)b54b(hyphen)6c887fecc637" name="Chrome Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -491,6 +499,7 @@
 			<atom name="Chrome Google V8" shortname="Chrome">
 				<abstract atomuuid="9cf33da3(hyphen)41ff(hyphen)4cb0(hyphen)8bbc(hyphen)e516a01c82ec" name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -501,6 +510,7 @@
 			<atom name="Install Firefox" shortname="Firefox">
 				<abstract atomuuid="0642a4c7(hyphen)bda4(hyphen)4e11(hyphen)be18(hyphen)8e9c25368641" name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnFailure>Uninstall Firefox</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -511,6 +521,7 @@
 			<atom name="Uninstall Firefox" shortname="Firefox">
 				<abstract atomuuid="e69b12d6(hyphen)3c8a(hyphen)470a(hyphen)943a(hyphen)14b2113a678d" name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -521,6 +532,7 @@
 			<atom name="Firefox SunSpider" shortname="Firefox">
 				<abstract atomuuid="f81463cb(hyphen)1152(hyphen)4221(hyphen)bb31(hyphen)3d7e946406d8" name="Firefox SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -531,6 +543,7 @@
 			<atom name="Firefox Kraken" shortname="Firefox">
 				<abstract atomuuid="cb79cd9d(hyphen)567f(hyphen)4070(hyphen)9621(hyphen)f5c7adb1dea9" name="Firefox Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -541,6 +554,7 @@
 			<atom name="Firefox Google V8" shortname="Firefox">
 				<abstract atomuuid="129c97b5(hyphen)26f1(hyphen)442b(hyphen)87f9(hyphen)d8f1dfe4094a" name="Firefox Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -551,6 +565,7 @@
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
 				<abstract atomuuid="e683cade(hyphen)9331(hyphen)406f(hyphen)b0f7(hyphen)dc27bd6d6304" name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnFailure>Uninstall Acrobat Reader</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -561,6 +576,7 @@
 			<atom name="Uninstall Acrobat Reader" shortname="Acrobat">
 				<abstract atomuuid="2d4f8367(hyphen)a6e6(hyphen)4851(hyphen)a751(hyphen)045fcc482db1" name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -577,6 +593,7 @@
 			<atom name="Simulate Failure" shortname="Sim">
 				<abstract name="Simulate Failure" shortname="Fail" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>

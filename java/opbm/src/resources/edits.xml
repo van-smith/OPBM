@@ -38,7 +38,6 @@
 	</rawedits>
 
 	<edits>
-
 		<edit name="flows">
 			<precommand p1="Edit Flows">leftpanel</precommand>
 			<listbox zoom="main">
@@ -362,24 +361,6 @@
 			</lookupbox>
 			<newcolumn/>
 			<options relativeto="elements"/>
-		</edit>
-
-		<edit name="keywords">
-			<precommand p1="Edit Keywords">leftpanel</precommand>
-			<listbox>
-				<add>listbox_add</add>
-				<delete>listbox_delete</delete>
-				<clone>listbox_clone</clone>
-				<up>listbox_move_up</up>
-				<down>listbox_move_down</down>
-				<source>opbm.metadata.keywords.keyword</source>
-				<foreach>keyword</foreach>
-				<listby p1="#name"/>
-			</listbox>
-			<label text="Keyword"/>
-			<textbox width="250" field="#name"/>
-			<label text="Notes:"/>
-			<editbox field="notes"/>
 		</edit>
 
 		<edit name="execute atoms">
