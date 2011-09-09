@@ -735,7 +735,7 @@ public class BenchmarkManifestResults
 	 */
 	public void addSummaryDataToAggregateByAtomTag(Tuple byAtom)
 	{
-		int i, j, k, instances;
+		int i, j, k, l, instances;
 		Xml resultSource, timingSource, atom, worklet, abstractXml, run;
 		String atomuuid, timinguuid, description, level;
 		Tuple sourceData, summaryTimeData, summaryScoreData;
@@ -807,13 +807,13 @@ public class BenchmarkManifestResults
 						// For each worklet, append all source times and scores for each run
 						uuids.clear();
 						Utils.extractCommaItems(uuids, summaryScoreData.getFirst(k));
-						for (i = 0; i < uuids.size(); i++)
+						for (l = 0; l < uuids.size(); l++)
 						{	// For every timing item, find its source in resultsdata.rawResults
-							timingSource = m_rawResults.getNodeByUUID(uuids.get(i), false);
+							timingSource = m_rawResults.getNodeByUUID(uuids.get(l), false);
 							if (timingSource != null)
 							{	// We have a timing source for this entry
-								run = new Xml("run" + Integer.toString(i + 1));
-								run.appendAttribute(new Xml("timinguuid",	uuids.get(i)));
+								run = new Xml("run" + Integer.toString(l + 1));
+								run.appendAttribute(new Xml("timinguuid",	uuids.get(l)));
 								run.appendAttribute(new Xml("time",			timingSource.getAttribute("time")));
 								run.appendAttribute(new Xml("score",		timingSource.getAttribute("score")));
 
