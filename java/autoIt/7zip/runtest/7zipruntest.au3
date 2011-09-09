@@ -101,9 +101,9 @@ Func create7ZArchive()
 	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\safari\install\exe\SafariSetup.exe" & chr(34) & " "
 	
 	If not $is386Executable Then
-		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " a -r " & $filename & $inputFiles
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " a -mx9 " & $filename & $inputFiles
 	Else
-		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " a -r " & $filename & $inputFiles
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " a -mx9 " & $filename & $inputFiles
 	EndIf
 	outputDebug( "Attempting to run " & $cmd )
 	$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
@@ -164,9 +164,9 @@ Func createZipArchive()
 	$inputFiles	= $inputFiles & chr(34) & $ROOT_DIR & "\safari\install\exe\SafariSetup.exe" & chr(34) & " "
 	
 	If not $is386Executable Then
-		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " a -r " & $filename & $inputFiles
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_X64 & " a -mx9 " & $filename & $inputFiles
 	Else
-		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " a -r " & $filename & $inputFiles
+		$cmd = $SEVENZIP_CMD_LINE_EXECUTABLE_I386 & " a -mx9 " & $filename & $inputFiles
 	EndIf
 	outputDebug( "Attempting to run " & $cmd )
 	$gPID = Run( $cmd, "C:\", @SW_SHOWMAXIMIZED )
