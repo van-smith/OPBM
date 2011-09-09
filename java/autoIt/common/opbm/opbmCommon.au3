@@ -169,11 +169,14 @@ Func TimerBegin()
 EndFunc
 
 Func TimerEnd( $Label )
+	$gTimerPoint = TimerDiff( $gTimer )	
+	TimerRecord( $Label, $gTimerPoint )
+EndFunc
+
+Func TimerRecord( $Label, $time )
 	Local $lRatio
 	Local $lFound
 	Local $lsTimingMessage
-	
-	$gTimerPoint = TimerDiff( $gTimer )	
 
 	;*** Block comment begin
 	; Added for OPBM July, 2011
@@ -188,16 +191,18 @@ Func TimerEnd( $Label )
 	$lFound = 0
 	For $i = 0 to $gBaselineSize - 1
 		If $gBaselines[$i][0] = $Label Then
-			$lRatio = ( $gBaseLines[$i][1] / $gTimerPoint ) * 100000
+			$lRatio = ( $gBaseLines[$i][1] / $time ) * 100000
 			$lFound = 1
 			ExitLoop
 		EndIf
 	Next
 	
+	; The format of lsTimingMessage cannot be changed without breaking the harness.
+	; It looks to the exact format "Description, time, ratio" to obtain its numbers.
 	If $lFound = 0 Then
-		$lsTimingMessage = $Label & ", " & ( $gTimerPoint / 1000 )
+		$lsTimingMessage = $Label & ", " & ( $time / 1000 )
 	Else
-		$lsTimingMessage = $Label & ", " & ( $gTimerPoint / 1000 ) & ", " & $lRatio
+		$lsTimingMessage = $Label & ", " & ( $time / 1000 ) & ", " & $lRatio
 	EndIf
 	outputTiming( $lsTimingMessage )
 	$gTimeIndex[ $gIndex ] = $lsTimingMessage
@@ -229,7 +234,7 @@ Func TimerWriteTimesToCSV( $CSVPath )
 	Local $lFileTimerCsv
 	Local $i
 	
-	$gTimerPoint = TimerDiff( $gScriptBeginTime )	
+	$gTimerPoint = TimerDiff( $gScriptBeginTime )
 ;; There is a dependency on this format in the HUD.properlyFormat() method:
 ;; Begin
 	$gTimeIndex[ $gIndex ] = "Total Runtime," & ( $gTimerPoint / 1000 )

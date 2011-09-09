@@ -186,3 +186,7 @@ Const $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES_SCORE		= 62.1698270806001	; Placeholder.
 Const $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES_SCORE		= 21.850377531907	; Placeholder. Not officially assigned yet
 Const $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY_SCORE		= 9.42108409452225	; Placeholder. Not officially assigned yet
 Const $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY_SCORE	= 1.10049678312566	; Placeholder. Not officially assigned yet
+
+; fileioCommon.au3
+Const $FILEIO_CREATE_FILES_SCORE					= 439.29954400524	; Placeholder. Not officially assigned yet
+Const $FILEIO_COPY_FILES_SCORE						= 401.2560807856	; Placeholder. Not officially assigned yet
