@@ -4,7 +4,7 @@
  * This class is the top-level class of the OPBM.  It creates a GUI, loads
  * necessary files, beings processing based on context, etc.
  *
- * Last Updated:  Aug 21, 2011
+ * Last Updated:  Sep 09, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -18,6 +18,7 @@
 
 package opbm;
 
+import opbm.dialogs.OpbmInput;
 import opbm.common.Xml;
 import opbm.common.Macros;
 import opbm.common.Settings;
@@ -195,8 +196,9 @@ public final class Opbm extends	ModalApp
 						List<Xml>		list	= new ArrayList<Xml>(0);
 						Xml target;
 						String line, name, digits;
-						int i, j, iterations, runCount;
+						int i, j, count, iterations, runCount;
 						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "", true);
+						OpbmDialog od;
 
 						// Load the command line options, including those from files, into the execution sequence
 						// Arguments get loaded into "List<String> args" rather than m_args[]
@@ -500,6 +502,12 @@ public final class Opbm extends	ModalApp
 							} else {
 								// Ignore the unknown option
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
+								od = new OpbmDialog(m_opbm, "Ignoring unknown command line option: " + line, "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+								// Wait up to 10 seconds before auto-closing the window
+								od.setTimeout(10);
+								// The 10-second timeout is in case the script is running in an automated environment,
+								// so the user dialog box won't cause it to hang forever, but the user will see it for a spell before continuing
+								Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 10);
 							}
 						}
 
@@ -1690,9 +1698,13 @@ public final class Opbm extends	ModalApp
 	 * @param id identifier to associate with this dialog input
 	 * @param triggerCommand triggers the command specified once the
 	 * OpbmInput dialog sets something
+	 * @param od the OpenDialog which this relates to, or null
+	 * @param oi the OpenInput which this relates to, or null
 	 */
-	public void initializeDialogResponse(String		id,
-										 String		triggerCommand)
+	public void initializeDialogResponse(String			id,
+										 String			triggerCommand,
+										 OpbmDialog		od,
+										 OpbmInput		oi)
 	{
 		int i;
 
@@ -1705,12 +1717,14 @@ public final class Opbm extends	ModalApp
 			{	// Found it
 				m_dialogTuple.setSecond(i, "Unanswered");
 				m_dialogTuple.setThird(i, "");
+				m_dialogTuple.setFifth(i, od);
+				m_dialogTuple.setSixth(i, oi);
 				m_dialogTuple.setTriggerCommand(i, triggerCommand);
 				return;
 			}
 		}
 		// If we get here, it wasn't found, add it
-		i = m_dialogTuple.add(id, "Unanswered", "");
+		i = m_dialogTuple.add(id, "Unanswered", "", "", od, oi);
 		m_dialogTuple.setTriggerCommand(i, triggerCommand);	// command to execute
 		m_dialogTuple.setTriggerFilters(i, "3");			// when 3rd item is updated
 	}
@@ -1720,14 +1734,18 @@ public final class Opbm extends	ModalApp
 	 * pressed)
 	 * @param id identifier associated with the dialog
 	 * @param userAction user action (text on the button, generally speaking)
+	 * @param od the OpenDialog which this relates to, or null
+	 * @param oi the OpenInput which this relates to, or null
 	 */
-	public void setDialogResponse(String	id,
-								  String	userAction)
+	public void setDialogResponse(String		id,
+								  String		userAction,
+								  OpbmDialog	od,
+								  OpbmInput		oi)
 	{
 		int i;
 
 		if (m_dialogTuple == null)
-			initializeDialogResponse(id, "");
+			initializeDialogResponse(id, "", od, oi);
 
 		for (i = 0; i < m_dialogTuple.size(); i++)
 		{
@@ -1738,8 +1756,8 @@ public final class Opbm extends	ModalApp
 			}
 		}
 		// If we get here, it wasn't found, add it, and try again
-		initializeDialogResponse(id, "");
-		setDialogResponse(id, userAction);
+		initializeDialogResponse(id, "", od, oi);
+		setDialogResponse(id, userAction, od, oi);
 	}
 
 	/**
@@ -1749,15 +1767,19 @@ public final class Opbm extends	ModalApp
 	 * @param userAction user action (text on the button, generally speaking)
 	 * @param data whatever the user had input in the input box when the button
 	 * was pressed
+	 * @param od the OpenDialog which this relates to, or null
+	 * @param oi the OpenInput which this relates to, or null
 	 */
-	public void setDialogResponse(String	id,
-								  String	userAction,
-								  String	data)
+	public void setDialogResponse(String		id,
+								  String		userAction,
+								  String		data,
+								  OpbmDialog	od,
+								  OpbmInput		oi)
 	{
 		int i;
 
 		if (m_dialogTuple == null)
-			initializeDialogResponse(id, "");
+			initializeDialogResponse(id, "", od, oi);
 
 		for (i = 0; i < m_dialogTuple.size(); i++)
 		{
@@ -1765,12 +1787,48 @@ public final class Opbm extends	ModalApp
 			{	// Found it
 				m_dialogTuple.setSecond(i, userAction);
 				m_dialogTuple.setThird(i, data);
+				m_dialogTuple.setFourth(i, "");
+				m_dialogTuple.setFifth(i, od);
+				m_dialogTuple.setSixth(i, oi);
 				return;
 			}
 		}
 		// If we get here, it wasn't found, add it, and try again
-		initializeDialogResponse(id, "");
-		setDialogResponse(id, userAction, data);
+		initializeDialogResponse(id, "", od, oi);
+		setDialogResponse(id, userAction, data, od, oi);
+	}
+
+	/**
+	 * Closes the specified dialog/input window
+	 * @param id window id to close
+	 */
+	public void closeDialogWindow(String id)
+	{
+		String result;
+		int i;
+		OpbmDialog od;
+		OpbmInput oi;
+
+		for (i = 0; i < m_dialogTuple.size(); i++)
+		{
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+			{	// Found it
+				try {
+					od = (OpbmDialog)m_dialogTuple.getFifth(i);
+					if (od != null)
+						od.dispose();
+				} catch (Throwable t) {
+				}
+
+				try {
+					oi = (OpbmInput)m_dialogTuple.getSixth(i);
+					if (oi != null)
+						oi.dispose();
+				} catch (Throwable t) {
+				}
+			}
+		}
+		// Not found
 	}
 
 	/**
@@ -1833,6 +1891,48 @@ public final class Opbm extends	ModalApp
 		}
 		// Not found
 		return("--not found--");
+	}
+
+	/**
+	 * Returns the OpbmDialog window associated with the id
+	 * pressed the button
+	 * @param id
+	 * @return
+	 */
+	public OpbmDialog getDialogOpbmDialogWindow(String id)
+	{
+		int i;
+
+		for (i = 0; i < m_dialogTuple.size(); i++)
+		{
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+			{	// Found it
+				return((OpbmDialog)m_dialogTuple.getFifth(i));
+			}
+		}
+		// Not found
+		return(null);
+	}
+
+	/**
+	 * Returns the OpbmInput window associated with the id
+	 * pressed the button
+	 * @param id
+	 * @return
+	 */
+	public OpbmDialog getDialogOpbmInputWindow(String id)
+	{
+		int i;
+
+		for (i = 0; i < m_dialogTuple.size(); i++)
+		{
+			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+			{	// Found it
+				return((OpbmDialog)m_dialogTuple.getSixth(i));
+			}
+		}
+		// Not found
+		return(null);
 	}
 
 	public void setTrialRun()
@@ -2808,6 +2908,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 04:44am";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 01:49pm";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

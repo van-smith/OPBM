@@ -1449,6 +1449,35 @@ public class Utils
 			return(true);
 	}
 
+	/**
+	 * Monitors the specified id for a change from "unanswered" to something
+	 * else within the timeout period
+	 * @param opbm parent to call back
+	 * @param id dialog id
+	 * @param timeoutSeconds number of seconds before returning if no response
+	 */
+	public static void monitorDialogWithTimeout(Opbm	opbm,
+												String	id,
+												int		timeoutSeconds)
+	{
+		int count;
+
+		count = 0;
+		try {
+			while (count < timeoutSeconds * 5)
+			{	// We keep the dialog up for up to N seconds
+				Thread.sleep(200);
+				// Check to see if they've clicked something
+				if (!opbm.getDialogResponse(id).equalsIgnoreCase("unanswered"))
+					return;	// They have
+				// Nope, still going
+				++count;
+			}
+			// When we get here, it's a timeout
+		} catch (InterruptedException ex) {
+		}
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

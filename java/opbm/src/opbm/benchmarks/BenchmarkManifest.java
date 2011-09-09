@@ -1386,7 +1386,8 @@ public final class BenchmarkManifest
 		m_bmr.appendResultsAnnotation("startup", Utils.getTimestamp(), "");
 
 		// Initialize everything
-		m_benchmarksMaster.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster());
+		if (!m_benchmarksMaster.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster()))
+			return;	// Something happened, we cannot continue
 
 		// Grab some necessary pointers for benchmark processing
 		m_bp		= m_benchmarksMaster.getBP();

@@ -27,6 +27,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,8 +41,9 @@ import opbm.Opbm;
 import opbm.graphics.AlphaImage;
 
 public final class OpbmInput
-					implements MouseListener,
-							   WindowListener
+					extends		TimerTask
+					implements	MouseListener,
+								WindowListener
 {
 	public OpbmInput(Opbm		opbm,
 					 String		caption,
@@ -70,7 +73,7 @@ public final class OpbmInput
 			id = "input";
 		}
 		m_id			= id;
-		m_opbm.initializeDialogResponse(id, triggerCommand);
+		m_opbm.initializeDialogResponse(id, triggerCommand, null, this);
 		createInputWindow();
 	}
 
@@ -106,7 +109,7 @@ public final class OpbmInput
 			id = "input";
 		}
 		m_id			= id;
-		m_opbm.initializeDialogResponse(id, triggerCommand);
+		m_opbm.initializeDialogResponse(id, triggerCommand, null, this);
 		createInputWindow();
 	}
 
@@ -289,6 +292,53 @@ public final class OpbmInput
 		m_frame.forceWindowToHaveFocus();
 	}
 
+	/**
+	 * Sets a timeout period for when the window should self-close
+	 * @param interval in seconds
+	 */
+	public void setTimeout(int interval)
+	{
+		m_timer		= new Timer();
+		m_count		= 0;
+		m_countMax	= interval;
+		m_timer.schedule(this, 1000, 1000);
+	}
+
+	/**
+	 * Timer() callback
+	 */
+	@Override
+	public void run()
+	{
+		++m_count;
+		if (m_count >= m_countMax)
+		{
+			m_timer.cancel();
+			m_opbm.setDialogResponse(m_id, "autoclosed", null, this);
+			dispose();
+
+		} else {
+			// Update our on-screen countdown display
+			if (m_lblCountdown == null)
+			{
+				m_lblCountdown = new JLabel();
+				m_lblCountdown.setBounds(0, 0, 15, 10);
+				m_lblCountdown.setFont(new Font("Calibri", Font.BOLD, 10));
+				m_lblCountdown.setHorizontalAlignment(JLabel.CENTER);
+				m_lblCountdown.setForeground(Color.WHITE);
+				m_pan.add(m_lblCountdown);
+				m_pan.moveToFront(m_lblCountdown);
+			}
+			m_lblCountdown.setText(Integer.toString(m_countMax - m_count));
+		}
+	}
+
+	public void dispose()
+	{
+		if (m_frame != null)
+			m_frame.dispose();
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
@@ -298,22 +348,22 @@ public final class OpbmInput
 	{
 		if (e.getComponent() == m_btnNext)
 		{	// Next button was clicked
-			m_opbm.setDialogResponse(m_id, m_nextButtonText, m_txtInput.getText());
+			m_opbm.setDialogResponse(m_id, m_nextButtonText, m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnCancel) {
 			// Cancel button was clicked
-			m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_txtInput.getText());
+			m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnAccept) {
 			// Accept button was clicked
-			m_opbm.setDialogResponse(m_id, m_acceptButtonText, m_txtInput.getText());
+			m_opbm.setDialogResponse(m_id, m_acceptButtonText, m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnOkay) {
 			// Okay button was clicked
-			m_opbm.setDialogResponse(m_id, m_okayButtonText, m_txtInput.getText());
+			m_opbm.setDialogResponse(m_id, m_okayButtonText, m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		}
@@ -338,7 +388,7 @@ public final class OpbmInput
 	@Override
 	public void windowClosing(WindowEvent e)
 	{	// User cancelled
-		m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_txtInput.getText());
+		m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_txtInput.getText(), null, this);
 	}
 
 	@Override
@@ -382,19 +432,25 @@ public final class OpbmInput
 	public JScrollPane			m_txtInputScroll;
 	public JTextArea			m_txtInput;
 
-	public JButton				m_btnNext;
-	public JButton				m_btnCancel;
-	public JButton				m_btnAccept;
-	public JButton				m_btnOkay;
+	private JButton				m_btnNext;
+	private JButton				m_btnCancel;
+	private JButton				m_btnAccept;
+	private JButton				m_btnOkay;
 
-	public String				m_nextButtonText;
-	public String				m_cancelButtonText;
-	public String				m_acceptButtonText;
-	public String				m_okayButtonText;
+	private String				m_nextButtonText;
+	private String				m_cancelButtonText;
+	private String				m_acceptButtonText;
+	private String				m_okayButtonText;
 
 	private String				m_caption;
 	private String				m_label;
 	private String				m_initValue;
 	private int					m_buttons;
 	private String				m_id;
+
+	// Used for the setTimeout() functionality
+	private Timer				m_timer;
+	private int					m_count;
+	private int					m_countMax;
+	private JLabel				m_lblCountdown;
 }

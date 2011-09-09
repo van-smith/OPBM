@@ -27,6 +27,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,8 +39,9 @@ import opbm.Opbm;
 import opbm.graphics.AlphaImage;
 
 public final class OpbmDialog
-					implements MouseListener,
-							   WindowListener
+					extends		TimerTask
+					implements  MouseListener,
+							    WindowListener
 {
 	public OpbmDialog(Opbm		opbm,
 					  String	message,
@@ -56,14 +59,13 @@ public final class OpbmDialog
 			id = "dialog";
 		}
 		m_id			= id;
-		m_opbm.initializeDialogResponse(id, triggerCommand);
+		m_opbm.initializeDialogResponse(id, triggerCommand, this, null);
 		createDialogWindow();
 	}
 
 	public void createDialogWindow()
 	{
 		Dimension prefSize;
-		JLayeredPane pan;
 		JLabel lblBackground;
 		Insets inset;
 		Font fontLabel, fontButtons;
@@ -99,12 +101,12 @@ public final class OpbmDialog
 		c.setBackground(new Color(120, 120, 120));
 		c.setForeground(Color.WHITE);
 
-		pan = new JLayeredPane();
-		pan.setLayout(null);
-		pan.setBounds(0, 0, width, height);
-		pan.setVisible(true);
-		pan.setBorder(BorderFactory.createEmptyBorder());
-		c.add(pan);
+		m_pan = new JLayeredPane();
+		m_pan.setLayout(null);
+		m_pan.setBounds(0, 0, width, height);
+		m_pan.setVisible(true);
+		m_pan.setBorder(BorderFactory.createEmptyBorder());
+		c.add(m_pan);
 		AlphaImage img = new AlphaImage(Opbm.locateFile("inquiry_background.png"));
 
 		// Set the background image
@@ -114,8 +116,8 @@ public final class OpbmDialog
 		lblBackground.setVerticalAlignment(JLabel.TOP);
 		lblBackground.setVisible(true);
 		lblBackground.setIcon(new ImageIcon(img.getBufferedImage()));
-		pan.add(lblBackground);
-		pan.moveToFront(lblBackground);
+		m_pan.add(lblBackground);
+		m_pan.moveToFront(lblBackground);
 
 		// Create the fonts
 		fontLabel	= new Font("Calibri", Font.BOLD, 18);
@@ -130,8 +132,8 @@ public final class OpbmDialog
 		// We force the text to center at a location we want using html tags
 		m_lblMessage.setText(String.format("<html><div align='center' valign='center' WIDTH=%d><table><tr><td width='60'></td><td>%s</td></tr></table></div><html>", 419, m_message));
  		m_lblMessage.setVisible(true);
-		pan.add(m_lblMessage);
-		pan.moveToFront(m_lblMessage);
+		m_pan.add(m_lblMessage);
+		m_pan.moveToFront(m_lblMessage);
 
 		// Determine which buttons are specified
 		buttonCount = 0;
@@ -144,8 +146,8 @@ public final class OpbmDialog
 			inset.left = 3;
 			inset.right = 3;
 			m_btnOkay.setMargin(inset);
-			pan.add(m_btnOkay);
-			pan.moveToFront(m_btnOkay);
+			m_pan.add(m_btnOkay);
+			m_pan.moveToFront(m_btnOkay);
 			++buttonCount;
 		}
 		if ((m_buttons & _CANCEL_BUTTON) != 0)
@@ -157,8 +159,8 @@ public final class OpbmDialog
 			inset.left = 3;
 			inset.right = 3;
 			m_btnCancel.setMargin(inset);
-			pan.add(m_btnCancel);
-			pan.moveToFront(m_btnCancel);
+			m_pan.add(m_btnCancel);
+			m_pan.moveToFront(m_btnCancel);
 			++buttonCount;
 		}
 		if ((m_buttons & _YES_BUTTON) != 0)
@@ -170,8 +172,8 @@ public final class OpbmDialog
 			inset.left = 3;
 			inset.right = 3;
 			m_btnYes.setMargin(inset);
-			pan.add(m_btnYes);
-			pan.moveToFront(m_btnYes);
+			m_pan.add(m_btnYes);
+			m_pan.moveToFront(m_btnYes);
 			++buttonCount;
 		}
 		if ((m_buttons & _NO_BUTTON) != 0)
@@ -183,8 +185,8 @@ public final class OpbmDialog
 			inset.left = 3;
 			inset.right = 3;
 			m_btnNo.setMargin(inset);
-			pan.add(m_btnNo);
-			pan.moveToFront(m_btnNo);
+			m_pan.add(m_btnNo);
+			m_pan.moveToFront(m_btnNo);
 			++buttonCount;
 		}
 
@@ -225,6 +227,53 @@ public final class OpbmDialog
 		m_frame.forceWindowToHaveFocus();
 	}
 
+	/**
+	 * Sets a timeout period for when the window should self-close
+	 * @param interval in seconds
+	 */
+	public void setTimeout(int interval)
+	{
+		m_timer		= new Timer();
+		m_count		= 0;
+		m_countMax	= interval;
+		m_timer.schedule(this, 1000, 1000);
+	}
+
+	/**
+	 * Timer() callback
+	 */
+	@Override
+	public void run()
+	{
+		++m_count;
+		if (m_count >= m_countMax)
+		{
+			m_timer.cancel();
+			m_opbm.setDialogResponse(m_id, "autoclosed", this, null);
+			dispose();
+
+		} else {
+			// Update our on-screen countdown display
+			if (m_lblCountdown == null)
+			{
+				m_lblCountdown = new JLabel();
+				m_lblCountdown.setBounds(0, 0, 15, 10);
+				m_lblCountdown.setFont(new Font("Calibri", Font.BOLD, 10));
+				m_lblCountdown.setHorizontalAlignment(JLabel.CENTER);
+				m_lblCountdown.setForeground(Color.WHITE);
+				m_pan.add(m_lblCountdown);
+				m_pan.moveToFront(m_lblCountdown);
+			}
+			m_lblCountdown.setText(Integer.toString(m_countMax - m_count));
+		}
+	}
+
+	public void dispose()
+	{
+		if (m_frame != null)
+			m_frame.dispose();
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
@@ -234,22 +283,22 @@ public final class OpbmDialog
 	{
 		if (e.getComponent() == m_btnOkay)
 		{	// Okay button was clicked
-			m_opbm.setDialogResponse(m_id, "okay");
+			m_opbm.setDialogResponse(m_id, "okay", this, null);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnCancel) {
 			// Cancel button was clicked
-			m_opbm.setDialogResponse(m_id, "cancel");
+			m_opbm.setDialogResponse(m_id, "cancel", this, null);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnYes) {
 			// Yes button was clicked
-			m_opbm.setDialogResponse(m_id, "yes");
+			m_opbm.setDialogResponse(m_id, "yes", this, null);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnNo) {
 			// No button was clicked
-			m_opbm.setDialogResponse(m_id, "no");
+			m_opbm.setDialogResponse(m_id, "no", this, null);
 			m_frame.dispose();
 
 		}
@@ -274,7 +323,7 @@ public final class OpbmDialog
 	@Override
 	public void windowClosing(WindowEvent e)
 	{	// User cancelled
-		m_opbm.setDialogResponse(m_id, "cancel");
+		m_opbm.setDialogResponse(m_id, "cancel", this, null);
 	}
 
 	@Override
@@ -311,10 +360,15 @@ public final class OpbmDialog
 	private String				m_caption;
 	private int					m_buttons;
 	private String				m_id;
-	public DroppableFrame		m_frame;
-	public JLabel				m_lblMessage;
-	public JButton				m_btnOkay;
-	public JButton				m_btnCancel;
-	public JButton				m_btnYes;
-	public JButton				m_btnNo;
+	private DroppableFrame		m_frame;
+	private JLayeredPane		m_pan;
+	private Timer				m_timer;
+	private JLabel				m_lblMessage;
+	private JButton				m_btnOkay;
+	private JButton				m_btnCancel;
+	private JButton				m_btnYes;
+	private JButton				m_btnNo;
+	private int					m_count;
+	private int					m_countMax;
+	private JLabel				m_lblCountdown;
 }

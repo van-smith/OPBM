@@ -269,11 +269,10 @@ public class Benchmarks
 	 * @param macroMaster the Macros class to use for this instance
 	 * @param settingsMaster the Settings class to use for this instance
 	 */
-	public void benchmarkInitialize(Macros			macroMaster,
-								    Settings		settingsMaster)
+	public boolean benchmarkInitialize(Macros		macroMaster,
+									   Settings		settingsMaster)
 
 	{
-		int count;
 		OpbmDialog od;
 
 		// Warn user if User Account Control is not diabled
@@ -281,19 +280,9 @@ public class Benchmarks
 		{	// It is enabled, tell the user it will not work this way
 			m_userNotYetWarnedAboutUAC = false;
 			od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM cannot run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "uac", "");
-			count = 0;
-			try {
-				while (count < 10)
-				{	// We keep the dialog up for up to 10 seconds, in case they are running from the command line
-					Thread.sleep(1000);
-					// Check to see if they've clicked "cancel"
-					if (!m_opbm.getDialogResponse("uac").equalsIgnoreCase("unanswered"))
-						break;
-					++count;
-				}
-			} catch (InterruptedException ex) {
-			}
-			return;
+			od.setTimeout(10);
+			Utils.monitorDialogWithTimeout(m_opbm, "uac", 10);
+			return(false);
 		}
 
 		// Warn user if User auto-logon is not enabled
@@ -301,20 +290,10 @@ public class Benchmarks
 		{	// It is enabled, tell the user it will not work this way
 			m_userNotYetWarnedAboutUAC = false;
 			od = new OpbmDialog(m_opbm, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._YES_NO_CANCEL, "autologon", "");
-			count = 0;
-			try {
-				while (count < 90)
-				{	// We keep the dialog up for up to 30 seconds, in case they are running from the command line
-					Thread.sleep(333);
-					// Check to see if they've clicked "cancel"
-					if (!m_opbm.getDialogResponse("autologon").equalsIgnoreCase("unanswered"))
-						break;
-					++count;
-				}
-			} catch (InterruptedException ex) {
-			}
+			od.setTimeout(30);
+			Utils.monitorDialogWithTimeout(m_opbm, "autologon", 30);
 			if (!m_opbm.getDialogResponse("autologon").equalsIgnoreCase("yes"))
-				return;
+				return(false);
 		}
 
 		// Make sure the JVM home location is correct
@@ -327,18 +306,9 @@ public class Benchmarks
 			System.out.println("Use [-home:\"c:\\full\\path\\to\\java.exe\"] command line override to manually set java.home location (surround with double-quotes if pathname contains a space).");
 
 			od = new OpbmDialog(m_opbm, "Cannot find java.exe. Please correct manually.", "Failure", OpbmDialog._CANCEL_BUTTON, "java.home", "");
-			count = 0;
-			try {
-				while (count < 10)
-				{	// We keep the dialog up for up to 10 seconds, in case they are running from the command line
-					Thread.sleep(1000);
-					// Check to see if they've clicked "cancel"
-					if (!m_opbm.getDialogResponse("java.home").isEmpty())
-						break;
-					++count;
-				}
-			} catch (InterruptedException ex) {
-			}
+			od.setTimeout(10);
+			Utils.monitorDialogWithTimeout(m_opbm, "java.home", 10);
+			return(false);
 		}
 
 		if (m_bp == null)
@@ -384,6 +354,7 @@ public class Benchmarks
 		// restore everything to its original state (cleaning up in that way
 		// after the benchmark terminates)
 		Opbm.snapshotProcesses();
+		return(true);
 	}
 
 	/**
