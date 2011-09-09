@@ -180,7 +180,7 @@ public final class ResultsViewer
 		img.rainbowRectangle(1, 83, img.getWidth() - 2, img.getHeight() - 1, (int)height - switchX - 6);
 
 		// Score
-		font	= new Font("Calibri", Font.BOLD, 64);
+		font	= new Font("Calibri", Font.BOLD, 48);
 		rect	= new Rectangle(0, 0, img.getWidth(), 20);
 		score	= Integer.toString((int)m_rootRVL.getComputedScore());
 		if (score.length() > 3)
@@ -825,14 +825,14 @@ public final class ResultsViewer
 		m_pan.moveToFront(m_scrollbarBottom);
 
 		// Add the buttons for showing the times or the scores
-		backSelectedNeutral		= AlphaImage.makeARGB(255, 255, 255,  64);		// brighter yellow
-		backSelectedOver		= AlphaImage.makeARGB(255, 215, 215,   0);		// darker yellow
-		backUnselectedOver		= AlphaImage.makeARGB(255,  48,  48,  32);		// darker gray
-		backUnselectedNeutral	= AlphaImage.makeARGB(255,  32,  32,  32);		// dark gray
+		backSelectedNeutral		= AlphaImage.makeARGB(255,  64, 255,  64);		// brighter green
+		backSelectedOver		= AlphaImage.makeARGB(255,  32, 215,  32);		// darker green
+		backUnselectedOver		= AlphaImage.makeARGB(255,  16,  32,  16);		// darker gray-green
+		backUnselectedNeutral	= AlphaImage.makeARGB(255,  32,  48,  32);		// dark gray-green
 		foreSelectedNeutral		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
 		foreSelectedOver		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
-		foreUnselectedNeutral	= AlphaImage.makeARGB(255, 255, 255, 192);		// yellowish
-		foreUnselectedOver		= AlphaImage.makeARGB(255, 255, 255, 192);		// yellowish
+		foreUnselectedNeutral	= AlphaImage.makeARGB(255, 192, 255, 192);		// greenish
+		foreUnselectedOver		= AlphaImage.makeARGB(255, 192, 255, 192);		// greenish
 
 		labelFont		= new Font("Calibri", Font.PLAIN, 18);
 		JLabel label	= new JLabel("Show by:");
@@ -888,7 +888,7 @@ public final class ResultsViewer
 		AlphaImage img	= new AlphaImage(Opbm.locateFile("csv.png"));
 		labelUnselectedNeutral.setIcon(new ImageIcon(img.getBufferedImage()));
 		img		= new AlphaImage(img);
-		img.scaleBrightness(0.5);
+		img.scaleBrightness(0.4);
 		labelUnselectedOver.setIcon(new ImageIcon(img.getBufferedImage()));
 		m_csv.setBounds(60, 410+30, img.getWidth(), img.getHeight());
 		m_csv.renderHotTrackChange();
