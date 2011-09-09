@@ -298,6 +298,16 @@
 					</options>
 				</abstract>
 			</atom>
+			<atom name="File I(slash)O Run Test" shortname="fileio">
+				<abstract atomuuid="198208fb(hyphen)5b4f(hyphen)491e(hyphen)9a35(hyphen)19aec950f742" name="File I(slash)O Run Test" shortname="fileio" sourcename="execute">
+					<options>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..(backslash)autoIT(backslash)fileio(backslash)copy(backslash)fileioTest.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Uninstall 7zip" shortname="7zip">
 				<abstract atomuuid="588d19be(hyphen)a519(hyphen)436e(hyphen)9c96(hyphen)78a49b4d5b00" name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
@@ -632,6 +642,7 @@
 				<atom name="Safari Google V8" shortname="SV8" sourcename="Safari Google V8"></atom>
 			</molecule>
 			<molecule name="File Operations" shortname="File">
+				<atom name="File I(slash)O" shortname="fileio" sourcename="File I(slash)O Run Test"></atom>
 				<atom name="7zip Run Test" shortname="7zip" sourcename="7zip Run Test"></atom>
 			</molecule>
 			<molecule name="Uninstall Applications" shortname="Uninstall">

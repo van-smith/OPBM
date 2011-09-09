@@ -2,6 +2,10 @@
 #include "stdafx.h"
 #include "..\common\opbm_common.h"
 
+HWND	enumeratedWindows[_MAX_HWND_COUNT];
+int		hwndMaxCount;
+int		hwndsClosed;
+
 
 HMODULE ghModule;
 
