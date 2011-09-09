@@ -494,7 +494,7 @@ public final class Settings
 	public void toggleRetryAttempts()
 	{
 		++m_retryAttempts;
-		if (m_retryAttempts > 10)
+		if (m_retryAttempts > 5)
 		{	// Reset to 0
 			m_retryAttempts = 0;
 		}
@@ -509,6 +509,12 @@ public final class Settings
 	public Xml getSettingsXml()
 	{
 		return(m_settingsRootXml);
+	}
+
+	public void toggleBenchmarkStopsIfRetriesFail()
+	{
+		m_stopIfFailure = !m_stopIfFailure;
+		saveSettings();
 	}
 
 	/**

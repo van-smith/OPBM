@@ -457,6 +457,11 @@
 				<command>toggle_retry_attempts</command>
 				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
 			</menu>
+			<menu>
+				<text fgcolor="$halt_on_error_color$">Halt on Errors?  $halt_on_error$</text>
+				<command>toggle_halt_on_error</command>
+				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
+			</menu>
 			<spacer/>
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
@@ -505,6 +510,11 @@
 				<text fgcolor="$retry_color$">Retry Attempts: $retry_attempts$</text>
 				<command>toggle_retry_attempts</command>
 				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="$halt_on_error_color$">Halt on Errors?  $halt_on_error$</text>
+				<command>toggle_halt_on_error</command>
+				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
 			</menu>
 			<spacer/>
 			<text>The HUD is divided into five</text>
@@ -555,6 +565,11 @@
 				<command>toggle_retry_attempts</command>
 				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
 			</menu>
+			<menu>
+				<text fgcolor="$halt_on_error_color$">Halt on Errors?  $halt_on_error$</text>
+				<command>toggle_halt_on_error</command>
+				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
+			</menu>
 			<spacer/>
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
@@ -603,6 +618,11 @@
 				<text fgcolor="$retry_color$">Retry Attempts: $retry_attempts$</text>
 				<command>toggle_retry_attempts</command>
 				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="$halt_on_error_color$">Halt on Errors?  $halt_on_error$</text>
+				<command>toggle_halt_on_error</command>
+				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
 			</menu>
 			<spacer/>
 			<text>The HUD is divided into five</text>

@@ -139,6 +139,12 @@ public class Macros
 				} else if (macro.equalsIgnoreCase("retry_color")) {
 					m_settings	= m_opbm.getSettingsMaster();
 					macroSubstitution = greenRedEvaluation(m_settings.getRetryAttempts() != 0).toUpperCase();
+				} else if (macro.equalsIgnoreCase("halt_on_error")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = logicalEvaluation(m_settings.benchmarkStopsIfRetriesFail()).toUpperCase();
+				} else if (macro.equalsIgnoreCase("halt_on_error_color")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = greenRedEvaluation(m_settings.benchmarkStopsIfRetriesFail()).toUpperCase();
 
 
 	//////////

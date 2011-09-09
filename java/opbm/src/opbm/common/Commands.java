@@ -360,6 +360,9 @@ public class Commands
 		} else if (command.equals("toggle_retry_attempts")) {
 			m_settingsMaster.toggleRetryAttempts();
 			m_opbm.refreshLeftPanelsAfterMacroUpdate();
+		} else if (command.equals("toggle_halt_on_error")) {
+			m_settingsMaster.toggleBenchmarkStopsIfRetriesFail();
+			m_opbm.refreshLeftPanelsAfterMacroUpdate();
 
 
 //////////
