@@ -27,6 +27,7 @@ import opbm.common.Tuple;
 import opbm.common.Utils;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -41,6 +42,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -1100,27 +1102,16 @@ public final class ResultsViewer
 
 	public void clickActionCallback(JLabelHotTrack jlht)
 	{
-		if (jlht.getIdentifier().equalsIgnoreCase("word"))
-		{	// Word is clicked
+		Process process;
 
-		} else if (jlht.getIdentifier().equalsIgnoreCase("excel")) {
-			// Excel is clicked
+		if (jlht.getIdentifier().equalsIgnoreCase("csv"))
+		{	// The CSV button was clicked
+			try
+			{	// Let their default/favorite spreadsheet load the results.csv file
+				Desktop.getDesktop().open(new File(Opbm.getHarnessCSVDirectory() + "results.csv"));
 
-		} else if (jlht.getIdentifier().equalsIgnoreCase("notepad")) {
-			// Notepad is clicked
-// REMEMBER need to restore this functionality once the output is coded to be generated
-//			SystemDataNotepad sdn = new SystemDataNotepad(m_opbm, this);
-
-		} else if (jlht.getIdentifier().equalsIgnoreCase("this_system")) {
-			// This System is clicked
-// REMEMBER need to restore this functionality once the output is coded to be generated
-//			createSystemData();
-
-		} else if (jlht.getIdentifier().equalsIgnoreCase("ref_system")) {
-			// Ref System is clicked
-// REMEMBER need to restore this functionality once the output is coded to be generated
-//			createSystemData();
-
+			} catch (Throwable t) {
+			}
 		}
 	}
 

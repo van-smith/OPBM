@@ -1412,6 +1412,43 @@ public class Utils
 		return(s);
 	}
 
+	/**
+	 * Called to delete the contents of the specified directory, but
+	 * @param path
+	 * @param deleteTopLevelToo
+	 */
+	public static void deleteDirectoryContents(String	path,
+											   boolean	deleteTopLevelToo)
+	{
+		deleteDir(new File(path), 0, deleteTopLevelToo);
+	}
+
+	/**
+	 * Deletes all files and subdirectories under the directory.
+	 */
+	private static boolean deleteDir(File		directory,
+									 int		level,
+									 boolean	deleteTopLevelToo)
+	{
+		int i;
+
+		if (directory.isDirectory())
+		{	// It's a directory, delete all of its sub-directories (if any)
+			String[] files = directory.list();
+			for (i = 0; i < files.length; i++)
+			{
+				if (!deleteDir(new File(directory, files[i]), level + 1, deleteTopLevelToo))
+					return false;
+			}
+		}
+		// The directory is empty now, so delete it
+		// Except, we don't delete the top-level directory unless they specified it
+		if (deleteTopLevelToo || level != 0)
+			return directory.delete();
+		else
+			return(true);
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

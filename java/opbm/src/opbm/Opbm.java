@@ -2306,6 +2306,18 @@ public final class Opbm extends	ModalApp
 	}
 
 	/**
+	 * Examines the registry keys to see if the user has a default password
+	 * setup in the appropriate registry key, and if not then returns false.
+	 * @return true or false, is auto logon enabled?
+	 */
+	public static boolean isAutoLogonEnabled()
+	{
+		String value;
+		value = Opbm.GetRegistryKeyValue("HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\DefaultPassword");
+		return(!value.isEmpty());
+	}
+
+	/**
 	 * Examines the registry keys to see if User Account Control is enabled,
 	 * which will prevent unsigned executables from running.
 	 * @return
@@ -2795,6 +2807,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 02:43am";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 04:44am";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

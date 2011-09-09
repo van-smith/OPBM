@@ -95,14 +95,14 @@ public class WaitUntilIdle
 	public void prepareBeforeScriptExecution()
 	{
 // REMEMBER need to set all registry keys prior to execution
+		Utils.deleteDirectoryContents(Opbm.getScriptTempDirectory(), false);
 	}
 
 	public void cleanupAfterScriptExecution()
 	{
 // REMEMBER need to restore all registry keys after execution
-// REMEMBER need to implement this to cleanup all temp files in the CSIDL scriptOutput\temp directory(ies)
+		Utils.deleteDirectoryContents(Opbm.getScriptTempDirectory(), false);
 	}
-
 
 	private BenchmarkParams		m_bp;
 }

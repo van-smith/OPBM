@@ -189,135 +189,6 @@ public class Benchmarks
 	}
 
 	/**
-	 * Original code used by OPBM during early phases.  Has been replaced now
-	 * by benchmarkRunManifest().
-	 * This method is called to physically execute the specified atom.
-	 * @param atom
-	 * @param iterations
-	 */
-	public void benchmarkRunAtom(Xml	atom,
-								 int	iterations)
-	{
-		int i, count;
-		Xml child, xmlSuccess, xmlFailure, xmlIteration, xmlRun_Success, xmlRun_Failure;
-
-
-		// Warn user if User Account Control is not diabled
-		if (Opbm.isUACEnabled())
-		{	// It is enabled, tell the user it will not work this way
-			m_userNotYetWarnedAboutUAC = false;
-			OpbmDialog od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM cannot run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "uac", "");
-//			count = 0;
-			try {
-//				while (count < 10)
-//				{	// We keep the dialog up for up to 10 seconds, in case they are running from the command line
-					Thread.sleep(10000);
-					// Check to see if they've clicked "cancel"
-//					if (!m_opbm.getDialogResponse("uac").isEmpty())
-//						break;
-//					++count;
-//				}
-			} catch (InterruptedException ex) {
-			}
-			return;
-		}
-
-		// Make sure the JVM home location is correct
-		File f = new File(Opbm.m_jvmHome);
-		if (!f.exists())
-		{	// Oops!
-			System.out.println("Warning: Working java.home location \"" + Opbm.m_jvmHome + "\" does not exist.");
-			System.out.println("Unable to locate java.exe at java.home location: " + Opbm.m_jvmHome+ ".");
-			System.out.println("The OPBM Restarter will NOT be able to automatically re-launch OPBM after reboot.");
-			System.out.println("Use [-home:\"c:\\full\\path\\to\\java.exe\"] command line override to manually set java.home location (surround with double-quotes if pathname contains a space).");
-		}
-
-		// Indicate the atom we're going into for the stack
-		m_bp.m_benchmarkStack.add(atom);
-
-		// Append the atom's entry to the output/results xml file
-		xmlRun_Success	= new Xml("atom");
-		xmlRun_Success.appendAttribute(new Xml("name", atom.getAttribute("name")));
-		m_bp.m_xmlRun.appendChild(xmlRun_Success);
-
-		xmlRun_Failure	= new Xml("failures");
-		xmlRun_Failure.appendAttribute(new Xml("name", atom.getAttribute("name")));
-		m_bp.m_xmlRun.appendChild(xmlRun_Failure);
-
-// REMEMBER In the future, will store data here containing run profile (information, notes, optimization settings, etc.)
-
-		// Initialize everything
-		xmlSuccess	= null;
-		xmlFailure	= null;
-
-		// We are processing as many iterations of this atom as were specified by the caller
-		// Note:  These iterations are different than retry counts, but are passed parameters
-		//        (typically from the command) line which indicate a repeating set of data
-		m_bp.m_maxIterations = iterations;
-		for (i = 0; i < iterations; i++)
-		{
-			// Process through the entire atom, based on its logic
-			child = atom.getFirstChild();
-			Stack.enterNewBlock(Stack._STACK_ROOT, child, m_bp.m_atomStack);
-
-			// Set everything up if there are multiple iterations
-			if (iterations != 1)
-			{
-				xmlSuccess		= xmlRun_Success;
-				xmlFailure		= xmlRun_Failure;
-
-				// Append success iteration information
-				xmlIteration	= new Xml("iteration");
-				xmlIteration.appendAttribute("this", Integer.toString(i+1));
-				xmlIteration.appendAttribute("max",  Integer.toString(iterations));
-				xmlRun_Success = xmlRun_Success.appendChild(xmlIteration);
-
-				xmlIteration	= new Xml("iteration");
-				xmlIteration.appendAttribute("this", Integer.toString(i+1));
-				xmlIteration.appendAttribute("max",  Integer.toString(iterations));
-				xmlRun_Failure = xmlRun_Failure.appendChild(xmlIteration);
-
-				// Indicate where we are in the overall scheme
-				m_bp.m_thisIteration			= i + 1;
-				m_bp.m_bpAtom.m_executeCounter	= 0;
-				m_bp.m_bpAtom.m_failureCounter	= 0;
-
-			} else {
-				m_bp.m_thisIteration = 0;
-
-			}
-
-			// Process all of the children for this atom (all of its sequence of operations)
-			benchmarkRunAtomProcessChildren(atom, xmlRun_Success, xmlRun_Failure);
-
-			// Restore everything
-			if (iterations != 1)
-			{	// For each iteration we created (above) a child of the actual
-				// xmlRun_Success and xmlRun_Failure entries.
-				// So now we have to restore them back to their parent values,
-				// for the next iteration, or for the completion of the run.
-				if (xmlSuccess != null)
-					xmlRun_Success = xmlSuccess;
-
-				if (xmlFailure != null)
-					xmlRun_Failure = xmlFailure;
-			}
-
-			// If the user is telling us to stop, we stop
-			if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
-				break;
-		}
-
-		// When we get here, we are finished with the run, generate the outputs to the success branch
-		m_bp.m_bpAtom.generateSummaryCSVs(xmlRun_Success);
-		appendResultsDataForResultsViewer(xmlRun_Success);
-		// Note:  The failure branch is not post-processed here, but remains in the file for later (manual?) examination
-
-		// Indicate the atom is done
-		m_bp.m_benchmarkStack.remove(m_bp.m_benchmarkStack.size() - 1);		// Remove the last item
-	}
-
-	/**
 	 * Executes all of the sequence of operations for the specified atom
 	 * @param atom
 	 * @param xmlRun_Success
@@ -402,6 +273,74 @@ public class Benchmarks
 								    Settings		settingsMaster)
 
 	{
+		int count;
+		OpbmDialog od;
+
+		// Warn user if User Account Control is not diabled
+		if (Opbm.isUACEnabled())
+		{	// It is enabled, tell the user it will not work this way
+			m_userNotYetWarnedAboutUAC = false;
+			od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM cannot run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "uac", "");
+			count = 0;
+			try {
+				while (count < 10)
+				{	// We keep the dialog up for up to 10 seconds, in case they are running from the command line
+					Thread.sleep(1000);
+					// Check to see if they've clicked "cancel"
+					if (!m_opbm.getDialogResponse("uac").equalsIgnoreCase("unanswered"))
+						break;
+					++count;
+				}
+			} catch (InterruptedException ex) {
+			}
+			return;
+		}
+
+		// Warn user if User auto-logon is not enabled
+		if (!Opbm.isAutoLogonEnabled())
+		{	// It is enabled, tell the user it will not work this way
+			m_userNotYetWarnedAboutUAC = false;
+			od = new OpbmDialog(m_opbm, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._YES_NO_CANCEL, "autologon", "");
+			count = 0;
+			try {
+				while (count < 90)
+				{	// We keep the dialog up for up to 30 seconds, in case they are running from the command line
+					Thread.sleep(333);
+					// Check to see if they've clicked "cancel"
+					if (!m_opbm.getDialogResponse("autologon").equalsIgnoreCase("unanswered"))
+						break;
+					++count;
+				}
+			} catch (InterruptedException ex) {
+			}
+			if (!m_opbm.getDialogResponse("autologon").equalsIgnoreCase("yes"))
+				return;
+		}
+
+		// Make sure the JVM home location is correct
+		File f = new File(Opbm.m_jvmHome);
+		if (!f.exists())
+		{	// Oops!
+			System.out.println("Warning: Working java.home location \"" + Opbm.m_jvmHome + "\" does not exist.");
+			System.out.println("Unable to locate java.exe at java.home location: " + Opbm.m_jvmHome+ ".");
+			System.out.println("The OPBM Restarter will NOT be able to automatically re-launch OPBM after reboot.");
+			System.out.println("Use [-home:\"c:\\full\\path\\to\\java.exe\"] command line override to manually set java.home location (surround with double-quotes if pathname contains a space).");
+
+			od = new OpbmDialog(m_opbm, "Cannot find java.exe. Please correct manually.", "Failure", OpbmDialog._CANCEL_BUTTON, "java.home", "");
+			count = 0;
+			try {
+				while (count < 10)
+				{	// We keep the dialog up for up to 10 seconds, in case they are running from the command line
+					Thread.sleep(1000);
+					// Check to see if they've clicked "cancel"
+					if (!m_opbm.getDialogResponse("java.home").isEmpty())
+						break;
+					++count;
+				}
+			} catch (InterruptedException ex) {
+			}
+		}
+
 		if (m_bp == null)
 			m_bp = new BenchmarkParams();
 
