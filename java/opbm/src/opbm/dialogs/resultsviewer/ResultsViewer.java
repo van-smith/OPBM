@@ -49,7 +49,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JScrollBar;
-import javax.swing.JTextField;
 import opbm.Opbm;
 import opbm.dialogs.OpbmDialog;
 import opbm.common.Xml;
@@ -196,7 +195,7 @@ public final class ResultsViewer
 		m_lblScoreboard.setIcon(new ImageIcon(img.getBufferedImage()));
 
 		// Update the time and score portions
-		time		= Utils.convertSecondsToHHMMSSff(m_rootRVL.getComputedTime());
+		time		= Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff(m_rootRVL.getComputedTime()));
 		successes	= Integer.toString(m_rootRVL.getComputedSuccesses());
 		failures	= Integer.toString(m_rootRVL.getComputedFailures());
 
@@ -826,14 +825,14 @@ public final class ResultsViewer
 		m_pan.moveToFront(m_scrollbarBottom);
 
 		// Add the buttons for showing the times or the scores
-		backSelectedNeutral		= AlphaImage.makeARGB(255, 64, 255, 64);		// brighter green
-		backSelectedOver		= AlphaImage.makeARGB(255, 0, 215, 0);			// darker green
-		backUnselectedOver		= AlphaImage.makeARGB(255, 255, 64, 64);		// red
-		backUnselectedNeutral	= AlphaImage.makeARGB(255, 215, 0, 0);			// darker red
+		backSelectedNeutral		= AlphaImage.makeARGB(255, 255, 255,  64);		// brighter yellow
+		backSelectedOver		= AlphaImage.makeARGB(255, 215, 215,   0);		// darker yellow
+		backUnselectedOver		= AlphaImage.makeARGB(255,  48,  48,  32);		// darker gray
+		backUnselectedNeutral	= AlphaImage.makeARGB(255,  32,  32,  32);		// dark gray
 		foreSelectedNeutral		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
 		foreSelectedOver		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
-		foreUnselectedNeutral	= AlphaImage.makeARGB(255, 255, 255, 255);		// white
-		foreUnselectedOver		= AlphaImage.makeARGB(255, 255, 255, 255);		// white
+		foreUnselectedNeutral	= AlphaImage.makeARGB(255, 255, 255, 192);		// yellowish
+		foreUnselectedOver		= AlphaImage.makeARGB(255, 255, 255, 192);		// yellowish
 
 		labelFont		= new Font("Calibri", Font.PLAIN, 18);
 		JLabel label	= new JLabel("Show by:");
@@ -934,7 +933,7 @@ public final class ResultsViewer
 		m_scrollbarBottom.setBlockIncrement(10);
 		m_scrollbarBottom.setUnitIncrement(1);
 		m_scrollbarBottom.setMinimum(0);
-		m_scrollbarBottom.setMaximum(m_scrollbarBottom.getVisibleAmount() + m_renderList.size() - 1);
+		m_scrollbarBottom.setMaximum(Math.max(m_scrollbarBottom.getVisibleAmount() + m_renderList.size() - 16, m_scrollbarBottom.getVisibleAmount() + 3));
 		m_scrollbarBottom.setValue(m_renderListTop);
 	}
 

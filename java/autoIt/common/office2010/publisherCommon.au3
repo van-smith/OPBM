@@ -47,10 +47,10 @@ Func launchPublisher()
 	Local $filename
 	
 	; Find out which version we're running
-	If FileExists( $DIRECTORY_EXE_AMD64 ) Then
+	If FileExists( $FILENAME_PUBLISHER_AMD64 ) Then
 		$filename = $FILENAME_PUBLISHER_AMD64
 		outputDebug( "Running 64-bit Office" )
-	ElseIf FileExists( $DIRECTORY_EXE_X86 ) Then
+	ElseIf FileExists( $FILENAME_PUBLISHER_X86 ) Then
 		$filename = $FILENAME_PUBLISHER_X86
 		outputDebug( "Running 32-bit Office" )
 	Else

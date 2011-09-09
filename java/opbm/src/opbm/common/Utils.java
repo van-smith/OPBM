@@ -402,11 +402,13 @@ public class Utils
 		nfi1.setMinimumIntegerDigits(2);
 		nfi2.setMaximumIntegerDigits(1);
 		nfi2.setMinimumIntegerDigits(1);
-		nfi2.setMinimumFractionDigits(1);
-		nfi2.setMaximumFractionDigits(1);
+		nfi2.setMinimumFractionDigits(2);
+		nfi2.setMaximumFractionDigits(2);
 
 		// Create the format
 		hhmmssf = nfi1.format(hours) + ":" + nfi1.format(minutes) + ":" + nfi1.format(seconds) + "." + nfi2.format(fraction).substring(2);
+		if (hhmmssf.contains(".9"))
+			fraction = 0.0;
 
 		// Return the value
 		return(hhmmssf);
@@ -1352,8 +1354,13 @@ public class Utils
 		// Skip forward until we find the first non-zero character
 		for (i = 0; i < number.length(); i++)
 		{
-			if (number.charAt(i) != '0')
+			if (number.charAt(i) != '0' && number.charAt(i) != ' ')
 			{	// We've found our last entry
+				if (i == 0 && number.charAt(i) == '.')
+					return("0" + number);	// For entries that don't have a leading zero of any kind, we add one
+
+				if (number.charAt(i) == '.' && i > 0)
+					--i;	// Back off for the leading zero before the decimal point
 				return(number.substring(i));
 			}
 		}
@@ -1373,8 +1380,13 @@ public class Utils
 		// Skip forward until we find the first non-zero/non-colon character
 		for (i = 0; i < number.length(); i++)
 		{
-			if (number.charAt(i) != '0' && number.charAt(i) != ':')
+			if (number.charAt(i) != '0' && number.charAt(i) != ':' && number.charAt(i) != ' ')
 			{	// We've found our last entry
+				if (i ==0 && (number.charAt(i) == ':' || number.charAt(i) == '.'))
+					return("0" + number);
+
+				if ((number.charAt(i) == ':' || number.charAt(i) == '.') && i > 0)
+					--i;	// Back off for the leading zero before the decimal point or colon
 				return(number.substring(i));
 			}
 		}

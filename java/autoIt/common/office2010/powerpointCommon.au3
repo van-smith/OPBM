@@ -51,10 +51,10 @@ Func launchPowerPoint()
 	Local $filename
 	
 	; Find out which version we're running
-	If FileExists( $DIRECTORY_EXE_AMD64 ) Then
+	If FileExists( $FILENAME_POWERPOINT_AMD64 ) Then
 		$filename = $FILENAME_POWERPOINT_AMD64
 		outputDebug( "Running 64-bit Office" )
-	ElseIf FileExists( $DIRECTORY_EXE_X86 ) Then
+	ElseIf FileExists( $FILENAME_POWERPOINT_X86 ) Then
 		$filename = $FILENAME_POWERPOINT_X86
 		outputDebug( "Running 32-bit Office" )
 	Else
