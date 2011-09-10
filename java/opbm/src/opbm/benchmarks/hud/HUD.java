@@ -58,6 +58,7 @@ public final class HUD extends DroppableFrame
 	 */
 	public void createHUD()
 	{
+		boolean isTranslucent, isJava16orEarlier;
 		int actualWidth, actualHeight;
 		Dimension size;
 
@@ -73,12 +74,21 @@ public final class HUD extends DroppableFrame
 			m_width		= 320;
 			m_height	= 117;
 		}
-		m_translucency = m_opbm.getSettingsMaster().getHUDTranslucency();
+		m_translucency		= m_opbm.getSettingsMaster().getHUDTranslucency();
+		isTranslucent		= m_translucency < 1.0;
+		isJava16orEarlier	= System.getProperty("java.version").compareTo("1.7") < 0;
 
 		pack();
-        Insets fi		= getInsets();
-		actualWidth		= m_width + fi.left + fi.right;
-		actualHeight	= m_height + fi.top  + fi.bottom;
+		if (isJava16orEarlier || !isTranslucent)
+		{	// For 1.6 and earlier, always handle it as their translucency windows work with the entire window
+			Insets fi		= getInsets();
+			actualWidth		= m_width + fi.left + fi.right;
+			actualHeight	= m_height + fi.top  + fi.bottom;
+		} else {
+			// For 1.7 and later, and translucent windows, we don't have any insets affecting the height/width because of the way the new API handles translucency
+			actualWidth		= m_width;
+			actualHeight	= m_height;
+		}
         size = new Dimension(actualWidth, actualHeight);
         setMinimumSize(size);
         setMaximumSize(size);
@@ -87,9 +97,13 @@ public final class HUD extends DroppableFrame
 		setAlwaysOnTop(true);
 		addMouseListener(this);
 
-		dispose();					// Necessary for translucency
-		setUndecorated(true);		// Necessary for translucency
-		setTranslucency(m_translucency);
+		if (!isJava16orEarlier)
+		{
+			dispose();				// Necessary for translucency in 1.7+
+			setUndecorated(true);	// Necessary for translucency in 1.7+
+		}
+		if (isTranslucent)
+			setTranslucency(m_translucency);
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation(dim.width - actualWidth - 5, dim.height - actualHeight - 5);
