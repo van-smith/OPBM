@@ -303,7 +303,7 @@ public final class Settings
 		if (m_uninstallAfterFailuresXml == null)
 		{	// #15 - Create it and set default value
 			++updateCount;
-			m_uninstallAfterFailuresXml = new Xml("rebootBeforeEachPass");
+			m_uninstallAfterFailuresXml = new Xml("uninstallAfterFailure");
 			m_benchmarksXml.appendChild(m_uninstallAfterFailuresXml);
 			// "stopIfFailure" goes on benchmarks node
 			m_uninstallAfterFailuresXml.setText("yes");

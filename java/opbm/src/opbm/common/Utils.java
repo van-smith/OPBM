@@ -1003,16 +1003,15 @@ public class Utils
 	/**
 	 * Set the directory to that of the executable, such that "c:\some\dir\file.exe"
 	 * will set to "c:\some\dir\"
-	 * @param executable fullpath executable, as in "c:\some\dir\file.exe" and
-	 * not just "file.exe"
+	 * @param filename fullpath, as in "c:\some\dir\file.exe" and not just "file.exe"
 	 * @return previous directory
 	 */
-	public static String makeTheCurrentDirectoryThatOfThisExecutable(String executable)
+	public static String makeTheCurrentDirectoryThatOfThisFilename(String filename)
 	{
 		String curDir, newDir;
 
 		curDir	= getCurrentDirectory();
-		newDir	= new File(executable).getParent();
+		newDir	= new File(filename).getParent();
 		setCurrentDirectory(newDir);
 
 		return(curDir);

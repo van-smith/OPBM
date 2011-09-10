@@ -1160,6 +1160,7 @@ public final class BenchmarkManifest
 	 */
 	public void reloadManifest(String pathName)
 	{
+		m_isManifestInError = true;
 		m_root = Opbm.loadXml(pathName, m_opbm);
 		if (m_root == null)
 		{	// Did not load successfully
@@ -1336,7 +1337,8 @@ public final class BenchmarkManifest
 		}
 
 		// If we get here, we found everything, everything looks good, etc.
-		m_manifestIsLoaded = true;
+		m_manifestIsLoaded	= true;
+		m_isManifestInError	= false;
 	}
 
 	/**
@@ -1371,7 +1373,7 @@ public final class BenchmarkManifest
 		}
 		if (m_controlLastRunUuid.getText().equalsIgnoreCase("finished"))
 		{	// The manifest is already finished, there's nothing else to do
-			OpbmDialog od = new OpbmDialog(m_opbm, "Benchmark has already completed", "Restart Error", OpbmDialog._OKAY_BUTTON, "", "");
+			OpbmDialog od = new OpbmDialog(m_opbm, "Benchmark has completed", "Restart Error", OpbmDialog._OKAY_BUTTON, "completed", "");
 			return;
 		}
 
@@ -1386,7 +1388,7 @@ public final class BenchmarkManifest
 		m_bmr.appendResultsAnnotation("startup", Utils.getTimestamp(), "");
 
 		// Initialize everything
-		if (!m_benchmarksMaster.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster()))
+		if (!m_benchmarksMaster.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster(), m_automated))
 			return;	// Something happened, we cannot continue
 
 		// Grab some necessary pointers for benchmark processing
@@ -1434,11 +1436,11 @@ public final class BenchmarkManifest
 			saveManifest();
 		}
 
-//		// If the last thing that happened was a failure, and we are supposed to uninstall stuff after failures, we need to do that
-//		if (m_bp.m_bpAtom.m_lastAtomWasFailure && m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
-//		{	// If there were failures, and they want to run the uninstall scripts after processing
-//			runUninstallers();
-//		}
+		// If the last thing that happened was a failure, and we are supposed to uninstall stuff after failures, we need to do that
+		if (m_bp.m_bpAtom.m_lastAtomWasFailure && m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
+		{	// If there were failures, and they want to run the uninstall scripts after processing
+			runUninstallers();
+		}
 
 		// Finish up, show the results viewer
 		m_benchmarksMaster.benchmarkShutdown();
@@ -1451,20 +1453,29 @@ public final class BenchmarkManifest
 	public void runUninstallers()
 	{
 		int i, j, k, failures;
-		boolean executed;
-		Xml result, candidate;
-		String manifestworkletuuid, atomsList, atomName, failureNames, successNames;
+		boolean executed, ignoreThisOne;
+		Xml result, atomCandidate, autoUninstall, success, failure, thisAtom, thisAtomResults;
+		String manifestworkletuuid, atomsList, atomName, failureNames, successNames, autoUninstalledAlready;
 		List<String>	atoms			= new ArrayList<String>(0);		// atom names found in <atomOnFailure> tag
 		List<Xml>		scriptsAtoms	= new ArrayList<Xml>(0);		// atoms from scripts.xml
 		List<Xml>		results			= new ArrayList<Xml>(0);		// results from manifest.xml
 
 		// Grab the completed atoms, one-by-one
-		Xml.getNodeList(results, m_bmr.getResultsDataRawResults(), "result", true);
+		Xml.getNodeList(results, m_bmr.getResultsDataRawResults(), "rawResults.result", false);
 
 		if (!results.isEmpty())
 		{	// Load all of the scripts.xml atoms
 			Xml.getNodeList(scriptsAtoms, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 			// Right now, scriptsAtoms is populated with every atom entry
+		}
+		// See if there is already an uninstall tag
+		autoUninstall = m_bmr.getResultsDataRawResults().getChildNode("autoUninstalls");
+		if (autoUninstall == null)
+		{	// Nope, add it
+			autoUninstall = new Xml("autoUninstalls");
+			autoUninstall.appendAttribute(new Xml("time", Utils.getTimestamp()));
+			autoUninstall.appendAttribute(new Xml("uuid", Utils.getUUID()));
+			m_bmr.getResultsDataRawResults().appendChild(autoUninstall);
 		}
 
 		// Iterate through each one identifying if any of those executed
@@ -1472,66 +1483,110 @@ public final class BenchmarkManifest
 		for (i = 0; i < results.size(); i++)
 		{	// Grab this entry
 			result = results.get(i);
-			if (result.getName().equalsIgnoreCase("result"))
-			{	// It's a result, see what the manifestworkletuuid backs in to
-				manifestworkletuuid = result.getAttribute("manifestworkletuuid");
-				if (!manifestworkletuuid.isEmpty())
-				{	// Search in the original run data to see what it is
-					candidate = m_manifest.getNodeByUUID(manifestworkletuuid, true);
-					if (candidate != null)
-					{	// We found our worklet
-						if (candidate.getName().equalsIgnoreCase("atom"))
-						{	// And it's an atom, see if it has a populated atomOnFailure tag
-							atomsList = candidate.getAttributeOrChild("atomOnFailure");
-							if (!atomsList.isEmpty())
-							{	// There are atoms to run, extract them and execute them one at a time
-								atoms.clear();
-								Utils.extractCommaItems(atoms, atomsList);
-								failureNames	= "";
-								successNames	= "";
-								failures		= 0;
-								for (j = 0; j < atoms.size(); j++)
-								{	// Grab this atom name
-									atomName = atoms.get(j);
-									// See if the atom is found in scripts.xml (as it may not have been included in the manifest.xml file or run data, but may exist externally as a "only-on-failure" cleanup state)
-									executed = false;
-									for (k = 0; k < scriptsAtoms.size(); k++)
-									{	// See if this scripts.xml atom matches
-										if (scriptsAtoms.get(i).getAttribute("name").equalsIgnoreCase(atomName))
-										{	// We found it, execute it
-											executed = true;
-											// Update that it's been executed
+			manifestworkletuuid = result.getAttribute("manifestworkletuuid");
+			if (!manifestworkletuuid.isEmpty())
+			{	// Search in the original run data to see what it is
+				atomCandidate = m_manifest.getNodeByUUID(manifestworkletuuid, true);
+				if (atomCandidate != null)
+				{	// We found our worklet
+					if (atomCandidate.getName().equalsIgnoreCase("abstract") && atomCandidate.getChildNode("options") != null)
+					{	// And it's an atom, see if it has a populated atomOnFailure tag
+						atomsList = atomCandidate.getChildNode("options").getAttributeOrChild("atomOnFailure");
+						if (!atomsList.isEmpty())
+						{	// There are atoms to run, extract them and execute them one at a time
+							atoms.clear();
+							Utils.extractCommaItems(atoms, atomsList);
+							failureNames	= "";
+							successNames	= "";
+							failures		= 0;
+							for (j = 0; j < atoms.size(); j++)
+							{	// Grab this atom name
+								atomName = atoms.get(j);
+								// See if the atom is found in scripts.xml (as it may not have been included in the manifest.xml file or run data, but may exist externally as a "only-on-failure" cleanup state)
+								executed		= false;
+								ignoreThisOne	= false;
+								for (k = 0; k < scriptsAtoms.size(); k++)
+								{	// See if this scripts.xml atom matches
+									thisAtom = scriptsAtoms.get(k);
+									if (thisAtom.getAttribute("name").equalsIgnoreCase(atomName))
+									{	// We found it, see if we still need to execute it
+										autoUninstalledAlready = atomCandidate.getAttribute("autoUninstall");
+										if (autoUninstalledAlready.isEmpty() || !autoUninstalledAlready.toLowerCase().contains(atomName.toLowerCase()))
+										{	// It hasn't already been run, or if it has, it failed previously, so we run it (or try again)
+											executed	= true;
+											success		= new Xml("success");
+											failure		= new Xml("failure");
+											// If success, executed = true, otherwise executed = false
+
+										//////////
+										// Physically conduct the work of the atom
+											System.out.println("Auto-Uninstall " + atomName);
+											m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
+										// End
+										//////////
+											thisAtomResults = new Xml("atomUninstall");
+											thisAtomResults.appendAttribute(new Xml("name", atomName));
+											thisAtomResults.appendAttribute(new Xml("uuid", Utils.getUUID()));
+
+											// Create an entry identifying this atom
+											thisAtomResults.appendChild(success);
+											thisAtomResults.appendChild(failure);
+											if (success.getFirstChild() != null)
+											{	// There was a success
+												thisAtomResults.appendAttribute("result", "success");
+											} else {
+												// Only failures
+												thisAtomResults.appendAttribute("result", "fail");
+											}
+
+											// Store the results good or bad
+											autoUninstall.appendChild(thisAtomResults);
+
+											// Save this result
+											saveManifest();
+
+										} else {
+											if (autoUninstalledAlready.toLowerCase().contains(atomName.toLowerCase()))
+											{	// It's already been run
+												System.out.println("Auto-Uninstall " + atomName + " (indicated by \"" + atomCandidate.getAttribute("name") + "\")already run previously, skipping");
+												ignoreThisOne = true;
+											}
+											//else it
 										}
+										// Update that it's been executed
+										break;
 									}
+								}
+								if (!ignoreThisOne)
+								{	// Items are ignored if they've already been run
 									if (!executed)
 									{	// We encountered an atomOnFailure that does not exist
 										++failures;
 										failureNames += (failureNames.isEmpty() ? "" : ", ") + atomName;
-										setError("Warning:  atomOnFailure \"" + atomName + "\" (indicated by \"" + candidate.getAttribute("name") + "\") was not found in scripts.xml");
+										setError("Warning:  atomOnFailure \"" + atomName + "\" (indicated by \"" + atomCandidate.getAttribute("name") + "\") was not found in scripts.xml");
 									} else {
 										// Success
 										successNames += (successNames.isEmpty() ? "" : ", ") + atomName;
 									}
 								}
-								// When we get here, we've tried to run every atom
-								if (!failureNames.isEmpty())
-								{	// Append list of failed atoms that could not be run (by names)
-									candidate.appendAttribute(new Xml("atomOnFailureFailures", failureNames));
-								}
+							}
+							// When we get here, we've tried to run every atom
+							if (!failureNames.isEmpty())
+							{	// Append list of failed atoms that could not be run (by names)
+								atomCandidate.appendAttribute(new Xml("autoUninstallFailure", failureNames));
+							}
 
-								if (!successNames.isEmpty())
-								{	// Append list of successful atoms
-									candidate.appendAttribute(new Xml("atomOnFailureSuccesses", successNames));
-								}
+							if (!successNames.isEmpty())
+							{	// Append list of successful atoms
+								atomCandidate.appendAttribute(new Xml("autoUninstalled", successNames));
 							}
 						}
 					}
 				}
 			}
 		}
-
-		// Note:  Each uninstalled atom is flagged as "uninstalled='yes'"
-		//        and only run one time
+		// Save this result
+		saveManifest();
 	}
 
 	/**
@@ -1842,7 +1897,7 @@ public final class BenchmarkManifest
 		if (m_worklet.getName().equalsIgnoreCase("abstract"))
 		{	// Create the area to store results from our execute atom
 			success		= new Xml("success");
-			failures	= new Xml("failures");
+			failures	= new Xml("failure");
 
 			// Grab some pointers
 			manifestWorkletUuid	= m_controlLastWorkletUuid.getText();

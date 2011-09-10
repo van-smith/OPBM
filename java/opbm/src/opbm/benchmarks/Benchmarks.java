@@ -270,10 +270,13 @@ public class Benchmarks
 	 * @param settingsMaster the Settings class to use for this instance
 	 */
 	public boolean benchmarkInitialize(Macros		macroMaster,
-									   Settings		settingsMaster)
+									   Settings		settingsMaster,
+									   boolean		isAutomatedRun)
 
 	{
 		OpbmDialog od;
+
+		m_isAutomatedRun = isAutomatedRun;
 
 		// Warn user if User Account Control is not diabled
 		if (Opbm.isUACEnabled())
@@ -292,7 +295,7 @@ public class Benchmarks
 			od = new OpbmDialog(m_opbm, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._YES_NO_CANCEL, "autologon", "");
 			od.setTimeout(30);
 			Utils.monitorDialogWithTimeout(m_opbm, "autologon", 30);
-			if (!m_opbm.getDialogResponse("autologon").equalsIgnoreCase("yes"))
+			if (!isAutomatedRun && !m_opbm.getDialogResponse("autologon").equalsIgnoreCase("yes"))
 				return(false);
 		}
 
@@ -305,7 +308,7 @@ public class Benchmarks
 			System.out.println("The OPBM Restarter will NOT be able to automatically re-launch OPBM after reboot.");
 			System.out.println("Use [-home:\"c:\\full\\path\\to\\java.exe\"] command line override to manually set java.home location (surround with double-quotes if pathname contains a space).");
 
-			od = new OpbmDialog(m_opbm, "Cannot find java.exe. Please correct manually.", "Failure", OpbmDialog._CANCEL_BUTTON, "java.home", "");
+			od = new OpbmDialog(m_opbm, "Cannot find java.exe. Please correct (use -home:\"c:\\path\\to\\java.exe\" on command line).", "Failure", OpbmDialog._CANCEL_BUTTON, "java.home", "");
 			od.setTimeout(10);
 			Utils.monitorDialogWithTimeout(m_opbm, "java.home", 10);
 			return(false);
@@ -695,6 +698,7 @@ public class Benchmarks
 	private Opbm				m_opbm;
 	private boolean				m_userNotYetWarnedAboutUAC;
 	private BenchmarkParams		m_bp;
+	private boolean				m_isAutomatedRun;
 
 	// Used during the launch process, tells BenchmarkManifest if the launch was
 	// automated, or the result of user interaction

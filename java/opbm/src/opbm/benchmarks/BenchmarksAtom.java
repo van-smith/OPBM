@@ -1297,7 +1297,7 @@ public class BenchmarksAtom
 							}
 
 							// Change the current directory to the directory of the executable, and get this command's user-readable name
-							curDir	= Utils.makeTheCurrentDirectoryThatOfThisExecutable(command);
+							curDir	= Utils.makeTheCurrentDirectoryThatOfThisFilename(command);
 							name	= m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name"));
 							if (record)
 							{	// We are recording logs for this one
