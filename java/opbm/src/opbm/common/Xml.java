@@ -2337,6 +2337,23 @@ public class Xml
 	}
 
 	/**
+	 * Non-static version of getNodeByAttributeNameEqualsValue(Xml root,
+	 * String attribute, String value, boolean searchAttributes)
+	 * @param attribute name of attribute field
+	 * @param value value it should contain
+	 * @param searchAttributes should attributes be searched (only valid while
+	 * the Xml is in memory, as attribute attributes are not saved to disk, or
+	 * re-loaded after a save)
+	 * @return the found Xml (if any)
+	 */
+	public Xml getNodeByAttributeNameEqualsValue(String		attribute,
+												 String		value,
+												 boolean	searchAttributes)
+	{
+		return(getNodeByAttributeNameEqualsValue(this, attribute, value, searchAttributes));
+	}
+
+	/**
 	 * Searches the root node and deeper to find the specified node with a named
 	 * attribute containing the specified value, typically used for forms of
 	 * UUID stored information, such as "manifestWorkletUuid" attribute with a

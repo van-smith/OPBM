@@ -1459,6 +1459,7 @@ public class BenchmarksAtom
 							{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
 								if (record)
 									xmlRun_RunFailure.appendChild(xmlType);
+								m_bp.setLastWorkletTimingData(null);
 
 							} else {
 								// Just append like normal, they're not retrying, this failure will persist

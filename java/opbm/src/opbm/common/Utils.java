@@ -1477,6 +1477,30 @@ public class Utils
 		}
 	}
 
+	/**
+	 * Returns names for single-digit numbers, computed number values for larger
+	 * @param number any integer
+	 * @return names for 0 to 9, computed number otherwise
+	 */
+	public static String getNumberName(int number)
+	{
+		switch (number)
+		{
+			case 0:		return("zero");
+			case 1:		return("one");
+			case 2:		return("two");
+			case 3:		return("three");
+			case 4:		return("four");
+			case 5:		return("five");
+			case 6:		return("six");
+			case 7:		return("seven");
+			case 8:		return("eight");
+			case 9:		return("nine");
+			default:
+				return(Integer.toString(number));
+		}
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

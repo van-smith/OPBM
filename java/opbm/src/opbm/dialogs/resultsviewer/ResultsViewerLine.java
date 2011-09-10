@@ -216,6 +216,10 @@ public final class ResultsViewerLine
 			// Move to the next sibling
 			child = child.getNext();
 		}
+		if (maxRuns == 0)
+		{	// Nothing was recorded for run data (due to an error in the script)
+			return;
+		}
 
 		// Create the template tuple entries for summation
 		// Create the fonts and color we'll use
@@ -298,8 +302,8 @@ public final class ResultsViewerLine
 				geoScore	*= Math.pow(score, power);
 			}
 		}
-		avgTime		= totTime	/ (double)count;
-		avgScore	= totScore	/ (double)count;
+		avgTime		= totTime	/ (double)(Math.max(count, 1));
+		avgScore	= totScore	/ (double)(Math.max(count, 1));
 
 		// Compute the score and time CV
 		cvTimeSum	= 0.0f;
@@ -311,11 +315,11 @@ public final class ResultsViewerLine
 			cvTimeSum	+= Math.pow(time	- avgTime,	2.0f);
 			cvScoreSum	+= Math.pow(score	- avgScore,	2.0f);
 		}
-		cvTime	= Math.sqrt(cvTimeSum  / (double)count);
-		cvScore	= Math.sqrt(cvScoreSum / (double)count);
+		cvTime	= Math.sqrt(cvTimeSum  / (double)(Math.max(count, 1)));
+		cvScore	= Math.sqrt(cvScoreSum / (double)(Math.max(count, 1)));
 		// Now, divide by abs(mean) to get CV
-		cvTime	= Math.sqrt(cvTime	/ Math.abs(geoTime));
-		cvScore	= Math.sqrt(cvScore	/ Math.abs(geoScore));
+		cvTime	= Math.sqrt(cvTime	/ Math.max(Math.abs(geoTime), 1.0));
+		cvScore	= Math.sqrt(cvScore	/ Math.max(Math.abs(geoScore), 1.0));
 		// Right now, these variables are defined:
 		//		totTime		totScore
 		//		geoTime		geoScore
@@ -423,13 +427,20 @@ public final class ResultsViewerLine
 		// If we're visibile at this point, render it
 		if (m_visible)
 		{	// Arrange the child sub-components
-			m_nameboxLabel.setBackground(getBackcolorForBoxes(m_level));
-			m_nameboxLabel.setForeground(getForecolorForBoxes(m_level));
+			if (!m_success)
+			{	// There's an error
+				m_nameboxLabel.setBackground(Color.RED);
+				m_nameboxLabel.setForeground(Color.YELLOW);
+			} else {
+				m_nameboxLabel.setBackground(getBackcolorForBoxes(m_level));
+				m_nameboxLabel.setForeground(getForecolorForBoxes(m_level));
+			}
 
 			if (!m_nameboxLabel.isVisible())
 				m_nameboxLabel.setVisible(true);		// Show it
 
-			renderTabs(mode);							// Show the tabs appropriately
+			if (m_success && !m_runList.isEmpty())
+				renderTabs(mode);						// Show the tabs appropriately when not in error
 
 		} else {
 			if (m_nameboxLabel.isVisible())
