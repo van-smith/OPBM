@@ -2764,13 +2764,15 @@ public final class Opbm extends	ModalApp
 	 */
     public static void main(String[] args)
 	{
-		// Switching to 1.7.0 changed the way translucency is handled
-        GraphicsEnvironment	ge		= GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice		grfx	= ge.getDefaultScreenDevice();
-        if (!grfx.isWindowTranslucencySupported(TRANSLUCENT))
-		{	// Tell the user that translucency is not supported
-            System.out.println("Translucency is not supported by this graphical environment");
-        }
+		if (System.getProperty("java.version").compareTo("1.7") >= 0)
+		{	// Switching to 1.7.0 changed the way translucency is handled
+			GraphicsEnvironment	ge		= GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice		grfx	= ge.getDefaultScreenDevice();
+			if (!grfx.isWindowTranslucencySupported(TRANSLUCENT))
+			{	// Tell the user that translucency is not supported
+				System.out.println("Translucency is not supported by this graphical environment");
+			}
+		}
 
 		// Launch the system
 		Opbm o = new Opbm(args);
@@ -2908,6 +2910,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 05:04pm";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 09:19pm";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

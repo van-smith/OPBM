@@ -1183,6 +1183,13 @@ public class BenchmarkManifestResults
 		return(newXml);
 	}
 
+	public Xml getResultsDataRoot()				{	return(m_resultsdataRoot);		}
+	public Xml getResultsDataRawResults()		{	return(m_rawResults);			}
+	public Xml getResultsDataResults()			{	return(m_results);				}
+	public Xml getResultsDataDetails()			{	return(m_details);				}
+	public Xml getResultsDataAggregate()		{	return(m_aggregate);			}
+	public Xml getResultsDataAggregateByAtom()	{	return(m_aggregateByAtom);		}
+
 	BenchmarkManifest		m_bm;						// Parent this results processor relates back to
 	private boolean			m_isLoaded;					// When the results have been created or successfully loaded, this flag is raised high
 

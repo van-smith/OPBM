@@ -416,82 +416,83 @@ public class Benchmarks
 	public void benchmarkInitializeExecutionEnvironment(BenchmarkParams bp)
 	{
 		// Initialize our relative items
-		bp.m_bpAtom.m_executeCounter	= 0;
-		bp.m_bpAtom.m_failureCounter	= 0;
-		bp.m_atomVariables				= new ArrayList<Variables>(0);
-		bp.m_atomStack					= new ArrayList<Stack>(0);
-		bp.m_bpAtom.m_timingEvents		= new ArrayList<Xml>(0);
-		bp.m_bpAtom.m_returnValue		= 0;
-		bp.m_wui						= new WaitUntilIdle(bp);
+		bp.m_bpAtom.m_executeCounter		= 0;
+		bp.m_bpAtom.m_failureCounter		= 0;
+		bp.m_atomVariables					= new ArrayList<Variables>(0);
+		bp.m_atomStack						= new ArrayList<Stack>(0);
+		bp.m_bpAtom.m_timingEvents			= new ArrayList<Xml>(0);
+		bp.m_bpAtom.m_returnValue			= 0;
+		bp.m_bpAtom.m_lastAtomWasFailure	= false;
+		bp.m_wui							= new WaitUntilIdle(bp);
 
-		bp.m_benchmarkStack				= new ArrayList<Xml>(0);
+		bp.m_benchmarkStack					= new ArrayList<Xml>(0);
 
-		bp.m_debuggerActive				= bp.m_settingsMaster.isInDebugMode();
-		bp.m_singleStepping				= bp.m_settingsMaster.isSingleStepping();
+		bp.m_debuggerActive					= bp.m_settingsMaster.isInDebugMode();
+		bp.m_singleStepping					= bp.m_settingsMaster.isSingleStepping();
 		if (bp.m_debuggerActive)
 		{	// The debugger is displayed, but that doesn't mean the user is single-stepping
-			bp.m_deb					= new Debugger(bp);
+			bp.m_deb						= new Debugger(bp);
 		} else {
 			// Not displayted (typical condition)
-			bp.m_deb					= null;
+			bp.m_deb						= null;
 		}
-		bp.m_debuggerOrHUDAction		= BenchmarkParams._NO_ACTION;
+		bp.m_debuggerOrHUDAction			= BenchmarkParams._NO_ACTION;
 
-		bp.m_hudActive					= bp.m_settingsMaster.isHUDVisible();
-		bp.m_hudDebugInfo				= bp.m_settingsMaster.getHUDDebugInfo();
+		bp.m_hudActive						= bp.m_settingsMaster.isHUDVisible();
+		bp.m_hudDebugInfo					= bp.m_settingsMaster.getHUDDebugInfo();
 		if (bp.m_hudActive)
 		{	// The HUD is displayed
-			bp.m_hud					= new HUD(bp.m_opbm, bp, false);
+			bp.m_hud						= new HUD(bp.m_opbm, bp, false);
 		} else {
 			// Not displayed (typical condition)
-			bp.m_hud					= null;
+			bp.m_hud						= null;
 		}
 
-		bp.m_retry						= bp.m_settingsMaster.isBenchmarkToRetryOnErrors();
-		bp.m_retryAttempts				= bp.m_settingsMaster.benchmarkRetryOnErrorCount();
+		bp.m_retry							= bp.m_settingsMaster.isBenchmarkToRetryOnErrors();
+		bp.m_retryAttempts					= bp.m_settingsMaster.benchmarkRetryOnErrorCount();
 
 		// Initialize our captures and gobblers
-		bp.m_errorArray					= new ArrayList<String>(0);
-		bp.m_errorGobbler				= null;
+		bp.m_errorArray						= new ArrayList<String>(0);
+		bp.m_errorGobbler					= null;
 
-		bp.m_outputArray				= new ArrayList<String>(0);
-		bp.m_outputGobbler				= null;
+		bp.m_outputArray					= new ArrayList<String>(0);
+		bp.m_outputGobbler					= null;
 
 		// Begin the logging
 		// Run data goes to opbm.rawdata.run
-		Xml root						= new Xml("opbm");				// Creae opbm
-		Xml rawdata						= new Xml("rawdata");			// Create opbm.rawdata
+		Xml root							= new Xml("opbm");				// Creae opbm
+		Xml rawdata							= new Xml("rawdata");			// Create opbm.rawdata
 		root.appendChild(rawdata);
-		Xml run							= new Xml("run");				// Create opbm.rawdata.run
+		Xml run								= new Xml("run");				// Create opbm.rawdata.run
 		rawdata.appendChild(run);
 
 		// Post-processed results goes to opbm.resultdata.result
-		Xml resultsdata					= new Xml("resultsdata");		// Create opbm.resultdata
-		Xml result						= new Xml("result");			// Create opbm.resultsdata.result
+		Xml resultsdata						= new Xml("resultsdata");		// Create opbm.resultdata
+		Xml result							= new Xml("result");			// Create opbm.resultsdata.result
 		addStandardResultAttributes(result);
 		resultsdata.appendChild(result);
 		root.appendChild(resultsdata);
 
 		// Information about the run goes to opbm.rundata
-		Xml runinfo						= new Xml("runinfo");
-		Xml runtype						= new Xml("type", bp.m_opbm.getRunType());
-		Xml start						= new Xml("start", Utils.getTimestamp());
-		Xml name						= new Xml("name", Utils.convertToLettersAndNumbersOnly(bp.m_opbm.getRunName()));
+		Xml runinfo							= new Xml("runinfo");
+		Xml runtype							= new Xml("type", bp.m_opbm.getRunType());
+		Xml start							= new Xml("start", Utils.getTimestamp());
+		Xml name							= new Xml("name", Utils.convertToLettersAndNumbersOnly(bp.m_opbm.getRunName()));
 		runinfo.appendChild(runtype);
 		runinfo.appendChild(start);
 		runinfo.appendChild(name);
 		root.appendChild(runinfo);
 
-// REMEMBER CPUID information will be recorded here
+// REMEMBER CPU-Z information will be recorded here
 
 		// Populate the global variables
-		bp.m_xmlRoot					= root;
-		bp.m_xmlRun						= run;
-		bp.m_xmlResults					= result;
-		bp.m_xmlResultsLastSuite		= null;
-		bp.m_xmlResultsLastScenario		= null;
-		bp.m_xmlResultsLastMolecule		= null;
-		bp.m_xmlResultsLastAtom			= null;
+		bp.m_xmlRoot						= root;
+		bp.m_xmlRun							= run;
+		bp.m_xmlResults						= result;
+		bp.m_xmlResultsLastSuite			= null;
+		bp.m_xmlResultsLastScenario			= null;
+		bp.m_xmlResultsLastMolecule			= null;
+		bp.m_xmlResultsLastAtom				= null;
 	}
 
 	public void addStandardResultAttributes(Xml result)

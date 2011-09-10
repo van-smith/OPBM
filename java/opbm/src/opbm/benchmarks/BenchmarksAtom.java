@@ -1515,9 +1515,14 @@ public class BenchmarksAtom
 
 				// For this statement, we simply proceed on to the next if we're good, otherwise, we're done
 				if (failure && stopIfFailure)
+				{	// We ended on a failure, so the last atom was a failure
+					m_bp.m_bpAtom.m_lastAtomWasFailure = true;
 					return(null);
-				else
+				} else {
+					// We ended on a success, so the last atom was not a failure
+					m_bp.m_bpAtom.m_lastAtomWasFailure = false;
 					return(thisCommand.getNext());
+				}
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndTerminate")) {
 				// Rebooting, and terminating the benchmark test (will restart the system and leave it in its natural state)
@@ -1713,4 +1718,5 @@ public class BenchmarksAtom
 	public	int					m_executeCounter;
 	public	List<Xml>			m_timingEvents;
 	public	int					m_returnValue;
+	public	boolean				m_lastAtomWasFailure;
 }
