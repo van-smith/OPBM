@@ -184,7 +184,7 @@ public final class ResultsViewerLine
 	 */
 	public void calculateRolledUpRunTabs()
 	{
-		int i, j, count, entry, maxRuns, left, top, width, height;
+		int i, j, iteration, count, entry, maxRuns, left, top, width, height;
 		ResultsViewerLine child;
 		String name, upper;
 		double time, score, power, geoTime, geoScore, totTime, totScore, avgTime, avgScore, cvTime, cvScore, cvTimeSum, cvScoreSum;
@@ -209,10 +209,12 @@ public final class ResultsViewerLine
 		child	= m_child;
 		while (child != null)
 		{	// Count each child, and find out how many run entries it has
-			++count;
-			if (child.m_runList.size() - 2 > maxRuns)	// We back off 2 for the CV and Average entries
-				maxRuns = child.m_runList.size() - 2;
-
+			if (child.wasSuccessful())
+			{	// We only include successful children in our scores
+				++count;
+				if (child.m_runList.size() - 2 > maxRuns)	// We back off 2 for the CV and Average entries
+					maxRuns = child.m_runList.size() - 2;
+			}
 			// Move to the next sibling
 			child = child.getNext();
 		}
@@ -248,12 +250,15 @@ public final class ResultsViewerLine
 		entry	= 0;
 		while (child != null)
 		{	// Add the totals for this child
-			for (i = 0; i < child.m_runList.size() - 2; i++)
-			{
-				tup = (Tuple)m_runList.getSeventh(i);
-				m_runList.addFourthDouble(i, (Double)child.m_runList.getFourth(i));	// time
-				tup.setSecond(entry, (Double)child.m_runList.getFifth(i));			// score
-				m_runList.addSixthInteger(i, 1);									// count
+			if (child.wasSuccessful())
+			{	// We only include successful children in our scores
+				for (i = 0; i < child.m_runList.size() - 2; i++)
+				{
+					tup = (Tuple)m_runList.getSeventh(i);
+					m_runList.addFourthDouble(i, (Double)child.m_runList.getFourth(i));	// time
+					tup.setSecond(entry, (Double)child.m_runList.getFifth(i));			// score
+					m_runList.addSixthInteger(i, 1);									// count
+				}
 			}
 
 			// Move to the next sibling
@@ -265,15 +270,26 @@ public final class ResultsViewerLine
 		for (i = 0; i < m_runList.size(); i++)
 		{	// i iterates through every run
 			tup			= (Tuple)m_runList.getSeventh(i);		// tuple of runN.childN entries
-			count		= (Integer)m_runList.getSixth(i);		// Number of childN entries at this level
-			power		= 1.0 / (double)count;					// 1^(-count)
+
+			// Find out how many non-null values there are (entries with valid times)
+			count = 0;
+			for (j = 0; j < tup.size(); j++)
+				count += tup.getSecond(j) == null ? 0 : 1;
+
+			power		= 1.0 / (double)count;
 			geoScore	= 0.0;
-			for (j = 0; j < count; j++)
+			iteration	= 0;
+			for (j = 0; iteration < count; j++)
 			{	// j iterates through every child's entry
-				if (j == 0)
-					geoScore	= Math.pow((Double)tup.getSecond(j), power);
-				else
-					geoScore	*= Math.pow((Double)tup.getSecond(j), power);
+				if (tup.getSecond(j) != null)
+				{
+					if (iteration == 0)
+						geoScore	= Math.pow((Double)tup.getSecond(j), power);
+					else
+						geoScore	*= Math.pow((Double)tup.getSecond(j), power);
+
+					++iteration;
+				}
 			}
 			// When we get here, this run's geoScore is computed
 			m_runList.setFifth(i, Double.valueOf(geoScore));

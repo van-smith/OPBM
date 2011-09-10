@@ -641,6 +641,22 @@ public class Tuple
 	}
 
 	/**
+	 * Empties out the contents of the tuple
+	 */
+	public void clear()
+	{
+		m_first.clear();
+		m_second.clear();
+		m_third.clear();
+		m_fourth.clear();
+		m_fifth.clear();
+		m_sixth.clear();
+		m_seventh.clear();
+		m_triggerCommand.clear();
+		m_triggerFilters.clear();
+	}
+
+	/**
 	 * For iterative functions, returns size of the <code>Tuple</code> list
 	 * @return size (count) of m_names in items (which will also be the same
 	 * size as m_objects and m_extra1, as these are all linked 1:1)

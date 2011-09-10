@@ -36,6 +36,12 @@
 				<command p1="Execute Suites">edit</command>
 				<tooltip>Record a benchmark run for a Suite.</tooltip>
 			</menu>
+			<menu>
+				<text>Results Viewer</text>
+				<command>run_results_viewer</command>
+				<tooltip>Load the Results Viewer on the last run benchmark.</tooltip>
+			</menu>
+			<spacer/>
 			<spacer/>
 			<heading>
 				<text>Full Benchmarks:</text>

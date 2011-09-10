@@ -255,6 +255,8 @@ public class BenchmarkManifestResults
 				timing.appendAttribute(new Xml("uuid", Utils.getUUID()));
 				result.appendChild(timing);
 			}
+			// Once the data is recorded, remove it for the next pass
+			timingData.clear();
 		}
 		m_rawResults.appendChild(result);
 	}
