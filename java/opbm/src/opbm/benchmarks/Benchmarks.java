@@ -45,7 +45,6 @@ public class Benchmarks
 	{
 		m_opbm						= opbm;
 		m_bp						= null;
-		m_userNotYetWarnedAboutUAC	= true;
 	}
 
 	/**
@@ -98,7 +97,7 @@ public class Benchmarks
 			public void run()
 			{
 				System.out.println("Beginning trial run named \"" + m_opbm.getRunName() + "\"");
-				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "", m_launchTrialRunIsAutomated);
+				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "trial", "", m_launchTrialRunIsAutomated, false);
 				if (bm.build())
 					bm.run();
 			}
@@ -163,7 +162,7 @@ public class Benchmarks
 			public void run()
 			{
 				System.out.println("Beginning official run named \"" + m_opbm.getRunName() + "\"");
-				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "", m_launchOfficialRunIsAutomated);
+				BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "official", "", m_launchOfficialRunIsAutomated, true);
 				if (bm.build())
 					bm.run();
 			}
@@ -183,7 +182,8 @@ public class Benchmarks
 	 */
 	public void benchmarkManifestRestart()
 	{
-		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "", Opbm.getRunningDirectory() + "manifest.xml", true);
+		// Note:  A reboot MAY be required here, but we are in restart mode now, so they would've already been warned if there was some need of warning
+		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "", Opbm.getRunningDirectory() + "manifest.xml", true, false);
 		if (!bm.isManifestInError())
 			bm.run();
 	}
@@ -268,20 +268,23 @@ public class Benchmarks
 	 * Called to initialize the harness state for the execution of a benchmark.
 	 * @param macroMaster the Macros class to use for this instance
 	 * @param settingsMaster the Settings class to use for this instance
+	 * @param isAutomatedRun is this an automated run?
+	 * @param isRebootRequired is a reboot required during this run?
 	 */
 	public boolean benchmarkInitialize(Macros		macroMaster,
 									   Settings		settingsMaster,
-									   boolean		isAutomatedRun)
+									   boolean		isAutomatedRun,
+									   boolean		isRebootRequired)
 
 	{
 		OpbmDialog od;
 
-		m_isAutomatedRun = isAutomatedRun;
+		m_isAutomatedRun	= isAutomatedRun;
+		m_isRebootRequired	= isRebootRequired;
 
 		// Warn user if User Account Control is not diabled
 		if (Opbm.isUACEnabled())
 		{	// It is enabled, tell the user it will not work this way
-			m_userNotYetWarnedAboutUAC = false;
 			od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM cannot run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "uac", "");
 			od.setTimeout(10);
 			Utils.monitorDialogWithTimeout(m_opbm, "uac", 10);
@@ -289,9 +292,8 @@ public class Benchmarks
 		}
 
 		// Warn user if User auto-logon is not enabled
-		if (!Opbm.isAutoLogonEnabled())
+		if (isRebootRequired && !Opbm.isAutoLogonEnabled())
 		{	// It is enabled, tell the user it will not work this way
-			m_userNotYetWarnedAboutUAC = false;
 			od = new OpbmDialog(m_opbm, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._YES_NO_CANCEL, "autologon", "");
 			od.setTimeout(30);
 			Utils.monitorDialogWithTimeout(m_opbm, "autologon", 30);
@@ -696,9 +698,9 @@ public class Benchmarks
 	}
 
 	private Opbm				m_opbm;
-	private boolean				m_userNotYetWarnedAboutUAC;
 	private BenchmarkParams		m_bp;
 	private boolean				m_isAutomatedRun;
+	private boolean				m_isRebootRequired;
 
 	// Used during the launch process, tells BenchmarkManifest if the launch was
 	// automated, or the result of user interaction

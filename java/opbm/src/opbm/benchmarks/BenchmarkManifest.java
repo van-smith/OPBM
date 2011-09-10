@@ -86,13 +86,17 @@ public final class BenchmarkManifest
 	 * Note:  When this class is created, a valid BenchmarkParams class needs
 	 *        to have been instantiated for the Benchmarks class
 	 *
+	 * @param opbm main class reference
 	 * @param type "trial", "official" or "compilation"
-	 * @param name (optional) name given to the run
+	 * @param manifestPathName path to manifest.xml for reload (if not null)
+	 * @param automated is the run automated?
+	 * @param rebootRequired is a reboot required?
 	 */
 	public BenchmarkManifest(Opbm		opbm,
 							 String		type,
 							 String		manifestPathName,
-							 boolean	automated)
+							 boolean	automated,
+							 boolean	rebootRequired)
 	{
 		m_isManifestInError		= false;
 		m_opbm					= opbm;
@@ -116,6 +120,7 @@ public final class BenchmarkManifest
 
 		m_manifestIsLoaded		= false;
 		m_automated				= automated;
+		m_rebootRequired		= rebootRequired;
 												// In manifest.xml, access to these nodes:
 		m_root					= null;			//		opbm
 		m_benchmarks			= null;			//		opbm.benchmarks
@@ -135,7 +140,9 @@ public final class BenchmarkManifest
 		if (manifestPathName.isEmpty())
 			createManifest();
 		else
+		{
 			reloadManifest(manifestPathName);
+		}
 	}
 
 	/**
@@ -998,6 +1005,7 @@ public final class BenchmarkManifest
 		if (m_passMax > 1)
 		{	// We need them
 			// Build the master reboot abstract so it can be cloned for each pass
+			m_rebootRequired = true;
 			rebootTemplate = new Xml("abstract");
 			rebootTemplate.appendAttribute(new Xml("name", "Auto(hyphen)inserted by OPBM's Manifest Builder for reboot at start of each pass"));
 			rebootTemplate.appendAttribute(new Xml("sourcename", "rebootAndContinue"));
@@ -1388,7 +1396,7 @@ public final class BenchmarkManifest
 		m_bmr.appendResultsAnnotation("startup", Utils.getTimestamp(), "");
 
 		// Initialize everything
-		if (!m_benchmarksMaster.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster(), m_automated))
+		if (!m_benchmarksMaster.benchmarkInitialize(m_opbm.getMacroMaster(), m_opbm.getSettingsMaster(), m_automated, m_rebootRequired))
 			return;	// Something happened, we cannot continue
 
 		// Grab some necessary pointers for benchmark processing
@@ -2137,6 +2145,7 @@ public final class BenchmarkManifest
 	private BenchmarkManifestResults	m_bmr;
 	private boolean						m_processing;			// Used in all of the run*() methods
 	private boolean						m_automated;			// Set by the launcher, was this an automated run or not?
+	private boolean						m_rebootRequired;		// Set by the builder, is a reboot required during this run?
 
 	// Root-level Xml entries
 	private boolean						m_manifestIsLoaded;

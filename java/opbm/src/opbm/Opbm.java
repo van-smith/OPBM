@@ -197,7 +197,7 @@ public final class Opbm extends	ModalApp
 						Xml target;
 						String line, name, digits;
 						int i, j, count, iterations, runCount;
-						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "", true);
+						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "", true, false);
 						OpbmDialog od;
 
 						// Load the command line options, including those from files, into the execution sequence
@@ -2072,7 +2072,7 @@ public final class Opbm extends	ModalApp
 								  String			p9,
 								  String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
 		m_bm_suite			= suite;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2127,7 +2127,7 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
 		m_bm_scenario		= scenario;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2182,7 +2182,7 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
 		m_bm_molecule		= molecule;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2237,7 +2237,7 @@ public final class Opbm extends	ModalApp
 								 String			p9,
 								 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false);
+		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
 		m_bm_atom			= atom;
 		m_bm_iterations		= iterations;
 		m_bm_pri			= pri;
@@ -2413,8 +2413,8 @@ public final class Opbm extends	ModalApp
 	public static boolean isAutoLogonEnabled()
 	{
 		String value;
-		value = Opbm.GetRegistryKeyValue("HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\DefaultPassword");
-		return(!value.isEmpty());
+		value = Opbm.GetRegistryKeyValue("HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\AutoAdminLogon");
+		return(value.equals("1"));
 	}
 
 	/**
@@ -2910,6 +2910,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 05:35pm";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 06:18pm";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }
