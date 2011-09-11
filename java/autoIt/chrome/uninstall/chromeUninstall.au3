@@ -73,8 +73,6 @@ EndFunc
 Func Uninstall()
 	outputDebug( "Bypassing 'Uninstall' buttons..." )
 
-	KillChromeIfRunning()
-
 	; Click on the "Uninstall" button
 	TimerBegin()
 	ControlClick( "Uninstall Google Chrome", "", "[CLASS:Button; INSTANCE:1]", "left" )
@@ -87,7 +85,7 @@ EndFunc
 Func CloseCallbackWindow()
 	; Give it time to launch
 	Sleep(10000)
+	
 	; Close it if/when it launches
 	WinClose( "google.com" )
-	KillChromeIfRunning()
 EndFunc

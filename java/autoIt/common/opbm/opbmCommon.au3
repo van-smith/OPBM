@@ -10,12 +10,10 @@ Opt("SendKeyDelay", 25)
 Const $ERROR_PREFIX								= @ScriptName & ":" & @ScriptLineNumber & ": "
 Const $OPBM_DLL									= $ROOT_DIR & "\common\opbm\dll\opbm.dll"
 Const $OPBM_SPLASH_HTML							= $ROOT_DIR & "\common\opbm\html\opbm_splash.html"
-Const $OPBM_SPLASH_ZIP							= $ROOT_DIR & "\common\opbm\zip\opbm_test_archive.7z"
 Const $CPU_ACTIVITY_THRESHOLD					= 5
 Const $TIMER_MAX_INDEX_COUNT					= 100
 ; When these splash/landing files are opened/launched, the title bar will contain this text:
 Const $OPBM_SPLASH_HTML_TITLE					= "OPBM Benchmark Splash"
-Const $OPBM_SPLASH_ZIP_TITLE					= "opbm_test_archive.7z"
 
 Global $gIterations
 Global $gPID
@@ -88,7 +86,7 @@ Func InitializeGlobalVariables()
 	;		SetRegistryKeyString( $key, $stringValue )
 	;		SetRegistryKeyDword( $key, $dwordValue )
 	;		GetRegistryKey( $key )
-	;		FixupPathnames( $pathname )				; Converts "c:\some\dir\..\path\" to "c:\some\path" (removes "dir\..")
+	;;;;;;;;FixupPathnames( $pathname )				; (future function) Converts "c:\some\dir\..\path\" to "c:\some\path" (removes "dir\..")
 	;		; The following DO include the trailing backslash
 	;		GetScriptCSVDirectory()					; Returns c:\users\user\documents\opbm\scriptOutput\
 	;		GetScriptTempDirectory()				; Returns c:\users\user\documents\opbm\scriptOutput\temp\
@@ -439,11 +437,15 @@ Func KillProcessByName( $name )
 	For $i = 0 to $list[0][0]
 		$pname	= $list[$i][0]
 		$pid	= $list[$i][1]
-		$result	= ProcessClose( $pid )
-		If $result <> 1 Then
-			; An error occurred trying to close the process naturally, so use a tool to do it
-			TaskKillProcessByID( $pid, $pname )
-			; If we get here, then PsKill successfully closed the app
+		If StringInStr( $pname, ".exe" ) Then
+			outputDebug( "Killing " & $pname )
+			$result	= ProcessClose( $pid )
+			If $result <> 1 Then
+				; An error occurred trying to close the process naturally, so use a tool to do it
+				outputDebug( "Unable to kill, spawning TaskKill.exe for " & $pname )
+				TaskKillProcessByID( $pid, $pname )
+				; If we get here, then PsKill successfully closed the app
+			EndIf
 		EndIf
 	Next
 EndFunc

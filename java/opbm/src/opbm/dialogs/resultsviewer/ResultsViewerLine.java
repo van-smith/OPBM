@@ -97,7 +97,7 @@ public final class ResultsViewerLine
 
 		// Add the constant elements to this pane
 		// Namebox
-		m_nameboxLabel = new JLabel(" " + Utils.replicate(level, " ") + m_name);
+		m_nameboxLabel = new JLabel(" " + Utils.replicate(level, " ") + (level == _WORKLET ? "   " : "") + m_name);
 		m_nameboxLabel.setBounds(195, 0, getNameboxWidth(), height);
 		m_nameboxLabel.setBackground(getBackcolorForBoxes(level));
 		m_nameboxLabel.setForeground(getForecolorForBoxes(level));
