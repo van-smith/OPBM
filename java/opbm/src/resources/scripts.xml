@@ -192,6 +192,7 @@
 			<atom name="PowerPoint War" shortname="PPoint">
 				<abstract atomuuid="64c292e9(hyphen)5363(hyphen)498d(hyphen)9c16(hyphen)b318658bc31a" name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -202,6 +203,7 @@
 			<atom name="PowerPoint Close" shortname="PPoint">
 				<abstract atomuuid="68b9ae26(hyphen)4e2e(hyphen)4b59(hyphen)a2ab(hyphen)b07294c403cb" name="Close PowerPoint 2010" shortname="Close" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>

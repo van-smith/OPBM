@@ -121,6 +121,7 @@ public final class Opbm extends	ModalApp
     public Opbm(String[] args)
 	{
 		m_opbm = this;
+		System.out.println("Java version: " + System.getProperty("java.version"));
 		System.out.println("JVM home: " + m_jvmHome);
 		File f = new File(m_jvmHome);
 		if (!f.exists())
@@ -2764,7 +2765,7 @@ public final class Opbm extends	ModalApp
 	 */
     public static void main(String[] args)
 	{
-		if (System.getProperty("java.version").compareTo("1.7") >= 0)
+		if (System.getProperty("java.version").substring(0,3).compareTo("1.7") >= 0)
 		{	// Switching to 1.7.0 changed the way translucency is handled
 			GraphicsEnvironment	ge		= GraphicsEnvironment.getLocalGraphicsEnvironment();
 			GraphicsDevice		grfx	= ge.getDefaultScreenDevice();
@@ -2910,6 +2911,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 09:51pm";
+	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.09 10:29pm";
 	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
 }

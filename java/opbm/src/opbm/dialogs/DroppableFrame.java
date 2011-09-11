@@ -256,7 +256,7 @@ public class DroppableFrame extends JFrame
 	{
 		try
 		{
-			if (System.getProperty("java.version").compareTo("1.6") <= 0)
+			if (System.getProperty("java.version").substring(0,3).compareTo("1.6") <= 0)
 			{	// Code for translucency works in 1.6, raises exception in 1.7
 				Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
 				Method mSetWindowOpacity;
