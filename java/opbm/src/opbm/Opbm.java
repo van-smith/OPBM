@@ -1144,8 +1144,18 @@ public final class Opbm extends	ModalApp
 	 */
 	private boolean loadScriptsXml()
 	{
-		m_scriptXml = loadXml("scripts.xml", this);
-		return(m_scriptXml != null);
+		int deletedCount;
+		String scriptsXmlFilename;
+
+		scriptsXmlFilename = Opbm.locateFile("scripts.xml");
+		m_scriptsXml = loadXml(scriptsXmlFilename, this);
+		if (m_scriptsXml != null)
+		{	// When scripts.xml is loaded, remove all atomuuids which may have existed previously from an impolite exit (or debugging by the developer)
+			deletedCount = m_scriptsXml.deleteAllAttributesWithThisName("atomuuid");
+			if (deletedCount != 0)
+				m_scriptsXml.saveNode(scriptsXmlFilename);
+		}
+		return(m_scriptsXml != null);
 	}
 
 	/**
@@ -2376,7 +2386,7 @@ public final class Opbm extends	ModalApp
 	 */
 	public Xml getScriptsXml()
 	{
-		return(m_scriptXml);
+		return(m_scriptsXml);
 	}
 
 	public PanelRight getActiveEdit()
@@ -2802,7 +2812,7 @@ public final class Opbm extends	ModalApp
 	/**
 	 * Root node of the scripts.xml data that is loaded at startup
 	 */
-	private	Xml						m_scriptXml;
+	private	Xml						m_scriptsXml;
 
 	/**
 	 * Raw pool of all loaded left-side panels, whether they are displayed or not
@@ -2907,7 +2917,7 @@ public final class Opbm extends	ModalApp
 	public static String			m_jvmHome				= Utils.getPathToJavaDotExe();
 
 	// Synchronization items used for various wait-until-all-parts-are-completed operations
-	public volatile static int		m_rvsync = 0;		// Used by createAndShowResultsViewer
+	public volatile static int		m_rvsync				= 0;	// Used by createAndShowResultsViewer
 
 	// Used for the build-date and time
 //	public final static String		m_version				= "Built 2011.08.22 05:19am";

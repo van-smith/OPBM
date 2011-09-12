@@ -178,7 +178,7 @@
 
 
 //////////
-// August 17, 2011 - Rick C. Hodgin
+// August 17, 2011
 // Registry key and supporitive functions moved to opbm_common.cpp,
 // to allow sharing between opbm.dll (scripts) and opbm64.dll (JNI).
 //////////

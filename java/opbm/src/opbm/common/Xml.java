@@ -389,6 +389,46 @@ public class Xml
 		// Done
 	}
 
+	/**
+	 * Non-static version of deleteAllAttributesWithThisName(Xml root, String attributeName)
+	 * @param attributeName
+	 */
+	public int deleteAllAttributesWithThisName(String attributeName)
+	{
+		return(deleteAllAttributesWithThisName(this, attributeName));
+	}
+
+	/**
+	 * Removes all of the attributes with the specified name
+	 * @param root
+	 * @param attributeName
+	 */
+	public static int deleteAllAttributesWithThisName(Xml		root,
+													  String	attributeName)
+	{
+		int count;
+		Xml attributeNode;
+
+		count = 0;
+		while (root != null)
+		{	// See if this entry has an attribute with this name
+			attributeNode = root.getAttributeNode(attributeName);
+			if (attributeNode != null)
+			{	// It was found, delete this node
+				++count;
+				attributeNode.deleteNode(true);
+			}
+
+			// Check if any of this item's children have it
+			count += deleteAllAttributesWithThisName(root.getFirstChild(), attributeName);
+
+			// Move to next sibling
+			root = root.getNext();
+		}
+		// Done
+		return(count);
+	}
+
 	/** Non-static version of the static <code>getNodeList()</code> method.
 	 *
 	 * @param nodes List of nodes to append to

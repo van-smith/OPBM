@@ -284,6 +284,7 @@ public class DroppableFrame extends JFrame
 		} catch (IllegalArgumentException ex) {
 		} catch (InvocationTargetException ex) {
 		} catch (IllegalComponentStateException ex) {
+		} catch (Throwable t) {
 		} finally {
 		}
 	}

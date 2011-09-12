@@ -550,7 +550,7 @@ public class BenchmarkManifestResults
 								timing.appendAttribute("name",	Utils.getNumberName(successCount) + Utils.singularOrPlural(successCount, " success, ", " successes, ") + Utils.getNumberName(failureCount) + Utils.singularOrPlural(failureCount, " failure", " failures"));
 								timing.appendAttribute("time",	"-1.0");
 								timing.appendAttribute("score",	"-1.0");
-								sourceData.add("Atom failed " + Utils.getNumberName(failureCount) + Utils.singularOrPlural(failureCount, " time", " times"), Double.valueOf(0.0), Double.valueOf(0.0), result, timing);
+								sourceData.add("Atom failed", Double.valueOf(-1.0), Double.valueOf(-1.0), result, timing);
 
 							} else {
 								// No timing data at all, success or failure, so we create an artificial line and report it
@@ -558,7 +558,7 @@ public class BenchmarkManifestResults
 								timing.appendAttribute("name",	"Error: No Timing Data");
 								timing.appendAttribute("time",	"-1.0");
 								timing.appendAttribute("score",	"-1.0");
-								sourceData.add("Manifest.xml is in error, no timing data available", Double.valueOf(0.0), Double.valueOf(0.0), result, timing);
+								sourceData.add("Manifest.xml is in error, no timing data available", Double.valueOf(-1.0), Double.valueOf(-1.0), result, timing);
 							}
 						}
 						// When we get here, we've added everything for this entry
