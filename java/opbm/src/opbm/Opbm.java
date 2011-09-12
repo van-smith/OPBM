@@ -4,7 +4,7 @@
  * This class is the top-level class of the OPBM.  It creates a GUI, loads
  * necessary files, beings processing based on context, etc.
  *
- * Last Updated:  Sep 09, 2011
+ * Last Updated:  Sep 12, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -12,7 +12,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.0.2
+ * @version 1.1.0
  *
  */
 
@@ -2769,8 +2769,8 @@ public final class Opbm extends	ModalApp
 		return(m_title);
 	}
 
-	/** Main app entry point.
-	 *
+	/**
+	 * Main app entry point
 	 * @param args command line parameters
 	 */
     public static void main(String[] args)
@@ -2784,101 +2784,28 @@ public final class Opbm extends	ModalApp
 				System.out.println("Translucency is not supported by this graphical environment");
 			}
 		}
-
 		// Launch the system
 		Opbm o = new Opbm(args);
 	}
 
-	/**
-	 * Master instance created in main()
-	 */
-	private Opbm					m_opbm;
 
-	/**
-	 * Holds the command line arguments for processing after the invokeLater() runnable
-	 */
-	private String[]				m_args;
-
-	/**
-	 * Root node of the edits.xml data that is loaded at startup
-	 */
-	private	Xml						m_editXml;
-
-	/**
-	 * Root node of the panels.xml data that is loaded at startup
-	 */
-	private	Xml						m_panelXml;
-
-	/**
-	 * Root node of the scripts.xml data that is loaded at startup
-	 */
-	private	Xml						m_scriptsXml;
-
-	/**
-	 * Raw pool of all loaded left-side panels, whether they are displayed or not
-	 */
-	private List<PanelLeft>			m_leftPanels;
-
-	/**
-	 * Chain of panels as they're navigated to/through in real-time
-	 */
-	private List<PanelLeft>			m_navHistory;
-
-	/**
-	 * Raw pool of edit rightpanels as created
-	 */
-	private List<PanelRight>		m_editPanels;
-
-	/**
-	 * Raw pool of rawedit rightpanels as created
-	 */
-	private List<PanelRight>		m_rawEditPanels;
-
-	/**
-	 * Master list of tuples used throughout the system, referenced by name
-	 */
-	private List<Tuple>				m_tuples;
-
-	/**
-	 * Holds current active edit <code>PanelRight</code> object being displayed.
-	 * Used to make $active_edit$ macro work.
-	 */
-	private PanelRight				m_editActive;
-
-	/**
-	 * Holds current active_rawedit <code>PanelRight</code> object being displayed.
-	 * Used to make $active_rawedit$ macro work.
-	 */
-	private PanelRight				m_rawEditActive;
-
-	/**
-	 * Handles all macros used in this system, updated with live data while
-	 * running.  Note:  Does not need to be a non-static class, but was setup
-	 * that way for possible future extensibility.
-	 */
-	private Macros					m_macroMaster;
-
-	/**
-	 * Handles all benchmark runs
-	 */
-	private Benchmarks				m_benchmarkMaster;
-
-	/**
-	 * Handles all settings processing.
-	 */
-	private Settings				m_settingsMaster;
-
-	/**
-	 * Handles all command processing.  Note:  Does not need to be a non-static
-	 * class, but was setup that way for possible future extensibility.
-	 */
-	private Commands				m_commandMaster;
-
-	/**
-	 * Command line switch "-font" can be used to indiate not running in
-	 * Windows.  Used to switch default font from Calibri to Arial.
-	 */
-	private boolean					m_fontOverride;
+	private Opbm					m_opbm;										// Master instance created in main()
+	private String[]				m_args;										// Holds the command line arguments for processing after the invokeLater() runnable
+	private	Xml						m_editXml;									// Root node of the edits.xml data that is loaded at startup
+	private	Xml						m_panelXml;									// Root node of the panels.xml data that is loaded at startup
+	private	Xml						m_scriptsXml;								// Root node of the scripts.xml data that is loaded at startup
+	private List<PanelLeft>			m_leftPanels;								// Raw pool of all loaded left-side panels, whether they are displayed or not
+	private List<PanelLeft>			m_navHistory;								// Chain of panels as they're navigated to/through in real-time
+	private List<PanelRight>		m_editPanels;								// Raw pool of edit rightpanels as created
+	private List<PanelRight>		m_rawEditPanels;							// Raw pool of rawedit rightpanels as created
+	private List<Tuple>				m_tuples;									// Master list of tuples used throughout the system, referenced by name
+	private PanelRight				m_editActive;								// Holds current active edit <code>PanelRight</code> object being displayed.  Used to make $active_edit$ macro work.
+	private PanelRight				m_rawEditActive;							// Holds current active_rawedit <code>PanelRight</code> object being displayed.  Used to make $active_rawedit$ macro work.
+	private Macros					m_macroMaster;								// Handles all macros used in this system, updated with live data while running.  Note:  Does not need to be a non-static class, but was setup that way for possible future extensibility.
+	private Benchmarks				m_benchmarkMaster;							// Handles all benchmark runs
+	private Settings				m_settingsMaster;							// Handles all settings processing.
+	private Commands				m_commandMaster;							// Handles all command processing.  Note:  Does not need to be a non-static class, but was setup that way for possible future extensibility.
+	private boolean					m_fontOverride;								// Command line switch "-font" can be used to indiate not running in Windows.  Used to switch default font from Calibri to Arial.
 
 	/**
 	 * Reference to the main newFrame used for visualization in this application.
@@ -2893,34 +2820,31 @@ public final class Opbm extends	ModalApp
 	 * These elements are always present, though they change through the real-
 	 * time use of the system by users.
 	 */
-    private DeveloperWindow			m_frameDeveloper;
-	private SimpleWindow			m_frameSimple;
+    private DeveloperWindow			m_frameDeveloper;							// The complex developer screen
+	private SimpleWindow			m_frameSimple;								// The skinned simple user screen
 
-	private List<JFrame>			m_zoomFrames;
-	private List<DroppableFrame>	m_rvFrames;		// Holds list of open windows, closed automatically at benchmark run
-	private ResultsViewer			m_rv;
-	private String					m_rvFilename;
-	private boolean					m_executingFromCommandLine;
-	private boolean					m_executingTrialRun;
-	private boolean					m_executingOfficialRun;
-	private String					m_executingBenchmarkRunName;
-	private boolean					m_noExit;						// Was the -noexit command line option specified?
-	private Tuple					m_dialogTuple;
+	private List<JFrame>			m_zoomFrames;								// Zoom button and editing windows (that popup when new entries are added) are all called zoom windows, this holds a list of all that are open at the time
+	private List<DroppableFrame>	m_rvFrames;									// Holds list of open results viewer windows, closed automatically at benchmark run
+	private ResultsViewer			m_rv;										// What was the last loaded results viewer instance?  (multiple instances of the results viewer are possible)
+	private String					m_rvFilename;								// What was the last loaded results viewer filename?
+	private boolean					m_executingFromCommandLine;					// Are we executing from the command line?
+	private boolean					m_executingTrialRun;						// Are we executing a trial run?
+	private boolean					m_executingOfficialRun;						// Are we executing an official run?
+	private String					m_executingBenchmarkRunName;				// The name of the run assigned on the command line
+	private boolean					m_noExit;									// Was the -noexit command line option specified?
+	private Tuple					m_dialogTuple;								// Holds references (by id, in getFirst(n)) for all responses and last actions (see getDialog* and setDialog* responses)
 
-	/**
-	 * An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not
-	 */
-	public static boolean			m_breakpointsEnabled;
-	public static String			m_lastStaticError;
+	public static boolean			m_breakpointsEnabled;						// Used for debugging (An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not)
+	public static String			m_lastStaticError;							//
 // REMEMBER for non-Windows based java runtimes, this logic will need to be changed
-// REMEMBER there's also a registry key for this item which may need to be used instead (for custom installations of Java), though for the standard installations from Oracle, this should always work:
-	public static String			m_jvmHome				= Utils.getPathToJavaDotExe();
+// REMEMBER there's also a registry key for this item which may need to be used instead (for custom installations of Java), though for the standard installations from Oracle and the java.home property, this should always work:
+	public static String			m_jvmHome	= Utils.getPathToJavaDotExe();
 
 	// Synchronization items used for various wait-until-all-parts-are-completed operations
-	public volatile static int		m_rvsync				= 0;	// Used by createAndShowResultsViewer
+	public volatile static int		m_rvsync	= 0;	// Used by createAndShowResultsViewer
 
 	// Used for the build-date and time
-//	public final static String		m_version				= "Built 2011.08.22 05:19am";
-	public final static String		m_version				= "-- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.11 10:12pm";
-	public final static String		m_title					= "OPBM - Office Productivity Benchmark - " + m_version;
+//	public final static String		m_version	= "Built 2011.08.22 05:19am";
+	public final static String		m_version	= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.11 07:31am";
+	public final static String		m_title		= "OPBM - Office Productivity Benchmark - " + m_version;
 }

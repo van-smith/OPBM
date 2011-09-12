@@ -6,7 +6,7 @@
  * all related variables, is used to determine if it meets the filter critiera,
  * etc.
  *
- * Last Updated:  September 9, 2011
+ * Last Updated:  Sep 12, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -14,7 +14,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.0.1
+ * @version 1.1.0
  *
  */
 

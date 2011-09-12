@@ -4,7 +4,7 @@
  * This class is the top-level class for benchmarking.  It executes scripts,
  * shows the heads-up display, displays the single-step debugger, etc.
  *
-  * Last Updated:  Aug 21, 2011
+  * Last Updated:  Sep 12, 2011
 *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -12,7 +12,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.0.2
+ * @version 1.1.0
  *
  */
 

@@ -3,7 +3,7 @@
  *
  * This class is used by the OPBM Office Productivity Benchmark.
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Sep 12, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -11,7 +11,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.0.2
+ * @version 1.1.0
  *
  */
 

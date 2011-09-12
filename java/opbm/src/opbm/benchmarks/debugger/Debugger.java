@@ -1,10 +1,13 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class is the top-level class for benchmarking.  It executes scripts,
- * shows the heads-up display, displays the single-step debugger, etc.
+ * This class handles the debugger display for OPBM's benchmark execution.
+ * It was originally intended to help diagnose scripts, however it was never
+ * completed as the execution of scripts resides completely in autoIt now.
+ * The debugger will/does allow a single-step execution through the steps of
+ * an atom, allowing examination of manifest.xml as it progresses.
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Sep 12, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -12,7 +15,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.0.2
+ * @version 1.1.0
  *
  */
 

@@ -1,14 +1,40 @@
+/*
+ * OPBM - Office Productivity Benchmark
+ *
+ * This class handles all variable options for the right-side panel items,
+ * which are the edit screens.  Variable items come in the form of an array
+ * of field names and their labels, and display them as they are relative to
+ * the the specified Xml tag.  They allow non-hard-coded variables to be
+ * created and added via changes in the UI, which write changes to scripts.xml,
+ * which are then used to augment data in edits.xml.
+ *
+ * To see how this works today, look at the abstracts and their fields which
+ * look like this:
+ *		{:tagName, description to display to user:}
+ *
+ * and then compare that to the output written to each
+ * opbm.scriptdata.atoms.atom.abstract entry in scripts.xml, and see how those
+ * prompts result in data being populated into scripts.xml.
+ *
+ * Last Updated:  Sep 12, 2011
+ *
+ * by Van Smith
+ * Cossatot Analytics Laboratories, LLC. (Cana Labs)
+ *
+ * (c) Copyright Cana Labs.
+ * Free software licensed under the GNU GPL2.
+ *
+ * @version 1.1.0
+ *
+ */
+
 package opbm.panels.right;
 
-import opbm.panels.right.PanelRightLookupbox;
-import opbm.panels.right.PanelRightItem;
-import opbm.panels.right.PanelRight;
 import opbm.common.Utils;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import opbm.common.Commands;
 import opbm.common.Macros;

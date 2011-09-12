@@ -8,11 +8,19 @@
  * file for displaying data, such as "field1.field2.field3" being defined
  * within the XML file by references to the parent, such as:
  *
- * <parent field1="something">
- *     <options>
- *         <
+ *		<listbox name="atom">
+ *			<delete>listbox_delete</delete>
+ *			<clone>listbox_clone</clone>
+ *			<up>listbox_move_up</up>
+ *			<down>listbox_move_down</down>
+ *			<onselect p1="elements">lookupbox_update</onselect>
+ *			<source>opbm.scriptdata.atoms.atom</source>
+ *			<template>opbm.scriptdata.templates.atom</template>
+ *			<foreach>atom</foreach>
+ *			<listby p1="#name"/>
+ *		</listbox>
  *
- * Last Updated:  Aug 01, 2011
+ * Last Updated:  Sep 12, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -20,7 +28,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.0.2
+ * @version 1.1.0
  *
  */
 

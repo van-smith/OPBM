@@ -5,7 +5,7 @@
  * present in Opbm's static JNI interface (opbm64.dll or opbm32.dll depending
  * on which JVM is running).
  *
- * Last Updated:  Aug 18, 2011
+ * Last Updated:  Sep 12, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -13,7 +13,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.0.2
+ * @version 1.1.0
  *
  */
 
