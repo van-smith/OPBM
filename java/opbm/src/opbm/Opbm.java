@@ -2364,7 +2364,7 @@ public final class Opbm extends	ModalApp
 	 *
 	 * @return Xml root for panels.xml
 	 */
-	public Xml getPanelXml()
+	public Xml getPanelsXml()
 	{
 		return(m_panelXml);
 	}
@@ -2374,7 +2374,7 @@ public final class Opbm extends	ModalApp
 	 *
 	 * @return Xml root for edits.xml
 	 */
-	public Xml getEditXml()
+	public Xml getEditsXml()
 	{
 		return(m_editXml);
 	}
@@ -2726,6 +2726,66 @@ public final class Opbm extends	ModalApp
 	}
 
 	/**
+	 * Gathers debug info in the form of all the XML files used by OPBM
+	 * (settings, manifest, results, scripts, edits and panels.xml), and
+	 * records information about the Java version, system variables, etc.
+	 */
+	public void gatherDebugInfo()
+	{
+		Thread t = new Thread("OPBMStartupThread")
+		{
+			@Override
+			public void run()
+			{
+				Xml root			= new Xml("opbm");
+				Xml debugData		= root.appendChild(new Xml("debugData"));
+				Xml machineInfo		= root.appendChild(new Xml("machineInfo"));
+				Xml settings		= debugData.appendChild(new Xml("settingsDotXml"));
+				Xml manifest		= debugData.appendChild(new Xml("manifestDotXml"));
+				Xml manifestFile	= Opbm.loadXml(Opbm.getRunningDirectory() + "manifest.xml", m_opbm);
+				Xml results			= debugData.appendChild(new Xml("resultsDotXml"));
+				Xml resultsFile		= Opbm.loadXml(Opbm.getHarnessXMLDirectory() + "results.xml", m_opbm);
+				Xml scripts			= debugData.appendChild(new Xml("scriptsDotXml"));
+				Xml edits			= debugData.appendChild(new Xml("editsDotXml"));
+				Xml panels			= debugData.appendChild(new Xml("panelsDotXml"));
+
+				Utils.appendJavaInfo(machineInfo);
+
+				settings.appendChild(getSettingsMaster().getSettingsXml().cloneNode(true));
+				scripts.appendChild(getScriptsXml().cloneNode(true));
+				edits.appendChild(getEditsXml().cloneNode(true));
+				panels.appendChild(getPanelsXml().cloneNode(true));
+
+				if (manifestFile != null)
+				{	// Manifest.xml file was loaded
+					manifest.appendChild(manifestFile.cloneNode(true));
+				} else {
+					// Manifest.xml file was not found
+					Xml error = manifest.appendChild(new Xml("error"));
+					error.addAttribute("fileNotFound", "manifest.xml");
+				}
+
+				if (resultsFile != null)
+				{	// Results.xml file was loaded
+					results.appendChild(resultsFile.cloneNode(true));
+				} else {
+					// Results.xml file was not found
+					Xml error = manifest.appendChild(new Xml("error"));
+					error.addAttribute("fileNotFound", "results.xml");
+				}
+
+				String filename	 = Utils.convertFilenameToLettersAndNumbersOnly("debugInfo_" + Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
+				root.saveNode(Opbm.getHarnessTempDirectory() + filename);
+				try {
+					Runtime.getRuntime().exec("explorer.exe /n, /select, " + Opbm.getHarnessTempDirectory() + filename);
+				} catch (Throwable t) {
+				}
+			}
+		};
+		t.start();
+	}
+
+	/**
 	 * When a command line sequence is run, this variable is set high.
 	 * @return yes or no if we're running a sequence from the command line
 	 */
@@ -2845,6 +2905,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version	= "Built 2011.08.22 05:19am";
-	public final static String		m_version	= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.11 07:31am";
+	public final static String		m_version	= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.11 04:15pm";
 	public final static String		m_title		= "OPBM - Office Productivity Benchmark - " + m_version;
 }

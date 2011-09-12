@@ -17,14 +17,15 @@ Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 ; Executables used to install, uninstall, or execute Chrome
 Const $CHROME_INSTALLER					= $EXE_DIRECTORY		&	"\ChromeStandaloneSetup.exe"
 Const $CHROME_UNINSTALLER				= $CHROME_DIRECTORY		&	"\12.0.742.122\Installer\setup.exe"
+;Const $CHROME_UNINSTALLER				= $EXE_DIRECTORY		&	"\ChromeStandaloneSetup.exe"
 Const $CHROME_UNINSTALL_COMMAND			= $CHROME_UNINSTALLER	&	" --uninstall"
 Const $CHROME_EXECUTABLE				= $CHROME_DIRECTORY		&	"\chrome.exe"
 Const $CHROME_EXECUTABLE_TO_LAUNCH		= $CHROME_DIRECTORY		&	"\chrome.exe " & $OPBM_SPLASH_HTML
 
 
 ; Constants used throughout for various scripts
-Const $LAUNCH_CHROME 					= "Launch Chrome 12.0.742.122"
-Const $CLOSE_CHROME						= "Close Chome 12.0.742.122"
+Const $LAUNCH_CHROME 					= "Launch Chrome"
+Const $CLOSE_CHROME						= "Close Chome"
 Const $CHROME_WINDOW					= "Untitled"
 Const $OPEN_FILE_DIALOG_TITLE			= "Open"
 
@@ -35,8 +36,8 @@ Const $LAUNCH_CHROME_INSTALLER			= "Launch Chrome Installer"
 Const $LAUNCH_CHROME_UNINSTALLER		= "Launch Chrome Un-installer"
 Const $BYPASS_NEXT_BUTTON				= "Bypass Next Button"
 Const $BYPASS_UNINSTALL_BUTTON			= "Bypass Uninstall Button"
-Const $INSTALL_CHROME					= "Install Chrome 12.0.742.122"
-Const $UNINSTALL_CHROME					= "Un-install Chrome 12.0.742.122"
+Const $INSTALL_CHROME					= "Install Chrome"
+Const $UNINSTALL_CHROME					= "Un-install Chrome"
 Const $CLOSE_UNINSTALLER				= "Close Un-installer"
 
 Const $RUN_SUNSPIDER 					= "Run SunSpider"

@@ -153,12 +153,12 @@
 			<abstract name="execute">
 				<logical>execute</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace)</variables>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace) (leftbrace)(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="executeParams">
 				<logical>execute_params</logical>
 				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace) (leftbrace)(colon)p1, First parameter(colon)(rightbrace) (leftbrace)(colon)p2, Second parameter(colon)(rightbrace) (leftbrace)(colon)p3, Third parameter(colon)(rightbrace) (leftbrace)(colon)p4, Fourth parameter(colon)(rightbrace) (leftbrace)(colon)p5, Fifth parameter(colon)(rightbrace) (leftbrace)(colon)p6, Sixth parameter(colon)(rightbrace) (leftbrace)(colon)p7, Seventh parameter(colon)(rightbrace) (leftbrace)(colon)p8, Eighth parameter(colon)(rightbrace) (leftbrace)(colon)p9, Ninth parameter(colon)(rightbrace) (leftbrace)(colon)p10, Tenth parameter(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace)</variables>
+				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace) (leftbrace)(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)(rightbrace)</variables>
 			</abstract>
 			<abstract name="rebootAndTerminate">
 				<logical>reboot_and_terminate</logical>
@@ -181,6 +181,9 @@
 			<atom name="PowerPoint Open" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -192,6 +195,9 @@
 			<atom name="PowerPoint War" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -203,6 +209,9 @@
 			<atom name="PowerPoint Close" shortname="PPoint">
 				<abstract name="Close PowerPoint 2010" shortname="Close" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -214,6 +223,10 @@
 			<atom name="Publisher Open" shortname="Pub">
 				<abstract name="Open Publisher 2010" shortname="Open" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -224,6 +237,10 @@
 			<atom name="Publisher Hedge" shortname="Pub">
 				<abstract name="Open Publisher 2010 HEDGE Flyer" shortname="Hedge" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -234,6 +251,10 @@
 			<atom name="Publisher Close" shortname="Pub">
 				<abstract name="Close Publisher 2010" shortname="Close" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -244,6 +265,10 @@
 			<atom name="Access Open" shortname="Access">
 				<abstract name="Open Microsoft Access" shortname="Open" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -254,6 +279,10 @@
 			<atom name="Access Close" shortname="Access">
 				<abstract name="Close Microsoft Access" shortname="Close" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -264,6 +293,10 @@
 			<atom name="Excel Heat" shortname="Excel">
 				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -274,6 +307,9 @@
 			<atom name="Word Alice" shortname="Word">
 				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -285,6 +321,9 @@
 			<atom name="Install 7zip" shortname="7zip">
 				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnSpinup>Uninstall 7zip</atomOnSpinup>
+						<atomAfterRuns>Uninstall 7zip</atomAfterRuns>
+						<atomBeforeRuns>Uninstall 7zip</atomBeforeRuns>
 						<atomOnFailure>Uninstall 7zip</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -296,6 +335,10 @@
 			<atom name="7zip Run Test" shortname="7zip">
 				<abstract name="7zip Run Test" shortname="Run" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -306,6 +349,10 @@
 			<atom name="File I(slash)O Run Test" shortname="fileio">
 				<abstract name="File I(slash)O Run Test" shortname="fileio" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -316,6 +363,9 @@
 			<atom name="Uninstall 7zip" shortname="7zip">
 				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -327,6 +377,9 @@
 			<atom name="Install Opera" shortname="Opera">
 				<abstract name="Install Opera" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnSpinup>Uninstall Opera</atomOnSpinup>
+						<atomAfterRuns>Uninstall Opera</atomAfterRuns>
+						<atomBeforeRuns>Uninstall Opera</atomBeforeRuns>
 						<atomOnFailure>Uninstall Opera</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -338,6 +391,9 @@
 			<atom name="Uninstall Opera" shortname="Opera">
 				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -349,6 +405,10 @@
 			<atom name="Opera SunSpider" shortname="Opera">
 				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -359,6 +419,10 @@
 			<atom name="Opera Kraken" shortname="Opera">
 				<abstract name="Opera Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -369,6 +433,10 @@
 			<atom name="Opera Google V8" shortname="Opera">
 				<abstract name="Opera Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -379,6 +447,9 @@
 			<atom name="Install Safari" shortname="Safari">
 				<abstract name="Install Safari" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnSpinup>Uninstall Safari</atomOnSpinup>
+						<atomAfterRuns>Uninstall Safari</atomAfterRuns>
+						<atomBeforeRuns>Uninstall Safari</atomBeforeRuns>
 						<atomOnFailure>Uninstall Safari</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -390,6 +461,10 @@
 			<atom name="Uninstall Safari" shortname="Safari">
 				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -400,6 +475,10 @@
 			<atom name="Safari SunSpider" shortname="Safari">
 				<abstract name="Safari SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -410,6 +489,10 @@
 			<atom name="Safari Kraken" shortname="Safari">
 				<abstract name="Safari Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -420,6 +503,10 @@
 			<atom name="Safari Google V8" shortname="Safari">
 				<abstract name="Safari Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -430,6 +517,10 @@
 			<atom name="IE SunSpider" shortname="IE9">
 				<abstract name="IE SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -440,6 +531,10 @@
 			<atom name="IE Kraken" shortname="IE9">
 				<abstract name="IE Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -450,6 +545,10 @@
 			<atom name="IE Google V8" shortname="IE9">
 				<abstract name="IE Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -460,6 +559,9 @@
 			<atom name="Install Chrome" shortname="Chrome">
 				<abstract name="Install Chrome" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnSpinup>Uninstall Chrome</atomOnSpinup>
+						<atomAfterRuns>Uninstall Chrome</atomAfterRuns>
+						<atomBeforeRuns>Uninstall Chrome</atomBeforeRuns>
 						<atomOnFailure>Uninstall Chrome</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -471,6 +573,9 @@
 			<atom name="Uninstall Chrome" shortname="Chrome">
 				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -482,6 +587,10 @@
 			<atom name="Chrome SunSpider" shortname="Chrome">
 				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -492,6 +601,9 @@
 			<atom name="Chrome Kraken" shortname="Chrome">
 				<abstract name="Chrome Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -503,6 +615,9 @@
 			<atom name="Chrome Google V8" shortname="Chrome">
 				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -514,6 +629,9 @@
 			<atom name="Install Firefox" shortname="Firefox">
 				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnSpinup>Uninstall Firefox</atomOnSpinup>
+						<atomAfterRuns>Uninstall Firefox</atomAfterRuns>
+						<atomBeforeRuns>Uninstall Firefox</atomBeforeRuns>
 						<atomOnFailure>Uninstall Firefox</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -525,6 +643,9 @@
 			<atom name="Uninstall Firefox" shortname="Firefox">
 				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -536,6 +657,9 @@
 			<atom name="Firefox SunSpider" shortname="Firefox">
 				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -547,6 +671,9 @@
 			<atom name="Firefox Kraken" shortname="Firefox">
 				<abstract name="Firefox Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -558,6 +685,9 @@
 			<atom name="Firefox Google V8" shortname="Firefox">
 				<abstract name="Firefox Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -569,6 +699,9 @@
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
 				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
+						<atomOnSpinup>Uninstall Acrobat Reader</atomOnSpinup>
+						<atomAfterRuns>Uninstall Acrobat Reader</atomAfterRuns>
+						<atomBeforeRuns>Uninstall Acrobat Reader</atomBeforeRuns>
 						<atomOnFailure>Uninstall Acrobat Reader</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -580,6 +713,9 @@
 			<atom name="Uninstall Acrobat Reader" shortname="Acrobat">
 				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -597,6 +733,9 @@
 			<atom name="Simulate Failure" shortname="Sim">
 				<abstract name="Simulate Failure" shortname="Fail" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -608,6 +747,10 @@
 			<atom name="Simulate Success" shortname="Sim">
 				<abstract name="Simulate success" shortname="Succeed" sourcename="execute">
 					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>

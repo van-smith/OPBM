@@ -136,91 +136,94 @@ public final class OpbmDialog
 		m_pan.moveToFront(m_lblMessage);
 
 		// Determine which buttons are specified
-		buttonCount = 0;
-		if ((m_buttons & _OKAY_BUTTON) != 0)
-		{	// Create the okay button, to be positioned below
-			m_btnOkay = new JButton("Okay");
-			m_btnOkay.setFont(fontButtons);
-			m_btnOkay.addMouseListener(this);
-			inset = m_btnOkay.getInsets();
-			inset.left = 3;
-			inset.right = 3;
-			m_btnOkay.setMargin(inset);
-			m_pan.add(m_btnOkay);
-			m_pan.moveToFront(m_btnOkay);
-			++buttonCount;
-		}
-		if ((m_buttons & _CANCEL_BUTTON) != 0)
-		{	// Create the cancel button, to be positioned below
-			m_btnCancel = new JButton("Cancel");
-			m_btnCancel.setFont(fontButtons);
-			m_btnCancel.addMouseListener(this);
-			inset = m_btnCancel.getInsets();
-			inset.left = 3;
-			inset.right = 3;
-			m_btnCancel.setMargin(inset);
-			m_pan.add(m_btnCancel);
-			m_pan.moveToFront(m_btnCancel);
-			++buttonCount;
-		}
-		if ((m_buttons & _YES_BUTTON) != 0)
-		{	// Create the yes button, to be positioned below
-			m_btnYes = new JButton("Yes");
-			m_btnYes.setFont(fontButtons);
-			m_btnYes.addMouseListener(this);
-			inset = m_btnYes.getInsets();
-			inset.left = 3;
-			inset.right = 3;
-			m_btnYes.setMargin(inset);
-			m_pan.add(m_btnYes);
-			m_pan.moveToFront(m_btnYes);
-			++buttonCount;
-		}
-		if ((m_buttons & _NO_BUTTON) != 0)
-		{	// Create the no button, to be positioned below
-			m_btnNo = new JButton("No");
-			m_btnNo.setFont(fontButtons);
-			m_btnNo.addMouseListener(this);
-			inset = m_btnNo.getInsets();
-			inset.left = 3;
-			inset.right = 3;
-			m_btnNo.setMargin(inset);
-			m_pan.add(m_btnNo);
-			m_pan.moveToFront(m_btnNo);
-			++buttonCount;
-		}
+		if (m_buttons != _ZERO_BUTTONS)
+		{
+			buttonCount = 0;
+			if ((m_buttons & _OKAY_BUTTON) != 0)
+			{	// Create the okay button, to be positioned below
+				m_btnOkay = new JButton("Okay");
+				m_btnOkay.setFont(fontButtons);
+				m_btnOkay.addMouseListener(this);
+				inset = m_btnOkay.getInsets();
+				inset.left = 3;
+				inset.right = 3;
+				m_btnOkay.setMargin(inset);
+				m_pan.add(m_btnOkay);
+				m_pan.moveToFront(m_btnOkay);
+				++buttonCount;
+			}
+			if ((m_buttons & _CANCEL_BUTTON) != 0)
+			{	// Create the cancel button, to be positioned below
+				m_btnCancel = new JButton("Cancel");
+				m_btnCancel.setFont(fontButtons);
+				m_btnCancel.addMouseListener(this);
+				inset = m_btnCancel.getInsets();
+				inset.left = 3;
+				inset.right = 3;
+				m_btnCancel.setMargin(inset);
+				m_pan.add(m_btnCancel);
+				m_pan.moveToFront(m_btnCancel);
+				++buttonCount;
+			}
+			if ((m_buttons & _YES_BUTTON) != 0)
+			{	// Create the yes button, to be positioned below
+				m_btnYes = new JButton("Yes");
+				m_btnYes.setFont(fontButtons);
+				m_btnYes.addMouseListener(this);
+				inset = m_btnYes.getInsets();
+				inset.left = 3;
+				inset.right = 3;
+				m_btnYes.setMargin(inset);
+				m_pan.add(m_btnYes);
+				m_pan.moveToFront(m_btnYes);
+				++buttonCount;
+			}
+			if ((m_buttons & _NO_BUTTON) != 0)
+			{	// Create the no button, to be positioned below
+				m_btnNo = new JButton("No");
+				m_btnNo.setFont(fontButtons);
+				m_btnNo.addMouseListener(this);
+				inset = m_btnNo.getInsets();
+				inset.left = 3;
+				inset.right = 3;
+				m_btnNo.setMargin(inset);
+				m_pan.add(m_btnNo);
+				m_pan.moveToFront(m_btnNo);
+				++buttonCount;
+			}
 
-		// Determine the coordinates for each button
-		buttonCenters	= (width / (buttonCount + 1));
-		buttonWidth		= (int)((double)buttonCenters * 0.80);
-		buttonBackoff	= (width / (buttonCount + 2)) / 2;
+			// Determine the coordinates for each button
+			buttonCenters	= (width / (buttonCount + 1));
+			buttonWidth		= (int)((double)buttonCenters * 0.80);
+			buttonBackoff	= (width / (buttonCount + 2)) / 2;
 
-		// Position the buttons
-		thisButton	= 1;
-		buttonTop	= 135;
-		if (m_btnOkay != null)
-		{	// Position and make visible this button
-			m_btnOkay.setBounds( + (thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
-			m_btnOkay.setVisible(true);
-			++thisButton;
-		}
-		if (m_btnCancel != null)
-		{	// Position and make visible this button
-			m_btnCancel.setBounds((thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
-			m_btnCancel.setVisible(true);
-			++thisButton;
-		}
-		if (m_btnYes!= null)
-		{	// Position and make visible this button
-			m_btnYes.setBounds((thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
-			m_btnYes.setVisible(true);
-			++thisButton;
-		}
-		if (m_btnNo != null)
-		{	// Position and make visible this button
-			m_btnNo.setBounds((thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
-			m_btnNo.setVisible(true);
-			++thisButton;
+			// Position the buttons
+			thisButton	= 1;
+			buttonTop	= 135;
+			if (m_btnOkay != null)
+			{	// Position and make visible this button
+				m_btnOkay.setBounds( + (thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
+				m_btnOkay.setVisible(true);
+				++thisButton;
+			}
+			if (m_btnCancel != null)
+			{	// Position and make visible this button
+				m_btnCancel.setBounds((thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
+				m_btnCancel.setVisible(true);
+				++thisButton;
+			}
+			if (m_btnYes!= null)
+			{	// Position and make visible this button
+				m_btnYes.setBounds((thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
+				m_btnYes.setVisible(true);
+				++thisButton;
+			}
+			if (m_btnNo != null)
+			{	// Position and make visible this button
+				m_btnNo.setBounds((thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
+				m_btnNo.setVisible(true);
+				++thisButton;
+			}
 		}
 
 		m_frame.setVisible(true);
@@ -346,6 +349,7 @@ public final class OpbmDialog
 	public void windowDeactivated(WindowEvent e) {
 	}
 
+	public static final int	_ZERO_BUTTONS	= 0;
 	public static final int	_OKAY_BUTTON	= 1;
 	public static final int	_CANCEL_BUTTON	= 2;
 	public static final int	_YES_BUTTON		= 4;

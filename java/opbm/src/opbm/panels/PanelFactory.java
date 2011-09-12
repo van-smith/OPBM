@@ -100,7 +100,7 @@ public class PanelFactory {
 		}
 
 		// Begin by loading every left pr entry in panels
-		Xml.getNodeList(panelsXml, opbm.getPanelXml(), "opbm.panels.left", false);
+		Xml.getNodeList(panelsXml, opbm.getPanelsXml(), "opbm.panels.left", false);
 		if (panelsXml.isEmpty()) {		// No panels were found
 			return(false);
 		}
@@ -336,7 +336,7 @@ public class PanelFactory {
 			f = new Font("Calibri", Font.PLAIN, 16);
 
 		// Begin by loading every left pr entry in panels
-		Xml.getNodeList(rawEditXml, opbm.getEditXml(), "opbm.rawedits.rawedit", false);
+		Xml.getNodeList(rawEditXml, opbm.getEditsXml(), "opbm.rawedits.rawedit", false);
 		if (rawEditXml.isEmpty()) {	// No name entries were found
 			return(null);
 		}
@@ -466,7 +466,7 @@ public class PanelFactory {
 			textFont	= new Font("Calibri", Font.PLAIN, 18);
 
 		// Begin by loading every left pr entry in panels
-		Xml.getNodeList(editsXml, opbm.getEditXml(), "opbm.edits.edit", false);
+		Xml.getNodeList(editsXml, opbm.getEditsXml(), "opbm.edits.edit", false);
 		if (editsXml.isEmpty()) {	// No name entries were found
 			return(null);
 		}
@@ -1051,7 +1051,7 @@ public class PanelFactory {
 		List<String>	prompts		= new ArrayList<String>(0);
 
 		// Begin by loading every left pr entry in panels
-		Xml.getNodeList(editsXml, opbm.getEditXml(), "opbm.edits.edit", false);
+		Xml.getNodeList(editsXml, opbm.getEditsXml(), "opbm.edits.edit", false);
 		if (editsXml.isEmpty()) {	// No name entries were found
 			return;
 		}

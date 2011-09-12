@@ -23,13 +23,13 @@ $gBaselines[2][1] = $LAUNCH_CHROME_UNINSTALLER_SCORE
 $gBaselines[3][0] = $UNINSTALL_CHROME
 $gBaselines[3][1] = $UNINSTALL_CHROME_SCORE
 
-outputDebug( "Starting up Chrome 12.0.742.122 Un-installer" )
+outputDebug( "Starting up Chrome Un-installer" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
 
 If not isChromeAlreadyInstalled() Then
-	outputError( "Chrome 12.0.742.122 is not installed" )
+	outputError( "Chrome is not installed" )
 	Exit -1
 Endif
 
@@ -45,8 +45,6 @@ outputDebug( "Uninstall()" )
 Uninstall()
 
 KillChromeIfRunning()
-
-outputDebug( "CloseCallbackWindow()" )
 CloseCallbackWindow()
 
 outputDebug( "FinalizeScript()" )
@@ -64,6 +62,9 @@ Func LaunchUninstaller()
 	
 	TimerBegin()
 	$gPID = Run($CHROME_UNINSTALL_COMMAND, "C:\", @SW_MAXIMIZE)
+	If $gPID = 0 Then
+		ErrorHandle( "Unable to launch Chrome uninstaller " & $CHROME_UNINSTALL_COMMAND )
+	EndIf
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitActivate( "Uninstall Google Chrome", "", $gTimeout, $ERROR_PREFIX & "WinWait: Uninstall Google Chrome: Unable to find Window.")
 	
@@ -84,8 +85,9 @@ EndFunc
 
 Func CloseCallbackWindow()
 	; Give it time to launch
-	Sleep(10000)
+	Sleep(2000)
 	
 	; Close it if/when it launches
-	WinClose( "google.com" )
+	outputDebug( "CloseCallbackWindow()" )
+	opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 EndFunc

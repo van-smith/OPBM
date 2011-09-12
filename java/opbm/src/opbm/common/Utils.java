@@ -1501,6 +1501,72 @@ public class Utils
 		}
 	}
 
+	/**
+	 * Add properties taken from:
+	 * http://download.oracle.com/javase/1.4.2/docs/api/java/lang/System.html#getProperties%28%29
+	 * @param tag Xml to add items to
+	 */
+	public static void appendJavaInfo(Xml tag)
+	{
+		if (tag != null)
+		{
+			appendJavaSystemGetPropertyItem(tag, "java.version",					"Java Runtime Environment version");
+			appendJavaSystemGetPropertyItem(tag, "java.vendor",						"Java Runtime Environment vendor");
+			appendJavaSystemGetPropertyItem(tag, "java.vendor.url",					"Java vendor url");
+			appendJavaSystemGetPropertyItem(tag, "java.home",						"Java installation directory");
+			appendJavaSystemGetPropertyItem(tag, "java.vm.specification.version",	"Java Virtual Machine specification version");
+			appendJavaSystemGetPropertyItem(tag, "java.vm.specification.vendor",	"Java Virtual Machine specification vendor");
+			appendJavaSystemGetPropertyItem(tag, "java.vm.specification.name",		"Java Virtual Machine specification name");
+			appendJavaSystemGetPropertyItem(tag, "java.specification.version",		"Java Runtime Environment specification version");
+			appendJavaSystemGetPropertyItem(tag, "java.specification.vendor",		"Java Runtime Environment specification vendor");
+			appendJavaSystemGetPropertyItem(tag, "java.specification.name",			"Java Runtime Environment specification name");
+			appendJavaSystemGetPropertyItem(tag, "java.vm.version",					"Java Virtual Machine implementation version");
+			appendJavaSystemGetPropertyItem(tag, "java.vm.vendor",					"Java Virtual Machine implementation vendor");
+			appendJavaSystemGetPropertyItem(tag, "java.vm.name",					"Java Virtual Machine implementation name");
+			appendJavaSystemGetPropertyItem(tag, "java.class.version",				"Java class format version number");
+			appendJavaSystemGetPropertyItem(tag, "java.class.path",					"Java class path");
+			appendJavaSystemGetPropertyItem(tag, "java.library.path",				"List of paths to search when loading libraries");
+			appendJavaSystemGetPropertyItem(tag, "java.io.tmpdir",					"Default temp file path");
+			appendJavaSystemGetPropertyItem(tag, "java.compiler",					"Name of JIT compiler to use");
+			appendJavaSystemGetPropertyItem(tag, "java.ext.dirs",					"Path of extension directory or directories");
+			appendJavaSystemGetPropertyItem(tag, "os.name",							"Operating system name");
+			appendJavaSystemGetPropertyItem(tag, "os.arch",							"Operating system architecture");
+			appendJavaSystemGetPropertyItem(tag, "os.version",						"Operating system version");
+			appendJavaSystemGetPropertyItem(tag, "file.separator",					"File separator (slash or backslash)");
+			appendJavaSystemGetPropertyItem(tag, "path.separator",					"Path separator (colon)");
+			appendJavaSystemGetPropertyItem(tag, "line.separator",					"Line separator (as in backslash n)");
+			appendJavaSystemGetPropertyItem(tag, "user.name",						"User's account name");
+			appendJavaSystemGetPropertyItem(tag, "user.home",						"User's home directory");
+			appendJavaSystemGetPropertyItem(tag, "user.dir",						"User's current working directory");
+		}
+	}
+
+	/**
+	 * Appends the specified system property to the specified tag, along with
+	 * the specified readable description
+	 * @param tag xml to add to
+	 * @param systemProperty one of the items listed on http://download.oracle.com/javase/1.4.2/docs/api/java/lang/System.html#getProperties%28%29
+	 * @param description human readable description of the property
+	 */
+	public static void appendJavaSystemGetPropertyItem(Xml		tag,
+													   String	systemProperty,
+													   String	description)
+	{
+		if (tag != null)
+		{
+			Xml tagNew = tag.appendChild(new Xml("property", systemProperty));
+			if (tagNew != null)
+			{
+				try {
+					tagNew.appendAttribute("value", System.getProperty(systemProperty));
+				} catch (Throwable t) {
+					tagNew.appendAttribute("value", "Unreadable, threw an exception");
+				}
+				tagNew.appendAttribute("desc", description);
+			}
+		}
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

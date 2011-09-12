@@ -438,11 +438,9 @@ Func KillProcessByName( $name )
 		$pname	= $list[$i][0]
 		$pid	= $list[$i][1]
 		If StringInStr( $pname, ".exe" ) Then
-			outputDebug( "Killing " & $pname )
 			$result	= ProcessClose( $pid )
 			If $result <> 1 Then
 				; An error occurred trying to close the process naturally, so use a tool to do it
-				outputDebug( "Unable to kill, spawning TaskKill.exe for " & $pname )
 				TaskKillProcessByID( $pid, $pname )
 				; If we get here, then PsKill successfully closed the app
 			EndIf
@@ -450,7 +448,7 @@ Func KillProcessByName( $name )
 	Next
 EndFunc
 
-Func TaskKillProcessByID( $pid, $nameToDisplayIfError )
+Func TaskKillProcessByID( $pid, $nameToDisplay )
 	Local $key
 	Local $cmd
 	Local $pskillid
@@ -458,13 +456,13 @@ Func TaskKillProcessByID( $pid, $nameToDisplayIfError )
 	
 	If ProcessExists( $pid ) Then
 		$cmd		= $ROOT_DIR & "\common\opbm\exe\taskkill.exe /f /t /pid " & $pid
-		outputDebug( "Attempting " & $cmd )
+		outputDebug( "Attempting " & $cmd & " " & $nameToDisplay )
 		$pskillid	= Run( $cmd, $ROOT_DIR, @SW_SHOWNORMAL)
 		If ProcessWait( $pskillid, 30 ) <> $pskillid Then
 			; An error occurred while processing the command
 			If ProcessExists( $pid ) Then
 				; The process should have been killed, but was not
-				ErrorHandle( "Unable to forcibly terminate " & $nameToDisplayIfError & ", pid " & $pid )
+				ErrorHandle( "Unable to forcibly terminate " & $nameToDisplay & ", pid " & $pid )
 			;Else
 			;We're good, the process is no longer in existence, even though pskill.exe failed
 			EndIf

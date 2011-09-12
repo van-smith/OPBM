@@ -373,6 +373,8 @@ public class Commands
 // MISCELLANEOUS COMMANDS
 		} else if (command.equals("compute_results_averages")) {
 			m_opbm.computeResultsXmlAverages();
+		} else if (command.equals("gather_debug_info")) {
+			m_opbm.gatherDebugInfo();
 
 //////////
 // CLOSING BRACE

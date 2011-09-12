@@ -20,13 +20,13 @@ Dim $LoopLimit
 $gBaselines[2][0] = $INSTALL_CHROME
 $gBaselines[2][1] = $INSTALL_CHROME_SCORE
 
-outputDebug( "Starting up Chrome 12.0.742.122 Installer" )
+outputDebug( "Starting up Chrome Installer" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
 
 If isChromeAlreadyInstalled() Then
-	outputError( "Chrome 12.0.742.122 already installed" )
+	outputError( "Chrome already installed" )
 	Exit -1
 Endif
 
