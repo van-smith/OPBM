@@ -179,7 +179,7 @@
 		</abstracts>
 		<atoms>
 			<atom name="PowerPoint Open" shortname="PPoint">
-				<abstract atomuuid="e61f2c68(hyphen)c855(hyphen)44dc(hyphen)9996(hyphen)797d5b53499c" name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
+				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
@@ -190,8 +190,9 @@
 				</abstract>
 			</atom>
 			<atom name="PowerPoint War" shortname="PPoint">
-				<abstract atomuuid="64c292e9(hyphen)5363(hyphen)498d(hyphen)9c16(hyphen)b318658bc31a" name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
+				<abstract name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -200,8 +201,9 @@
 				</abstract>
 			</atom>
 			<atom name="PowerPoint Close" shortname="PPoint">
-				<abstract atomuuid="68b9ae26(hyphen)4e2e(hyphen)4b59(hyphen)a2ab(hyphen)b07294c403cb" name="Close PowerPoint 2010" shortname="Close" sourcename="execute">
+				<abstract name="Close PowerPoint 2010" shortname="Close" sourcename="execute">
 					<options>
+						<atomOnFailure></atomOnFailure>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -210,7 +212,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Open" shortname="Pub">
-				<abstract atomuuid="284228ee(hyphen)5f3e(hyphen)4985(hyphen)a37e(hyphen)357f6497c279" name="Open Publisher 2010" shortname="Open" sourcename="execute">
+				<abstract name="Open Publisher 2010" shortname="Open" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -220,7 +222,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Hedge" shortname="Pub">
-				<abstract atomuuid="c09a2781(hyphen)e063(hyphen)45ab(hyphen)8d76(hyphen)d19ed2621f9f" name="Open Publisher 2010 HEDGE Flyer" shortname="Hedge" sourcename="execute">
+				<abstract name="Open Publisher 2010 HEDGE Flyer" shortname="Hedge" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -230,7 +232,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Close" shortname="Pub">
-				<abstract atomuuid="ea3ea440(hyphen)a960(hyphen)4eb4(hyphen)b09a(hyphen)6f1b69569b68" name="Close Publisher 2010" shortname="Close" sourcename="execute">
+				<abstract name="Close Publisher 2010" shortname="Close" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -240,7 +242,7 @@
 				</abstract>
 			</atom>
 			<atom name="Access Open" shortname="Access">
-				<abstract atomuuid="3824f6b7(hyphen)8d12(hyphen)42b3(hyphen)97b5(hyphen)f43aacd8341b" name="Open Microsoft Access" shortname="Open" sourcename="execute">
+				<abstract name="Open Microsoft Access" shortname="Open" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -250,7 +252,7 @@
 				</abstract>
 			</atom>
 			<atom name="Access Close" shortname="Access">
-				<abstract atomuuid="c9976fd8(hyphen)a9b7(hyphen)4575(hyphen)a483(hyphen)abaccf845020" name="Close Microsoft Access" shortname="Close" sourcename="execute">
+				<abstract name="Close Microsoft Access" shortname="Close" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -260,7 +262,7 @@
 				</abstract>
 			</atom>
 			<atom name="Excel Heat" shortname="Excel">
-				<abstract atomuuid="009df4e1(hyphen)56d5(hyphen)4a84(hyphen)9be4(hyphen)88b8eb92cdd0" name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
+				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -270,7 +272,7 @@
 				</abstract>
 			</atom>
 			<atom name="Word Alice" shortname="Word">
-				<abstract atomuuid="5d06a962(hyphen)bcef(hyphen)4acf(hyphen)bf91(hyphen)722ae46fae96" name="Alice in Wonderland" shortname="Alice" sourcename="execute">
+				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -281,7 +283,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install 7zip" shortname="7zip">
-				<abstract atomuuid="cdda829a(hyphen)e440(hyphen)4b2d(hyphen)a1fa(hyphen)d06955c15f66" name="Install 7zip" shortname="Install" sourcename="execute">
+				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnFailure>Uninstall 7zip</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -292,7 +294,7 @@
 				</abstract>
 			</atom>
 			<atom name="7zip Run Test" shortname="7zip">
-				<abstract atomuuid="198208fb(hyphen)5b4f(hyphen)491e(hyphen)9a35(hyphen)19aec950f742" name="7zip Run Test" shortname="Run" sourcename="execute">
+				<abstract name="7zip Run Test" shortname="Run" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -302,7 +304,7 @@
 				</abstract>
 			</atom>
 			<atom name="File I(slash)O Run Test" shortname="fileio">
-				<abstract atomuuid="198208fb(hyphen)5b4f(hyphen)491e(hyphen)9a35(hyphen)19aec950f742" name="File I(slash)O Run Test" shortname="fileio" sourcename="execute">
+				<abstract name="File I(slash)O Run Test" shortname="fileio" sourcename="execute">
 					<options>
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
@@ -312,7 +314,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall 7zip" shortname="7zip">
-				<abstract atomuuid="588d19be(hyphen)a519(hyphen)436e(hyphen)9c96(hyphen)78a49b4d5b00" name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -323,7 +325,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Opera" shortname="Opera">
-				<abstract atomuuid="45ac00e1(hyphen)5a4f(hyphen)47f5(hyphen)8028(hyphen)0430b8133856" name="Install Opera" shortname="Install" sourcename="execute">
+				<abstract name="Install Opera" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnFailure>Uninstall Opera</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -334,7 +336,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Opera" shortname="Opera">
-				<abstract atomuuid="aa8214eb(hyphen)8c97(hyphen)4d8e(hyphen)be2e(hyphen)5d7c9ea78d5e" name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -345,7 +347,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera SunSpider" shortname="Opera">
-				<abstract atomuuid="cf69e3fd(hyphen)a172(hyphen)447d(hyphen)9a24(hyphen)3c312ddceb23" name="Opera SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -355,7 +357,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera Kraken" shortname="Opera">
-				<abstract atomuuid="e87dc8fd(hyphen)0120(hyphen)4602(hyphen)819d(hyphen)63446d79dc3e" name="Opera Kraken" shortname="Kraken" sourcename="execute">
+				<abstract name="Opera Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -365,7 +367,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera Google V8" shortname="Opera">
-				<abstract atomuuid="e81f59e1(hyphen)12eb(hyphen)4a9d(hyphen)99ae(hyphen)2fbbfd3d9eb2" name="Opera Google V8" shortname="V8" sourcename="execute">
+				<abstract name="Opera Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -375,7 +377,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Safari" shortname="Safari">
-				<abstract atomuuid="47fe6899(hyphen)bf68(hyphen)43fb(hyphen)801b(hyphen)bc623987cf32" name="Install Safari" shortname="Install" sourcename="execute">
+				<abstract name="Install Safari" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnFailure>Uninstall Safari</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -386,7 +388,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Safari" shortname="Safari">
-				<abstract atomuuid="e29b62a9(hyphen)8b46(hyphen)4ab0(hyphen)9188(hyphen)5b61e726b47b" name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -396,7 +398,7 @@
 				</abstract>
 			</atom>
 			<atom name="Safari SunSpider" shortname="Safari">
-				<abstract atomuuid="887cfaab(hyphen)7811(hyphen)40e1(hyphen)a683(hyphen)1eebbb6c6191" name="Safari SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Safari SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -406,7 +408,7 @@
 				</abstract>
 			</atom>
 			<atom name="Safari Kraken" shortname="Safari">
-				<abstract atomuuid="eeb19de2(hyphen)2ec7(hyphen)49f5(hyphen)97e3(hyphen)b5908db4344c" name="Safari Kraken" shortname="Kraken" sourcename="execute">
+				<abstract name="Safari Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -416,7 +418,7 @@
 				</abstract>
 			</atom>
 			<atom name="Safari Google V8" shortname="Safari">
-				<abstract atomuuid="b48d30d6(hyphen)b6d0(hyphen)4fe3(hyphen)b02f(hyphen)d9a7bbc7b8fa" name="Safari Google V8" shortname="V8" sourcename="execute">
+				<abstract name="Safari Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -426,7 +428,7 @@
 				</abstract>
 			</atom>
 			<atom name="IE SunSpider" shortname="IE9">
-				<abstract atomuuid="b60dac41(hyphen)f0f3(hyphen)4072(hyphen)84b8(hyphen)e60e896c6b13" name="IE SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="IE SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -436,7 +438,7 @@
 				</abstract>
 			</atom>
 			<atom name="IE Kraken" shortname="IE9">
-				<abstract atomuuid="c01e9d9f(hyphen)beec(hyphen)46b9(hyphen)b433(hyphen)0ab17490823c" name="IE Kraken" shortname="Kraken" sourcename="execute">
+				<abstract name="IE Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -446,7 +448,7 @@
 				</abstract>
 			</atom>
 			<atom name="IE Google V8" shortname="IE9">
-				<abstract atomuuid="dd2058b7(hyphen)a65f(hyphen)48f8(hyphen)a5b5(hyphen)fe3e60ea6eeb" name="IE Google V8" shortname="V8" sourcename="execute">
+				<abstract name="IE Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -456,7 +458,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Chrome" shortname="Chrome">
-				<abstract atomuuid="ec1fee6f(hyphen)0357(hyphen)4504(hyphen)a917(hyphen)0c0802a699b4" name="Install Chrome" shortname="Install" sourcename="execute">
+				<abstract name="Install Chrome" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnFailure>Uninstall Chrome</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -467,7 +469,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Chrome" shortname="Chrome">
-				<abstract atomuuid="e8532eac(hyphen)14ab(hyphen)4718(hyphen)bd07(hyphen)0009c14ae982" name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -478,7 +480,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome SunSpider" shortname="Chrome">
-				<abstract atomuuid="1bb18ea1(hyphen)fcbc(hyphen)4c04(hyphen)9f35(hyphen)20833b135eb7" name="Chrome SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
@@ -488,7 +490,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome Kraken" shortname="Chrome">
-				<abstract atomuuid="1fd9850b(hyphen)4adf(hyphen)423a(hyphen)b54b(hyphen)6c887fecc637" name="Chrome Kraken" shortname="Kraken" sourcename="execute">
+				<abstract name="Chrome Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -499,7 +501,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome Google V8" shortname="Chrome">
-				<abstract atomuuid="9cf33da3(hyphen)41ff(hyphen)4cb0(hyphen)8bbc(hyphen)e516a01c82ec" name="Chrome Google V8" shortname="V8" sourcename="execute">
+				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -510,7 +512,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Firefox" shortname="Firefox">
-				<abstract atomuuid="0642a4c7(hyphen)bda4(hyphen)4e11(hyphen)be18(hyphen)8e9c25368641" name="Install Firefox" shortname="Install" sourcename="execute">
+				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnFailure>Uninstall Firefox</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -521,7 +523,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Firefox" shortname="Firefox">
-				<abstract atomuuid="e69b12d6(hyphen)3c8a(hyphen)470a(hyphen)943a(hyphen)14b2113a678d" name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -532,7 +534,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox SunSpider" shortname="Firefox">
-				<abstract atomuuid="f81463cb(hyphen)1152(hyphen)4221(hyphen)bb31(hyphen)3d7e946406d8" name="Firefox SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -543,7 +545,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox Kraken" shortname="Firefox">
-				<abstract atomuuid="cb79cd9d(hyphen)567f(hyphen)4070(hyphen)9621(hyphen)f5c7adb1dea9" name="Firefox Kraken" shortname="Kraken" sourcename="execute">
+				<abstract name="Firefox Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -554,7 +556,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox Google V8" shortname="Firefox">
-				<abstract atomuuid="129c97b5(hyphen)26f1(hyphen)442b(hyphen)87f9(hyphen)d8f1dfe4094a" name="Firefox Google V8" shortname="V8" sourcename="execute">
+				<abstract name="Firefox Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -565,7 +567,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
-				<abstract atomuuid="e683cade(hyphen)9331(hyphen)406f(hyphen)b0f7(hyphen)dc27bd6d6304" name="Install Acrobat Reader" shortname="Install" sourcename="execute">
+				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnFailure>Uninstall Acrobat Reader</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
@@ -576,7 +578,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Acrobat Reader" shortname="Acrobat">
-				<abstract atomuuid="2d4f8367(hyphen)a6e6(hyphen)4851(hyphen)a751(hyphen)045fcc482db1" name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
