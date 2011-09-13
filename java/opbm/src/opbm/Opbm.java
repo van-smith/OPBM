@@ -1190,14 +1190,11 @@ public final class Opbm extends	ModalApp
 			root			= Xml.processW3cNodesIntoXml(null, docPanelsXml.getChildNodes(), opbm);
 
 		} catch (ParserConfigurationException ex) {
-			m_lastStaticError = ex.getMessage();
-
+			m_lastLoadXmlError = ex.getMessage();
 		} catch (SAXException ex) {
-			m_lastStaticError = ex.getMessage();
-
+			m_lastLoadXmlError = ex.getMessage();
 		} catch (IOException ex) {
-			m_lastStaticError = ex.getMessage();
-
+			m_lastLoadXmlError = ex.getMessage();
 		}
 		return(root);	// success if root was defined
 	}
@@ -2896,15 +2893,16 @@ public final class Opbm extends	ModalApp
 
 	// Static variables used throughout
 	public static boolean			m_breakpointsEnabled;						// Used for debugging (An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not)
-	public static boolean			m_debugSimulateRunAtomMode;							// Used for debugging (An internal debugger flag, to bypass normal operations and simulate successes during testing)
-	public static String			m_lastStaticError;							//
-	public static String			m_jvmHome			= Utils.getPathToJavaDotExe();
+	public static boolean			m_debugSimulateRunAtomMode;					// Used for debugging (An internal debugger flag, to bypass normal operations and simulate successes during testing)
+	public static double			m_debugSimulateRunAtomModeFailurePercent;	// Used for debugging (An internal debugger value, to determine how many tests (on average) should fail)
+	public static String			m_lastLoadXmlError;							//
+	public static String			m_jvmHome					= Utils.getPathToJavaDotExe();
 
 	// Synchronization items used for various wait-until-all-parts-are-completed operations
-	public volatile static int		m_rvsync			= 0;	// Used by createAndShowResultsViewer
+	public volatile static int		m_rvsync					= 0;	// Used by createAndShowResultsViewer
 
 	// Used for the build-date and time
-//	public final static String		m_version			= "Built 2011.08.22 05:19am";
-	public final static String		m_version			= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.13 08:33am";
-	public final static String		m_title				= "OPBM - Office Productivity Benchmark - " + m_version;
+//	public final static String		m_version					= "Built 2011.08.22 05:19am";
+	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.13 02:17pm";
+	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

@@ -1350,9 +1350,9 @@ public class BenchmarksAtom
 		// The following is used for debugging, to simulate successes for far more rapid testing
 		// Simulate successes and failures
 		commandsAndParameters.clear();
-		//if (Math.random() <= 0.2)	// Setup to fail 20% of the time
-		//	commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\failure\\failure.exe");
-		//else	// The rest of hte time, run successes
+		if (Math.random() <= Opbm.m_debugSimulateRunAtomModeFailurePercent)	// Setup to fail this percent of the time
+			commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\failure\\failure.exe");
+		else	// The rest of the time, run successes
 			commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\success\\success.exe");
 	}
 	//else running in regular (normal) mode, the comand will execute as it was originally built
@@ -1514,7 +1514,10 @@ public class BenchmarksAtom
 				if (failure)
 				{
 					m_bp.setLastWorkletResult("failure");
-					++m_failureCounter;
+
+					if (m_isRecordingCounts)
+						++m_failureCounter;
+
 					if (stopIfFailure)
 					{	// We have to force the stop now
 						m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
@@ -1527,7 +1530,9 @@ public class BenchmarksAtom
 
 				} else {
 					m_bp.setLastWorkletResult("success");
-					++m_executeCounter;
+
+					if (m_isRecordingCounts)
+						++m_executeCounter;
 				}
 
 				// Store the number of retrise (should be 0 if no retries, 1 to m_bp.m_retryAttempts otherwise)
@@ -1750,4 +1755,5 @@ public class BenchmarksAtom
 	public	List<Xml>			m_timingEvents;
 	public	int					m_returnValue;
 	public	boolean				m_lastAtomWasFailure;
+	public	boolean				m_isRecordingCounts;
 }

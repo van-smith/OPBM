@@ -16,7 +16,7 @@
 
 outputDebug( "Simulating a success" )
 outputStatus( "Running test()" )
-outputTiming( "Simulated test result1,10.0, 100.0" )
-outputTiming( "Simulated test result2,9.0, 105.0" )
+outputTiming( "Simulated test result 1,10.0, 100.0" )
+outputTiming( "Simulated test result 2,9.0, 105.0" )
 outputStatus( "TimerFinish: Total Runtime,19.0" )
 Exit

@@ -324,7 +324,7 @@
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall 7zip</atomBeforeRuns>
-						<atomOnFailure></atomOnFailure>
+						<atomOnFailure>Uninstall 7zip</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -380,7 +380,7 @@
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Opera</atomBeforeRuns>
-						<atomOnFailure></atomOnFailure>
+						<atomOnFailure>Uninstall Opera</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -450,7 +450,7 @@
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Safari</atomBeforeRuns>
-						<atomOnFailure></atomOnFailure>
+						<atomOnFailure>Uninstall Safari</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -562,7 +562,7 @@
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Chrome</atomBeforeRuns>
-						<atomOnFailure></atomOnFailure>
+						<atomOnFailure>Uninstall Chrome</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -632,7 +632,7 @@
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Firefox</atomBeforeRuns>
-						<atomOnFailure></atomOnFailure>
+						<atomOnFailure>Uninstall Firefox</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -702,7 +702,7 @@
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Acrobat Reader</atomBeforeRuns>
-						<atomOnFailure></atomOnFailure>
+						<atomOnFailure>Uninstall Acrobat Reader</atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -758,8 +758,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Spinup Pauser" shortname="Spinup">
-				<abstract name="Spinup Pauser" shortname="Spinup" sourcename="execute">
+			<atom name="Spinup Pausing 60 Seconds" shortname="Spinup">
+				<abstract name="Spinup Pause 60 Seconds" shortname="Spinup" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>

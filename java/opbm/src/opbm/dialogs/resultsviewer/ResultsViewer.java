@@ -184,7 +184,7 @@ public final class ResultsViewer
 		// Score
 		font	= new Font("Calibri", Font.BOLD, 48);
 		rect	= new Rectangle(0, 0, img.getWidth(), 20);
-		score	= Integer.toString((int)m_rootRVL.getComputedScore());
+		score	= Integer.toString((int)m_rootRVL.getAverageTabScore());
 		if (score.length() > 3)
 			score = "999";
 		img.drawStringInRectangle(rect, score, Color.WHITE, font, 255, true);
@@ -197,7 +197,7 @@ public final class ResultsViewer
 		m_lblScoreboard.setIcon(new ImageIcon(img.getBufferedImage()));
 
 		// Update the time and score portions
-		time		= Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff(m_rootRVL.getComputedTime()));
+		time		= Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff((int)m_rootRVL.getAverageTabTime()));
 		successes	= Integer.toString(m_rootRVL.getComputedSuccesses());
 		failures	= Integer.toString(m_rootRVL.getComputedFailures());
 
@@ -936,6 +936,10 @@ public final class ResultsViewer
 		m_scrollbarBottom.setUnitIncrement(1);
 		m_scrollbarBottom.setMinimum(0);
 		m_scrollbarBottom.setMaximum(Math.max(m_scrollbarBottom.getVisibleAmount() + m_renderList.size() - 16, m_scrollbarBottom.getVisibleAmount() + 3));
+		m_scrollbarBottom.setBounds(m_lblBottom.getX() + m_lblBottom.getWidth() - 20,
+									m_lblBottom.getY(),
+									20,
+									m_height - m_lblBottom.getY());
 		m_scrollbarBottom.setValue(m_renderListTop);
 	}
 

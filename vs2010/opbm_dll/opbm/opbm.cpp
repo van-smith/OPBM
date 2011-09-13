@@ -575,6 +575,9 @@ extern HMODULE ghModule;
 			llSuccess7	= iCopyFile(		&appdata[0],	L"\\google\\chrome\\User Data\\.ChromotingConfig.json",	chromoting,		lnChromoting);
 			llSuccess8	= iCopyFile(		&appdata[0],	L"\\google\\chrome\\User Data\\Default\\Preferences",	preferences,	lnPreferences);
 
+			// Turn off the auto-updater
+			SetRegistryKeyValueAsString("HKLM\\SOFTWARE\\Policies\\Google\\Update\\DisableAutoUpdateChecksCheckboxValue", "1");
+
 			// See if we were successful
 			llSuccess = llSuccess1 && llSuccess2 && llSuccess3 && llSuccess4 && llSuccess5 && llSuccess6 && llSuccess7 && llSuccess8;
 

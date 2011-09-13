@@ -384,12 +384,6 @@ public class Benchmarks
 			m_bp.m_deb = null;
 		}
 
-//		// Create a unique filename for this operation, based on the date and time
-//		fileName = Opbm.getHarnessXMLDirectory() + "results_" + Utils.convertFilenameToLettersAndNumbersOnly(Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
-//
-//		// Save the output
-//		m_bp.m_xmlRoot.saveNode(fileName);
-
 		// Introduced for the new BenchmarkManifest method of running benchmarks, output always goes to results.xml
 		// The filename for the generated out
 		fileName = Opbm.getHarnessXMLDirectory() + "results.xml";
@@ -423,6 +417,7 @@ public class Benchmarks
 		// Initialize our relative items
 		bp.m_bpAtom.m_executeCounter		= 0;
 		bp.m_bpAtom.m_failureCounter		= 0;
+		bp.m_bpAtom.m_isRecordingCounts		= true;
 		bp.m_atomVariables					= new ArrayList<Variables>(0);
 		bp.m_atomStack						= new ArrayList<Stack>(0);
 		bp.m_bpAtom.m_timingEvents			= new ArrayList<Xml>(0);

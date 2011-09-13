@@ -369,6 +369,15 @@ public final class ResultsViewerLine
 		}
 	}
 
+	/**
+	 * Builds the lower textbox.  Originally, the results viewer had an upper
+	 * textbox above each lower item, which was its moniker or description.
+	 * Later versions added simple headers, and the upper textbox was removed.
+	 * @param width how wide
+	 * @param height how high
+	 * @param isTotalTab if it's a total tab, it has a different border color
+	 * @return the new label which was created to these specs
+	 */
 	public JLabel makeLower(int			width,
 							int			height,
 							boolean		isTotalTab)
@@ -392,6 +401,11 @@ public final class ResultsViewerLine
 		return(lower);
 	}
 
+	/**
+	 * Each level is rendered in a different color.
+	 * @param level the level to return
+	 * @return the forecolor for that level
+	 */
 	public Color getBackcolorForBoxes(int level)
 	{
 		switch (level)
@@ -412,6 +426,11 @@ public final class ResultsViewerLine
 		}
 	}
 
+	/**
+	 * Each level is rendered in a different color.
+	 * @param level the level to return
+	 * @return the backcolor for that level
+	 */
 	public Color getForecolorForBoxes(int level)
 	{
 		switch (level)
@@ -476,10 +495,9 @@ public final class ResultsViewerLine
 	public void renderTabs(int mode)
 	{
 		int i, left, top;
-		double cvScore, cvTime, value;
+		double cvScore, cvTime;
 		String text;
 		Rectangle rect;
-		ResultsViewerLine tab;
 		JLabel lower;
 
 		// Show all the tabs that should be shown
@@ -540,6 +558,48 @@ public final class ResultsViewerLine
 
 			// Move over for next item
 			left += lower.getWidth();
+		}
+	}
+
+	/**
+	 * Returns the last tab score, which is the average score for all completed runs
+	 * @return score
+	 */
+	public double getAverageTabScore()
+	{
+		double cvScore;
+
+		// Refer to loadRuns() and calculateRolledUpRunTabs() above for info on the tuple assignments
+		if (m_runList != null)
+		{
+			cvScore		= (Double)m_runList.getFifth(m_runList.size() - 1);
+			//cvTime	= (Double)m_runList.getFourth(m_runList.size() - 1);
+			return(cvScore);
+
+		} else {
+			// Some error
+			return(-1.0);
+		}
+	}
+
+	/**
+	 * Returns the last tab time, which is the average time for all completed runs
+	 * @return time
+	 */
+	public double getAverageTabTime()
+	{
+		double cvTime;
+
+		// Refer to loadRuns() and calculateRolledUpRunTabs() above for info on the tuple assignments
+		if (m_runList != null)
+		{
+			//cvScore	= (Double)m_runList.getFifth(m_runList.size() - 1);
+			cvTime		= (Double)m_runList.getFourth(m_runList.size() - 1);
+			return(cvTime);
+
+		} else {
+			// Some error
+			return(-1.0);
 		}
 	}
 

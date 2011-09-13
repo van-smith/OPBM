@@ -1374,6 +1374,7 @@ public final class BenchmarkManifest
 	 */
 	public void run()
 	{
+		boolean prevIsRecordingCounts;
 		Xml result;
 
 		if (m_isManifestInError)
@@ -1416,38 +1417,47 @@ public final class BenchmarkManifest
 //////
 	//
 	//Opbm.m_debugSimulateRunAtomMode = true;
+	//Opbm.m_debugSimulateRunAtomModeFailurePercent = 0.2;	// Fail 20% of the time
 	//
 //////
 // End
 //////////
 
-
 		// If this is a trial or official run...
-		if (isTrialRun() || isOfficialRun())
+		if (isATrialRun() || isAnOfficialRun())
 		{	// Run the appropriate tags based on where we are
-
-			// Launch the spinup scripts first, anything beginning with the text "spinup ", as in "spinup something" and "spinup other thing"
-			result = runAtomsStartingWithThisPrefix("spinup ");
-			if (result.getFirstChild() != null)
-			{	// At least one thing was done, record it
-				m_bmr.appendAtomRunResult(result);
-				saveManifest();
-			}
-
+			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
+			m_bpa.m_isRecordingCounts = false;
 			if (runHasNotYetStarted())
 			{	// Run the pre-run atoms
-				System.out.println("Executing \"before run\" atoms");
 				result = runAtomTags("atomBeforeRuns");
+				// If is an official run, the next thing it will do is reboot,
+				// at which time it will run the spinups below
+				// If it's a trial run, it will simply proceed
+
 			} else {
-				// Run the specifically-related-to-atom spinup atoms
-				System.out.println("Spinning up");
-				result = runAtomTags("atomOnSpinup");
+				if (isAnOfficialRun())
+				{	// Launch the spinup scripts first, anything beginning with the text "spinup ", as in "spinup something" or "spinup other thing"
+					result = runAtomsStartingWithThisPrefix("spinup ");
+					if (result.getFirstChild() != null)
+					{	// At least one thing was done, record it
+						m_bmr.appendAtomRunResult(result);
+						saveManifest();
+					}
+					// Run the specifically-related-to-atom spinup atoms
+					System.out.println("Spinning up");
+					result = runAtomTags("atomOnSpinup");
+
+				} else {
+					result = null;
+				}
 			}
-			if (result.getFirstChild() != null)
+			if (result != null && result.getFirstChild() != null)
 			{	// At least one thing was done, record it
 				m_bmr.appendAtomRunResult(result);
 				saveManifest();
 			}
+			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
 
 		// Continue processing until we're done
@@ -1472,10 +1482,12 @@ public final class BenchmarkManifest
 		saveManifest();
 
 		// When the run is completely over, run the post-run atoms
-		if ((isTrialRun() || isOfficialRun()) && runIsNowCompletelyOver())
+		if ((isATrialRun() || isAnOfficialRun()) && runIsNowCompletelyOver())
 		{	// Run the post-run atoms
-			System.out.println("Executing \"after run\" atoms");
+			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
+			m_bpa.m_isRecordingCounts = false;
 			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns"));
+			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
 
 		// If we are finished, then compute the aggregate totals
@@ -1496,7 +1508,11 @@ public final class BenchmarkManifest
 		// If the last thing that happened was a failure, and we are supposed to uninstall stuff after failures, we need to do that
 		if (m_bp.m_bpAtom.m_lastAtomWasFailure && m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
 		{	// If there were failures, and they want to run the uninstall scripts after processing
+			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
+			m_bpa.m_isRecordingCounts = false;
+			m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 			runAutoUninstaller();
+			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
 
 		// Finish up, show the results viewer
@@ -1807,7 +1823,11 @@ public final class BenchmarkManifest
 
 		if (!Opbm.m_debugSimulateRunAtomMode)
 			saveManifest();		// Save this result when not simulating a run in debug moe
-		m_macroMaster.SystemOutPrintln("Pass " + m_run.getAttribute("this") + " of " + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
+
+		if (!m_run.getAttribute("this").equals(m_run.getAttribute("max")))
+			m_macroMaster.SystemOutPrintln("Pass " + m_run.getAttribute("this") + " of " + m_run.getAttribute("max") + ": " + m_worklet.getAttribute("name"));
+		else
+			m_macroMaster.SystemOutPrintln("Executing: " + m_worklet.getAttribute("name"));
 
 		if (m_worklet.getName().equalsIgnoreCase("abstract"))
 		{	// Create the area to store results from our execute atom
@@ -1969,7 +1989,7 @@ public final class BenchmarkManifest
 	 */
 	public void runAutoUninstaller()
 	{
-		int i, j, k, failures;
+		int i, j, k, failures, previousDebuggerOrHUDAction;
 		boolean executed, ignoreThisOne;
 		Xml result, atomCandidate, autoUninstall, success, failure, thisAtom, thisAtomResults;
 		String manifestworkletuuid, atomsList, atomName, failureNames, successNames, autoUninstalledAlready;
@@ -2037,8 +2057,11 @@ public final class BenchmarkManifest
 
 										//////////
 										// Physically conduct the work of the atom
-											System.out.println("Auto-Uninstall " + atomName);
+											previousDebuggerOrHUDAction = m_bp.m_debuggerOrHUDAction;	// Save the state of the thing
+											m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
+											System.out.println("Auto-uninstall: " + atomName);
 											m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
+											m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 										// End
 										//////////
 											thisAtomResults = new Xml("atomUninstall");
@@ -2112,7 +2135,7 @@ public final class BenchmarkManifest
 	 */
 	public Xml runAtomTags(String tagName)
 	{
-		int i, j, k;
+		int i, j, k, previousDebuggerOrHUDAction;
 		boolean executed;
 		Xml candidate, thisAtom, autoExecute, success, failure, thisAtomResults, options, tag;
 		String atomsList, atomName, warning;
@@ -2165,8 +2188,11 @@ public final class BenchmarkManifest
 
 									//////////
 									// Physically conduct the work of the atom
+										previousDebuggerOrHUDAction = m_bp.m_debuggerOrHUDAction;	// Save the state of the thing
+										m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 										System.out.println(Utils.translateScriptsAbstractOptionsTagName(tagName) + ": " + atomName);
 										m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
+										m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 									// End
 									//////////
 										thisAtomResults = new Xml(tagName);
@@ -2201,7 +2227,6 @@ public final class BenchmarkManifest
 				}
 			}
 		}
-		// Return the list of things we've executed
 		return(autoExecute);
 	}
 
@@ -2214,7 +2239,7 @@ public final class BenchmarkManifest
 	public Xml runAtomsStartingWithThisPrefix(String prefix)
 	{
 		// REMEMBER and then update the above code to use only those atoms specified in the manifest
-		int i;
+		int i, previousDebuggerOrHUDAction;
 		Xml thisAtom, candidate, autoExecute, success, failure, thisAtomResults, options;
 		String name;
 		List<Xml> scriptsAtoms = new ArrayList<Xml>(0);	// atoms from scripts.xml
@@ -2243,8 +2268,11 @@ public final class BenchmarkManifest
 
 				//////////
 				// Physically conduct the work of the atom
+					previousDebuggerOrHUDAction = m_bp.m_debuggerOrHUDAction;	// Save the state of the thing
+					m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 					System.out.println("Running: " + name);
 					m_bpa.processAbstract_Atom(candidate, success, failure);
+					m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 				// End
 				//////////
 					thisAtomResults = new Xml(prefix.trim());
@@ -2350,7 +2378,7 @@ public final class BenchmarkManifest
 	 * Is this an official run that's running?
 	 * opbm.benchmarks.control.run.#type = "official run"
 	 */
-	public boolean isOfficialRun()
+	public boolean isAnOfficialRun()
 	{
 		String runtype = m_controlRun.getAttribute("type");
 
@@ -2368,7 +2396,7 @@ public final class BenchmarkManifest
 	 * Is this a trial run that's running?
 	 * opbm.benchmarks.control.run.#type = "trial run"
 	 */
-	public boolean isTrialRun()
+	public boolean isATrialRun()
 	{
 		String runtype = m_controlRun.getAttribute("type");
 
