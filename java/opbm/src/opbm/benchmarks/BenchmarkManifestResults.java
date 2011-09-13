@@ -737,11 +737,12 @@ public class BenchmarkManifestResults
 						cvTimeSum	+= Math.pow(times.get(k)  - avgTime, 2.0f);
 						cvScoreSum	+= Math.pow(scores.get(k) - avgScore, 2.0f);
 					}
-					cvTime	= Math.sqrt( cvTimeSum / (double)times.size() );
-					cvScore	= Math.sqrt( cvScoreSum / (double)times.size() );
+					// Compute the standard deviation
+					cvTime	= Math.sqrt( cvTimeSum  / (double)Math.max(times.size() - 1, 0.0000001));
+					cvScore	= Math.sqrt( cvScoreSum / (double)Math.max(times.size() - 1, 1.0));
 					// Now, divide by abs(mean) to get CV
-					cvTime	= Math.sqrt( cvTime / Math.abs(geoTime) );
-					cvScore	= Math.sqrt( cvScore / Math.abs(geoScore) );
+					cvTime	= cvTime  / Math.max(Math.abs(avgTime),  0.0000001);
+					cvScore	= cvScore / Math.max(Math.abs(avgScore), 1.0);
 					// CV is computed
 
 					// When we get here, we've summed everything for all

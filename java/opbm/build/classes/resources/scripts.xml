@@ -854,6 +854,7 @@
 			</molecule>
 			<molecule name="Presentation" shortname="Ppoint">
 				<atom name="PowerPoint Open" shortname="Open" sourcename="PowerPoint Open"></atom>
+				<atom name="PowerPoint War" shortname="War" sourcename="PowerPoint War"></atom>
 				<atom name="PowerPoint Close" shortname="Close" sourcename="PowerPoint Close"></atom>
 			</molecule>
 			<molecule name="Database" shortname="Access">
@@ -862,6 +863,7 @@
 			</molecule>
 			<molecule name="Publisher" shortname="Publisher">
 				<atom name="Publisher Open" shortname="Open" sourcename="Publisher Open"></atom>
+				<atom name="Publisher HEDGE" shortname="Hedge" sourcename="Publisher HEDGE"></atom>
 				<atom name="Publisher Close" shortname="Close" sourcename="Publisher Close"></atom>
 			</molecule>
 			<molecule name="Spreadsheet" shortname="Excel">
@@ -872,12 +874,23 @@
 			</molecule>
 			<molecule name="JavaScript" shortname="Browser">
 				<atom name="Chrome SunSpider" shortname="CSpider" sourcename="Chrome SunSpider"></atom>
+				<atom name="Chrome Kraken" shortname="CKraken" sourcename="Chrome Kraken"></atom>
+				<atom name="Chrome Google V8" shortname="CV8" sourcename="Chrome Google V8"></atom>
 				<atom name="Firefox SunSpider" shortname="FSpider" sourcename="Firefox SunSpider"></atom>
+				<atom name="Firefox Kraken" shortname="FKraken" sourcename="Firefox Kraken"></atom>
+				<atom name="Firefox Google V8" shortname="FV8" sourcename="Firefox Google V8"></atom>
 				<atom name="IE SunSpider" shortname="ISpider" sourcename="IE SunSpider"></atom>
+				<atom name="IE Kraken" shortname="IKraken" sourcename="IE Kraken"></atom>
+				<atom name="IE Google V8" shortname="IV8" sourcename="IE Google V8"></atom>
 				<atom name="Opera SunSpider" shortname="OSpider" sourcename="Opera SunSpider"></atom>
+				<atom name="Opera Kraken" shortname="OKraken" sourcename="Opera Kraken"></atom>
+				<atom name="Opera Google V8" shortname="OV8" sourcename="Opera Google V8"></atom>
 				<atom name="Safari SunSpider" shortname="SSpider" sourcename="Safari SunSpider"></atom>
+				<atom name="Safari Kraken" shortname="SKraken" sourcename="Safari Kraken"></atom>
+				<atom name="Safari Google V8" shortname="SV8" sourcename="Safari Google V8"></atom>
 			</molecule>
 			<molecule name="File Operations" shortname="File">
+				<atom name="File I/O" shortname="fileio" sourcename="File I/O Run Test"></atom>
 				<atom name="7zip Run Test" shortname="7zip" sourcename="7zip Run Test"></atom>
 			</molecule>
 			<molecule name="Uninstall Applications" shortname="Uninstall">

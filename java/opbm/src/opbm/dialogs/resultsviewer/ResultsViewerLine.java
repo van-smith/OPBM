@@ -158,6 +158,8 @@ public final class ResultsViewerLine
 			run = run.getNext();
 		}
 		// When we get here, all run data items are loaded for the worklet
+		// CV scores were computed during the "create results.xml" phase, which occurs in BenchmarkManifestResults.sumUpSourceDataByAtom() method
+		// Note:  Additional rolled-up CV values are computed below in calculateRolledUpRunTabs() for higher-than-worklet-level results.
 		// Append the CV
 		time	= Utils.doubleValueOf(worklet.getAttributeOrChild("cvTime"), -1.0);
 		score	= Utils.doubleValueOf(worklet.getAttributeOrChild("cvScore"), -1.0);
@@ -321,7 +323,7 @@ public final class ResultsViewerLine
 		avgTime		= totTime	/ (double)(Math.max(count, 1));
 		avgScore	= totScore	/ (double)(Math.max(count, 1));
 
-		// Compute the score and time CV
+		// Compute the score and time sum of deviations
 		cvTimeSum	= 0.0f;
 		cvScoreSum	= 0.0f;
 		for (i = 0; i < count; i++)
@@ -331,11 +333,12 @@ public final class ResultsViewerLine
 			cvTimeSum	+= Math.pow(time	- avgTime,	2.0f);
 			cvScoreSum	+= Math.pow(score	- avgScore,	2.0f);
 		}
-		cvTime	= Math.sqrt(cvTimeSum  / (double)(Math.max(count, 1)));
-		cvScore	= Math.sqrt(cvScoreSum / (double)(Math.max(count, 1)));
-		// Now, divide by abs(mean) to get CV
-		cvTime	= Math.sqrt(cvTime	/ Math.max(Math.abs(geoTime), 1.0));
-		cvScore	= Math.sqrt(cvScore	/ Math.max(Math.abs(geoScore), 1.0));
+		// Compute the standard deviation
+		cvTime	= Math.sqrt(cvTimeSum  / (double)(Math.max(count - 1, 0.0000001)));
+		cvScore	= Math.sqrt(cvScoreSum / (double)(Math.max(count - 1, 1.0)));
+		// Divide by abs(mean) to get CV
+		cvTime	= cvTime	/ Math.max(Math.abs(avgTime),  0.0000001);
+		cvScore	= cvScore	/ Math.max(Math.abs(avgScore), 1.0);
 		// Right now, these variables are defined:
 		//		totTime		totScore
 		//		geoTime		geoScore

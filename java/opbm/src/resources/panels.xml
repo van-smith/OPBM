@@ -36,18 +36,6 @@
 				<command p1="Execute Suites">edit</command>
 				<tooltip>Record a benchmark run for a Suite.</tooltip>
 			</menu>
-			<menu>
-				<text>Results Viewer</text>
-				<command>run_results_viewer</command>
-				<tooltip>Load the Results Viewer on the last run benchmark.</tooltip>
-			</menu>
-			<spacer/>
-			<menu>
-				<text>Gather Debug Info</text>
-				<command>gather_debug_info</command>
-				<tooltip>Load system data into a debugInfo.xml file for email or public posting to/for the developer</tooltip>
-			</menu>
-			<spacer/>
 			<spacer/>
 			<heading>
 				<text>Full Benchmarks:</text>
@@ -61,6 +49,20 @@
 				<text>Official Run</text>
 				<command>official_run</command>
 				<tooltip>Run an official run benchmark.</tooltip>
+			</menu>
+			<spacer/>
+			<heading>
+				<text>Shortcuts:</text>
+			</heading>
+			<menu>
+				<text>Results Viewer</text>
+				<command>run_results_viewer</command>
+				<tooltip>Load the Results Viewer on the last run benchmark.</tooltip>
+			</menu>
+			<menu>
+				<text>Gather Debug Info</text>
+				<command>gather_debug_info</command>
+				<tooltip>Load system data into a debugInfo.xml file for email or public posting to/for the developer</tooltip>
 			</menu>
 			<spacer/>
 			<spacer/>

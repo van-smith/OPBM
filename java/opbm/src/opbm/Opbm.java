@@ -2903,6 +2903,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.13 03:16pm";
+	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.13 05:40pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
