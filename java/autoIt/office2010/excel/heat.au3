@@ -34,6 +34,8 @@ For $CurrentLoop = 1 to $LoopLimit
 	
 	outputStatus( "InitializeExcelScript()" )
 	InitializeExcelScript()
+	$gErrorTrap = FileCopy($FILENAME_SPREADSHEET_BACKUP, $FILENAME_SPREADSHEET, 1)
+	If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & "FileCopy: " & $FILENAME_SPREADSHEET_BACKUP & ": Unable to copy file.")
 	
 	outputStatus( "LaunchExcel()" )
 	LaunchExcel()
@@ -65,18 +67,6 @@ Exit
 
 ;======================================================================================================================================
 ;======================================================================================================================================
-
-Func InitializeExcelScript()
-	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
-	HotKeySet("{ESC}", "Terminate")
-	
-	; Start script timer
-	$gScriptBeginTime = TimerInit()
-	opbmWaitUntilSystemIdle( 10, 100, 5000 )
-	
-	$gErrorTrap = FileCopy($FILENAME_SPREADSHEET_BACKUP, $FILENAME_SPREADSHEET, 1)
-	If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & "FileCopy: " & $FILENAME_SPREADSHEET_BACKUP & ": Unable to copy file.")
-EndFunc
 
 Func CloseEmptyWorksheet()
 	TimerBegin()

@@ -61,6 +61,16 @@ $gBaselines[0][1] = $LAUNCH_MICROSOFT_WORD_SCORE
 $gBaselines[1][0] = $CLOSE_MICROSOFT_WORD
 $gBaselines[1][1] = $CLOSE_MICROSOFT_WORD_SCORE
 
+
+Func InitializeWordScript()
+	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
+	HotKeySet("{ESC}", "Terminate")
+	
+	; Start script timer
+	$gScriptBeginTime = TimerInit()
+	opbmWaitUntilSystemIdle( 10, 100, 5000 )
+EndFunc
+
 Func LaunchWord()
 	Local $filename
 	

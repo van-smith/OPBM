@@ -62,8 +62,24 @@ public class WaitUntilIdle
 		// Capture starting time
 		before		= Utils.getMillisecondTimer();
 
+//////////
+// Used for debugging
+// The following line is used for debugging, to keep it from spending time waiting between runs
+//////
+	//
+	if (Opbm.m_debugSimulateRunAtomMode)
+	{	// Running in simulated mode
+		utilization = 1.0f;
+	} else {
+		// Running in regular (normal) mode
 		// Wait for up to 20 seconds for a 2-second interval of 10% or less CPU usage system-wide
 		utilization	= Opbm.waitUntilSystemIdle(10, 2000, 20000);
+	}
+	//
+//////
+// End
+//////////
+
 
 		// Capture ending time
 		after		= Utils.getMillisecondTimer();

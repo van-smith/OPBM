@@ -65,6 +65,7 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
 	outputDebug( "InitializeAliceScript()" )
+	InitializeWordScript()
 	InitializeAliceScript()
 	
 	If not isAcrobatReaderAlreadyInstalled() Then
@@ -133,13 +134,6 @@ EndIf
 ;======================================================================================================================================
 
 Func InitializeAliceScript()
-	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
-	HotKeySet("{ESC}", "Terminate")
-	
-	; Start script timer
-	$gScriptBeginTime = TimerInit()
-	opbmWaitUntilSystemIdle( 10, 100, 5000 )
-	
 	; Delete the PDF in case it wasn't deleted last time
 	$DIRECTORY_ALICE_IN_WONDERLAND_PDF	= GetScriptTempDirectory()
 	$FILENAME_ALICE_IN_WONDERLAND_PDF		= $DIRECTORY_ALICE_IN_WONDERLAND_PDF & $ALICEINWONDERLAND_PDF

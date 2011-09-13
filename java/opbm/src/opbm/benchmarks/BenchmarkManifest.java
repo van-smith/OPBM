@@ -1007,7 +1007,7 @@ public final class BenchmarkManifest
 			// Build the master reboot abstract so it can be cloned for each pass
 			m_rebootRequired = true;
 			rebootTemplate = new Xml("abstract");
-			rebootTemplate.appendAttribute(new Xml("name", "Auto(hyphen)inserted by OPBM's Manifest Builder for reboot at start of each pass"));
+			rebootTemplate.appendAttribute(new Xml("name", "Reboot the machine (Auto-inserted at start of each pass)"));
 			rebootTemplate.appendAttribute(new Xml("sourcename", "rebootAndContinue"));
 			for (i = 0; i < m_runPasses.size(); i++)
 			{	// Update the run-level xml for each entry
@@ -1406,15 +1406,40 @@ public final class BenchmarkManifest
 		m_bpa		= m_benchmarksMaster.getBPAtom();
 		m_bp.m_bm	= this;
 
+
+//////////
+// For debugging mode, uncomment and/or set this variable to true.  It will
+// simulate runs with the success.exe script so that full official, trial and
+// compilation runs proceed much faster.  It also eliminates the WaitUntilIdle()
+// test and turns off the regular saving of the manifest.xml file until the run
+// is done.
+//////
+	//
+	//Opbm.m_debugSimulateRunAtomMode = true;
+	//
+//////
+// End
+//////////
+
+
 		// If this is a trial or official run...
 		if (isTrialRun() || isOfficialRun())
 		{	// Run the appropriate tags based on where we are
+
+			// Launch the spinup scripts first, anything beginning with the text "spinup ", as in "spinup something" and "spinup other thing"
+			result = runAtomsStartingWithThisPrefix("spinup ");
+			if (result.getFirstChild() != null)
+			{	// At least one thing was done, record it
+				m_bmr.appendAtomRunResult(result);
+				saveManifest();
+			}
+
 			if (runHasNotYetStarted())
 			{	// Run the pre-run atoms
 				System.out.println("Executing \"before run\" atoms");
 				result = runAtomTags("atomBeforeRuns");
 			} else {
-				// Run the spinup atoms
+				// Run the specifically-related-to-atom spinup atoms
 				System.out.println("Spinning up");
 				result = runAtomTags("atomOnSpinup");
 			}
@@ -1444,6 +1469,7 @@ public final class BenchmarkManifest
 		// shut down and continue.
 		// Record the time of this event
 		m_bmr.appendResultsAnnotation("shutdown", Utils.getTimestamp(), "");
+		saveManifest();
 
 		// When the run is completely over, run the post-run atoms
 		if ((isTrialRun() || isOfficialRun()) && runIsNowCompletelyOver())
@@ -1451,12 +1477,6 @@ public final class BenchmarkManifest
 			System.out.println("Executing \"after run\" atoms");
 			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns"));
 		}
-
-
-		// Save the final/current result
-// REMEMBER The save is done three times here for now until the code is well-tested, and there are no exceptions thrown in the compute algorithms preventing a single post-operation save from storing the results.
-//          In the future it can be moved below this if..loop and saved only once.
-		saveManifest();
 
 		// If we are finished, then compute the aggregate totals
 		if (m_controlLastWorklet.getAttribute("uuid").equalsIgnoreCase("finished"))
@@ -1785,7 +1805,8 @@ public final class BenchmarkManifest
 		Xml success, failures;
 		String manifestWorkletUuid, manifestAtomUuid, type;
 
-		saveManifest();
+		if (!Opbm.m_debugSimulateRunAtomMode)
+			saveManifest();		// Save this result when not simulating a run in debug moe
 		m_macroMaster.SystemOutPrintln("Pass " + m_run.getAttribute("this") + " of " + m_run.getAttribute("max") + ", " + m_worklet.getAttribute("name"));
 
 		if (m_worklet.getName().equalsIgnoreCase("abstract"))
@@ -2039,7 +2060,8 @@ public final class BenchmarkManifest
 											autoUninstall.appendChild(thisAtomResults);
 
 											// Save this result
-											saveManifest();
+											if (!Opbm.m_debugSimulateRunAtomMode)
+												saveManifest();		// Save this result when not simulating a run in debug moe
 
 										} else {
 											if (autoUninstalledAlready.toLowerCase().contains(atomName.toLowerCase()))
@@ -2081,8 +2103,8 @@ public final class BenchmarkManifest
 				}
 			}
 		}
-		// Save this result
-		saveManifest();
+		if (!Opbm.m_debugSimulateRunAtomMode)
+			saveManifest();		// Save this result when not simulating a run in debug moe
 	}
 
 	/**
@@ -2092,13 +2114,17 @@ public final class BenchmarkManifest
 	{
 		int i, j, k;
 		boolean executed;
-		Xml thisAtom, candidate, autoExecute, success, failure, thisAtomResults, options, tag;
-		String atomsList, atomName, fullTagName, warning;
-		List<String>	atoms			= new ArrayList<String>(0);		// atom names found in <tagName> tag
-		List<Xml>		scriptsAtoms	= new ArrayList<Xml>(0);		// atoms from scripts.xml
+		Xml candidate, thisAtom, autoExecute, success, failure, thisAtomResults, options, tag;
+		String atomsList, atomName, warning;
+		List<String>	atoms				= new ArrayList<String>(0);		// atom names found in <tagName> tag
+		List<Xml>		scriptsAtoms		= new ArrayList<Xml>(0);		// atoms from scripts.xml
+		List<Xml>		manifestAbstracts	= new ArrayList<Xml>(0);		// abstracts from manifest.xml, those that are actively being run
 
-		// Load all of the scripts.xml atoms
+		// Load all of the atoms present in scripts.xml
 		Xml.getNodeList(scriptsAtoms, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
+
+		// Load all of the abstracts present in the manifest
+		loadManifestAtoms(manifestAbstracts);
 
 		autoExecute = new Xml("autoExecute");
 		autoExecute.appendAttribute(new Xml("time", Utils.getTimestamp()));
@@ -2106,10 +2132,9 @@ public final class BenchmarkManifest
 
 		// Iterate through each one identifying if any of those executed
 		// atoms have a list of uninstall atoms to run on failure
-		for (i = 0; i < scriptsAtoms.size(); i++)
+		for (i = 0; i < manifestAbstracts.size(); i++)
 		{	// Grab this entry
-			thisAtom	= scriptsAtoms.get(i);
-			candidate	= thisAtom.getChildNode("abstract");
+			candidate	= manifestAbstracts.get(i);
 			if (candidate != null)
 			{	// The candidate is an abstract
 				options = candidate.getChildNode("options");
@@ -2131,7 +2156,7 @@ public final class BenchmarkManifest
 								for (k = 0; k < scriptsAtoms.size(); k++)
 								{	// See if this scripts.xml atom matches
 									thisAtom = scriptsAtoms.get(k);
-									if (thisAtom.getAttribute("name").equalsIgnoreCase(atomName))
+									if (thisAtom.getChildNode("abstract") != null && thisAtom.getAttribute("name").equalsIgnoreCase(atomName))
 									{	// We found it, see if we still need to execute it
 										executed = true;
 										success	= new Xml("success");
@@ -2166,7 +2191,7 @@ public final class BenchmarkManifest
 								}
 								if (!executed)
 								{	// This specified atom wasn't found
-									warning = "Warning: The specified atom named \"" + atomName + "\" (indicated by a " + Utils.translateScriptsAbstractOptionsTagName(tagName) + " on \"" + thisAtom.getAttribute("name") + "\") was not found, ignoring.";
+									warning = "Warning: The specified atom named \"" + atomName + "\" (indicated by a " + Utils.translateScriptsAbstractOptionsTagName(tagName) + " on \"" + candidate.getAttribute("name") + "\") was not found, ignoring.";
 									System.out.println(warning);
 									autoExecute.appendChild(new Xml("warning", warning));
 								}
@@ -2178,6 +2203,118 @@ public final class BenchmarkManifest
 		}
 		// Return the list of things we've executed
 		return(autoExecute);
+	}
+
+	/**
+	 * Runs all atoms starting with the prefix text, as in "spinup" to run
+	 * all spinup atoms at start.
+	 * @param prefix text atom name must begin with
+	 * @return
+	 */
+	public Xml runAtomsStartingWithThisPrefix(String prefix)
+	{
+		// REMEMBER and then update the above code to use only those atoms specified in the manifest
+		int i;
+		Xml thisAtom, candidate, autoExecute, success, failure, thisAtomResults, options;
+		String name;
+		List<Xml> scriptsAtoms = new ArrayList<Xml>(0);	// atoms from scripts.xml
+
+		// Load all of the scripts.xml atoms
+		Xml.getNodeList(scriptsAtoms, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
+
+		autoExecute = new Xml("autoExecute");
+		autoExecute.appendAttribute(new Xml("time", Utils.getTimestamp()));
+		autoExecute.appendAttribute(new Xml("uuid", Utils.getUUID()));
+
+		// Iterate through each one identifying if any of those executed
+		// atoms have a list of uninstall atoms to run on failure
+		for (i = 0; i < scriptsAtoms.size(); i++)
+		{	// Grab this entry
+			thisAtom	= scriptsAtoms.get(i);
+			candidate	= thisAtom.getChildNode("abstract");
+			if (candidate != null)
+			{	// The candidate is an abstract
+				name = candidate.getAttribute("name");
+				if (name != null && name.toLowerCase().startsWith(prefix))
+				{	// And its name begins with our prefix
+					success	= new Xml("success");
+					failure	= new Xml("failure");
+					// If success, executed = true, otherwise executed = false
+
+				//////////
+				// Physically conduct the work of the atom
+					System.out.println("Running: " + name);
+					m_bpa.processAbstract_Atom(candidate, success, failure);
+				// End
+				//////////
+					thisAtomResults = new Xml(prefix.trim());
+					thisAtomResults.appendAttribute(new Xml("name", name));
+					thisAtomResults.appendAttribute(new Xml("uuid", Utils.getUUID()));
+
+					// Create an entry identifying this atom
+					thisAtomResults.appendChild(success);
+					thisAtomResults.appendChild(failure);
+					if (success.getFirstChild() != null)
+					{	// There was a success
+						thisAtomResults.appendAttribute("result", "success");
+					} else {
+						// Only failures
+						thisAtomResults.appendAttribute("result", "fail");
+					}
+
+					// Store the results good or bad
+					autoExecute.appendChild(thisAtomResults);
+				}
+			}
+		}
+		// Return the list of things we've executed
+		return(autoExecute);
+	}
+
+	/**
+	 * Populates the specified list with a unique list of all atoms in the
+	 * manifest.xml file
+	 * @param list list to update
+	 */
+	public void loadManifestAtoms(List<Xml> list)
+	{
+		int i;
+		boolean found;
+		Xml run, candidate;
+
+		run = m_manifest.getFirstChild();
+		while (run != null)
+		{	// See if this run has any abstract entries
+			if (run.getName().equalsIgnoreCase("run"))
+			{
+				candidate = run.getFirstChild();
+				while (candidate != null)
+				{
+					if (candidate.getName().equalsIgnoreCase("abstract"))
+					{	// We found one
+						// See if this atom is already in the list
+						found = false;
+						for (i = 0; i < list.size(); i++)
+						{
+							if (list.get(i).getAttribute("name").equalsIgnoreCase(candidate.getAttribute("name")))
+							{	// We found a match
+								found = true;
+								break;
+							}
+						}
+						if (!found)
+							list.add(candidate);
+					}
+
+					// Move to next sibling
+					candidate = candidate.getNext();
+				}
+			}
+
+			// Move to next run
+			run = run.getNext();
+		}
+		// When we get here, we have a unique list of all atoms in this run
 	}
 
 	/**

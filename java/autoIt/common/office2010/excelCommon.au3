@@ -6,7 +6,7 @@ Const $ROOT_DIR = @ScriptDir & "\..\.."
 Const $DIRECTORY_SPREADSHEET			= @ScriptDir & "\Data"
 Const $DIRECTORY_EXCEL_I386				= "C:\Program Files (x86)\Microsoft Office\OFFICE14"
 Const $DIRECTORY_EXCEL_X64				= "C:\Program Files\Microsoft Office\OFFICE14"
-;Const $FILENAME_SPREADSHEET				= $DIRECTORY_SPREADSHEET & "\surfaceChart.xlsx"
+;Const $FILENAME_SPREADSHEET			= $DIRECTORY_SPREADSHEET & "\surfaceChart.xlsx"
 ;Const $FILENAME_SPREADSHEET_BACKUP		= $DIRECTORY_SPREADSHEET & "\surfaceChart.backup"
 Const $FILENAME_SPREADSHEET				= $DIRECTORY_SPREADSHEET & "\surfaceChartWithMacros.xlsm"
 Const $FILENAME_SPREADSHEET_BACKUP		= $DIRECTORY_SPREADSHEET & "\surfaceChartWithMacros.backup"
@@ -39,6 +39,15 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_EXCEL_SCORE
 
 
 ; Functions used by Excel
+Func InitializeExcelScript()
+	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
+	HotKeySet("{ESC}", "Terminate")
+	
+	; Start script timer
+	$gScriptBeginTime = TimerInit()
+	opbmWaitUntilSystemIdle( 10, 100, 5000 )
+EndFunc
+
 Func ExcelGotoSheetAndCell($sheet, $cell)
 	opbmWinActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
 	Send("^g")

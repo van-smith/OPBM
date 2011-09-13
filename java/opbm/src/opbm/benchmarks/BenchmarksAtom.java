@@ -1340,13 +1340,27 @@ public class BenchmarksAtom
 								// Start the process (with its optional list of parameters)
 								m_bp.setLastWorkletStart(Utils.getTimestamp());
 
-// The following is used for debugging, to simulate successes for far more rapid testing
-// Simulate successes and failures
-//commandsAndParameters.clear();
-//if (Math.random() <= 0.2)	// 20% of the time run failures
-//	commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\failure\\failure.exe");
-//else	// The rest of hte time, run successes
-//	commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\success\\success.exe");
+//////////
+// Used for debugging
+// The following lines are used for debugging, to keep it from executing real scripts, but instead executes a simulated success
+//////
+	//
+	if (Opbm.m_debugSimulateRunAtomMode)
+	{	// Running in simulated mode
+		// The following is used for debugging, to simulate successes for far more rapid testing
+		// Simulate successes and failures
+		commandsAndParameters.clear();
+		//if (Math.random() <= 0.2)	// Setup to fail 20% of the time
+		//	commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\failure\\failure.exe");
+		//else	// The rest of hte time, run successes
+			commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\success\\success.exe");
+	}
+	//else running in regular (normal) mode, the comand will execute as it was originally built
+	//
+//////
+// End
+//////////
+
 
 								builder = new ProcessBuilder(commandsAndParameters);
 								process = builder.start();
@@ -1634,8 +1648,20 @@ public class BenchmarksAtom
 			if (m_bp != null && m_bp.m_hud != null)
 				m_bp.m_hud.updateStatus("Executing shutdown...");
 
+//////////
+// Used for debugging
 // The following line is used for debugging, to keep it from rebooting between runs
-//System.exit(0);
+//////
+	//
+	if (Opbm.m_debugSimulateRunAtomMode)
+	{
+		System.exit(0);
+	}
+	//
+//////
+// End
+//////////
+
 			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /r");
 
 			// Grab the output

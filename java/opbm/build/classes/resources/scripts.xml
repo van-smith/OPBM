@@ -181,7 +181,7 @@
 			<atom name="PowerPoint Open" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
-						<atomOnSpinup></atomOnSpinup>
+						<atomOnSpinup>Launch and Close PowerPoint</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
@@ -223,7 +223,7 @@
 			<atom name="Publisher Open" shortname="Pub">
 				<abstract name="Open Publisher 2010" shortname="Open" sourcename="execute">
 					<options>
-						<atomOnSpinup></atomOnSpinup>
+						<atomOnSpinup>Launch and Close Publisher</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
@@ -265,7 +265,7 @@
 			<atom name="Access Open" shortname="Access">
 				<abstract name="Open Microsoft Access" shortname="Open" sourcename="execute">
 					<options>
-						<atomOnSpinup></atomOnSpinup>
+						<atomOnSpinup>Launch and Close Access</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
@@ -293,7 +293,7 @@
 			<atom name="Excel Heat" shortname="Excel">
 				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
 					<options>
-						<atomOnSpinup></atomOnSpinup>
+						<atomOnSpinup>Launch and Close Excel</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
@@ -307,7 +307,7 @@
 			<atom name="Word Alice" shortname="Word">
 				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
-						<atomOnSpinup></atomOnSpinup>
+						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
@@ -319,7 +319,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install 7zip" shortname="7zip">
-				<abstract name="Install 7zip" shortname="Install" sourcename="execute" atomuuid="ecb5194f-a880-4427-930d-a448fa417e7f">
+				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -361,7 +361,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall 7zip" shortname="7zip">
-				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute" atomuuid="0bd0cfb8-51f2-446c-90cb-e80c3b25adcf">
+				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -755,6 +755,90 @@
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
 						<executable>..\autoIT\tests\success\success.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Spinup Pauser" shortname="Spinup">
+				<abstract name="Spinup Pauser" shortname="Spinup" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\spinup\spinup\spinup.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Launch and Close PowerPoint" shortname="SpinPP">
+				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\spinup\powerpoint\launchAndClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Launch and Close Publisher" shortname="SpinPub">
+				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\spinup\publisher\launchAndClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Launch and Close Access" shortname="SpinAcc">
+				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\spinup\access\launchAndClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Launch and Close Word" shortname="SpinWord">
+				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\spinup\word\launchAndClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Launch and Close Excel" shortname="SpinXl">
+				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\spinup\excel\launchAndClose.exe</executable>
 					</options>
 				</abstract>
 			</atom>

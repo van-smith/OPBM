@@ -9,10 +9,11 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	printf("Spinning up...\n");
+	printf("Spinning up for 60 seconds...\n");
 
-	// Placeholder pause for now, 10 seconds
-	Sleep(10000);
+	// Placeholder pause for now, 60 seconds
+	// Let the operating system do its thing
+	Sleep(60000);
 
 	// Indicate "success"
 	return 0;

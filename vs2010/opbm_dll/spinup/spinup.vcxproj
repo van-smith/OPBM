@@ -62,10 +62,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\Debug\spinup.exe ..\..\..\java\autoit\common\opbm\exe\spinup.exe</Command>
+      <Command>copy ..\Debug\spinup.exe ..\..\..\java\autoit\spinup\spinup\spinup.exe</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy spinup.exe autoit\opbm\exe\</Message>
+      <Message>Copy spinup.exe autoit\spinup\spinup\</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,10 +85,10 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\Release\spinup.exe ..\..\..\java\autoit\common\opbm\exe\spinup.exe</Command>
+      <Command>copy ..\Release\spinup.exe ..\..\..\java\autoit\spinup\spinup\spinup.exe</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy spinup.exe autoit\opbm\exe\</Message>
+      <Message>Copy spinup.exe autoit\spinup\spinup\</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

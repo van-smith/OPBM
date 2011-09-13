@@ -2738,16 +2738,16 @@ public final class Opbm extends	ModalApp
 			public void run()
 			{
 				Xml root			= new Xml("opbm");
-				Xml debugData		= root.appendChild(new Xml("debugData"));
+				Xml debugInfo		= root.appendChild(new Xml("debugInfo"));
 				Xml machineInfo		= root.appendChild(new Xml("machineInfo"));
-				Xml settings		= debugData.appendChild(new Xml("settingsDotXml"));
-				Xml manifest		= debugData.appendChild(new Xml("manifestDotXml"));
+				Xml settings		= debugInfo.appendChild(new Xml("settingsDotXml"));
+				Xml manifest		= debugInfo.appendChild(new Xml("manifestDotXml"));
 				Xml manifestFile	= Opbm.loadXml(Opbm.getRunningDirectory() + "manifest.xml", m_opbm);
-				Xml results			= debugData.appendChild(new Xml("resultsDotXml"));
+				Xml results			= debugInfo.appendChild(new Xml("resultsDotXml"));
 				Xml resultsFile		= Opbm.loadXml(Opbm.getHarnessXMLDirectory() + "results.xml", m_opbm);
-				Xml scripts			= debugData.appendChild(new Xml("scriptsDotXml"));
-				Xml edits			= debugData.appendChild(new Xml("editsDotXml"));
-				Xml panels			= debugData.appendChild(new Xml("panelsDotXml"));
+				Xml scripts			= debugInfo.appendChild(new Xml("scriptsDotXml"));
+				Xml edits			= debugInfo.appendChild(new Xml("editsDotXml"));
+				Xml panels			= debugInfo.appendChild(new Xml("panelsDotXml"));
 
 				Utils.appendJavaInfo(machineInfo);
 
@@ -2894,17 +2894,17 @@ public final class Opbm extends	ModalApp
 	private boolean					m_noExit;									// Was the -noexit command line option specified?
 	private Tuple					m_dialogTuple;								// Holds references (by id, in getFirst(n)) for all responses and last actions (see getDialog* and setDialog* responses)
 
+	// Static variables used throughout
 	public static boolean			m_breakpointsEnabled;						// Used for debugging (An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not)
+	public static boolean			m_debugSimulateRunAtomMode;							// Used for debugging (An internal debugger flag, to bypass normal operations and simulate successes during testing)
 	public static String			m_lastStaticError;							//
-// REMEMBER for non-Windows based java runtimes, this logic will need to be changed
-// REMEMBER there's also a registry key for this item which may need to be used instead (for custom installations of Java), though for the standard installations from Oracle and the java.home property, this should always work:
-	public static String			m_jvmHome	= Utils.getPathToJavaDotExe();
+	public static String			m_jvmHome			= Utils.getPathToJavaDotExe();
 
 	// Synchronization items used for various wait-until-all-parts-are-completed operations
-	public volatile static int		m_rvsync	= 0;	// Used by createAndShowResultsViewer
+	public volatile static int		m_rvsync			= 0;	// Used by createAndShowResultsViewer
 
 	// Used for the build-date and time
-//	public final static String		m_version	= "Built 2011.08.22 05:19am";
-	public final static String		m_version	= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.11 10:00pm";
-	public final static String		m_title		= "OPBM - Office Productivity Benchmark - " + m_version;
+//	public final static String		m_version			= "Built 2011.08.22 05:19am";
+	public final static String		m_version			= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.13 08:33am";
+	public final static String		m_title				= "OPBM - Office Productivity Benchmark - " + m_version;
 }
