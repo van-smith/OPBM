@@ -47,10 +47,10 @@
 		</templates>
 		<flows>
 			<flow name="call">
-				<variables>(leftbrace)(colon)function, FUNCTION(colon)(rightbrace)</variables>
+				<variables>{(colon)function, FUNCTION(colon)}</variables>
 			</flow>
 			<flow name="function">
-				<variables>(leftbrace)(colon)function, FUNCTION name(colon)(rightbrace)</variables>
+				<variables>{(colon)function, FUNCTION name(colon)}</variables>
 			</flow>
 			<flow name="functionEnd">
 				<variables></variables>
@@ -59,16 +59,16 @@
 				<variables></variables>
 			</flow>
 			<flow name="goto">
-				<variables>(leftbrace)(colon)label, LABEL(colon)(rightbrace)</variables>
+				<variables>{(colon)label, LABEL(colon)}</variables>
 			</flow>
 			<flow name="label">
-				<variables>(leftbrace)(colon)label, LABEL name(colon)(rightbrace)</variables>
+				<variables>{(colon)label, LABEL name(colon)}</variables>
 			</flow>
 			<flow name="switch">
-				<variables>(leftbrace)(colon)variable, VARIABLE(colon)(rightbrace)</variables>
+				<variables>{(colon)variable, VARIABLE(colon)}</variables>
 			</flow>
 			<flow name="case">
-				<variables>(leftbrace)(colon)value, VALUE or VARIABLE(colon)(rightbrace)</variables>
+				<variables>{(colon)value, VALUE or VARIABLE(colon)}</variables>
 			</flow>
 			<flow name="break">
 				<variables></variables>
@@ -83,25 +83,25 @@
 				<variables></variables>
 			</flow>
 			<flow name="until">
-				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+				<variables>{(colon)value1, Left-side VALUE(colon)} {(colon)comparator, Logic(colon)} {(colon)value2, Right-side VALUE(colon)}</variables>
 			</flow>
 			<flow name="while">
-				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+				<variables>{(colon)value1, Left-side VALUE(colon)} {(colon)comparator, Logic(colon)} {(colon)value2, Right-side VALUE(colon)}</variables>
 			</flow>
 			<flow name="whileEnd">
 				<variables></variables>
 			</flow>
 			<flow name="for">
-				<variables>(leftbrace)(colon)variable, Variable name(colon)(rightbrace) (leftbrace)(colon)startvalue, START or variable name(colon)(rightbrace) (leftbrace)(colon)finishvalue, END or variable name(colon)(rightbrace) (leftbrace)(colon)stepvalue, STEP or variable name(colon)(rightbrace)</variables>
+				<variables>{(colon)variable, Variable name(colon)} {(colon)startvalue, START or variable name(colon)} {(colon)finishvalue, END or variable name(colon)} {(colon)stepvalue, STEP or variable name(colon)}</variables>
 			</flow>
 			<flow name="next">
 				<variables></variables>
 			</flow>
 			<flow name="if">
-				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+				<variables>{(colon)value1, Left-side VALUE(colon)} {(colon)comparator, Logic(colon)} {(colon)value2, Right-side VALUE(colon)}</variables>
 			</flow>
 			<flow name="elseif">
-				<variables>(leftbrace)(colon)value1, Left(hyphen)side VALUE(colon)(rightbrace) (leftbrace)(colon)comparator, Logic(colon)(rightbrace) (leftbrace)(colon)value2, Right(hyphen)side VALUE(colon)(rightbrace)</variables>
+				<variables>{(colon)value1, Left-side VALUE(colon)} {(colon)comparator, Logic(colon)} {(colon)value2, Right-side VALUE(colon)}</variables>
 			</flow>
 			<flow name="else">
 				<variables></variables>
@@ -110,55 +110,55 @@
 				<variables></variables>
 			</flow>
 			<flow name="log">
-				<variables>(leftbrace)(colon)message, MESSAGE to log(colon)(rightbrace)</variables>
+				<variables>{(colon)message, MESSAGE to log(colon)}</variables>
 			</flow>
 			<flow name="throw">
-				<variables>(leftbrace)(colon)message, ERROR MESSAGE to throw(colon)(rightbrace)</variables>
+				<variables>{(colon)message, ERROR MESSAGE to throw(colon)}</variables>
 			</flow>
 			<flow name="debug">
-				<variables>(leftbrace)(colon)message, DEBUG MESSAGE to show(colon)(rightbrace)</variables>
+				<variables>{(colon)message, DEBUG MESSAGE to show(colon)}</variables>
 			</flow>
 			<flow name="quit">
-				<variables>(leftbrace)(colon)value, EXIT value(colon)(rightbrace)</variables>
+				<variables>{(colon)value, EXIT value(colon)}</variables>
 			</flow>
 			<flow name="prompt">
-				<variables>(leftbrace)(colon)message, MESSAGE to prompt user with(colon)(rightbrace)</variables>
+				<variables>{(colon)message, MESSAGE to prompt user with(colon)}</variables>
 			</flow>
 			<flow name="optionDuo">
-				<variables>(leftbrace)(colon)message, MESSAGE to prompt user with(colon)(rightbrace) (leftbrace)(colon)option1, OPTION (poundsign)1 Prompt(colon)(rightbrace) (leftbrace)(colon)option2, OPTION (poundsign)2 Prompt(colon)(rightbrace)</variables>
+				<variables>{(colon)message, MESSAGE to prompt user with(colon)} {(colon)option1, OPTION #1 Prompt(colon)} {(colon)option2, OPTION #2 Prompt(colon)}</variables>
 			</flow>
 			<flow name="onOption1">
-				<variables>(leftbrace)(colon)label, Label if option (poundsign)1 chosen(colon)(rightbrace)</variables>
+				<variables>{(colon)label, Label if option #1 chosen(colon)}</variables>
 			</flow>
 			<flow name="onOption2">
-				<variables>(leftbrace)(colon)label, Label if option (poundsign)2 chosen(colon)(rightbrace)</variables>
+				<variables>{(colon)label, Label if option #2 chosen(colon)}</variables>
 			</flow>
 			<flow name="variable">
-				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace) (leftbrace)(colon)value, VALUE(colon)(rightbrace)</variables>
+				<variables>{(colon)name, NAME(colon)} {(colon)value, VALUE(colon)}</variables>
 			</flow>
-			<flow name="(plus)(plus)">
-				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace)</variables>
+			<flow name="++">
+				<variables>{(colon)name, NAME(colon)}</variables>
 			</flow>
-			<flow name="(hyphen)(hyphen)">
-				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace)</variables>
+			<flow name="--">
+				<variables>{(colon)name, NAME(colon)}</variables>
 			</flow>
-			<flow name="(plus)(equals)">
-				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace) (leftbrace)(colon)value, VALUE(colon)(rightbrace)</variables>
+			<flow name="+=">
+				<variables>{(colon)name, NAME(colon)} {(colon)value, VALUE(colon)}</variables>
 			</flow>
-			<flow name="(hyphen)(equals)">
-				<variables>(leftbrace)(colon)name, NAME(colon)(rightbrace) (leftbrace)(colon)value, VALUE(colon)(rightbrace)</variables>
+			<flow name="-=">
+				<variables>{(colon)name, NAME(colon)} {(colon)value, VALUE(colon)}</variables>
 			</flow>
 		</flows>
 		<abstracts>
 			<abstract name="execute">
 				<logical>execute</logical>
-				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace) (leftbrace)(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)(rightbrace)</variables>
+				<real>{(colon)executable, Full executable path(colon)}</real>
+				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)}</variables>
 			</abstract>
 			<abstract name="executeParams">
 				<logical>execute_params</logical>
-				<real>(leftbrace)(colon)executable, Full executable path(colon)(rightbrace) (leftbrace)(colon)p1, First parameter(colon)(rightbrace) (leftbrace)(colon)p2, Second parameter(colon)(rightbrace) (leftbrace)(colon)p3, Third parameter(colon)(rightbrace) (leftbrace)(colon)p4, Fourth parameter(colon)(rightbrace) (leftbrace)(colon)p5, Fifth parameter(colon)(rightbrace) (leftbrace)(colon)p6, Sixth parameter(colon)(rightbrace) (leftbrace)(colon)p7, Seventh parameter(colon)(rightbrace) (leftbrace)(colon)p8, Eighth parameter(colon)(rightbrace) (leftbrace)(colon)p9, Ninth parameter(colon)(rightbrace) (leftbrace)(colon)p10, Tenth parameter(colon)(rightbrace)</real>
-				<variables>(leftbrace)(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)atomOnFailure, Run these atoms on failure(colon)(rightbrace) (leftbrace)(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)(rightbrace) (leftbrace)(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)(rightbrace)</variables>
+				<real>{(colon)executable, Full executable path(colon)} {(colon)p1, First parameter(colon)} {(colon)p2, Second parameter(colon)} {(colon)p3, Third parameter(colon)} {(colon)p4, Fourth parameter(colon)} {(colon)p5, Fifth parameter(colon)} {(colon)p6, Sixth parameter(colon)} {(colon)p7, Seventh parameter(colon)} {(colon)p8, Eighth parameter(colon)} {(colon)p9, Ninth parameter(colon)} {(colon)p10, Tenth parameter(colon)}</real>
+				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)}</variables>
 			</abstract>
 			<abstract name="rebootAndTerminate">
 				<logical>reboot_and_terminate</logical>
@@ -188,7 +188,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)powerpoint(backslash)powerpointOpen.exe</executable>
+						<executable>..\autoIT\office2010\powerpoint\powerpointOpen.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -202,7 +202,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)powerpoint(backslash)powerpointWar.exe</executable>
+						<executable>..\autoIT\office2010\powerpoint\powerpointWar.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -216,7 +216,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)powerpoint(backslash)powerpointClose.exe</executable>
+						<executable>..\autoIT\office2010\powerpoint\powerpointClose.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -230,7 +230,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)publisher(backslash)publisherOpen.exe</executable>
+						<executable>..\autoIT\office2010\publisher\publisherOpen.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -244,7 +244,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)publisher(backslash)publisherHedge.exe</executable>
+						<executable>..\autoIT\office2010\publisher\publisherHedge.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -258,7 +258,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)publisher(backslash)publisherClose.exe</executable>
+						<executable>..\autoIT\office2010\publisher\publisherClose.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -272,7 +272,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)access(backslash)accessOpen.exe</executable>
+						<executable>..\autoIT\office2010\access\accessOpen.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -286,7 +286,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)access(backslash)accessClose.exe</executable>
+						<executable>..\autoIT\office2010\access\accessClose.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -300,7 +300,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)excel(backslash)heat.exe</executable>
+						<executable>..\autoIT\office2010\excel\heat.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -314,12 +314,12 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)office2010(backslash)word(backslash)alice.exe</executable>
+						<executable>..\autoIT\office2010\word\alice.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Install 7zip" shortname="7zip">
-				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
+				<abstract name="Install 7zip" shortname="Install" sourcename="execute" atomuuid="ecb5194f-a880-4427-930d-a448fa417e7f">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -328,7 +328,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)7zip(backslash)install(backslash)7zipInstall.exe</executable>
+						<executable>..\autoIT\7zip\install\7zipInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -342,12 +342,12 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)7zip(backslash)runtest(backslash)7zipRunTest.exe</executable>
+						<executable>..\autoIT\7zip\runtest\7zipRunTest.exe</executable>
 					</options>
 				</abstract>
 			</atom>
-			<atom name="File I(slash)O Run Test" shortname="fileio">
-				<abstract name="File I(slash)O Run Test" shortname="fileio" sourcename="execute">
+			<atom name="File I/O Run Test" shortname="fileio">
+				<abstract name="File I/O Run Test" shortname="fileio" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -356,12 +356,12 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..(backslash)autoIT(backslash)fileio(backslash)copy(backslash)fileioTest.exe</executable>
+						<executable>..\autoIT\fileio\copy\fileioTest.exe</executable>
 					</options>
 				</abstract>
 			</atom>
 			<atom name="Uninstall 7zip" shortname="7zip">
-				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute" atomuuid="0bd0cfb8-51f2-446c-90cb-e80c3b25adcf">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -370,7 +370,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)7zip(backslash)uninstall(backslash)7zipUninstall.exe</executable>
+						<executable>..\autoIT\7zip\uninstall\7zipUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -384,7 +384,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)opera(backslash)install(backslash)operaInstall.exe</executable>
+						<executable>..\autoIT\opera\install\operaInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -398,7 +398,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)opera(backslash)uninstall(backslash)operaUninstall.exe</executable>
+						<executable>..\autoIT\opera\uninstall\operaUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -412,7 +412,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)opera(backslash)spider(backslash)operaSpider.exe</executable>
+						<executable>..\autoIT\opera\spider\operaSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -426,7 +426,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)opera(backslash)kraken(backslash)operaKraken.exe</executable>
+						<executable>..\autoIT\opera\kraken\operaKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -440,7 +440,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)opera(backslash)googlev8(backslash)operaGoogleV8.exe</executable>
+						<executable>..\autoIT\opera\googlev8\operaGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -454,7 +454,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)safari(backslash)install(backslash)safariInstall.exe</executable>
+						<executable>..\autoIT\safari\install\safariInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -468,7 +468,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)safari(backslash)uninstall(backslash)safariUninstall.exe</executable>
+						<executable>..\autoIT\safari\uninstall\safariUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -482,7 +482,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)safari(backslash)spider(backslash)safariSpider.exe</executable>
+						<executable>..\autoIT\safari\spider\safariSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -496,7 +496,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)safari(backslash)kraken(backslash)safariKraken.exe</executable>
+						<executable>..\autoIT\safari\kraken\safariKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -510,7 +510,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)safari(backslash)googlev8(backslash)safariGoogleV8.exe</executable>
+						<executable>..\autoIT\safari\googlev8\safariGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -524,7 +524,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)ie(backslash)spider(backslash)ieSpider.exe</executable>
+						<executable>..\autoIT\ie\spider\ieSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -538,7 +538,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)ie(backslash)kraken(backslash)ieKraken.exe</executable>
+						<executable>..\autoIT\ie\kraken\ieKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -552,7 +552,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)ie(backslash)googlev8(backslash)ieGoogleV8.exe</executable>
+						<executable>..\autoIT\ie\googlev8\ieGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -566,7 +566,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)chrome(backslash)install(backslash)chromeInstall.exe</executable>
+						<executable>..\autoIT\chrome\install\chromeInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -580,7 +580,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)chrome(backslash)uninstall(backslash)chromeUninstall.exe</executable>
+						<executable>..\autoIT\chrome\uninstall\chromeUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -594,7 +594,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)chrome(backslash)spider(backslash)chromeSpider.exe</executable>
+						<executable>..\autoIT\chrome\spider\chromeSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -608,7 +608,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)chrome(backslash)kraken(backslash)chromeKraken.exe</executable>
+						<executable>..\autoIT\chrome\kraken\chromeKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -622,7 +622,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)chrome(backslash)googlev8(backslash)chromeGoogleV8.exe</executable>
+						<executable>..\autoIT\chrome\googlev8\chromeGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -636,7 +636,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)firefox(backslash)install(backslash)firefoxInstall.exe</executable>
+						<executable>..\autoIT\firefox\install\firefoxInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -650,7 +650,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)firefox(backslash)uninstall(backslash)firefoxUninstall.exe</executable>
+						<executable>..\autoIT\firefox\uninstall\firefoxUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -664,7 +664,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)firefox(backslash)spider(backslash)firefoxSpider.exe</executable>
+						<executable>..\autoIT\firefox\spider\firefoxSpider.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -678,7 +678,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)firefox(backslash)kraken(backslash)firefoxKraken.exe</executable>
+						<executable>..\autoIT\firefox\kraken\firefoxKraken.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -692,7 +692,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)firefox(backslash)googlev8(backslash)firefoxGoogleV8.exe</executable>
+						<executable>..\autoIT\firefox\googlev8\firefoxGoogleV8.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -706,7 +706,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)install(backslash)acrobatReaderInstall.exe</executable>
+						<executable>..\autoIT\acrobatReader\install\acrobatReaderInstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -720,7 +720,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)acrobatReader(backslash)uninstall(backslash)acrobatReaderUninstall.exe</executable>
+						<executable>..\autoIT\acrobatReader\uninstall\acrobatReaderUninstall.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -740,7 +740,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)tests(backslash)failure(backslash)failure.exe</executable>
+						<executable>..\autoIT\tests\failure\failure.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -754,7 +754,7 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..(backslash)autoIT(backslash)tests(backslash)success(backslash)success.exe</executable>
+						<executable>..\autoIT\tests\success\success.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -806,7 +806,7 @@
 				<atom name="Safari Google V8" shortname="SV8" sourcename="Safari Google V8"></atom>
 			</molecule>
 			<molecule name="File Operations" shortname="File">
-				<atom name="File I(slash)O" shortname="fileio" sourcename="File I(slash)O Run Test"></atom>
+				<atom name="File I/O" shortname="fileio" sourcename="File I/O Run Test"></atom>
 				<atom name="7zip Run Test" shortname="7zip" sourcename="7zip Run Test"></atom>
 			</molecule>
 			<molecule name="Uninstall Applications" shortname="Uninstall">

@@ -288,27 +288,11 @@ public class Macros
 	{
 		candidate = candidate.replace("(lessthan)",				"<");
 		candidate = candidate.replace("(greaterthan)",			">");
-		candidate = candidate.replace("(equals)",				"=");
 		candidate = candidate.replace("(ampersand)",			"&");
-		candidate = candidate.replace("(caret)",				"^");
-		candidate = candidate.replace("(percent)",				"%");
-		candidate = candidate.replace("(poundsign)",			"#");
-		candidate = candidate.replace("(atsign)",				"@");
-		candidate = candidate.replace("(exclamationpoint)",		"!");
 		candidate = candidate.replace("(tilde)",				"~");
 		candidate = candidate.replace("(singlequote)",			"'");
 		candidate = candidate.replace("(doublequote)",			"\"");
-		candidate = candidate.replace("(hyphen)",				"-");
-		candidate = candidate.replace("(plus)",					"+");
-		candidate = candidate.replace("(leftbracket)",			"[");
-		candidate = candidate.replace("(rightbracket)",			"]");
-		candidate = candidate.replace("(leftbrace)",			"{");
-		candidate = candidate.replace("(rightbrace)",			"}");
-		candidate = candidate.replace("(asterisk)",				"*");
-		candidate = candidate.replace("(backslash)",			"\\");
-		candidate = candidate.replace("(slash)",				"/");
 		candidate = candidate.replace("(colon)",				":");
-		candidate = candidate.replace("(semicolon)",			";");
 		return(candidate);
 	}
 
@@ -332,28 +316,11 @@ public class Macros
 	{
 		candidate = candidate.replace("<",	"(lessthan)");
 		candidate = candidate.replace(">",	"(greaterthan)");
-		candidate = candidate.replace("=",	"(equals)");
 		candidate = candidate.replace("&",	"(ampersand)");
-		candidate = candidate.replace("^",	"(caret)");
-		candidate = candidate.replace("%",	"(percent)");
-		candidate = candidate.replace("$",	"(dollarsign)");
-		candidate = candidate.replace("#",	"(poundsign)");
-		candidate = candidate.replace("@",	"(atsign)");
-		candidate = candidate.replace("!",	"(exclamationpoint)");
 		candidate = candidate.replace("~",	"(tilde)");
 		candidate = candidate.replace("'",	"(singlequote)");
 		candidate = candidate.replace("\"",	"(doublequote)");
-		candidate = candidate.replace("+",	"(plus)");
-		candidate = candidate.replace("-",	"(hyphen)");
-		candidate = candidate.replace("[",	"(leftbracket)");
-		candidate = candidate.replace("]",	"(rightbracket)");
-		candidate = candidate.replace("{",	"(leftbrace)");
-		candidate = candidate.replace("}",	"(rightbrace)");
-		candidate = candidate.replace("*",	"(asterisk)");
-		candidate = candidate.replace("\\",	"(backslash)");
-		candidate = candidate.replace("/",	"(slash)");
 		candidate = candidate.replace(":",	"(colon)");
-		candidate = candidate.replace(";",	"(semicolon)");
 		return(candidate);
 	}
 

@@ -114,22 +114,6 @@
 				<tooltip></tooltip>
 			</menu>
 			<spacer/>
-<!--
-			<heading>
-				<text fgcolor="7f7f3f">Definitions:</text>
-			</heading>
-			<menu>
-				<text>Flow Control</text>
-				<command p1="flows">edit</command>
-				<tooltip></tooltip>
-			</menu>
-			<menu>
-				<text>Command Abstracts</text>
-				<command p1="abstracts">edit</command>
-				<tooltip></tooltip>
-			</menu>
-			<spacer/>
--->
 			<heading>
 				<text fgcolor="7f7f3f">Maintenance:</text>
 			</heading>
@@ -138,14 +122,75 @@
 				<command p1="XML File Viewing">leftpanel</command>
 				<tooltip></tooltip>
 			</menu>
-<!--
-			<menu>
-				<text>Compute results averages</text>
-				<command>compute_results_averages</command>
-				<tooltip>Takes a directory of results.xml files and computes averages for every timing point (worklet)</tooltip>
-			</menu>
--->
 			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<heading>
+				<text fgcolor="d0d0a0">Internal:</text>
+			</heading>
+			<menu>
+				<text fgcolor="d0d0ff">Internal Editing</text>
+				<command p1="Internal Editing">leftpanel</command>
+				<tooltip>This option is only for use only by the OPBM Java/C++ Developer, not for regular OPBM users.</tooltip>
+			</menu>
+		</left>
+
+		<left name="Internal Editing" bgcolor="fff4e2">
+			<navigation>
+				<text>Back</text>
+				<command>back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
+			<spacer/>
+			<heading>
+				<text fgcolor="7f7f3f">Internal:</text>
+			</heading>
+			<menu>
+				<text fgcolor="#4f0000">Flow Control*</text>
+				<command p1="flows">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="#4f0000">Command Abstracts*</text>
+				<command p1="abstracts">edit</command>
+				<tooltip></tooltip>
+			</menu>
+			<spacer/>
+			<text fgcolor="#4f0000">*Editing is VERY dangerous</text>
+			<text fgcolor="#4f0000">(ampersand)nbsp;(ampersand)nbsp;on these two options!</text>
+			<spacer/>
+			<spacer/>
+			<spacer/>
+			<heading>
+				<text fgcolor="7f7f3f">OPBM Developer:</text>
+			</heading>
+			<menu>
+				<text fgcolor="#4f0000">Compute Baselines</text>
+				<command>compute_results_averages</command>
+				<tooltip>Takes a manifest.xml file and computes averages for every worklet.  Used to update scoringBaseline.au3</tooltip>
+			</menu>
+
 		</left>
 
 		<left name="XML File Viewing" bgcolor="fff4e2">
@@ -301,53 +346,51 @@
 			</menu>
 		</left>
 
-<!--
-		<left name="Edit Flows" bgcolor="fff4e2">
+		<left name="Edit Flows" bgcolor="ff0000">
 			<navigation>
-				<text>Back</text>
+				<text fgcolor="0000ff">Back</text>
 				<command>edit_back</command>
 				<tooltip>Return to $previous_panel$</tooltip>
 			</navigation>
 			<navigation>
-				<text>Home</text>
+				<text fgcolor="0000ff">Home</text>
 				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
 			<spacer/>
 			<heading>
-				<text fgcolor="7f7f3f">Flow Control</text>
+				<text fgcolor="000000">Flow Control</text>
 			</heading>
 			<spacer/>
 			<spacer/>
-			<text>Flow control directives handle</text>
-			<text>looping, conditional execution</text>
-			<text>of code, script commands, etc.</text>
+			<text fgcolor="ffffff">***DO NOT***</text>
+			<text fgcolor="ffffff">edit any of these records</text>
+			<text fgcolor="ffffff">unless you know exactly</text>
+			<text fgcolor="ffffff">what you are doing!</text>
 		</left>
 
-		<left name="Edit Abstracts" bgcolor="fff4e2">
+		<left name="Edit Abstracts" bgcolor="ff0000">
 			<navigation>
-				<text>Back</text>
+				<text fgcolor="0000ff">Back</text>
 				<command>edit_back</command>
 				<tooltip>Return to $previous_panel$</tooltip>
 			</navigation>
 			<navigation>
-				<text>Home</text>
+				<text fgcolor="0000ff">Home</text>
 				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
 			<spacer/>
 			<heading>
-				<text fgcolor="7f7f3f">Abstracts</text>
+				<text fgcolor="000000">Abstracts</text>
 			</heading>
 			<spacer/>
 			<spacer/>
-			<text>Abstracts provide an in-between</text>
-			<text>programming layer, addressing a</text>
-			<text>functional need coupled to the</text>
-			<text>underlying commands to carry out</text>
-			<text>the work.</text>
+			<text fgcolor="ffffff">***DO NOT***</text>
+			<text fgcolor="ffffff">edit any of these records</text>
+			<text fgcolor="ffffff">unless you know exactly</text>
+			<text fgcolor="ffffff">what you are doing!</text>
 		</left>
--->
 
 		<left name="Edit Atoms" bgcolor="fff4e2">
 			<navigation>
@@ -381,6 +424,10 @@
 				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
+			<spacer/>
+			<heading>
+				<text fgcolor="7f7f3f">Molecules</text>
+			</heading>
 			<spacer/>
 			<text>Molecules are groups of related</text>
 			<text>operations, conducting a larger</text>
@@ -484,11 +531,11 @@
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
 			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)1 (hyphen) Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)2 (hyphen) Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)3 (hyphen) Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)4 (hyphen) Statusbar (slash) counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar (slash) counter$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 		<left name="Execute Molecules" bgcolor="ffffff">
@@ -544,11 +591,11 @@
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
 			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)1 (hyphen) Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)2 (hyphen) Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)3 (hyphen) Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)4 (hyphen) Statusbar (slash) counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar / counter$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 		<left name="Execute Scenarios" bgcolor="ffffff">
@@ -604,11 +651,11 @@
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
 			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)1 (hyphen) Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)2 (hyphen) Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)3 (hyphen) Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)4 (hyphen) Statusbar (slash) counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar (slash) counter$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 		<left name="Execute Suites" bgcolor="ffffff">
@@ -664,11 +711,11 @@
 			<text>The HUD is divided into five</text>
 			<text>component areas:</text>
 			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)1 (hyphen) Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)2 (hyphen) Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)3 (hyphen) Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)4 (hyphen) Statusbar (slash) counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$(poundsign)5 (hyphen) Debug info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar / counter$/td$$/tr$$/table$</text>
+			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 	</panels>

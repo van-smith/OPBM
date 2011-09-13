@@ -6,34 +6,34 @@
 		<rawedit name="edits.xml">
 			<precommand p1="Raw Edit">leftpanel</precommand>
 			<filename>$edits.xml$</filename>
-			<tooltip>Editing: $edits.xml$</tooltip>
+			<tooltip>Editing(colon) $edits.xml$</tooltip>
 			<postcommand></postcommand>
 		</rawedit>
 		<rawedit name="panels.xml">
 			<precommand p1="Raw Edit">leftpanel</precommand>
 			<filename>$panels.xml$</filename>
-			<tooltip>Editing: $panels.xml$</tooltip>
+			<tooltip>Editing(colon) $panels.xml$</tooltip>
 		</rawedit>
 		<rawedit name="scripts.xml">
 			<precommand p1="Raw Edit">leftpanel</precommand>
 			<filename>$scripts.xml$</filename>
-			<tooltip>Editing: $scripts.xml$</tooltip>
+			<tooltip>Editing(colon) $scripts.xml$</tooltip>
 		</rawedit>
 		<comment>The following are viewing items, which are read-only raw edits.</comment>
-		<rawedit name="ro:edits.xml" readonly="true">
+		<rawedit name="ro(colon)edits.xml" readonly="true">
 			<precommand p1="Raw View">leftpanel</precommand>
 			<filename>$edits.xml$</filename>
-			<tooltip>Viewing: $edits.xml$</tooltip>
+			<tooltip>Viewing(colon) $edits.xml$</tooltip>
 		</rawedit>
-		<rawedit name="ro:panels.xml" readonly="true">
+		<rawedit name="ro(colon)panels.xml" readonly="true">
 			<precommand p1="Raw View">leftpanel</precommand>
 			<filename>$panels.xml$</filename>
-			<tooltip>Viewing: $panels.xml$</tooltip>
+			<tooltip>Viewing(colon) $panels.xml$</tooltip>
 		</rawedit>
-		<rawedit name="ro:scripts.xml" readonly="true">
+		<rawedit name="ro(colon)scripts.xml" readonly="true">
 			<precommand p1="Raw View">leftpanel</precommand>
 			<filename>$scripts.xml$</filename>
-			<tooltip>Viewing: $scripts.xml$</tooltip>
+			<tooltip>Viewing(colon) $scripts.xml$</tooltip>
 		</rawedit>
 	</rawedits>
 
@@ -51,14 +51,14 @@
 				<listby p1="#name"/>
 				<newRecordPattern>
 					<flow name="New Flow">
-						<variables>(leftbrace)(colon)example, Description of variable input field(colon)(rightbrace)</variables>
+						<variables>{(colon)example, Description of variable input field(colon)}</variables>
 					</flow>
 				</newRecordPattern>
 			</listbox>
-			<label zoom="main" text="Flow Control Directive Name:"/>
+			<label zoom="main" text="Flow Control Directive Name(colon)"/>
 			<textbox readonly="yes" zoom="main" width="200" field="#name"/>
 			<vspacer zoom="main" height="10"/>
-			<label zoom="main" text="Variable Prompts:"/>
+			<label zoom="main" text="Variable Prompts(colon)"/>
 			<editbox readonly="yes" zoom="main" field="variables"/>
 		</edit>
 
@@ -76,28 +76,28 @@
 				<newRecordPattern>
 					<abstract name="New Abstract">
 						<logical>name</logical>
-						<real>(leftbrace)(colon)name, Description of the name entry(colon)(rightbrace)</real>
-						<variables>(leftbrace)(colon)field1, Description of variable input field(colon)(rightbrace) (leftbrace)(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)(rightbrace) (leftbrace)(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)(rightbrace)</variables>
+						<real>{(colon)name, Description of the name entry(colon)}</real>
+						<variables>{(colon)field1, Description of variable input field(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)}</variables>
 					</abstract>
 				</newRecordPattern>
 			</listbox>
-			<label zoom="main" text="Abstraction Name / Description:"/>
+			<label zoom="main" text="Abstraction Name / Description(colon)"/>
 			<textbox readonly="yes" zoom="main" field="#name"/>
 			<vspacer zoom="main" height="10"/>
-			<label zoom="main" text="OPBM Command:"/>
+			<label zoom="main" text="OPBM Command(colon)"/>
 			<textbox readonly="yes" zoom="main" width="350" field="logical"/>
 			<vspacer zoom="main" height="10"/>
-			<label zoom="main" text="OPBM Variable Fields:"/>
+			<label zoom="main" text="OPBM Variable Fields(colon)"/>
 			<editbox readonly="yes" zoom="main" height="max" field="real"/>
 		</edit>
 
 		<edit name="atoms">
 			<precommand p1="Edit Atoms">leftpanel</precommand>
-			<label width="250" text="Atom Name/Description:"/>
+			<label width="250" text="Atom Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="#shortname"/>
-			<label width="250" text="Atom Listing:"/>
+			<label width="250" text="Atom Listing(colon)"/>
 			<listbox name="atom">
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
@@ -109,11 +109,11 @@
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label width="250" text="Operation Name/Description:"/>
+			<label width="250" text="Operation Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
-			<label width="250" text="Sequence of Operations:"/>
+			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
 				<clone>lookupbox_clone</clone>
@@ -127,7 +127,7 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control:"/>
+			<label text="Flow Control(colon)"/>
 			<lookupbox name="flows" autoupdate="no">
 				<add p1="atom" p2="elements" p3="flows">lookupbox_add</add>
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
@@ -135,7 +135,7 @@
 				<foreach>flow</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
-			<label text="Command Abstracts:"/>
+			<label text="Command Abstracts(colon)"/>
 			<lookupbox name="abstracts" autoupdate="no">
 				<add p1="atom" p2="elements" p3="abstracts">lookupbox_add</add>
 				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
@@ -149,11 +149,11 @@
 
 		<edit name="molecules">
 			<precommand p1="Edit Molecules">leftpanel</precommand>
-			<label text="Molecule Name/Description:"/>
+			<label text="Molecule Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="#shortname"/>
-			<label text="Molecules:" width="250"/>
+			<label text="Molecules(colon)" width="250"/>
 			<listbox name="molecule">
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
@@ -165,11 +165,11 @@
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label text="Sequence Name/Description:"/>
+			<label text="Sequence Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
-			<label text="Sequence of Operations:" width="250"/>
+			<label text="Sequence of Operations(colon)" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
 				<clone>lookupbox_clone</clone>
@@ -182,7 +182,7 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control:"/>
+			<label text="Flow Control(colon)"/>
 			<lookupbox name="flows" autoupdate="no">
 				<add p1="molecule" p2="elements" p3="flows">lookupbox_add</add>
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
@@ -190,7 +190,7 @@
 				<foreach>flow</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
-			<label text="Command Abstracts:"/>
+			<label text="Command Abstracts(colon)"/>
 			<lookupbox name="abstracts" autoupdate="no">
 				<add p1="molecule" p2="elements" p3="abstracts">lookupbox_add</add>
 				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
@@ -199,7 +199,7 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Atoms:"/>
+			<label text="Atoms(colon)"/>
 			<lookupbox name="atoms" autoupdate="no">
 				<add p1="molecule" p2="elements" p3="atoms">lookupbox_add</add>
 				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
@@ -213,11 +213,11 @@
 
 		<edit name="scenarios">
 			<precommand p1="Edit Scenarios">leftpanel</precommand>
-			<label text="Scenario Name/Description:"/>
+			<label text="Scenario Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="#shortname"/>
-			<label text="Scenarios:" width="250"/>
+			<label text="Scenarios(colon)" width="250"/>
 			<listbox name="scenario">
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
@@ -229,11 +229,11 @@
 				<foreach>scenario</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label text="Operation Name/Description:"/>
+			<label text="Operation Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
-			<label text="Sequence of Operations:" width="250"/>
+			<label text="Sequence of Operations(colon)" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
 				<clone>lookupbox_clone</clone>
@@ -246,7 +246,7 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control:"/>
+			<label text="Flow Control(colon)"/>
 			<lookupbox name="flows" autoupdate="no">
 				<add p1="scenario" p2="elements" p3="flows">lookupbox_add</add>
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
@@ -254,7 +254,7 @@
 				<foreach>flow</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
-			<label text="Command Abstracts:"/>
+			<label text="Command Abstracts(colon)"/>
 			<lookupbox name="abstracts" autoupdate="no">
 				<add p1="scenario" p2="elements" p3="abstracts">lookupbox_add</add>
 				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
@@ -263,7 +263,7 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Atoms:"/>
+			<label text="Atoms(colon)"/>
 			<lookupbox name="atoms" autoupdate="no">
 				<add p1="scenario" p2="elements" p3="atoms">lookupbox_add</add>
 				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
@@ -271,7 +271,7 @@
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
-			<label text="Molecules:"/>
+			<label text="Molecules(colon)"/>
 			<lookupbox name="molecules" autoupdate="no">
 				<add p1="scenario" p2="elements" p3="molecules">lookupbox_add</add>
 				<zoom p1="molecules" autopreview="yes">lookupbox_zoom</zoom>
@@ -285,11 +285,11 @@
 
 		<edit name="suites">
 			<precommand p1="Edit Suites">leftpanel</precommand>
-			<label text="Suite Name/Description:"/>
+			<label text="Suite Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="#shortname"/>
-			<label text="Suites:" width="250"/>
+			<label text="Suites(colon)" width="250"/>
 			<listbox name="suite">
 				<delete>listbox_delete</delete>
 				<clone>listbox_clone</clone>
@@ -301,11 +301,11 @@
 				<foreach>suite</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label text="Operation Name/Description:"/>
+			<label text="Operation Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters):"/>
+			<label width="250" text="Short Name (8 characters)(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
-			<label text="Sequence of Operations:" width="250"/>
+			<label text="Sequence of Operations(colon)" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<subtract>lookupbox_subtract</subtract>
 				<clone>lookupbox_clone</clone>
@@ -318,7 +318,7 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control:"/>
+			<label text="Flow Control(colon)"/>
 			<lookupbox name="flows" autoupdate="no">
 				<add p1="suite" p2="elements" p3="flows">lookupbox_add</add>
 				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
@@ -326,7 +326,7 @@
 				<foreach>flow</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
-			<label text="Command Abstracts:"/>
+			<label text="Command Abstracts(colon)"/>
 			<lookupbox name="abstracts" autoupdate="no">
 				<add p1="suite" p2="elements" p3="abstracts">lookupbox_add</add>
 				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
@@ -335,7 +335,7 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Atoms:"/>
+			<label text="Atoms(colon)"/>
 			<lookupbox name="atoms" autoupdate="no">
 				<add p1="suite" p2="elements" p3="atoms">lookupbox_add</add>
 				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
@@ -343,7 +343,7 @@
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
-			<label text="Molecules:"/>
+			<label text="Molecules(colon)"/>
 			<lookupbox name="molecules" autoupdate="no">
 				<add p1="suite" p2="elements" p3="molecules">lookupbox_add</add>
 				<zoom p1="molecules" autopreview="yes">lookupbox_zoom</zoom>
@@ -351,7 +351,7 @@
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
 			</lookupbox>
-			<label text="Scenarios:"/>
+			<label text="Scenarios(colon)"/>
 			<lookupbox name="scenarios" autoupdate="no">
 				<add p1="suite" p2="elements" p3="scenarios">lookupbox_add</add>
 				<zoom p1="scenarios" autopreview="yes">lookupbox_zoom</zoom>
@@ -365,9 +365,9 @@
 
 		<edit name="execute atoms">
 			<precommand p1="Execute Atoms">leftpanel</precommand>
-			<label width="250" text="Atom Description:"/>
+			<label width="250" text="Atom Description(colon)"/>
 			<textbox readonly="yes" width="250" field="#name"/>
-			<label width="250" text="Atom Listing:"/>
+			<label width="250" text="Atom Listing(colon)"/>
 			<listbox name="atom">
 				<onselect p1="elements">lookupbox_update</onselect>
 				<dblclick p1="atom">run_atom_sequence</dblclick>
@@ -376,9 +376,9 @@
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label width="250" text="Sequence Description:"/>
+			<label width="250" text="Sequence Description(colon)"/>
 			<textbox readonly="yes" width="250" field="elements.#name"/>
-			<label width="250" text="Sequence of Operations:"/>
+			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
@@ -406,9 +406,9 @@
 
 		<edit name="execute molecules">
 			<precommand p1="Execute Molecules">leftpanel</precommand>
-			<label width="250" text="Molecule Description:"/>
+			<label width="250" text="Molecule Description(colon)"/>
 			<textbox readonly="yes" width="250" field="#name"/>
-			<label width="250" text="Molecule Listing:"/>
+			<label width="250" text="Molecule Listing(colon)"/>
 			<listbox name="molecule">
 				<onselect p1="elements">lookupbox_update</onselect>
 				<dblclick p1="molecule">run_molecule_sequence</dblclick>
@@ -417,9 +417,9 @@
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label width="250" text="Sequence Description:"/>
+			<label width="250" text="Sequence Description(colon)"/>
 			<textbox readonly="yes" width="250" field="elements.#name"/>
-			<label width="250" text="Sequence of Operations:"/>
+			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
@@ -447,9 +447,9 @@
 
 		<edit name="execute scenarios">
 			<precommand p1="Execute Scenarios">leftpanel</precommand>
-			<label width="250" text="Scenario Description:"/>
+			<label width="250" text="Scenario Description(colon)"/>
 			<textbox readonly="yes" width="250" field="#name"/>
-			<label width="250" text="Scenario Listing:"/>
+			<label width="250" text="Scenario Listing(colon)"/>
 			<listbox name="scenario">
 				<onselect p1="elements">lookupbox_update</onselect>
 				<dblclick p1="scenario">run_scenario_sequence</dblclick>
@@ -458,9 +458,9 @@
 				<foreach>scenario</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label width="250" text="Sequence Description:"/>
+			<label width="250" text="Sequence Description(colon)"/>
 			<textbox readonly="yes" width="250" field="elements.#name"/>
-			<label width="250" text="Sequence of Operations:"/>
+			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
@@ -488,9 +488,9 @@
 
 		<edit name="execute suites">
 			<precommand p1="Execute Suites">leftpanel</precommand>
-			<label width="250" text="Suite Description:"/>
+			<label width="250" text="Suite Description(colon)"/>
 			<textbox readonly="yes" width="250" field="#name"/>
-			<label width="250" text="Suite Listing:"/>
+			<label width="250" text="Suite Listing(colon)"/>
 			<listbox name="suite">
 				<onselect p1="elements">lookupbox_update</onselect>
 				<dblclick p1="suite">run_suite_sequence</dblclick>
@@ -499,9 +499,9 @@
 				<foreach>suite</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label width="250" text="Sequence Description:"/>
+			<label width="250" text="Sequence Description(colon)"/>
 			<textbox readonly="yes" width="250" field="elements.#name"/>
-			<label width="250" text="Sequence of Operations:"/>
+			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
 				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
