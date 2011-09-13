@@ -15,9 +15,8 @@
 #include <../../common/ie/ieCommon.au3>
 
 outputDebug( "Simulating a success" )
-Sleep(1000)
 outputStatus( "Running test()" )
-Sleep(1000)
-outputTiming( "Simulated test result,10.0, 100.0" )
-outputStatus( "TimerFinish: Total Runtime,10.0" )
+outputTiming( "Simulated test result1,10.0, 100.0" )
+outputTiming( "Simulated test result2,9.0, 105.0" )
+outputStatus( "TimerFinish: Total Runtime,19.0" )
 Exit

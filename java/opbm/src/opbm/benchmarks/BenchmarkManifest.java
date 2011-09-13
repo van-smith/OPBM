@@ -1374,6 +1374,8 @@ public final class BenchmarkManifest
 	 */
 	public void run()
 	{
+		Xml result;
+
 		if (m_isManifestInError)
 		{	// We cannot run this manifest because it's in error
 			OpbmDialog od = new OpbmDialog(m_opbm, m_error, "Run Error", OpbmDialog._OKAY_BUTTON, "", "");
@@ -1404,6 +1406,25 @@ public final class BenchmarkManifest
 		m_bpa		= m_benchmarksMaster.getBPAtom();
 		m_bp.m_bm	= this;
 
+		// If this is a trial or official run...
+		if (isTrialRun() || isOfficialRun())
+		{	// Run the appropriate tags based on where we are
+			if (runHasNotYetStarted())
+			{	// Run the pre-run atoms
+				System.out.println("Executing \"before run\" atoms");
+				result = runAtomTags("atomBeforeRuns");
+			} else {
+				// Run the spinup atoms
+				System.out.println("Spinning up");
+				result = runAtomTags("atomOnSpinup");
+			}
+			if (result.getFirstChild() != null)
+			{	// At least one thing was done, record it
+				m_bmr.appendAtomRunResult(result);
+				saveManifest();
+			}
+		}
+
 		// Continue processing until we're done
 		while (m_processing)
 		{
@@ -1423,6 +1444,14 @@ public final class BenchmarkManifest
 		// shut down and continue.
 		// Record the time of this event
 		m_bmr.appendResultsAnnotation("shutdown", Utils.getTimestamp(), "");
+
+		// When the run is completely over, run the post-run atoms
+		if ((isTrialRun() || isOfficialRun()) && runIsNowCompletelyOver())
+		{	// Run the post-run atoms
+			System.out.println("Executing \"after run\" atoms");
+			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns"));
+		}
+
 
 		// Save the final/current result
 // REMEMBER The save is done three times here for now until the code is well-tested, and there are no exceptions thrown in the compute algorithms preventing a single post-operation save from storing the results.
@@ -2059,23 +2088,21 @@ public final class BenchmarkManifest
 	/**
 	 * Called to run the specified tags for all atom items in scripts.xml
 	 */
-/*
-	public void runAtomTags(String tagName)
+	public Xml runAtomTags(String tagName)
 	{
-		int i, j, k, failures;
-		boolean executed, ignoreThisOne;
+		int i, j, k;
+		boolean executed;
 		Xml thisAtom, candidate, autoExecute, success, failure, thisAtomResults, options, tag;
-		String manifestworkletuuid, atomsList, atomName, failureNames, successNames, autoUninstalledAlready;
-		List<String>	atoms			= new ArrayList<String>(0);		// atom names found in <atomOnFailure> tag
+		String atomsList, atomName, fullTagName, warning;
+		List<String>	atoms			= new ArrayList<String>(0);		// atom names found in <tagName> tag
 		List<Xml>		scriptsAtoms	= new ArrayList<Xml>(0);		// atoms from scripts.xml
 
 		// Load all of the scripts.xml atoms
 		Xml.getNodeList(scriptsAtoms, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 
-		autoExecute = new Xml("autoExecute_" + tagName);
+		autoExecute = new Xml("autoExecute");
 		autoExecute.appendAttribute(new Xml("time", Utils.getTimestamp()));
 		autoExecute.appendAttribute(new Xml("uuid", Utils.getUUID()));
-		m_bmr.getResultsDataRawResults().appendChild(autoExecute);
 
 		// Iterate through each one identifying if any of those executed
 		// atoms have a list of uninstall atoms to run on failure
@@ -2084,103 +2111,64 @@ public final class BenchmarkManifest
 			thisAtom	= scriptsAtoms.get(i);
 			candidate	= thisAtom.getChildNode("abstract");
 			if (candidate != null)
-			{	//
-				options		= thisAtom.getChildNode("options");
+			{	// The candidate is an abstract
+				options = candidate.getChildNode("options");
 				if (options != null)
-				{	// Search in the original run data to see what it is
-					tag = thisAtom.getChildNode(tagName);
+				{	// Grab its tag for this run
+					tag = options.getChildNode(tagName);
 					if (tag != null)
-					{	// We found a worklet to run
-						if (thisAtom.getName().equalsIgnoreCase("abstract") && candidate.getChildNode("options") != null)
-						{	// And it's an atom, see if it has a populated atomOnFailure tag
-							atomsList = candidate.getChildNode("options").getAttributeOrChild("atomOnFailure");
-							if (!atomsList.isEmpty())
-							{	// There are atoms to run, extract them and execute them one at a time
-								atoms.clear();
-								Utils.extractCommaItems(atoms, atomsList);
-								failureNames	= "";
-								successNames	= "";
-								failures		= 0;
-								for (j = 0; j < atoms.size(); j++)
-								{	// Grab this atom name
-									atomName = atoms.get(j);
-									// See if the atom is found in scripts.xml (as it may not have been included in the manifest.xml file or run data, but may exist externally as a "only-on-failure" cleanup state)
-									executed		= false;
-									ignoreThisOne	= false;
-									for (k = 0; k < scriptsAtoms.size(); k++)
-									{	// See if this scripts.xml atom matches
-										thisAtom = scriptsAtoms.get(k);
-										if (thisAtom.getAttribute("name").equalsIgnoreCase(atomName))
-										{	// We found it, see if we still need to execute it
-											autoUninstalledAlready = candidate.getAttribute("autoUninstall");
-											if (autoUninstalledAlready.isEmpty() || !autoUninstalledAlready.toLowerCase().contains(atomName.toLowerCase()))
-											{	// It hasn't already been run, or if it has, it failed previously, so we run it (or try again)
-												executed	= true;
-												success		= new Xml("success");
-												failure		= new Xml("failure");
-												// If success, executed = true, otherwise executed = false
+					{	// We found it, see if there are any options there
+						atomsList = tag.getText();
+						if (!atomsList.isEmpty())
+						{	// There are atoms to run, extract them and execute them one at a time
+							atoms.clear();
+							Utils.extractCommaItems(atoms, atomsList);
+							for (j = 0; j < atoms.size(); j++)
+							{	// Grab this atom name
+								atomName = atoms.get(j);
+								// See if the atom is found in scripts.xml (as it may not have been included in the manifest.xml file or run data, but may exist externally as a "only-on-failure" cleanup state)
+								executed = false;
+								for (k = 0; k < scriptsAtoms.size(); k++)
+								{	// See if this scripts.xml atom matches
+									thisAtom = scriptsAtoms.get(k);
+									if (thisAtom.getAttribute("name").equalsIgnoreCase(atomName))
+									{	// We found it, see if we still need to execute it
+										executed = true;
+										success	= new Xml("success");
+										failure	= new Xml("failure");
+										// If success, executed = true, otherwise executed = false
 
-											//////////
-											// Physically conduct the work of the atom
-												System.out.println("Auto-Uninstall " + atomName);
-												m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-											// End
-											//////////
-												thisAtomResults = new Xml("atomUninstall");
-												thisAtomResults.appendAttribute(new Xml("name", atomName));
-												thisAtomResults.appendAttribute(new Xml("uuid", Utils.getUUID()));
+									//////////
+									// Physically conduct the work of the atom
+										System.out.println(Utils.translateScriptsAbstractOptionsTagName(tagName) + ": " + atomName);
+										m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
+									// End
+									//////////
+										thisAtomResults = new Xml(tagName);
+										thisAtomResults.appendAttribute(new Xml("name", atomName));
+										thisAtomResults.appendAttribute(new Xml("uuid", Utils.getUUID()));
 
-												// Create an entry identifying this atom
-												thisAtomResults.appendChild(success);
-												thisAtomResults.appendChild(failure);
-												if (success.getFirstChild() != null)
-												{	// There was a success
-													thisAtomResults.appendAttribute("result", "success");
-												} else {
-													// Only failures
-													thisAtomResults.appendAttribute("result", "fail");
-												}
-
-												// Store the results good or bad
-												autoExecute.appendChild(thisAtomResults);
-
-												// Save this result
-												saveManifest();
-
-											} else {
-												if (autoUninstalledAlready.toLowerCase().contains(atomName.toLowerCase()))
-												{	// It's already been run
-													System.out.println("Auto-Uninstall " + atomName + " (indicated by \"" + candidate.getAttribute("name") + "\")already run previously, skipping");
-													ignoreThisOne = true;
-												}
-												//else it
-											}
-											// Update that it's been executed
-											break;
-										}
-									}
-									if (!ignoreThisOne)
-									{	// Items are ignored if they've already been run
-										if (!executed)
-										{	// We encountered an atomOnFailure that does not exist
-											++failures;
-											failureNames += (failureNames.isEmpty() ? "" : ", ") + atomName;
-											setError("Warning:  atomOnFailure \"" + atomName + "\" (indicated by \"" + candidate.getAttribute("name") + "\") was not found in scripts.xml");
+										// Create an entry identifying this atom
+										thisAtomResults.appendChild(success);
+										thisAtomResults.appendChild(failure);
+										if (success.getFirstChild() != null)
+										{	// There was a success
+											thisAtomResults.appendAttribute("result", "success");
 										} else {
-											// Success
-											successNames += (successNames.isEmpty() ? "" : ", ") + atomName;
+											// Only failures
+											thisAtomResults.appendAttribute("result", "fail");
 										}
+
+										// Store the results good or bad
+										autoExecute.appendChild(thisAtomResults);
+										break;
 									}
 								}
-								// When we get here, we've tried to run every atom
-								if (!failureNames.isEmpty())
-								{	// Append list of failed atoms that could not be run (by names)
-									candidate.appendAttribute(new Xml("autoUninstallFailure", failureNames));
-								}
-
-								if (!successNames.isEmpty())
-								{	// Append list of successful atoms
-									candidate.appendAttribute(new Xml("autoUninstalled", successNames));
+								if (!executed)
+								{	// This specified atom wasn't found
+									warning = "Warning: The specified atom named \"" + atomName + "\" (indicated by a " + Utils.translateScriptsAbstractOptionsTagName(tagName) + " on \"" + thisAtom.getAttribute("name") + "\") was not found, ignoring.";
+									System.out.println(warning);
+									autoExecute.appendChild(new Xml("warning", warning));
 								}
 							}
 						}
@@ -2188,11 +2176,9 @@ public final class BenchmarkManifest
 				}
 			}
 		}
-		// Save this result
-		saveManifest();
+		// Return the list of things we've executed
+		return(autoExecute);
 	}
-
-*/
 
 	/**
 	 * Returns the root node of the <manifest> tag
@@ -2221,6 +2207,72 @@ public final class BenchmarkManifest
 	public boolean isCompilationEmpty()
 	{
 		return(m_compilation.isEmpty());
+	}
+
+	/**
+	 * Is this an official run that's running?
+	 * opbm.benchmarks.control.run.#type = "official run"
+	 */
+	public boolean isOfficialRun()
+	{
+		String runtype = m_controlRun.getAttribute("type");
+
+		if (runtype != null)
+		{
+			if (runtype.toLowerCase().startsWith("official"))
+			{	// It is an official run
+				return(true);
+			}
+		}
+		return(false);
+	}
+
+	/**
+	 * Is this a trial run that's running?
+	 * opbm.benchmarks.control.run.#type = "trial run"
+	 */
+	public boolean isTrialRun()
+	{
+		String runtype = m_controlRun.getAttribute("type");
+
+		if (runtype != null)
+		{
+			if (runtype.toLowerCase().startsWith("trial"))
+			{	// It is a trial run
+				return(true);
+			}
+		}
+		return(false);
+	}
+
+	/**
+	 * Has the run started yet?
+	 * opbm.benchmarks.control.last.worklet.#uuid is empty
+	 */
+	public boolean runHasNotYetStarted()
+	{
+		String uuid = m_controlLastWorkletUuid.getText();
+
+		if (uuid == null || uuid.isEmpty())
+		{	// It has not started yet
+			return(true);
+		}
+		return(false);
+	}
+
+	/**
+	 * Is the run completely over now?
+	 * opbm.benchmarks.control.last.worklet.#uuid is "finished"
+	 */
+	public boolean runIsNowCompletelyOver()
+	{
+		String uuid = m_controlLastWorkletUuid.getText();
+
+		if (uuid != null && uuid.equalsIgnoreCase("finished"))
+		{	// It is over, the benchmark is completed
+			return(true);
+		}
+		return(false);
 	}
 
 	/**

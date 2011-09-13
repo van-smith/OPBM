@@ -84,8 +84,8 @@ public class WaitUntilIdle
 
 			}
 			try {
-				// Wait an extra 2 seconds (For the hud to display it so people can see it)
-				Thread.sleep(2000);
+				// Wait an extra second (For the hud to display it so people can see it)
+				Thread.sleep(1000);
 
 			} catch (InterruptedException ex) {
 			}
@@ -104,5 +104,5 @@ public class WaitUntilIdle
 		Utils.deleteDirectoryContents(Opbm.getScriptTempDirectory(), false);
 	}
 
-	private BenchmarkParams		m_bp;
+	private BenchmarkParams m_bp;
 }

@@ -819,7 +819,7 @@ public final class ResultsViewer
 		m_scrollbarBottom.setBounds(m_lblBottom.getX() + m_lblBottom.getWidth() - 20,
 									m_lblBottom.getY(),
 									20,
-									m_lblBottom.getHeight());
+									m_height);
 		m_scrollbarBottom.setVisible(true);
 		m_scrollbarBottom.addAdjustmentListener(this);
 		m_scrollbarBottom.addKeyListener(this);

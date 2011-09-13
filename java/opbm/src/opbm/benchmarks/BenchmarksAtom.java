@@ -1339,6 +1339,15 @@ public class BenchmarksAtom
 							try {
 								// Start the process (with its optional list of parameters)
 								m_bp.setLastWorkletStart(Utils.getTimestamp());
+
+// The following is used for debugging, to simulate successes for far more rapid testing
+// Simulate successes and failures
+//commandsAndParameters.clear();
+//if (Math.random() <= 0.2)	// 20% of the time run failures
+//	commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\failure\\failure.exe");
+//else	// The rest of hte time, run successes
+//	commandsAndParameters.add("c:\\cana\\java\\autoIT\\tests\\success\\success.exe");
+
 								builder = new ProcessBuilder(commandsAndParameters);
 								process = builder.start();
 
@@ -1614,13 +1623,6 @@ public class BenchmarksAtom
 
 			// Stop everything that may be "hanging around" out there
 			Opbm.stopProcesses();
-
-	//////////
-	//
-	// REMEMBER to save everything here we need to
-	//          the data we save is the current results.xml, the state of the
-	//          benchmark manifest (the entire benchmark we're running, where we
-	//////////
 		}
 
 		// This dialog will persist until the user clicks okay, or until the system
@@ -1632,6 +1634,8 @@ public class BenchmarksAtom
 			if (m_bp != null && m_bp.m_hud != null)
 				m_bp.m_hud.updateStatus("Executing shutdown...");
 
+// The following line is used for debugging, to keep it from rebooting between runs
+//System.exit(0);
 			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /r");
 
 			// Grab the output

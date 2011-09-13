@@ -1567,6 +1567,28 @@ public class Utils
 		}
 	}
 
+	/**
+	 * Certain tags have more easily readable meanings.  This method translates
+	 * the tag name into its readable meaning.
+	 */
+	public static String translateScriptsAbstractOptionsTagName(String tag)
+	{
+		String translation;
+
+		if (tag.equalsIgnoreCase("atomOnSpinup")) {
+			translation = "Spinup atom";
+		} else if (tag.equalsIgnoreCase("atomAfterRuns")) {
+			translation = "After Run atom";
+		} else if (tag.equalsIgnoreCase("atomBeforeRuns")) {
+			translation = "Before Run atom";
+		} else if (tag.equalsIgnoreCase("atomOnFailure")) {
+			translation = "Failure atom";
+		} else {
+			return(tag);
+		}
+		return(translation);
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

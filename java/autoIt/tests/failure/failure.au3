@@ -15,8 +15,5 @@
 #include <../../common/ie/ieCommon.au3>
 
 outputDebug( "Simulating a failure" )
-Sleep(1000)
-outputStatus( "Attempting to do something()" )
-Sleep(1000)
 outputError( "Failure" )
 Exit -1

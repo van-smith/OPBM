@@ -321,10 +321,10 @@
 			<atom name="Install 7zip" shortname="7zip">
 				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
-						<atomOnSpinup>Uninstall 7zip</atomOnSpinup>
-						<atomAfterRuns>Uninstall 7zip</atomAfterRuns>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall 7zip</atomBeforeRuns>
-						<atomOnFailure>Uninstall 7zip</atomOnFailure>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -377,10 +377,10 @@
 			<atom name="Install Opera" shortname="Opera">
 				<abstract name="Install Opera" shortname="Install" sourcename="execute">
 					<options>
-						<atomOnSpinup>Uninstall Opera</atomOnSpinup>
-						<atomAfterRuns>Uninstall Opera</atomAfterRuns>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Opera</atomBeforeRuns>
-						<atomOnFailure>Uninstall Opera</atomOnFailure>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -447,10 +447,10 @@
 			<atom name="Install Safari" shortname="Safari">
 				<abstract name="Install Safari" shortname="Install" sourcename="execute">
 					<options>
-						<atomOnSpinup>Uninstall Safari</atomOnSpinup>
-						<atomAfterRuns>Uninstall Safari</atomAfterRuns>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Safari</atomBeforeRuns>
-						<atomOnFailure>Uninstall Safari</atomOnFailure>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -559,10 +559,10 @@
 			<atom name="Install Chrome" shortname="Chrome">
 				<abstract name="Install Chrome" shortname="Install" sourcename="execute">
 					<options>
-						<atomOnSpinup>Uninstall Chrome</atomOnSpinup>
-						<atomAfterRuns>Uninstall Chrome</atomAfterRuns>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Chrome</atomBeforeRuns>
-						<atomOnFailure>Uninstall Chrome</atomOnFailure>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -629,10 +629,10 @@
 			<atom name="Install Firefox" shortname="Firefox">
 				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
-						<atomOnSpinup>Uninstall Firefox</atomOnSpinup>
-						<atomAfterRuns>Uninstall Firefox</atomAfterRuns>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Firefox</atomBeforeRuns>
-						<atomOnFailure>Uninstall Firefox</atomOnFailure>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
@@ -699,10 +699,10 @@
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
 				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
-						<atomOnSpinup>Uninstall Acrobat Reader</atomOnSpinup>
-						<atomAfterRuns>Uninstall Acrobat Reader</atomAfterRuns>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Acrobat Reader</atomBeforeRuns>
-						<atomOnFailure>Uninstall Acrobat Reader</atomOnFailure>
+						<atomOnFailure></atomOnFailure>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
