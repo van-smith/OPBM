@@ -264,12 +264,12 @@ public class BenchmarkManifestResults
 
 	/**
 	 * Appends the result of an atom run (pre-run atoms, post-run atoms, on-
-	 * spinup atoms, on-failuire atoms) to the results.
+	 * spinup atoms, on-failure atoms) to the results details.
 	 * @param result what to add
 	 */
 	public void appendAtomRunResult(Xml result)
 	{
-		m_rawResults.appendChild(result);
+		m_details.appendChild(result);
 	}
 
 	/**

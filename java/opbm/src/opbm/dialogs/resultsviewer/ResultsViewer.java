@@ -184,7 +184,7 @@ public final class ResultsViewer
 		// Score
 		font	= new Font("Calibri", Font.BOLD, 48);
 		rect	= new Rectangle(0, 0, img.getWidth(), 20);
-		score	= Integer.toString((int)m_rootRVL.getAverageTabScore());
+		score	= Utils.removeLeadingZeros(Utils.doubleToString((Double)m_rootRVL.getAverageTabScore(), 3, 0));
 		if (score.length() > 3)
 			score = "999";
 		img.drawStringInRectangle(rect, score, Color.WHITE, font, 255, true);
@@ -197,7 +197,7 @@ public final class ResultsViewer
 		m_lblScoreboard.setIcon(new ImageIcon(img.getBufferedImage()));
 
 		// Update the time and score portions
-		time		= Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff((int)m_rootRVL.getAverageTabTime()));
+		time		= Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff((Double)m_rootRVL.getAverageTabTime()));
 		successes	= Integer.toString(m_rootRVL.getComputedSuccesses());
 		failures	= Integer.toString(m_rootRVL.getComputedFailures());
 

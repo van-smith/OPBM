@@ -2006,13 +2006,13 @@ public final class BenchmarkManifest
 			// Right now, scriptsAtoms is populated with every atom entry
 		}
 		// See if there is already an uninstall tag
-		autoUninstall = m_bmr.getResultsDataRawResults().getChildNode("autoUninstalls");
+		autoUninstall = m_bmr.getResultsDataDetails().getChildNode("autoUninstalls");
 		if (autoUninstall == null)
 		{	// Nope, add it
 			autoUninstall = new Xml("autoUninstalls");
 			autoUninstall.appendAttribute(new Xml("time", Utils.getTimestamp()));
 			autoUninstall.appendAttribute(new Xml("uuid", Utils.getUUID()));
-			m_bmr.getResultsDataRawResults().appendChild(autoUninstall);
+			m_bmr.appendAtomRunResult(autoUninstall);
 		}
 
 		// Iterate through each one identifying if any of those executed

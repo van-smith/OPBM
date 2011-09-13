@@ -1,3 +1,0 @@
-**************************************
-08/21/2011  03:08:42
-safariKraken.exe:-1: WinWait: Safari: Unable to find Window.
