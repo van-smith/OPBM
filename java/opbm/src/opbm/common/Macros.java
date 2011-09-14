@@ -178,13 +178,21 @@ public class Macros
 	// edits.xml
 	// panels.xml
 	// scripts.xml
+	// manifest.xml
+	// results.xml
+	// results.csv
 				} else if (macro.equalsIgnoreCase("edits.xml")) {
 					macroSubstitution = Opbm.locateFile("edits.xml");
 				} else if (macro.equalsIgnoreCase("panels.xml")) {
 					macroSubstitution = Opbm.locateFile("panels.xml");
 				} else if (macro.equalsIgnoreCase("scripts.xml")) {
 					macroSubstitution = Opbm.locateFile("scripts.xml");
-
+				} else if (macro.equalsIgnoreCase("manifest.xml")) {
+					macroSubstitution = Opbm.getRunningDirectory() + "manifest.xml";
+				} else if (macro.equalsIgnoreCase("results.xml")) {
+					macroSubstitution = Opbm.getHarnessXMLDirectory() + "results.xml";
+				} else if (macro.equalsIgnoreCase("results.csv")) {
+					macroSubstitution = Opbm.getHarnessCSVDirectory() + "results.csv";
 
 	//////////
 	// Unrecognized, remove its invalid contents

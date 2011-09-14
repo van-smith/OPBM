@@ -457,7 +457,7 @@ public final class HUD extends DroppableFrame
 				}
 			};
 			t.start();
-			m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP;
+			m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_USER_CLICKED_STOP;
 		}
 	}
 

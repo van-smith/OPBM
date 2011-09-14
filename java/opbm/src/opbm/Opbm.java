@@ -2055,6 +2055,22 @@ public final class Opbm extends	ModalApp
 		return(m_commandMaster);
 	}
 
+	/**
+	 * Takes the
+	 */
+	public void translateManifestToResults(String fileName)
+	{
+		BenchmarkManifest bm;
+		OpbmDialog od;
+
+		bm = new BenchmarkManifest(m_opbm);
+		bm.reloadManifestAndComputeResultsXml(fileName);
+		if (bm.isManifestInError())
+			od = new OpbmDialog(m_opbm, "There was an error while processing manifest.xml", "Error", OpbmDialog._CANCEL_BUTTON, "", "");
+		else
+			createAndShowResultsViewer(Opbm.getHarnessXMLDirectory() + "results.xml");
+	}
+
 	public void benchmarkLaunchTrialRun(boolean automated)
 	{
 		m_benchmarkMaster.benchmarkLaunchTrialRun(automated);
@@ -2906,6 +2922,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.14 03:42am";
+	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.14 06:15pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

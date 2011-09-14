@@ -76,7 +76,7 @@ public class Benchmarks
 		if (!automated)
 		{	// We have to check the user response
 			result = m_opbm.getDialogResponse("trial");
-			if (!result.equalsIgnoreCase("go"))
+			if (!result.toLowerCase().contains("go"))
 			{	// User cancelled
 				return;
 			}
@@ -141,7 +141,7 @@ public class Benchmarks
 		if (!automated)
 		{	// We have to check the user response
 			result = m_opbm.getDialogResponse("official");
-			if (!result.equalsIgnoreCase("go"))
+			if (!result.toLowerCase().contains("go"))
 			{	// User cancelled
 				return;
 			}

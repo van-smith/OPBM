@@ -64,6 +64,11 @@
 				<command>gather_debug_info</command>
 				<tooltip>Load system data into a debugInfo.xml file for email or public posting to/for the developer</tooltip>
 			</menu>
+			<menu>
+				<text>Manifest -$gt$ Results</text>
+				<command p1="$manifest.xml$">translate_manifest_to_results</command>
+				<tooltip>Translates a specified manifest.xml file into a results.xml file</tooltip>
+			</menu>
 			<spacer/>
 			<spacer/>
 			<heading>

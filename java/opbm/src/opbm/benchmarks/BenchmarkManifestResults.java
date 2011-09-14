@@ -67,6 +67,7 @@ import opbm.Opbm;
 import opbm.common.Tuple;
 import opbm.common.Utils;
 import opbm.common.Xml;
+import opbm.dialogs.OpbmDialog;
 
 public class BenchmarkManifestResults
 {
@@ -74,9 +75,11 @@ public class BenchmarkManifestResults
 	 * Constructor, this class is used for storing and querying results data
 	 * by BenchmarkManifest and the Results Viewer
 	 */
-	public BenchmarkManifestResults(BenchmarkManifest bm)
+	public BenchmarkManifestResults(Opbm				opbm,
+									BenchmarkManifest	bm)
 	{
 		m_bm		= bm;
+		m_opbm		= opbm;
 		m_isLoaded	= false;
 	}
 
@@ -398,6 +401,352 @@ public class BenchmarkManifestResults
 	}
 
 	/**
+	 * Completes any incomplete timing entries for an early-aborted run, or
+	 * a multi-pass run where there were total failures on one or more of the
+	 * passes, yet at least one success.
+	 *
+	 * Iterate through all opbm.benchmarks.mainfest.run.abstract entries,
+	 * loading in all timing data for each atom per run, and comparing the
+	 * timing entries.  If there are any missing in any run, then we obtain
+	 * the longest unique list from all runs, excepting the "--failure--"
+	 * auto-added entries, and add them to each one that has them missing, with
+	 * a 0 score and 0 time for each.
+	 */
+	public void completeAnyIncompleteAbstractTimings(boolean saveManifest)
+	{
+		int i, j, k, l, thisRun, maxRuns;
+		boolean found, anythingChanged;
+		String atomuuid, manifestworkletuuid, thisTimingName, uuid;
+		Xml thisAbstract, result, timing, candidate;
+		List<Xml>		timings				= new ArrayList<Xml>(0);
+		List<Xml>		manifestAbstracts	= new ArrayList<Xml>(0);
+		List<Xml>		results				= new ArrayList<Xml>(0);
+		List<String>	runElementsUniqueList			= new ArrayList<String>(0);
+		Tuple abstractData, runNtimingElements, run;
+
+//////////
+// manifestAbstracts contains one element for every
+// opbm.benchmarks.manifest.run.abstract entry (every
+// atom that was run, for all of the runs).
+/////
+		Xml.getNodeListContainingThisAttributeName(manifestAbstracts, m_bm.getManifestRoot(), "atomuuid", true);
+		if (!manifestAbstracts.isEmpty())
+		{	// Find out how many runs there were
+			maxRuns = Math.min(Utils.getValueOf(manifestAbstracts.get(0).getParent().getAttribute("max"), 0), 3);
+
+			// Grab all of the results into an easily navigable listing
+			Xml.getNodeList(results, m_rawResults.getFirstChild(), "result", false);
+//////////
+//
+// STEP 1
+//
+// abstractData sums up manifestAbstracts in such a way that it contains one
+// entry for every atomuuid in all of the opbm.benchmarks.manifest.run.abstract
+// entries.  By doing this, and since each atom should contain a unique uuid
+// that is only run once per benchmark, abstractData can serve as a repository
+// for instance data of each run's timing events and result output.
+//
+// Each abstractData element therefore contains data for (up to) three runs:
+//		Runs 1, 2 and 3
+//		With each run containing:
+//				(a) its recorded/captured timing elements, and
+//				(b) the results tag in opbm.resultsdata.rawResults
+//
+// Note:  This information appears in these slots/positions:
+//			(a) elements occupy Tuple slots second,third and fourth
+//			(b) elements occupy Tuple slots fifth,sixth and seventh
+/////
+			abstractData = new Tuple();
+			// Iterate through everything that's for each run, loading its run's timing events and result Xml tag into these positions:
+			//	first		= ArrayList<String> of 0=atomuuid, 1=manifestworkletuuid
+			//	second		= run1 timing data elements
+			//	third		= run2 timing data elements
+			//	fourth		= run3 timing data elements
+			//	fifth		= run1 resultsdata.rawResults.result entry (parent of its timing entries)
+			//	sixth		= run2 resultsdata.rawResults.result entry (parent of its timing entries)
+			//	seventh		= run3 resultsdata.rawResults.result entry (parent of its timing entries)
+			for (i = 0; i < manifestAbstracts.size(); i++)
+			{	// For each entry, lookup its timing elements, and add them to the appropriate run slot
+				thisAbstract		= manifestAbstracts.get(i);
+				thisRun				= Utils.getValueOf(thisAbstract.getParent().getAttribute("this"), 0);
+				atomuuid			= thisAbstract.getAttribute("atomuuid");
+				if (thisRun >= 1 && thisRun <= maxRuns)
+				{
+					// See if this atomuuid already exists in the atomData tuple
+					found = false;
+					for (j = 0; j < abstractData.size(); j++)
+					{
+						if (abstractData.getFirst(j).equalsIgnoreCase(atomuuid))
+						{	// We found a match
+							found = true;
+							break;
+						}
+					}
+
+					if (!found)
+					{	// Adding a new entry to record this run's data
+						j = abstractData.add(atomuuid, /*run1*/		new Tuple(),	/*run2*/	new Tuple(),	/*run3*/	new Tuple(),
+													   /*result1*/	null,			/*result2*/	null,			/*result3*/	null);
+
+						// Each new Tuple just added (in second, third and fourth positions,
+						// for run1, run2 and run3) each contains these elements within:
+						//		first		= timing element name
+						//		second		= time (as a String)
+						//		third		= score (as a String)
+						//		fourth		= uuid
+					}
+					//else j is set from above where the previous atomuuid entry was found, and it broke out of the for..loop
+
+				} else {
+					// We ignore runs beyond 3, or below 1
+					runNtimingElements	= null;
+					System.out.println("Error: Manifest.xml contains malformed run data relative to atomuuid=" + atomuuid + ", ignoring its data");
+					// No results data was found, so we have to create fill-in/false data for it
+					// If it does not match the entries from the other runs, it will be supplanted below
+				}
+			}
+
+//////////
+//
+// STEP 2
+//
+// Iterate through the results data, and load all data for the atom entries for
+// the run they relate to
+//
+/////
+			for (i = 0; i < results.size(); i++)
+			{
+				result = results.get(i);
+				// See what this result backs into
+				// Grab the manifestworkletuuid and find its parent/source
+				// entry in the manifestAbstracts, this will tell us what
+				// run the data was recorded for, and then we'll use the
+				// atomuuid to find the slot/entry in abstractData and
+				// populate the appropraite runN entry.
+				timings.clear();
+				Xml.getNodeList(timings, result.getFirstChild(), "timing", false);
+				manifestworkletuuid	= result.getAttribute("manifestworkletuuid");
+				atomuuid			= result.getAttribute("atomuuid");
+				found				= false;
+				for (j = 0; j < manifestAbstracts.size(); j++)
+				{
+					if (manifestAbstracts.get(j).getAttribute("uuid").equalsIgnoreCase(manifestworkletuuid))
+					{	// This is the match
+						found = true;
+						break;
+					}
+				}
+				if (found)
+				{	// It should ALWAYS be found, unless the manifest is corrupted
+					thisRun = Utils.getValueOf(manifestAbstracts.get(j).getParent().getAttribute("this"), 0);
+					if (thisRun >= 1 && thisRun <= maxRuns)
+					{	// Find the associated abstractData entry
+						found = false;
+						for (k = 0; k < abstractData.size(); k++)
+						{
+							if (abstractData.getFirst(k).equalsIgnoreCase(atomuuid))
+							{	// We found it
+								found = true;
+								break;
+							}
+						}
+						if (found)
+						{	// Load the timing elements to the appropriate runN entry
+							runNtimingElements	= (Tuple)abstractData.getNumbered(/*runN*/thisRun+1, k);	// Get second,third or fourth
+							abstractData.setNumbered(thisRun+4, k, result);									// Set fifth,sixth or seventh
+							for (l = 0; l < timings.size(); l++)
+							{
+								timing = timings.get(l);
+								runNtimingElements.add(timing.getAttribute("name"), timing.getAttribute("time"), timing.getAttribute("score"), timing.getAttribute("uuid"));
+							}
+							// When we get here, every element is added to this entry's run number
+						}
+					}
+				}
+			}
+			// When we get here, every result has been applied to its appropriate atomuuid-based run number
+
+//////////
+//
+// STEP 3
+//
+// Take the list of populated entries, and fill in anything that doesn't have
+// any timing data with a "--failure--" entry, so it can be conglomerated
+// together properly in step 4 below.
+//
+/////
+			for (i = 0; i < manifestAbstracts.size(); i++)
+			{	// For every manifestworkletuuid, lookup its atomuuid, and make
+				// sure it has timing element and result data
+				thisAbstract			= manifestAbstracts.get(i);
+				manifestworkletuuid		= thisAbstract.getAttribute("uuid");
+				atomuuid				= thisAbstract.getAttribute("atomuuid");
+				thisRun					= Utils.getValueOf(thisAbstract.getParent().getAttribute("this"), 0);
+				if (thisRun >= 1 && thisRun <= maxRuns)
+				{	// It's a valid run number
+					for (j = 0; j < abstractData.size(); j++)
+					{	// Try to find the abstractData run-grouping element
+						if (abstractData.getFirst(j).equalsIgnoreCase(atomuuid))
+						{	// We found it, now check this run item
+							runNtimingElements	= (Tuple)abstractData.getNumbered(/*runN*/   thisRun+1, j);		// Get second,third or fourth
+							result				= (Xml)	 abstractData.getNumbered(/*resultN*/thisRun+4, j);		// Get fifth,sixth or seventh
+							if (result == null)
+							{	// There is no result entry for this one manifestworkletuuid, so we have add it as a placeholder
+								// See if there's an entry by manifestworkletuuid
+								result = new Xml("resultNew");
+								m_rawResults.appendChild(result);
+								result.appendAttribute("manifestworkletuuid",	manifestworkletuuid);
+								result.appendAttribute("atomuuid",				atomuuid);
+								result.appendAttribute("start",					Utils.getTimestamp());
+								result.appendAttribute("end",					Utils.getTimestamp());
+								result.appendAttribute("status",				"failure");
+								result.appendAttribute("score",					"0.0");
+								result.appendAttribute("uuid",					Utils.getUUID());
+								abstractData.setNumbered(thisRun+4, j, result);	// set the fifth,sixth or seventh for this (j) item
+							}
+							timings.clear();
+							Xml.getNodeList(timings, result.getFirstChild(), "timing", true);
+							if (timings.isEmpty())
+							{	// There are no timing entries for this record, add one as a placeholder
+								runNtimingElements.add("--failure--", "0.0", "0.0", Utils.getUUID());
+							}
+							// When we get here, we have the result entry guaranteed.
+							// We also have at least one timing entry guaranteed.
+							break;
+						}
+					}
+				}
+			}
+
+//////////
+//
+// STEP 4
+//
+// When we get here, we have all recorded timing elements for all runs loaded
+// for all atomuuids.  The next step is to take that list of timing elements
+// recorded for every atomuuid for each run, and combine them into a single
+// conglomerate that has a unique list of every timing item encountered.  This
+// will address instances where only run1 ran, and the user stopped the test
+// before completing runs 2 and 3, or if the tests simply failed on runs 2 and
+// 3, etc.
+//
+// Once gathered into the single-source conglomeration, each run is then
+// iterated back through to ensure that it contains every element.  Doing this
+// addresses all instances where not all tests produced all result entries, or
+// if there were failures on a specific pass and only a single "--failure--"
+// entry was recorded by the harness, it is now bypassed to include the actual
+// recorded timing entries for the test(s) that did pass, such that every run
+// entry then contains the full set of timing items, as though each had
+// received them from their associated script, though in these instances where
+// we are "back-filling" with false/filler data, the data comes from a real-
+// world examination about what data the instance(s) that did pass produced.
+//
+// This very complex variable set of variables (which itself contains an
+// additional set of variables (the timing events)) is necessary to address the
+// flexible nature of the scripting engine and its unknown-in-advance-or-by-
+// the-harness method of producing timing events.
+//
+// This algorithm simply processes whatever it is fed, up to a 3-run pass,
+// with "--failure--" events being tagged on completely blank entries (no
+// success or failure was recorded by the harness, meaning the script never
+// ran).
+//
+/////
+			// For mental reference, these positions are used below in the "for (i.." loop
+			//run1		= (Tuple) abstractData.getSecond(i);
+			//run2		= (Tuple) abstractData.getThird(i);
+			//run3		= (Tuple) abstractData.getFourth(i);
+			//result1	= (Xml)   abstractData.getFifth(i);
+			//result2	= (Xml)   abstractData.getSixth(i);
+			//result3	= (Xml)   abstractData.getSeventh(i);
+
+			// Make sure each abstract entry (each atom that was run) contains the same entries in each run's position
+			anythingChanged = false;
+			for (i = 0; i < abstractData.size(); i++)
+			{	// Load the base "pointers" for each run
+
+				// Create a unique list of every entry in run1, run2 and run3, all conglomerated together in runElements
+				runElementsUniqueList.clear();
+				for (j = 0; j < maxRuns; j++)
+				{	// Iterate through each one building the unique list
+					run		= (Tuple)abstractData.getNumbered(j+2, i);		// get the runN		(second,third or fourth) for this (i) item
+					result	= (Xml)  abstractData.getNumbered(j+5, i);		// get the resultN	(fifth,sixth or seventh) for this (i) item
+					for (k = 0; k < run.size(); k++)
+					{	// See if these elements are present in the runElementsUniqueList tuple
+						thisTimingName	= run.getFirst(k);
+						found			= false;
+						for (l = 0; l < runElementsUniqueList.size(); l++)
+						{	// See if thisTimingName is already in the unique list
+							if (thisTimingName.equalsIgnoreCase(runElementsUniqueList.get(l)))
+							{	// It is, we have this one already, so stop looking for this one
+								found = true;
+								break;
+							}
+						}
+						if (!found)
+						{	// It wasn't already in htere, so add this entry
+							runElementsUniqueList.add(thisTimingName);
+						}
+					}
+				}
+				// When we get here, runElements contains a completely filled
+				// and unique list of entries for all three runs.
+
+				if (runElementsUniqueList.size() > 1)
+				{	// If there is more than 1 run, and any of the run entries are
+					// named "--failure--", then we delete it.
+					for (j = 0; j < runElementsUniqueList.size(); j++)
+					{
+						if (runElementsUniqueList.get(j).equalsIgnoreCase("--failure--"))
+						{	// Delete this entry
+							runElementsUniqueList.remove(j);
+							// It's a unique list, so we can be guaranteed this was the only one
+							break;
+						}
+					}
+				}
+
+				// For each run, add any item that is not present within
+				for (j = 0; j < maxRuns; j++)
+				{	// This time we're looking to see if an entry exists within
+					// the run, and if not, then we append it to its opbm.resultsdata.rawResults.result entry
+					run		= (Tuple)abstractData.getNumbered(j+2, i);		// get second,third or fourth for this (i) item
+					result	= (Xml)  abstractData.getNumbered(j+5, i);		// get fifth,sixth or seventh for this (i) item
+
+					// Now, append all timing elements to it
+					for (k = 0; k < runElementsUniqueList.size(); k++)
+					{	// See if this full unique set of elements is present in the run's entries
+						thisTimingName	= runElementsUniqueList.get(k);
+						found			= false;
+						for (l = 0; l < run.size(); l++)
+						{	// Check this unique list entry against everything in the run
+							if (thisTimingName.equalsIgnoreCase(run.getFirst(l)))
+							{	// We have this one already, so stop looking for it
+								found = true;
+								break;
+							}
+						}
+						if (!found || thisTimingName.equalsIgnoreCase("--failure--"))
+						{	// Add this entry to the results
+							anythingChanged = true;
+							timing = new Xml("timing");
+							timing.appendAttribute("name",	thisTimingName);
+							timing.appendAttribute("score", "0.0");
+							timing.appendAttribute("time",	"0.0");
+							timing.appendAttribute("uuid",	Utils.getUUID());
+							result.appendChild(timing);
+						}
+					}
+				}
+				// When we get here, everything for this manifestworkletuuid has been set
+				// All of the runs have data which match all of the other runs
+			}
+			// When we get here, every abstract (atom operation/worklet that was run) has its correct timing data
+			m_bm.saveManifest();	// Save the new results
+		}
+	}
+
+	/**
 	 * Computes the aggregate totals by uuid (each instance of a run, averaged
 	 * across multiple passes), along with atomuuid (each instance of an atom,
 	 * no matter where it occurs, averaged by the number of instances total)
@@ -410,11 +759,27 @@ public class BenchmarkManifestResults
 	 *				<atomuuid count="1" timeAverage="01:01" timeMean="01:01" timeMin="01:01" timeMax="01:01" scoreAverage="0" scoreMean="0" scoreMin="0" scoreMax="0" scoreCV="0">whatever</atomuuid>
 	 *			</byatom>
 	 *		</aggregate>
+	 * @param retireOldAggregateData should old data be retired?  If yes, all tags are
+	 * appended with an "old" moniker, and the attribute "retired" is added,
+	 * set to Utils.getTimestamp().
 	 */
-	public void computeAggregateTotals()
+	public void computeAggregateTotals(boolean retireOldData)
 	{
 		List<Xml> manifestAtoms			= new ArrayList<Xml>(0);
 		Tuple byAtom					= new Tuple();
+
+		// Retire (or delete) the old data
+		if (retireOldData)
+		{	// Retiring renames the tag from <aggregate> to <aggregateOld>
+			// and adds a "retired" attribute set to Utils.getTimestamp()
+			retireOldAggregateData();
+			retireOldResultsData();
+		} else {
+			// Deleting supplants the previous data completely, which is then
+			// garbage collected
+			deleteOldAggregateData();
+			deleteOldResultsData();
+		}
 
 		// Verify all of atom data in the manifest has a score
 		Xml.getNodeListContainingThisAttributeName(manifestAtoms, m_bm.getManifestRoot(), "atomuuid", true);
@@ -458,7 +823,7 @@ public class BenchmarkManifestResults
 			{
 				if (byAtom.getFirst(j).equalsIgnoreCase(atomuuid))
 				{	// This is a match, update it
-					byAtom.setSecond(j, (Integer)byAtom.getSecond(j) + 1);
+					byAtom.addSecondInteger(j, 1);	// byAtom.getSecond(j) += 1;
 					updated = true;
 					break;
 				}
@@ -482,8 +847,8 @@ public class BenchmarkManifestResults
 	 */
 	public void populateSourceDataIntoByAtomLists(Tuple byAtom)
 	{
-		int i, count, successCount, failureCount;
-		Xml result, timing, detail, success, failure;
+		int i, count, successCount, failureCount, thisRun, maxRun;
+		Xml result, timing, detail, success, failure, source;
 		double time, percentOfBaseline;
 		String atomuuid, description, manifestworkletuuid;
 		Tuple sourceData;
@@ -499,80 +864,98 @@ public class BenchmarkManifestResults
 				++count;
 
 				// Grab our related-to-uuids
-				atomuuid = result.getAttribute("atomuuid");
+				atomuuid			= result.getAttribute("atomuuid");
+				manifestworkletuuid	= result.getAttribute("manifestworkletuuid");
+				if (!manifestworkletuuid.isEmpty())
+				{	// Runs are only valid if everything is valid
+					source = m_bm.getManifestRoot().getNodeByAttributeNameEqualsValue("uuid", manifestworkletuuid, false);
+					if (source != null)
+					{	// We need to back into the source manifest.run.abstract entry to find its this and max values, to know how many entries their should be
+						thisRun		= Utils.getValueOf(source.getParent().getAttribute("this"), 1);
+						maxRun		= Utils.getValueOf(source.getParent().getAttribute("max"), 3);
 
-				// Iterate through byAtom (for atomuuid)
-				for (i = 0; i < byAtom.size(); i++)
-				{	// Find this entry
-					if (byAtom.getFirst(i).equalsIgnoreCase(atomuuid))
-					{	// We found our match
-						// Add the totals lines
-						timing		= result.getFirstChild();
-						sourceData	= (Tuple)byAtom.getThird(i);
-						if (timing != null)
-						{	// Store all worklets (points of timing data)
-							while (timing != null)
-							{	// Add each line in turn as raw data to the tuple
-								if (timing.getName().equalsIgnoreCase("timing"))
-								{	//
-									description			= timing.getAttribute("name");
-									time				= Double.valueOf(timing.getAttribute("time"));
-									percentOfBaseline	= Double.valueOf(timing.getAttribute("score"));
+						// Iterate through byAtom (for atomuuid)
+						for (i = 0; i < byAtom.size(); i++)
+						{	// Find this entry
+							if (byAtom.getFirst(i).equalsIgnoreCase(atomuuid))
+							{	// We found our match
+								// Add the totals lines
+								timing		= result.getFirstChild();
+								sourceData	= (Tuple)byAtom.getThird(i);
+								if (timing != null)
+								{	// Store all worklets (points of timing data)
+									while (timing != null)
+									{	// Add each line in turn as raw data to the tuple
+										if (timing.getName().equalsIgnoreCase("timing"))
+										{	//
+											description			= timing.getAttribute("name");
+											time				= Double.valueOf(timing.getAttribute("time"));
+											percentOfBaseline	= Double.valueOf(timing.getAttribute("score"));
 
-									// Add the line to the sourceData tuple:
-									//		first	= description
-									//		second	= time
-									//		third	= percent of baseline (score)
-									//		fourth	= result xml line
-									//		fifth	= timing xml line
-									sourceData.add(description, Double.valueOf(time), Double.valueOf(percentOfBaseline), result, timing);
+											// Add the line to the sourceData tuple:
+											//		first	= description
+											//		second	= time
+											//		third	= percent of baseline (score)
+											//		fourth	= result xml line
+											//		fifth	= timing xml line
+											//		sixth	= this run number
+											//		seventh	= max runs
+											sourceData.add(description, Double.valueOf(time), Double.valueOf(percentOfBaseline), result, timing, Integer.valueOf(thisRun), Integer.valueOf(maxRun));
+										}
+										// Move to next sibling
+										timing = timing.getNext();
+									}
+
+								} else {
+									// There is no timing data for this atom
+									// See if there are any failures noted for it
+									manifestworkletuuid = result.getAttribute("manifestworkletuuid");
+									detail	= m_details.getNodeByAttributeNameEqualsValue("manifestworkletuuid", manifestworkletuuid, false);
+									if (detail != null)
+									{	// We have the detail line, see if there is a failure tag
+										success = detail.getChildNode("success");
+										failure = detail.getChildNode("failure");
+
+										successCount = 0;
+										while (success != null)
+										{	// Count the number of success entries for our summary line (should always be zero)
+											success = success.getNext();
+											++successCount;
+										}
+
+										failureCount = 0;
+										while (failure != null)
+										{	// Count the number of failure entries for our summary line (should always be one more more)
+											failure = failure.getNext();
+											++failureCount;
+										}
+
+/*
+										// Create our artificial timing line
+										timing = new Xml("timing");
+										timing.appendAttribute("name",	Utils.getNumberName(successCount) + Utils.singularOrPlural(successCount, " success, ", " successes, ") + Utils.getNumberName(failureCount) + Utils.singularOrPlural(failureCount, " failure", " failures"));
+										timing.appendAttribute("time",	"-1.0");
+										timing.appendAttribute("score",	"-1.0");
+										sourceData.add("Atom failed", Double.valueOf(-1.0), Double.valueOf(-1.0), result, timing, Integer.valueOf(thisRun), Integer.valueOf(maxRun));
+
+ */
+
+									} else {
+										// No timing data at all, success or failure, so we create an artificial line and report it
+/*
+										timing = new Xml("timing");
+										timing.appendAttribute("name",	"Error: No Timing Data");
+										timing.appendAttribute("time",	"-1.0");
+										timing.appendAttribute("score",	"-1.0");
+										sourceData.add("Manifest.xml is in error, no timing data available", Double.valueOf(-1.0), Double.valueOf(-1.0), result, timing, Integer.valueOf(thisRun), Integer.valueOf(maxRun));
+
+ */
+									}
 								}
-								// Move to next sibling
-								timing = timing.getNext();
-							}
-
-						} else {
-							// There is no timing data for this atom
-							// See if there are any failures noted for it
-							manifestworkletuuid = result.getAttribute("manifestworkletuuid");
-							detail = m_details.getNodeByAttributeNameEqualsValue("manifestworkletuuid", manifestworkletuuid, false);
-							if (detail != null)
-							{	// We have the detail line, see if there is a failure tag
-								success = detail.getChildNode("success");
-								failure = detail.getChildNode("failure");
-
-								successCount = 0;
-								while (success != null)
-								{	// Count the number of success entries for our summary line (should always be zero)
-									success = success.getNext();
-									++successCount;
-								}
-
-								failureCount = 0;
-								while (failure != null)
-								{	// Count the number of failure entries for our summary line (should always be one more more)
-									failure = failure.getNext();
-									++failureCount;
-								}
-
-								// Create our artificial timing line
-								timing = new Xml("timing");
-								timing.appendAttribute("name",	Utils.getNumberName(successCount) + Utils.singularOrPlural(successCount, " success, ", " successes, ") + Utils.getNumberName(failureCount) + Utils.singularOrPlural(failureCount, " failure", " failures"));
-								timing.appendAttribute("time",	"-1.0");
-								timing.appendAttribute("score",	"-1.0");
-								sourceData.add("Atom failed", Double.valueOf(-1.0), Double.valueOf(-1.0), result, timing);
-
-							} else {
-								// No timing data at all, success or failure, so we create an artificial line and report it
-								timing = new Xml("timing");
-								timing.appendAttribute("name",	"Error: No Timing Data");
-								timing.appendAttribute("time",	"-1.0");
-								timing.appendAttribute("score",	"-1.0");
-								sourceData.add("Manifest.xml is in error, no timing data available", Double.valueOf(-1.0), Double.valueOf(-1.0), result, timing);
+								// When we get here, we've added everything for this entry
+								// There may be more entries for this atomuuid, so continue looking
 							}
 						}
-						// When we get here, we've added everything for this entry
-						// There may be more entries for this atomuuid, so continue looking
 					}
 				}
 			}
@@ -581,6 +964,9 @@ public class BenchmarkManifestResults
 		if (count == 0)
 		{	// Error
 			m_bm.setError("Error:  Unable to find rawResults tag to sum up totals.");
+			OpbmDialog od = new OpbmDialog(m_opbm, "Unable to create summary data for Results Viewer. No results found.", "Error", OpbmDialog._CANCEL_BUTTON, "populateSourceDataIntoByAtomLists", "");
+			od.setTimeout(30);
+			Utils.monitorDialogWithTimeout(m_opbm, "populateSourceDataIntoByAtomLists", 30);
 
 		} else {
 			// Sum it all up
@@ -615,6 +1001,8 @@ public class BenchmarkManifestResults
 		//		third	= percent of baseline (score)
 		//		fourth	= result xml line
 		//		fifth	= timing xml line
+		//		sixth	= this run number
+		//		seventh	= max runs
 		//
 		// summaryData layout:
 		//		first	= description
@@ -631,138 +1019,140 @@ public class BenchmarkManifestResults
 			sourceData			= (Tuple)byAtom.getThird(i);
 			summaryTimeData		= (Tuple)byAtom.getFourth(i);
 			summaryScoreData	= (Tuple)byAtom.getFifth(i);
+			if (sourceData != null && summaryTimeData != null && summaryScoreData != null)
+			{
+				// Iterate through the source data entries, comparing the specified entry to every other one, summing matches
+				for (j = 0; j < sourceData.size(); j++)
+				{	// For entries that have previously been tagged, we used the word "<!-- Processed -->"
+					//
+					// Grab the data from the tuple:
+					//		first	= description
+					//		second	= time
+					//		third	= percent of baseline (score)
+					//		fourth	= result xml line
+					//		fifth	= timing xml line
+					//
+					description = sourceData.getFirst(j);
+					if (!description.equalsIgnoreCase("<!-- Processed -->"))
+					{	// This line has not been processed yet
+						time	= (Double)sourceData.getSecond(j);		// time
+						score	= (Double)sourceData.getThird(j);		// percentOfBaseline
 
-			// Iterate through the source data entries, comparing the specified entry to every other one, summing matches
-			for (j = 0; j < sourceData.size(); j++)
-			{	// For entries that have previously been tagged, we used the word "<!-- Processed -->"
-				//
-				// Grab the data from the tuple:
-				//		first	= description
-				//		second	= time
-				//		third	= percent of baseline (score)
-				//		fourth	= result xml line
-				//		fifth	= timing xml line
-				//
-				description = sourceData.getFirst(j);
-				if (!description.equalsIgnoreCase("<!-- Processed -->"))
-				{	// This line has not been processed yet
-					time	= (Double)sourceData.getSecond(j);		// time
-					score	= (Double)sourceData.getThird(j);		// percentOfBaseline
+						// Reset our totals
+						times.clear();
+						scores.clear();
+						timingXmls.clear();
 
-					// Reset our totals
-					times.clear();
-					scores.clear();
-					timingXmls.clear();
+						// We have at least one entry to total for this, see if there are any more
+						times.add(time);
+						scores.add(score);
+						timingXmls.add((Xml)sourceData.getFifth(j));					// build chain of uuids which fed into this summary
 
-					// We have at least one entry to total for this, see if there are any more
-					times.add(time);
-					scores.add(score);
-					timingXmls.add((Xml)sourceData.getFifth(j));					// build chain of uuids which fed into this summary
+						// Create our initial totals
+						timeTotal	= time;
+						scoreTotal	= score;
+						timingUuids	= ((Xml)sourceData.getFifth(j)).getAttribute("uuid");
+						for (k = 0; k < sourceData.size(); k++)
+						{	// We're looking for items that match this one
+							if (k != j)
+							{	// See if this entry matches
+								if (sourceData.getFirst(k).equalsIgnoreCase(description))
+								{	// This is a match, include it
+									// Add to the array list
+									times.add((Double)sourceData.getSecond(k));			// time
+									scores.add((Double)sourceData.getThird(k));			// percentOfBaseline
+									timingXmls.add((Xml)sourceData.getFifth(k));		// timing xml source line
 
-					// Create our initial totals
-					timeTotal	= time;
-					scoreTotal	= score;
-					timingUuids	= ((Xml)sourceData.getFifth(j)).getAttribute("uuid");
-					for (k = 0; k < sourceData.size(); k++)
-					{	// We're looking for items that match this one
-						if (k != j)
-						{	// See if this entry matches
-							if (sourceData.getFirst(k).equalsIgnoreCase(description))
-							{	// This is a match, include it
-								// Add to the array list
-								times.add((Double)sourceData.getSecond(k));			// time
-								scores.add((Double)sourceData.getThird(k));			// percentOfBaseline
-								timingXmls.add((Xml)sourceData.getFifth(k));		// timing xml source line
+									// Increase our totals
+									timeTotal	+= (Double)sourceData.getSecond(k);		// time
+									scoreTotal	+= (Double)sourceData.getThird(k);		// percentOfBaseline
+									timingUuids	+= "," + ((Xml)sourceData.getFifth(k)).getAttribute("uuid");
 
-								// Increase our totals
-								timeTotal	+= (Double)sourceData.getSecond(k);		// time
-								scoreTotal	+= (Double)sourceData.getThird(k);		// percentOfBaseline
-								timingUuids	+= "," + ((Xml)sourceData.getFifth(k)).getAttribute("uuid");
-
-								// Indicate this line's already been included
-								sourceData.setFirst(k, "<!-- Processed -->");
+									// Indicate this line's already been included
+									sourceData.setFirst(k, "<!-- Processed -->");
+								}
 							}
 						}
-					}
-					// When we get here, we have all input items for this line
-					// Remember, this is just a single line, like "Launch Internet Explorer" or "Type in the URL" or "Run the test", etc.
+						// When we get here, we have all input items for this line
+						// Remember, this is just a single line, like "Launch Internet Explorer" or "Type in the URL" or "Run the test", etc.
 
-					// Compute our simple values
-					avgTime		= timeTotal / times.size();
-					avgScore	= scoreTotal / times.size();
+						// Compute our simple values
+						avgTime		= timeTotal / times.size();
+						avgScore	= scoreTotal / times.size();
 
-					// Compute the min and max
-					minTime		= 100000.0f;
-					maxTime		= -100000.0f;
-					minScore	= 100000.0f;
-					maxScore	= -100000.0f;
-					for (k = 0; k < times.size(); k++)
-					{
-						time	= times.get(k);
-						score	= scores.get(k);
+						// Compute the min and max
+						minTime		= 100000.0f;
+						maxTime		= -100000.0f;
+						minScore	= 100000.0f;
+						maxScore	= -100000.0f;
+						for (k = 0; k < times.size(); k++)
+						{
+							time	= times.get(k);
+							score	= scores.get(k);
 
-						if (time < minTime)		minTime = time;
-						if (time > maxTime)		maxTime = time;
+							if (time < minTime)		minTime = time;
+							if (time > maxTime)		maxTime = time;
 
-						if (score < minScore)	minScore = score;
-						if (score > maxScore)	maxScore = score;
-					}
-
-					// Compute the geometric mean
-					power			= 1.0 / (double)times.size();
-					geoTime			= 0.0f;
-					geoScore		= 0.0f;
-					for (k = 0; k < times.size(); k++)
-					{	// Compute the geometric mean
-						if (k == 0)
-						{	// First time, store the value
-							geoTime		= Math.pow(times.get(k), power);
-							geoScore	= Math.pow(scores.get(k), power);
-
-						} else {
-							// Multiply the value
-							geoTime		*= Math.pow(times.get(k), power);
-							geoScore	*= Math.pow(scores.get(k), power);
+							if (score < minScore)	minScore = score;
+							if (score > maxScore)	maxScore = score;
 						}
+
+						// Compute the geometric mean
+						power			= 1.0 / (double)times.size();
+						geoTime			= 0.0f;
+						geoScore		= 0.0f;
+						for (k = 0; k < times.size(); k++)
+						{	// Compute the geometric mean
+							if (k == 0)
+							{	// First time, store the value
+								geoTime		= Math.pow(times.get(k), power);
+								geoScore	= Math.pow(scores.get(k), power);
+
+							} else {
+								// Multiply the value
+								geoTime		*= Math.pow(times.get(k), power);
+								geoScore	*= Math.pow(scores.get(k), power);
+							}
+						}
+						// When we get here, we have our geometric means
+
+						// Compute the CV
+						// Compute the standard deviation
+						// sqrt((sum_of_variances^2) / count)
+						cvTimeSum	= 0.0f;
+						cvScoreSum	= 0.0f;
+						for (k = 0; k < times.size(); k++)
+						{	// Add up each to get the population's standard deviation
+							cvTimeSum	+= Math.pow(times.get(k)  - avgTime, 2.0f);
+							cvScoreSum	+= Math.pow(scores.get(k) - avgScore, 2.0f);
+						}
+						// Compute the standard deviation
+						cvTime	= Math.sqrt( cvTimeSum  / (double)Math.max(times.size() - 1, 0.0000001));
+						cvScore	= Math.sqrt( cvScoreSum / (double)Math.max(times.size() - 1, 1.0));
+						// Now, divide by abs(mean) to get CV
+						cvTime	= cvTime  / Math.max(Math.abs(avgTime),  0.0000001);
+						cvScore	= cvScore / Math.max(Math.abs(avgScore), 1.0);
+						// CV is computed
+
+						// When we get here, we've summed everything for all
+						// entries which match this one.
+						// These two tuples have a 1:1 ratio, description is in summaryTimeData, and timingUuids which fed into the computation is in summaryScoreData
+						summaryTimeData.add(description,						/* first */
+											Integer.valueOf(times.size()),		/* second */
+											Double.valueOf(minTime),			/* third */
+											Double.valueOf(maxTime),			/* fourth */
+											Double.valueOf(avgTime),			/* fifth */
+											Double.valueOf(geoTime),			/* sixth */
+											Double.valueOf(cvTime));			/* seventh */
+
+						summaryScoreData.add(timingUuids,						/* first */
+											Integer.valueOf(times.size()),		/* second */
+											Double.valueOf(minScore),			/* third */
+											Double.valueOf(maxScore),			/* fourth */
+											Double.valueOf(avgScore),			/* fifth */
+											Double.valueOf(geoScore),			/* sixth */
+											Double.valueOf(cvScore));			/* seventh */
 					}
-					// When we get here, we have our geometric means
-
-					// Compute the CV
-					// Compute the standard deviation
-					// sqrt((sum_of_variances^2) / count)
-					cvTimeSum	= 0.0f;
-					cvScoreSum	= 0.0f;
-					for (k = 0; k < times.size(); k++)
-					{	// Add up each to get the population's standard deviation
-						cvTimeSum	+= Math.pow(times.get(k)  - avgTime, 2.0f);
-						cvScoreSum	+= Math.pow(scores.get(k) - avgScore, 2.0f);
-					}
-					// Compute the standard deviation
-					cvTime	= Math.sqrt( cvTimeSum  / (double)Math.max(times.size() - 1, 0.0000001));
-					cvScore	= Math.sqrt( cvScoreSum / (double)Math.max(times.size() - 1, 1.0));
-					// Now, divide by abs(mean) to get CV
-					cvTime	= cvTime  / Math.max(Math.abs(avgTime),  0.0000001);
-					cvScore	= cvScore / Math.max(Math.abs(avgScore), 1.0);
-					// CV is computed
-
-					// When we get here, we've summed everything for all
-					// entries which match this one.
-					// These two tuples have a 1:1 ratio, description is in summaryTimeData, and timingUuids which fed into the computation is in summaryScoreData
-					summaryTimeData.add(description,						/* first */
-										Integer.valueOf(times.size()),		/* second */
-										Double.valueOf(minTime),			/* third */
-										Double.valueOf(maxTime),			/* fourth */
-										Double.valueOf(avgTime),			/* fifth */
-										Double.valueOf(geoTime),			/* sixth */
-										Double.valueOf(cvTime));			/* seventh */
-
-					summaryScoreData.add(timingUuids,						/* first */
-										Integer.valueOf(times.size()),		/* second */
-										Double.valueOf(minScore),			/* third */
-										Double.valueOf(maxScore),			/* fourth */
-										Double.valueOf(avgScore),			/* fifth */
-										Double.valueOf(geoScore),			/* sixth */
-										Double.valueOf(cvScore));			/* seventh */
 				}
 			}
 		}
@@ -800,96 +1190,97 @@ public class BenchmarkManifestResults
 
 		for (i = 0; i < byAtom.size(); i++)
 		{	// Grab this entry
-			//	first	= atomuuid
 			atomuuid			= (String)byAtom.getFirst(i);
 			instances			= (Integer)byAtom.getSecond(i);
 			sourceData			= (Tuple)byAtom.getThird(i);
 			summaryTimeData		= (Tuple)byAtom.getFourth(i);
 			summaryScoreData	= (Tuple)byAtom.getFifth(i);
+			if (sourceData != null && summaryTimeData != null && summaryScoreData != null)
+			{
+				atom = new Xml("atom");
 
-			atom = new Xml("atom");
+				// Load the original manifest entry for this atomuuid
+				abstractXml = Xml.getNodeByAttributeNameEqualsValue(m_bm.getManifestRoot(), "atomuuid", atomuuid, false);
+				if (abstractXml != null)
+				{	// Store the description and level (for personal viewer reference)
+					description = abstractXml.getAttribute("name");
+					level		= abstractXml.getAttribute("level");
 
-			// Load the original manifest entry for this atomuuid
-			abstractXml = Xml.getNodeByAttributeNameEqualsValue(m_bm.getManifestRoot(), "atomuuid", atomuuid, false);
-			if (abstractXml != null)
-			{	// Store the description and level (for personal viewer reference)
-				description = abstractXml.getAttribute("name");
-				level		= abstractXml.getAttribute("level");
+					if (description != null)
+						atom.appendAttribute(new Xml("name", description));
 
-				if (description != null)
-					atom.appendAttribute(new Xml("name", description));
-
-				if (level != null)
-					atom.appendAttribute(new Xml("level", level));
-			}
-
-			atom.appendAttribute(new Xml("instances", Integer.toString(instances)));
-			atom.appendAttribute(new Xml("atomuuid", atomuuid));
-			m_aggregateByAtom.appendChild(atom);
-
-			if (!sourceData.isEmpty())
-			{	// Scan through every source line entry, reporting each one, one-by-one
-				for (j = 0; j < sourceData.size(); j++)
-				{	// Report the total for this source
-					//	first	= description
-					//	second	= timing
-					//	third	= score
-					resultSource	= (Xml)sourceData.getFourth(j);				// <result> tag it came from
-					timingSource	= (Xml)sourceData.getFifth(j);				// <timing> tag it came from
-					timinguuid		= timingSource.getAttribute("uuid");
-
-					// Record the summary data
-					for (k = 0; k < summaryTimeData.size(); k++)
-					{	// Write the entries in summaryTimeData and summaryScoreData
-						// summaryTimeData and summaryScoreData are in sync, so as we migrate through one, we migrate through the other
-						// Make sure the descriptions match
-						if (summaryTimeData.getFirst(k).equalsIgnoreCase(sourceData.getFirst(j)))
-						{	// This is the match
-							worklet = new Xml("worklet");
-
-							// Append the attributes for this entry
-							worklet.appendAttribute(new Xml("description",			summaryTimeData.getFirst(k)));
-							worklet.appendAttribute(new Xml("instances",			Integer.toString((Integer)summaryTimeData.getSecond(k))));
-							worklet.appendAttribute(new Xml("minTime",				Double.toString((Double)summaryTimeData.getThird(k))));
-							worklet.appendAttribute(new Xml("maxTime",				Double.toString((Double)summaryTimeData.getFourth(k))));
-							worklet.appendAttribute(new Xml("avgTime",				Double.toString((Double)summaryTimeData.getFifth(k))));
-							worklet.appendAttribute(new Xml("geoTime",				Double.toString((Double)summaryTimeData.getSixth(k))));
-							worklet.appendAttribute(new Xml("cvTime",				Double.toString((Double)summaryTimeData.getSeventh(k))));
-							worklet.appendAttribute(new Xml("minScore",				Double.toString((Double)summaryScoreData.getThird(k))));
-							worklet.appendAttribute(new Xml("maxScore",				Double.toString((Double)summaryScoreData.getFourth(k))));
-							worklet.appendAttribute(new Xml("avgScore",				Double.toString((Double)summaryScoreData.getFifth(k))));
-							worklet.appendAttribute(new Xml("geoScore",				Double.toString((Double)summaryScoreData.getSixth(k))));
-							worklet.appendAttribute(new Xml("cvScore",				Double.toString((Double)summaryScoreData.getSeventh(k))));
-							worklet.appendAttribute(new Xml("sourcetiminguuids",	summaryScoreData.getFirst(k)));
-
-							// For each worklet, append all source times and scores for each run
-							uuids.clear();
-							Utils.extractCommaItems(uuids, summaryScoreData.getFirst(k));
-							for (l = 0; l < uuids.size(); l++)
-							{	// For every timing item, find its source in resultsdata.rawResults
-								timingSource = m_rawResults.getNodeByUUID(uuids.get(l), false);
-								if (timingSource != null)
-								{	// We have a timing source for this entry
-									run = new Xml("run" + Integer.toString(l + 1));
-									run.appendAttribute(new Xml("timinguuid",	uuids.get(l)));
-									run.appendAttribute(new Xml("time",			timingSource.getAttribute("time")));
-									run.appendAttribute(new Xml("score",		timingSource.getAttribute("score")));
-
-									// Add it to the worklet
-									worklet.appendChild(run);
-								}
-							}
-
-							// Add to the result to the atom
-							atom.appendChild(worklet);
-							break;
-						}
-					}
+					if (level != null)
+						atom.appendAttribute(new Xml("level", level));
 				}
 
-			} else {
-				// There is no source data because this atom failed
+				atom.appendAttribute(new Xml("instances", Integer.toString(instances)));
+				atom.appendAttribute(new Xml("atomuuid", atomuuid));
+				m_aggregateByAtom.appendChild(atom);
 
+				if (!sourceData.isEmpty())
+				{	// Scan through every source line entry, reporting each one, one-by-one
+					for (j = 0; j < sourceData.size(); j++)
+					{	// Report the total for this source
+						//	first	= description
+						//	second	= timing
+						//	third	= score
+						resultSource	= (Xml)sourceData.getFourth(j);				// <result> tag it came from
+						timingSource	= (Xml)sourceData.getFifth(j);				// <timing> tag it came from
+						timinguuid		= timingSource.getAttribute("uuid");
+
+						// Record the summary data
+						for (k = 0; k < summaryTimeData.size(); k++)
+						{	// Write the entries in summaryTimeData and summaryScoreData
+							// summaryTimeData and summaryScoreData are in sync, so as we migrate through one, we migrate through the other
+							// Make sure the descriptions match
+							if (summaryTimeData.getFirst(k).equalsIgnoreCase(sourceData.getFirst(j)))
+							{	// This is the match
+								worklet = new Xml("worklet");
+
+								// Append the attributes for this entry
+								worklet.appendAttribute(new Xml("description",			summaryTimeData.getFirst(k)));
+								worklet.appendAttribute(new Xml("instances",			Integer.toString((Integer)summaryTimeData.getSecond(k))));
+								worklet.appendAttribute(new Xml("minTime",				Double.toString((Double)summaryTimeData.getThird(k))));
+								worklet.appendAttribute(new Xml("maxTime",				Double.toString((Double)summaryTimeData.getFourth(k))));
+								worklet.appendAttribute(new Xml("avgTime",				Double.toString((Double)summaryTimeData.getFifth(k))));
+								worklet.appendAttribute(new Xml("geoTime",				Double.toString((Double)summaryTimeData.getSixth(k))));
+								worklet.appendAttribute(new Xml("cvTime",				Double.toString((Double)summaryTimeData.getSeventh(k))));
+								worklet.appendAttribute(new Xml("minScore",				Double.toString((Double)summaryScoreData.getThird(k))));
+								worklet.appendAttribute(new Xml("maxScore",				Double.toString((Double)summaryScoreData.getFourth(k))));
+								worklet.appendAttribute(new Xml("avgScore",				Double.toString((Double)summaryScoreData.getFifth(k))));
+								worklet.appendAttribute(new Xml("geoScore",				Double.toString((Double)summaryScoreData.getSixth(k))));
+								worklet.appendAttribute(new Xml("cvScore",				Double.toString((Double)summaryScoreData.getSeventh(k))));
+								worklet.appendAttribute(new Xml("sourcetiminguuids",	summaryScoreData.getFirst(k)));
+
+								// For each worklet, append all source times and scores for each run
+								uuids.clear();
+								Utils.extractCommaItems(uuids, summaryScoreData.getFirst(k));
+								for (l = 0; l < uuids.size(); l++)
+								{	// For every timing item, find its source in resultsdata.rawResults
+									timingSource = m_rawResults.getNodeByUUID(uuids.get(l), false);
+									if (timingSource != null)
+									{	// We have a timing source for this entry
+										run = new Xml("run" + Integer.toString(l + 1));
+										run.appendAttribute(new Xml("timinguuid",	uuids.get(l)));
+										run.appendAttribute(new Xml("time",			timingSource.getAttribute("time")));
+										run.appendAttribute(new Xml("score",		timingSource.getAttribute("score")));
+
+										// Add it to the worklet
+										worklet.appendChild(run);
+									}
+								}
+
+								// Add to the result to the atom
+								atom.appendChild(worklet);
+								break;
+							}
+						}
+					}
+
+				} else {
+					// There is no source data because this atom failed
+// REMEMBER
+				}
 			}
 		}
 	}
@@ -1168,6 +1559,88 @@ public class BenchmarkManifestResults
 	}
 
 	/**
+	 * Called to retire the old <aggregate> data, and prepare a new, virgin tag
+	 */
+	public void retireOldAggregateData()
+	{
+		Xml newAggregate, newAggregateByAtom;
+
+		if (m_aggregate != null)
+		{	// Create the new entries
+			newAggregate		= new Xml("aggregate");
+			newAggregateByAtom	= new Xml("byAtom");
+			newAggregate.appendChild(newAggregateByAtom);
+
+			// Update the old entry
+			m_aggregate.setNext(newAggregate);
+			m_aggregate.setName(m_aggregate.getName() + "Old");
+			m_aggregate.appendAttribute("retired", Utils.getTimestamp());
+
+			// Supplant the old entry
+			m_aggregate			= newAggregate;
+			m_aggregateByAtom	= newAggregateByAtom;
+		}
+	}
+
+	/**
+	 * Called to delete the old <aggregate> data, and prepare a new, virgin tag
+	 */
+	public void deleteOldAggregateData()
+	{
+		Xml newAggregate, newAggregateByAtom;
+
+		if (m_aggregate != null)
+		{	// Create the new entries
+			newAggregate		= new Xml("aggregate");
+			newAggregateByAtom	= new Xml("byAtom");
+			newAggregate.appendChild(newAggregateByAtom);
+
+			// Supplant the old entry
+			m_aggregate			= newAggregate;
+			m_aggregateByAtom	= newAggregateByAtom;
+			// Old entries are deleted by garbage collection
+		}
+	}
+
+	/**
+	 * Called to retire the old <aggregate> data, and prepare a new, virgin tag
+	 */
+	public void retireOldResultsData()
+	{
+		Xml newResults;
+
+		if (m_results != null)
+		{	// Create the new entries
+			newResults		= new Xml("aggregate");
+
+			// Update the old entry
+			m_results.setNext(newResults);
+			m_results.setName(m_results.getName() + "Old");
+			m_results.appendAttribute("retired", Utils.getTimestamp());
+
+			// Supplant the old entry
+			m_results	= newResults;
+		}
+	}
+
+	/**
+	 * Called to delete the old <aggregate> data, and prepare a new, virgin tag
+	 */
+	public void deleteOldResultsData()
+	{
+		Xml newResults;
+
+		if (m_results != null)
+		{	// Create the new entries
+			newResults	= new Xml("results");
+
+			// Supplant the old entry
+			m_results	= newResults;
+			// Old entries are deleted by garbage collection
+		}
+	}
+
+	/**
 	 * For the results viewer, there is a rigid structure that must be adhered
 	 * to which is an xml tree representation of the logical OPBM entity
 	 * relationship, which is suites, scenarios, molecules and atoms.
@@ -1255,6 +1728,7 @@ public class BenchmarkManifestResults
 	public Xml getResultsDataAggregate()		{	return(m_aggregate);			}
 	public Xml getResultsDataAggregateByAtom()	{	return(m_aggregateByAtom);		}
 
+	private Opbm			m_opbm;
 	BenchmarkManifest		m_bm;						// Parent this results processor relates back to
 	private boolean			m_isLoaded;					// When the results have been created or successfully loaded, this flag is raised high
 

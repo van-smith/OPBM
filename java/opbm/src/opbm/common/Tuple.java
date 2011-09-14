@@ -1,14 +1,28 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class stores two primary items, along with an extra item.  The first
+ * This class stores two primary items, along with extra items.  The first
  * item is typically a name.  It's used to allow disparate, un-connected
- * classes to pass "lazy" messages back and forth, allowing an indeterminate
- * amount of time to elapse between uses.  In addition, otherwise unassociated
- * generic items can be sorted and stored by this class, allowing for a single
- * name to reference a lot of information about a particular item of interest.
+ * classes to pass "lazy" messages back and forth, or to store items across
+ * method boundaries which may be executed in different threads, etc.  This
+ * allows an indeterminate amount of time to elapse between uses, and for data
+ * to be handled appropriately across lifespans.  In addition, what would be
+ * otherwise unassociated generic items can be sorted and stored by this class,
+ * allowing for a single name to reference a lot of information about a
+ * particular item of interest.
  *
- * Last Updated:  Sep 12, 2011
+ * Originally there were two items, with one extra item.  It has since evolved
+ * into a seven item (plus a trigger command + filters) construction, making
+ * it extremely useful for correlating large sets of related data, that must
+ * be maintained separately, but by a single, generic tool.
+ *
+ * This evolution has added a minor impact to performance.  It should not be
+ * used where performance is necessary, unless more than two or three items are
+ * required.  For the two- or three-instance items, it might be worth copying
+ * this class and creating a true Tuple and remaining this one to TuplePlus or
+ * something similar.
+ *
+ * Last Updated:  Sep 14, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -60,7 +74,7 @@ public class Tuple
 	{
 		m_opbm				= null;
 		m_uuid				= Utils.getUUID();
-		m_first				= new ArrayList<String>(0);
+		m_first				= new ArrayList<Object>(0);
 		m_second			= new ArrayList<Object>(0);
 		m_third				= new ArrayList<Object>(0);
 		m_fourth			= new ArrayList<Object>(0);
@@ -83,7 +97,7 @@ public class Tuple
 	{
 		m_opbm				= opbm;
 		m_uuid				= Utils.getUUID();
-		m_first				= new ArrayList<String>(0);
+		m_first				= new ArrayList<Object>(0);
 		m_second			= new ArrayList<Object>(0);
 		m_third				= new ArrayList<Object>(0);
 		m_fourth			= new ArrayList<Object>(0);
@@ -105,11 +119,28 @@ public class Tuple
 	}
 
 	/**
+	 * Called to setup a specified number of slots that need to exist for
+	 * whatever processing is taking place
+	 * @param max number of slots
+	 */
+	public void ensureThisManySlots(int max)
+	{
+		int i;
+
+		// Make sure every entry has its place
+		for (i = 0; i < max; i++)
+		{
+			if (m_first.size() < i + 1)
+				add("");		// Add in a blank entry for this position
+		}
+	}
+
+	/**
 	 * Adds a new entry to the tuple, which could be a duplicate.
 	 *
 	 * @param first <code>String</code> to identify the object
 	 */
-	public int add(String first)
+	public int add(Object first)
 	{
 		m_first.add(first);
 		m_second.add(null);
@@ -129,7 +160,7 @@ public class Tuple
 	 * @param first <code>String</code> to identify the object
 	 * @param second object to add
 	 */
-	public int add(String first, Object second)
+	public int add(Object first, Object second)
 	{
 		m_first.add(first);
 		m_second.add(second);
@@ -150,7 +181,7 @@ public class Tuple
 	 * @param second object to add
 	 * @param third extra object to add
 	 */
-	public int add(String first, Object second, Object third)
+	public int add(Object first, Object second, Object third)
 	{
 		m_first.add(first);
 		m_second.add(second);
@@ -172,7 +203,7 @@ public class Tuple
 	 * @param third extra object to add
 	 * @param fourth extra object to add
 	 */
-	public int add(String first, Object second, Object third, Object fourth)
+	public int add(Object first, Object second, Object third, Object fourth)
 	{
 		m_first.add(first);
 		m_second.add(second);
@@ -195,7 +226,7 @@ public class Tuple
 	 * @param fourth extra object to add
 	 * @param fifth extra object to add
 	 */
-	public int add(String first, Object second, Object third, Object fourth, Object fifth)
+	public int add(Object first, Object second, Object third, Object fourth, Object fifth)
 	{
 		m_first.add(first);
 		m_second.add(second);
@@ -219,7 +250,7 @@ public class Tuple
 	 * @param fifth extra object to add
 	 * @param sixth extra object to add
 	 */
-	public int add(String first, Object second, Object third, Object fourth, Object fifth, Object sixth)
+	public int add(Object first, Object second, Object third, Object fourth, Object fifth, Object sixth)
 	{
 		m_first.add(first);
 		m_second.add(second);
@@ -244,7 +275,7 @@ public class Tuple
 	 * @param sixth extra object to add
 	 * @param seventh extra object to add
 	 */
-	public int add(String first, Object second, Object third, Object fourth, Object fifth, Object sixth, Object seventh)
+	public int add(Object first, Object second, Object third, Object fourth, Object fifth, Object sixth, Object seventh)
 	{
 		m_first.add(first);
 		m_second.add(second);
@@ -255,6 +286,139 @@ public class Tuple
 		m_seventh.add(seventh);
 		m_triggerCommand.add(null);
 		m_triggerFilters.add(null);
+		return(size() - 1);
+	}
+
+	/**
+	 * Sets/updates an entry in the tuple, which could be a duplicate, at the
+	 * specified index.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 */
+	public int addAs(int item, Object first)
+	{
+		ensureThisManySlots(item);
+		m_first.set(item, first);
+		return(size() - 1);
+	}
+
+	/**
+	 * Sets/updates an entry in the tuple, which could be a duplicate, at the
+	 * specified index.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 */
+	public int addAs(int item, Object first, Object second)
+	{
+		ensureThisManySlots(item);
+		m_first.set(item, first);
+		m_second.set(item, second);
+		return(size() - 1);
+	}
+
+	/**
+	 * Sets/updates an entry in the tuple, which could be a duplicate, at the
+	 * specified index.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 */
+	public int addAs(int item, Object first, Object second, Object third)
+	{
+		ensureThisManySlots(item);
+		m_first.set(item, first);
+		m_second.set(item, second);
+		m_third.set(item, third);
+		return(size() - 1);
+	}
+
+	/**
+	 * Sets/updates an entry in the tuple, which could be a duplicate, at the
+	 * specified index.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 */
+	public int addAs(int item, Object first, Object second, Object third, Object fourth)
+	{
+		ensureThisManySlots(item);
+		m_first.set(item, first);
+		m_second.set(item, second);
+		m_third.set(item, third);
+		m_fourth.set(item, fourth);
+		return(size() - 1);
+	}
+
+	/**
+	 * Sets/updates an entry in the tuple, which could be a duplicate, at the
+	 * specified index.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 * @param fifth extra object to add
+	 */
+	public int addAs(int item, Object first, Object second, Object third, Object fourth, Object fifth)
+	{
+		ensureThisManySlots(item);
+		m_first.set(item, first);
+		m_second.set(item, second);
+		m_third.set(item, third);
+		m_fourth.set(item, fourth);
+		m_fifth.set(item, fifth);
+		return(size() - 1);
+	}
+
+	/**
+	 * Sets/updates an entry in the tuple, which could be a duplicate, at the
+	 * specified index.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 * @param fifth extra object to add
+	 * @param sixth extra object to add
+	 */
+	public int addAs(int item, Object first, Object second, Object third, Object fourth, Object fifth, Object sixth)
+	{
+		ensureThisManySlots(item);
+		m_first.set(item, first);
+		m_second.set(item, second);
+		m_third.set(item, third);
+		m_fourth.set(item, fourth);
+		m_fifth.set(item, fifth);
+		m_sixth.set(item, sixth);
+		return(size() - 1);
+	}
+
+	/**
+	 * Sets/updates an entry in the tuple, which could be a duplicate, at the
+	 * specified index.
+	 *
+	 * @param first <code>String</code> to identify the object
+	 * @param second object to add
+	 * @param third extra object to add
+	 * @param fourth extra object to add
+	 * @param fifth extra object to add
+	 * @param sixth extra object to add
+	 * @param seventh extra object to add
+	 */
+	public int addAs(int item, Object first, Object second, Object third, Object fourth, Object fifth, Object sixth, Object seventh)
+	{
+		ensureThisManySlots(item);
+		m_first.set(item, first);
+		m_second.set(item, second);
+		m_third.set(item, third);
+		m_fourth.set(item, fourth);
+		m_fifth.set(item, fifth);
+		m_sixth.set(item, sixth);
+		m_seventh.set(item, seventh);
 		return(size() - 1);
 	}
 
@@ -273,7 +437,7 @@ public class Tuple
 		{
 			if (m_second.get(i).equals(o))
 			{
-				return(m_first.get(i));
+				return((String)m_first.get(i));
 			}
 		}
 		return("");
@@ -292,7 +456,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				return(m_second.get(i));
 			}
@@ -313,7 +477,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 				return(m_third.get(i));
 		}
 		return(null);
@@ -332,7 +496,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 				return(m_fourth.get(i));
 		}
 		return(null);
@@ -351,7 +515,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 				return(m_fifth.get(i));
 		}
 		return(null);
@@ -370,7 +534,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 				return(m_sixth.get(i));
 		}
 		return(null);
@@ -389,7 +553,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 				return(m_seventh.get(i));
 		}
 		return(null);
@@ -419,7 +583,7 @@ public class Tuple
 		{
 			if (m_second.get(i).equals(o))
 			{
-				returnValue = m_first.get(i);
+				returnValue = (String)m_first.get(i);
 				m_first.set(i, newValue);
 				checkTrigger(i, "1");
 				break;
@@ -443,7 +607,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				returnObject = m_second.get(i);
 				m_second.set(i, newObject);
@@ -469,7 +633,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				returnObject = m_third.get(i);
 				m_third.set(i, newObject);
@@ -495,7 +659,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				returnObject = m_fourth.get(i);
 				m_fourth.set(i, newObject);
@@ -521,7 +685,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				returnObject = m_fifth.get(i);
 				m_fifth.set(i, newObject);
@@ -547,7 +711,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				returnObject = m_sixth.get(i);
 				m_sixth.set(i, newObject);
@@ -573,7 +737,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				returnObject = m_seventh.get(i);
 				m_seventh.set(i, newObject);
@@ -596,7 +760,7 @@ public class Tuple
 
 		for (i = 0; i < m_first.size(); i++)
 		{
-			if (m_first.get(i).equalsIgnoreCase(name))
+			if (((String)m_first.get(i)).equalsIgnoreCase(name))
 			{
 				m_first.remove(i);
 				m_second.remove(i);
@@ -671,6 +835,86 @@ public class Tuple
 		return(m_first.isEmpty());
 	}
 
+	public boolean setNumbered(int		number,
+							   int		item,
+							   Object	data)
+	{
+		if (number >= 1 && number <= 7)
+		{	// We're good, it's a first through seventh
+			if (item < m_first.size())
+			{	// Still good
+				switch (number)
+				{	// Return the numbered item
+					case 1:
+						m_first.set(item, data);
+						break;
+					case 2:
+						m_second.set(item, data);
+						break;
+					case 3:
+						m_third.set(item, data);
+						break;
+					case 4:
+						m_fourth.set(item, data);
+						break;
+					case 5:
+						m_fifth.set(item, data);
+						break;
+					case 6:
+						m_sixth.set(item, data);
+						break;
+					case 7:
+						m_seventh.set(item, data);
+						break;
+				}
+				// Success
+				return(true);
+
+			} else {
+				// Failure, out of bounds
+			}
+
+		} else {
+			// Failure, not a first through seventh set action
+		}
+		return(false);
+	}
+
+	public Object getNumbered(int	number,
+							  int	item)
+	{
+		if (number >= 1 && number <= 7)
+		{	// We're good, it's a first through seventh
+			if (item < m_first.size())
+			{	// Still good
+				switch (number)
+				{	// Return the numbered item
+					case 1:
+						return(m_first.get(item));
+					case 2:
+						return(m_second.get(item));
+					case 3:
+						return(m_third.get(item));
+					case 4:
+						return(m_fourth.get(item));
+					case 5:
+						return(m_fifth.get(item));
+					case 6:
+						return(m_sixth.get(item));
+					case 7:
+						return(m_seventh.get(item));
+				}
+
+			} else {
+				// Failure, out of bounds
+			}
+
+		} else {
+			// Failure
+		}
+		return(null);
+	}
+
 	/**
 	 * Returns the explicit item within the list
 	 * @param item item number to access
@@ -679,8 +923,20 @@ public class Tuple
 	public String getFirst(int item)
 	{
 		if (item < m_first.size())
-			return(m_first.get(item));
+			return((String)m_first.get(item));
 		return("");
+	}
+
+	/**
+	 * Returns the explicit item within the list
+	 * @param item item number to access
+	 * @return first item (String) associated with the <code>Tuple</code> entry
+	 */
+	public Object getFirstObject(int item)
+	{
+		if (item < m_first.size())
+			return(m_first.get(item));
+		return(null);
 	}
 
 	/**
@@ -999,15 +1255,10 @@ public class Tuple
 	private String					m_uuid;
 
 	/**
-	 * Holds list of String items for the tuple.  Has a 1:1 relationship with
-	 * the entries in m_objects.
+	 * Holds list of entries for the tuple.  Each List<*> item below a 1:1
+	 * relationship with every other List<*> entry
 	 */
-	private volatile List<String>	m_first;
-
-	/**
-	 * Holds list of Object items for the named tuple.  Each line has a 1:1
-	 * relationship with the entries in m_names.
-	 */
+	private volatile List<Object>	m_first;
 	private volatile List<Object>	m_second;
 	private volatile List<Object>	m_third;
 	private volatile List<Object>	m_fourth;

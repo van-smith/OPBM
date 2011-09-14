@@ -537,6 +537,10 @@ public class Xml
 				// Move to next item, see if it's a match
 				xmlThis = xmlThis.getNext();
 			}
+
+		} else {
+			// No elements could be loaded
+			nodes.clear();
 		}
 		return;
 	}

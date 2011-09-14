@@ -321,6 +321,8 @@ public class Commands
 			m_opbm.benchmarkLaunchTrialRun(/*automated*/true);
 		} else if (command.equals("launch_official_run_automated")) {
 			m_opbm.benchmarkLaunchOfficialRun(/*automated*/true);
+		} else if (command.equals("translate_manifest_to_results")) {
+			m_opbm.translateManifestToResults(m_macroMaster.parseMacros(p1));
 
 //////////
 // RESULTS VIEWER

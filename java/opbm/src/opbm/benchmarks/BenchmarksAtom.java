@@ -1481,8 +1481,10 @@ public class BenchmarksAtom
 							if (failure /* the old system stored one of the failures in the "success" so the rseults viewer parser could process the failure, the benchmark manifest does not handle it the same way && retryCount != retryAttempts*/)
 							{	// An error occurred, so we put this on the retry pipe, all except the last one, which is logged to the success branch itself to record the failure officially
 								if (record)
+								{
 									xmlRun_RunFailure.appendChild(xmlType);
-								m_bp.setLastWorkletTimingData(null);
+									m_bp.computeLastWorkletScore(xmlOutput);
+								}
 
 							} else {
 								// Just append like normal, they're not retrying, this failure will persist

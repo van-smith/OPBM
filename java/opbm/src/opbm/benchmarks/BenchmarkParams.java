@@ -219,7 +219,13 @@ public class BenchmarkParams
 		double power, score;
 		Xml output;
 		NumberFormat nf = NumberFormat.getNumberInstance();
-		Tuple timingData = new Tuple(m_opbm);
+		Tuple timingData;
+
+
+		timingData = new Tuple(m_opbm);
+		//	first	= timing item description (as in "Launch Excel")
+		//	second	= time
+		//	third	= score
 
 		count	= 0;
 		output	= outputs.getFirstChild();
@@ -234,6 +240,15 @@ public class BenchmarkParams
 
 			// Move to next output sibling
 			output = output.getNext();
+		}
+
+		if (timingData.isEmpty())
+		{	// A failure, nothing was recorded, so indicate the same
+			setLastWorkletScore("0.0");
+			setLastWorkletTimingData(null);
+			return;
+//			timingData.add("--failure--", Double.valueOf(0.0), Double.valueOf(0.0));
+//			count = 1;
 		}
 
 		// When we get here, we have all of our timings

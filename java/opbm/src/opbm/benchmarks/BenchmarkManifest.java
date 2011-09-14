@@ -98,13 +98,46 @@ public final class BenchmarkManifest
 							 boolean	automated,
 							 boolean	rebootRequired)
 	{
+		initialize(opbm, type, manifestPathName, automated, rebootRequired);
+	}
+
+	/**
+	 * Constructor, creates a generic BenchmarkManifest instance, most likely
+	 * used for processing an existing manifest.xml into results.xml
+	 * @param opbm
+	 */
+	public BenchmarkManifest(Opbm opbm)
+	{
+		initialize(opbm, "", "", false, false);
+	}
+
+	/**
+	 * Handles the grunt work of initialization, sets up everything based on
+	 * user-supplied parameters.  Note:  When initialize() is called, not only
+	 * are class items updated, but also external files, such as scripts.xml
+	 * losing all of its atomuuid assignments, etc.  While this class does not
+	 * need to be a singleton, it should be viewed as one when it comes to
+	 * benchmark processing.  For generic manipulation of manifest.xml into
+	 * other forms, as many instances as are needed can be created and used.
+	 * @param opbm main class reference
+	 * @param type "trial", "official" or "compilation"
+	 * @param manifestPathName path to manifest.xml for reload (if not null)
+	 * @param automated is the run automated?
+	 * @param rebootRequired is a reboot required?
+	 */
+	public void initialize(Opbm			opbm,
+						   String		type,
+						   String		manifestPathName,
+						   boolean		automated,
+						   boolean		rebootRequired)
+	{
 		m_isManifestInError		= false;
 		m_opbm					= opbm;
 		m_benchmarksMaster		= opbm.getBenchmarkMaster();
 		m_macroMaster			= opbm.getMacroMaster();
 		m_bp					= null;
 		m_bpa					= null;
-		m_bmr					= new BenchmarkManifestResults(this);
+		m_bmr					= new BenchmarkManifestResults(opbm, this);
 		m_type					= type;
 		m_name					= m_opbm.getRunName();
 
@@ -1154,10 +1187,28 @@ public final class BenchmarkManifest
 		// Append discovery info
 		m_benchmarks.appendChild(m_discovery);			// opbm.benchmarks.discovery
 
-// REMEMBER for CPU-Z CPUZ stuff
+// REMEMBER CPU-Z CPUZ stuff will go here
+
 		m_manifestIsLoaded = true;
-// Manifest is not saved to manifest.xml because it may not be used.
-// When a build*() method is called and a run is initiated, then it will be saved.
+		// Note:  The manifest is not saved to manifest.xml because it may not be used.
+		//        When a build*() method is called and a run is initiated, then it will
+		//        be saved as needed for the operation.
+	}
+
+	/**
+	 * Reload the manifest, and recompute its tallied values into the form
+	 * required by results.xml
+	 * @param pathName file to load (typically Opbm.getRunningDirectory() + "manifest.xml"
+	 */
+	public void reloadManifestAndComputeResultsXml(String pathName)
+	{
+		reloadManifest(pathName);
+
+		if (m_isManifestInError)
+			return;		// There was an error opening the manifest
+
+		// If we get here, we're good
+		computeForResultsXml(true, true);
 	}
 
 	/**
@@ -1407,7 +1458,6 @@ public final class BenchmarkManifest
 		m_bpa		= m_benchmarksMaster.getBPAtom();
 		m_bp.m_bm	= this;
 
-
 //////////
 // For debugging mode, uncomment and/or set this variable to true.  It will
 // simulate runs with the success.exe script so that full official, trial and
@@ -1416,8 +1466,8 @@ public final class BenchmarkManifest
 // is done.
 //////
 	//
-	//Opbm.m_debugSimulateRunAtomMode = true;
-	//Opbm.m_debugSimulateRunAtomModeFailurePercent = 0.2;	// Fail 20% of the time
+	Opbm.m_debugSimulateRunAtomMode = true;
+	Opbm.m_debugSimulateRunAtomModeFailurePercent = 0.6;	// Fail 60% of the time
 	//
 //////
 // End
@@ -1458,6 +1508,9 @@ public final class BenchmarkManifest
 				saveManifest();
 			}
 			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
+
+			// If the user clicked stop, we're done processing
+			m_processing = (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP);
 		}
 
 		// Continue processing until we're done
@@ -1490,19 +1543,15 @@ public final class BenchmarkManifest
 			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
 
-		// If we are finished, then compute the aggregate totals
-		if (m_controlLastWorklet.getAttribute("uuid").equalsIgnoreCase("finished"))
+//////////
+// We compute totals if one of these conditions is true:
+//		1)  the last atom was a failure, and we're done now
+//		2)  the user clicked stop, and we're done now
+//		3)  the benchmark is completely run finished, and we're done now
+/////
+		if (m_bp.m_bpAtom.m_lastAtomWasFailure || (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP) || m_controlLastWorklet.getAttribute("uuid").equalsIgnoreCase("finished"))
 		{	// We are finished, so tally up!
-			m_bmr.computeAggregateTotals();
-
-			// Save the new results
-			saveManifest();
-
-			// Compute the ResultsViewer totals and generate a CSV file with all of the data
-			m_bmr.computeResultsViewerTotalsAndGenerateCSVFile();
-
-			// Save the new results
-			saveManifest();
+			computeForResultsXml(false, true);
 		}
 
 		// If the last thing that happened was a failure, and we are supposed to uninstall stuff after failures, we need to do that
@@ -1824,10 +1873,12 @@ public final class BenchmarkManifest
 		if (!Opbm.m_debugSimulateRunAtomMode)
 			saveManifest();		// Save this result when not simulating a run in debug moe
 
-		if (!m_run.getAttribute("this").equals(m_run.getAttribute("max")))
+		if (!m_run.getAttribute("this").equals("1") || !m_run.getAttribute("this").equals(m_run.getAttribute("max")))
+		{	// We display the pass information on runs that have more than one pass
 			m_macroMaster.SystemOutPrintln("Pass " + m_run.getAttribute("this") + " of " + m_run.getAttribute("max") + ": " + m_worklet.getAttribute("name"));
-		else
+		} else {
 			m_macroMaster.SystemOutPrintln("Executing: " + m_worklet.getAttribute("name"));
+		}
 
 		if (m_worklet.getName().equalsIgnoreCase("abstract"))
 		{	// Create the area to store results from our execute atom
@@ -2061,7 +2112,8 @@ public final class BenchmarkManifest
 											m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 											System.out.println("Auto-uninstall: " + atomName);
 											m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-											m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
+											if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+												m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 										// End
 										//////////
 											thisAtomResults = new Xml("atomUninstall");
@@ -2110,6 +2162,9 @@ public final class BenchmarkManifest
 										successNames += (successNames.isEmpty() ? "" : ", ") + atomName;
 									}
 								}
+								// If the user clicked stop, we're done
+								if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+									break;
 							}
 							// When we get here, we've tried to run every atom
 							if (!failureNames.isEmpty())
@@ -2120,6 +2175,13 @@ public final class BenchmarkManifest
 							if (!successNames.isEmpty())
 							{	// Append list of successful atoms
 								atomCandidate.appendAttribute(new Xml("autoUninstalled", successNames));
+							}
+							// If the user clicked stop, we're done
+							if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+							{	// We're done, clean up before leaving
+								if (!Opbm.m_debugSimulateRunAtomMode)
+									saveManifest();		// Save this result when not simulating a run in debug moe
+								return;
 							}
 						}
 					}
@@ -2192,7 +2254,8 @@ public final class BenchmarkManifest
 										m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 										System.out.println(Utils.translateScriptsAbstractOptionsTagName(tagName) + ": " + atomName);
 										m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-										m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
+										if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+											m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 									// End
 									//////////
 										thisAtomResults = new Xml(tagName);
@@ -2221,6 +2284,9 @@ public final class BenchmarkManifest
 									System.out.println(warning);
 									autoExecute.appendChild(new Xml("warning", warning));
 								}
+								// If the user clicked stop, we're done
+								if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+									return(autoExecute);
 							}
 						}
 					}
@@ -2272,7 +2338,8 @@ public final class BenchmarkManifest
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 					System.out.println("Running: " + name);
 					m_bpa.processAbstract_Atom(candidate, success, failure);
-					m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
+					if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+						m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 				// End
 				//////////
 					thisAtomResults = new Xml(prefix.trim());
@@ -2292,6 +2359,10 @@ public final class BenchmarkManifest
 
 					// Store the results good or bad
 					autoExecute.appendChild(thisAtomResults);
+
+					// If the user clicked stop, we're done
+					if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+						return(autoExecute);
 				}
 			}
 		}
@@ -2343,6 +2414,35 @@ public final class BenchmarkManifest
 			run = run.getNext();
 		}
 		// When we get here, we have a unique list of all atoms in this run
+	}
+
+	/**
+	 * Computes the aggregate totals based on the details and rawResults in
+	 * the manifest.  Can be called when the manifest is in a virgin state, or
+	 * repeatedly if there are improvements made to the scoring algorithms, or
+	 * if it is desirable to see a previously saved manifest.xml's capture again.
+	 * @param retireOldAggregateData should any existing data be retired?  If no, then
+	 * it is deleted and the new data supplants it
+	 * @param saveManifest should manifest.xml be saved when finished?
+	 */
+	public void computeForResultsXml(boolean	retireOldData,
+									 boolean	saveManifest)
+	{
+		// The following code is called to initially compute, or to recompute
+		// the results, as such these algorithms look for previously computed
+		// data and migrate it to a retired state before creating new spaces
+		// for the newly created data.
+
+		// Go ahead and complete any incomplete entries in the run
+		m_bmr.completeAnyIncompleteAbstractTimings(saveManifest);
+
+		// Create the results.xml output from it
+		m_bmr.computeAggregateTotals(retireOldData);
+		// Compute the ResultsViewer totals and generate a CSV file with all of the data
+		m_bmr.computeResultsViewerTotalsAndGenerateCSVFile();
+
+		if (saveManifest)
+			saveManifest();	// Save the new results
 	}
 
 	/**
@@ -2541,7 +2641,6 @@ public final class BenchmarkManifest
 	private Xml							m_statisticsSuccesses;
 	private Xml							m_statisticsFailures;
 	private Xml							m_statisticsRetries;
-
-	// The resultsdata portions are handled by BenchmarkManifestResults
-	// See createResultsdataFramework().
+// Note:  The resultsdata portions are handled by BenchmarkManifestResults
+//        See createResultsdataFramework().
 }
