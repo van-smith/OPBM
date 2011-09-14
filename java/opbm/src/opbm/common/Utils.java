@@ -38,7 +38,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -1509,7 +1511,27 @@ public class Utils
 	public static void appendJavaInfo(Xml tag)
 	{
 		if (tag != null)
-		{
+		{	// VM platform, 32-bit or 64-bit
+			Xml tagNew;
+
+			// Append some system properties
+			tagNew = tag.appendChild(new Xml("property", "sun.arch.data.model"));
+			tagNew.appendAttribute(new Xml("value", System.getProperty("sun.arch.data.model")));
+			tagNew.appendAttribute(new Xml("desc", "Java Virtual Machine is 32-bit or 64-bit?"));
+
+			tagNew = tag.appendChild(new Xml("property", "Opbm.m_jvmHome"));
+			tagNew.appendAttribute(new Xml("value", Opbm.m_jvmHome));
+			tagNew.appendAttribute(new Xml("desc", "Home directory the harness is using"));
+
+			tagNew = tag.appendChild(new Xml("property", "autoLogon"));
+			tagNew.appendAttribute(new Xml("value", (Opbm.isAutoLogonEnabled() ? "yes" : "no")));
+			tagNew.appendAttribute(new Xml("desc", "Is autoLogon enabled?"));
+
+			tagNew = tag.appendChild(new Xml("property", "UAC"));
+			tagNew.appendAttribute(new Xml("value", (Opbm.isUACEnabled() ? "yes" : "no")));
+			tagNew.appendAttribute(new Xml("desc", "Is UAC enabled?"));
+
+			// System properties
 			appendJavaSystemGetPropertyItem(tag, "java.version",					"Java Runtime Environment version");
 			appendJavaSystemGetPropertyItem(tag, "java.vendor",						"Java Runtime Environment vendor");
 			appendJavaSystemGetPropertyItem(tag, "java.vendor.url",					"Java vendor url");
@@ -1538,6 +1560,12 @@ public class Utils
 			appendJavaSystemGetPropertyItem(tag, "user.name",						"User's account name");
 			appendJavaSystemGetPropertyItem(tag, "user.home",						"User's home directory");
 			appendJavaSystemGetPropertyItem(tag, "user.dir",						"User's current working directory");
+
+			// Grab all properties the system has, and include them
+			Properties props = System.getProperties();
+			Enumeration e = props.propertyNames();
+			while (e.hasMoreElements())
+			  appendJavaSystemGetPropertyItem(tag, (String)e.nextElement(), "Enumerated property");
 		}
 	}
 

@@ -149,6 +149,9 @@ public final class Opbm extends	ModalApp
 			System.exit(-1);
 		}
 
+		System.out.println("Detected auto-logon is " + (isAutoLogonEnabled() ? "enabled" : "disabled"));
+		System.out.println("Detected UAC is " + (isUACEnabled() ? "enabled" : "disabled"));
+
 		// Set the necessary startup variables
 		m_args						= args;
 		m_leftPanels				= new ArrayList<PanelLeft>(0);
@@ -2903,6 +2906,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.14 02:37am";
+	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.14 03:42am";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
