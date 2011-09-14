@@ -1212,7 +1212,7 @@ public class PanelRightLookupbox
 	 */
 	public void afterWindowResize(int newWidth, int newHeight)
 	{
-		// This is a fixed-size field that's not resized,
+		// Lookupboxes are fixed-size fields that's not resized,
 		// so this control does nothing
 	}
 

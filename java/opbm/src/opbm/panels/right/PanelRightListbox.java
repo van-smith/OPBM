@@ -991,6 +991,14 @@ public class PanelRightListbox
 			if (m_listBoxClone != null) {
 				m_listBoxClone.setLocation(m_listBoxClone.getX(), m_listBoxClone.getY() + diff);
 			}
+
+			if (m_listBoxUp != null) {
+				m_listBoxUp.setLocation(m_listBoxUp.getX(), m_listBoxUp.getY() + diff);
+			}
+
+			if (m_listBoxDown != null) {
+				m_listBoxDown.setLocation(m_listBoxDown.getX(), m_listBoxDown.getY() + diff);
+			}
 		}
 	}
 
