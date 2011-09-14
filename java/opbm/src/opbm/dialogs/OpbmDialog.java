@@ -60,10 +60,44 @@ public final class OpbmDialog
 		}
 		m_id			= id;
 		m_opbm.initializeDialogResponse(id, triggerCommand, this, null);
-		createDialogWindow();
+		createDialogWindow("Okay", "Cancel", "Yes", "No");
 	}
 
-	public void createDialogWindow()
+	public OpbmDialog(Opbm		opbm,
+					  String	message,
+					  String	caption,
+					  int		buttons,
+					  String	id,
+					  String	triggerCommand,
+					  String	button1Text,
+					  String	button2Text,
+					  String	button3Text,
+					  String	button4Text)
+	{
+		m_opbm			= opbm;
+		m_message		= message;
+		m_caption		= caption;
+		m_buttons		= buttons;
+		if (id == null)
+		{	// They didn't specify an ID, so use the generic one
+			id = "dialog";
+		}
+		m_id			= id;
+		m_opbm.initializeDialogResponse(id, triggerCommand, this, null);
+		createDialogWindow(button1Text, button2Text, button3Text, button4Text);
+	}
+
+	/**
+	 * Creates the interface, sets up the buttons, etc.
+	 * @param okayButtonText text to display for the "okay button" position
+	 * @param cancelButtonText text to display for the "cancel button" position
+	 * @param yesButtonText text to display for the "yes button" position
+	 * @param noButtonText text to display for the "no button" position
+	 */
+	public void createDialogWindow(String	okayButtonText,
+								   String	cancelButtonText,
+								   String	yesButtonText,
+								   String	noButtonText)
 	{
 		Dimension prefSize;
 		JLabel lblBackground;
@@ -141,7 +175,7 @@ public final class OpbmDialog
 			buttonCount = 0;
 			if ((m_buttons & _OKAY_BUTTON) != 0)
 			{	// Create the okay button, to be positioned below
-				m_btnOkay = new JButton("Okay");
+				m_btnOkay = new JButton(okayButtonText);
 				m_btnOkay.setFont(fontButtons);
 				m_btnOkay.addMouseListener(this);
 				inset = m_btnOkay.getInsets();
@@ -154,7 +188,7 @@ public final class OpbmDialog
 			}
 			if ((m_buttons & _CANCEL_BUTTON) != 0)
 			{	// Create the cancel button, to be positioned below
-				m_btnCancel = new JButton("Cancel");
+				m_btnCancel = new JButton(cancelButtonText);
 				m_btnCancel.setFont(fontButtons);
 				m_btnCancel.addMouseListener(this);
 				inset = m_btnCancel.getInsets();
@@ -167,7 +201,7 @@ public final class OpbmDialog
 			}
 			if ((m_buttons & _YES_BUTTON) != 0)
 			{	// Create the yes button, to be positioned below
-				m_btnYes = new JButton("Yes");
+				m_btnYes = new JButton(yesButtonText);
 				m_btnYes.setFont(fontButtons);
 				m_btnYes.addMouseListener(this);
 				inset = m_btnYes.getInsets();
@@ -180,7 +214,7 @@ public final class OpbmDialog
 			}
 			if ((m_buttons & _NO_BUTTON) != 0)
 			{	// Create the no button, to be positioned below
-				m_btnNo = new JButton("No");
+				m_btnNo = new JButton(noButtonText);
 				m_btnNo.setFont(fontButtons);
 				m_btnNo.addMouseListener(this);
 				inset = m_btnNo.getInsets();
@@ -286,22 +320,22 @@ public final class OpbmDialog
 	{
 		if (e.getComponent() == m_btnOkay)
 		{	// Okay button was clicked
-			m_opbm.setDialogResponse(m_id, "okay", this, null);
+			m_opbm.setDialogResponse(m_id, "okay_button1", this, null);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnCancel) {
 			// Cancel button was clicked
-			m_opbm.setDialogResponse(m_id, "cancel", this, null);
+			m_opbm.setDialogResponse(m_id, "cancel_button2", this, null);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnYes) {
 			// Yes button was clicked
-			m_opbm.setDialogResponse(m_id, "yes", this, null);
+			m_opbm.setDialogResponse(m_id, "yes_button3", this, null);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnNo) {
 			// No button was clicked
-			m_opbm.setDialogResponse(m_id, "no", this, null);
+			m_opbm.setDialogResponse(m_id, "no_button4", this, null);
 			m_frame.dispose();
 
 		}
@@ -326,7 +360,9 @@ public final class OpbmDialog
 	@Override
 	public void windowClosing(WindowEvent e)
 	{	// User cancelled
-		m_opbm.setDialogResponse(m_id, "cancel", this, null);
+		String response = m_opbm.getDialogResponse(m_id);
+		if (response == null || response.isEmpty())
+			m_opbm.setDialogResponse(m_id, "cancel", this, null);
 	}
 
 	@Override
@@ -358,6 +394,13 @@ public final class OpbmDialog
 	public static final int	_YES_NO			= 12;
 	public static final int	_YES_NO_CANCEL	= 14;
 	public static final int	_YES_CANCEL		= 6;
+	public static final int	_BUTTON1		= 1;
+	public static final int	_BUTTON2		= 2;
+	public static final int	_BUTTON3		= 4;
+	public static final int	_BUTTON4		= 8;
+	public static final int _BUTTONS12		= _BUTTON1 + _BUTTON2;
+	public static final int _BUTTONS123		= _BUTTON1 + _BUTTON2 + _BUTTON3;
+	public static final int _BUTTONS1234	= _BUTTON1 + _BUTTON2 + _BUTTON3 + _BUTTON4;
 
 	private Opbm				m_opbm;
 	private String				m_message;

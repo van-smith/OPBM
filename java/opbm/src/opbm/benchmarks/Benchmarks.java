@@ -277,6 +277,7 @@ public class Benchmarks
 									   boolean		isRebootRequired)
 
 	{
+		String response;
 		OpbmDialog od;
 
 		m_isAutomatedRun	= isAutomatedRun;
@@ -294,11 +295,20 @@ public class Benchmarks
 		// Warn user if User auto-logon is not enabled
 		if (isRebootRequired && !Opbm.isAutoLogonEnabled())
 		{	// It is enabled, tell the user it will not work this way
-			od = new OpbmDialog(m_opbm, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._YES_NO_CANCEL, "autologon", "");
+			od = new OpbmDialog(m_opbm, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._BUTTONS1234, "autologon", "", "Yes", "No", "Cancel", "More...");
 			od.setTimeout(30);
 			Utils.monitorDialogWithTimeout(m_opbm, "autologon", 30);
-			if (!isAutomatedRun && !m_opbm.getDialogResponse("autologon").equalsIgnoreCase("yes"))
+			response = m_opbm.getDialogResponse("autologon").toLowerCase();
+			if (response.contains("button4"))
+			{	// They want to see instructions on it
+				try {
+					Runtime.getRuntime().exec("notepad.exe ..\\documentation\\disable-login-screen.txt");
+				} catch (Throwable t) {
+				}
 				return(false);
+			} else if (!isAutomatedRun && !response.contains("button1")) {
+				return(false);
+			}
 		}
 
 		// Make sure the JVM home location is correct

@@ -348,22 +348,22 @@ public final class OpbmInput
 	{
 		if (e.getComponent() == m_btnNext)
 		{	// Next button was clicked
-			m_opbm.setDialogResponse(m_id, m_nextButtonText, m_txtInput.getText(), null, this);
+			m_opbm.setDialogResponse(m_id, m_nextButtonText + "_button1", m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnCancel) {
 			// Cancel button was clicked
-			m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_txtInput.getText(), null, this);
+			m_opbm.setDialogResponse(m_id, m_cancelButtonText + "_button2", m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnAccept) {
 			// Accept button was clicked
-			m_opbm.setDialogResponse(m_id, m_acceptButtonText, m_txtInput.getText(), null, this);
+			m_opbm.setDialogResponse(m_id, m_acceptButtonText + "_button3", m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnOkay) {
 			// Okay button was clicked
-			m_opbm.setDialogResponse(m_id, m_okayButtonText, m_txtInput.getText(), null, this);
+			m_opbm.setDialogResponse(m_id, m_okayButtonText + "_button4", m_txtInput.getText(), null, this);
 			m_frame.dispose();
 
 		}
@@ -418,6 +418,13 @@ public final class OpbmInput
 	public static final int	_NEXT_CANCEL	= 3;
 	public static final int	_ACCEPT_CANCEL	= 6;
 	public static final int	_OKAY_CANCEL	= 10;
+	public static final int	_BUTTON1		= 1;
+	public static final int	_BUTTON2		= 2;
+	public static final int	_BUTTON3		= 4;
+	public static final int	_BUTTON4		= 8;
+	public static final int _BUTTONS12		= _BUTTON1 + _BUTTON2;
+	public static final int _BUTTONS123		= _BUTTON1 + _BUTTON2 + _BUTTON3;
+	public static final int _BUTTONS1234	= _BUTTON1 + _BUTTON2 + _BUTTON3 + _BUTTON4;
 
 	private Opbm				m_opbm;
 	private int					m_actual_width;

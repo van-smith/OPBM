@@ -459,7 +459,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Safari" shortname="Safari">
-				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute" atomuuid="08bea337-7721-41b0-9e38-4ef0132a27e5">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
