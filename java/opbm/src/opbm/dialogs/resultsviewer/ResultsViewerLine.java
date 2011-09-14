@@ -465,7 +465,7 @@ public final class ResultsViewerLine
 		// If we're visibile at this point, render it
 		if (m_visible)
 		{	// Arrange the child sub-components
-			if (!m_success)
+			if (m_nameboxLabel.getText().trim().equalsIgnoreCase("--failure--"))
 			{	// There's an error
 				m_nameboxLabel.setBackground(Color.RED);
 				m_nameboxLabel.setForeground(Color.YELLOW);
@@ -477,8 +477,7 @@ public final class ResultsViewerLine
 			if (!m_nameboxLabel.isVisible())
 				m_nameboxLabel.setVisible(true);		// Show it
 
-			if (m_success && !m_runList.isEmpty())
-				renderTabs(mode);						// Show the tabs appropriately when not in error
+			renderTabs(mode);
 
 		} else {
 			if (m_nameboxLabel.isVisible())
@@ -498,7 +497,8 @@ public final class ResultsViewerLine
 	public void renderTabs(int mode)
 	{
 		int i, left, top;
-		double cvScore, cvTime;
+		boolean error;
+		double cvScore, cvTime, time, score;
 		String text;
 		Rectangle rect;
 		JLabel lower;
@@ -509,6 +509,8 @@ public final class ResultsViewerLine
 		for (i = 0; i < m_runList.size(); i++)
 		{
 			lower	= (JLabel)m_runList.getThird(i);
+			time	= (Double)m_runList.getFourth(i);
+			score	= (Double)m_runList.getFifth(i);
 			if (i == m_runList.size() - 2)
 			{	// CV
 				// Refer to loadRuns() and calculateRolledUpRunTabs() above for info on the tuple assignments
@@ -523,7 +525,6 @@ public final class ResultsViewerLine
 				{	// Make it red with yellow text
 					lower.setBackground(Color.RED);
 					lower.setForeground(Color.YELLOW);
-
 				} else {
 					// Normla text
 					lower.setBackground(getBackcolorForBoxes(m_level));
@@ -533,9 +534,9 @@ public final class ResultsViewerLine
 			} else if (i == m_runList.size() - 1) {
 				// Average total score
 				if (mode == ResultsViewer._SCORES)
-					text = Utils.removeLeadingZeros(Utils.doubleToString((Double)m_runList.getFifth(i), 3, 0));
+					text = Utils.removeLeadingZeros(Utils.doubleToString(score, 3, 0));
 				else
-					text = Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff((Double)m_runList.getFourth(i)));
+					text = Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff(time));
 
 				lower.setBackground(getBackcolorForBoxes(m_level));
 				lower.setForeground(getForecolorForBoxes(m_level));
@@ -543,12 +544,22 @@ public final class ResultsViewerLine
 			} else {
 				// Regular run score
 				if (mode == ResultsViewer._SCORES)
-					text = Utils.removeLeadingZeros(Utils.doubleToString((Double)m_runList.getFifth(i), 3, 0));
-				else
-					text = Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff((Double)m_runList.getFourth(i)));
+				{
+					text = Utils.removeLeadingZeros(Utils.doubleToString(score, 3, 0));
+					error	= (score == 0.0);
+				} else {
+					text = Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff(time));
+					error	= (time == 0.0);
+				}
 
-				lower.setBackground(getBackcolorForBoxes(m_level));
-				lower.setForeground(getForecolorForBoxes(m_level));
+				if (error)
+				{	// There is an error with this data
+					lower.setBackground(Color.RED);
+					lower.setForeground(Color.YELLOW);
+				} else {
+					lower.setBackground(getBackcolorForBoxes(m_level));
+					lower.setForeground(getForecolorForBoxes(m_level));
+				}
 			}
 			lower.setText(text);
 
