@@ -17,3 +17,7 @@
 *** To execute: Double-click \java\opbm\opbm.jar or read the accompanying     *
 ***             documentation.                                                *
 *******************************************************************************
+
+NOTE:  This branch will simulate failures 60% of the time.  It will also NOT
+       REBOOT, but will simply exit.  It can be restarted with the "-restart"
+       command line switch for rapid testing.
