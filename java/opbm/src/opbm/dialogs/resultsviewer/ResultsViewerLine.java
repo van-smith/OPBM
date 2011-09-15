@@ -211,12 +211,10 @@ public final class ResultsViewerLine
 		child	= m_child;
 		while (child != null)
 		{	// Count each child, and find out how many run entries it has
-			if (child.wasSuccessful())
-			{	// We only include successful children in our scores
-				++count;
-				if (child.m_runList.size() - 2 > maxRuns)	// We back off 2 for the CV and Average entries
-					maxRuns = child.m_runList.size() - 2;
-			}
+			++count;
+			if (child.m_runList.size() - 2 > maxRuns)	// We back off 2 for the CV and Average entries
+				maxRuns = child.m_runList.size() - 2;
+
 			// Move to the next sibling
 			child = child.getNext();
 		}
@@ -252,15 +250,12 @@ public final class ResultsViewerLine
 		entry	= 0;
 		while (child != null)
 		{	// Add the totals for this child
-			if (child.wasSuccessful())
-			{	// We only include successful children in our scores
-				for (i = 0; i < child.m_runList.size() - 2; i++)
-				{
-					tup = (Tuple)m_runList.getSeventh(i);
-					m_runList.addFourthDouble(i, (Double)child.m_runList.getFourth(i));	// time
-					tup.setSecond(entry, (Double)child.m_runList.getFifth(i));			// score
-					m_runList.addSixthInteger(i, 1);									// count
-				}
+			for (i = 0; i < child.m_runList.size() - 2; i++)
+			{
+				tup = (Tuple)m_runList.getSeventh(i);
+				m_runList.addFourthDouble(i, (Double)child.m_runList.getFourth(i));	// time
+				tup.setSecond(entry, (Double)child.m_runList.getFifth(i));			// score
+				m_runList.addSixthInteger(i, 1);									// count
 			}
 
 			// Move to the next sibling
