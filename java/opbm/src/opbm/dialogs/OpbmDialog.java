@@ -312,6 +312,11 @@ public final class OpbmDialog
 			m_frame.dispose();
 	}
 
+	public static Opbm		m_sd_opbm;
+	public static String	m_sd_uuid;
+	public static String	m_sd_message;
+	public static String	m_sd_caption;
+	public static int		m_sd_timeoutSeconds;
 	/**
 	 * Creates a simple dialog for displaying something for an (optional)
 	 * period of time before auto-closing
@@ -320,13 +325,6 @@ public final class OpbmDialog
 	 * @param timeoutSeconds how many seconds to pause before auto-closing
 	 * (use 0 to disable)
 	 */
-
-	public static Opbm		m_sd_opbm;
-	public static String	m_sd_uuid;
-	public static String	m_sd_message;
-	public static String	m_sd_caption;
-	public static int		m_sd_timeoutSeconds;
-
 	public static String simpleDialog(Opbm		opbm,
 									  String	message,
 									  String	caption,
@@ -337,7 +335,7 @@ public final class OpbmDialog
 		m_sd_message		= message;
 		m_sd_caption		= caption;
 		m_sd_timeoutSeconds	= timeoutSeconds;
-		
+
 		Thread t = new Thread("simpleDialog_" + m_sd_uuid)
 		{
 			@Override
@@ -449,7 +447,11 @@ public final class OpbmDialog
 	public static final int	_BUTTON3		= 4;
 	public static final int	_BUTTON4		= 8;
 	public static final int _BUTTONS12		= _BUTTON1 + _BUTTON2;
+	public static final int _BUTTONS14		= _BUTTON1 + _BUTTON4;
+	public static final int _BUTTONS23		= _BUTTON2 + _BUTTON3;
+	public static final int _BUTTONS34		= _BUTTON3 + _BUTTON4;
 	public static final int _BUTTONS123		= _BUTTON1 + _BUTTON2 + _BUTTON3;
+	public static final int _BUTTONS234		= _BUTTON2 + _BUTTON3 + _BUTTON4;
 	public static final int _BUTTONS1234	= _BUTTON1 + _BUTTON2 + _BUTTON3 + _BUTTON4;
 
 	private Opbm				m_opbm;

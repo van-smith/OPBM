@@ -176,7 +176,7 @@ public final class ResultsViewer
 		// 1b) Render the rainbow gauge
 		height	= (double)img.getHeight() - 83.0;
 		half = (height / 2.0);
-		diff = (Utils.between(m_rootRVL.getComputedScore(), 0.0, 200.0) - 100.0) / 100.0;
+		diff = (Utils.ensureBetween(m_rootRVL.getComputedScore(), 0.0, 200.0) - 100.0) / 100.0;
 		// We make the entire rainbow spectrum only show variations of 33 points
 		switchX = (int)Utils.roundAwayFromZero(half + (half * diff));
 		img.rainbowRectangle(1, 83, img.getWidth() - 2, img.getHeight() - 1, (int)height - switchX - 6);

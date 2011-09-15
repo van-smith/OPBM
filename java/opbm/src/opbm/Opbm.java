@@ -633,6 +633,15 @@ public final class Opbm extends	ModalApp
 	}
 
 	/**
+	 * Prompts the user for the CV value that should appear in red, and then
+	 * updates the value after the fact
+	 */
+	public void setResultsViewerCV()
+	{
+		OpbmInput.simpleInput(m_opbm, "Specify Value", "CV Percentage (should be \"3\" for 3%):", Utils.removeLeadingZeros(Utils.doubleToString(m_settingsMaster.getCVInRed() * 100.0, 3, 0)), "results_viewer_cv", "save_results_viewer_cv");
+	}
+
+	/**
 	 * Creates the developer window to allow editing of scripts.xml and other
 	 * xml files
 	 */
@@ -2923,6 +2932,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.14 11:06am";
+	public final static String		m_version					= "-- 1.1.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.14 12:36pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

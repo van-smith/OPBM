@@ -38,6 +38,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import opbm.Opbm;
+import opbm.common.Utils;
 import opbm.graphics.AlphaImage;
 
 public final class OpbmInput
@@ -111,6 +112,48 @@ public final class OpbmInput
 		m_id			= id;
 		m_opbm.initializeDialogResponse(id, triggerCommand, null, this);
 		createInputWindow();
+	}
+
+	public static Opbm		m_si_opbm;
+	public static String	m_si_label;
+	public static String	m_si_caption;
+	public static String	m_si_initValue;
+	public static String	m_si_id;
+	public static String	m_si_triggerCommand;
+	/**
+	 * Creates a simple input for inputting some value, with a post-user-action
+	 * trigger command
+	 */
+	public static void simpleInput(Opbm			opbm,
+								   String		caption,
+								   String		label,
+								   String		initValue,
+								   String		id,
+								   String		triggerCommand)
+	{
+		m_si_opbm				= opbm;
+		m_si_label				= label;
+		m_si_caption			= caption;
+		m_si_initValue			= initValue;
+		m_si_id					= id;
+		m_si_triggerCommand		= triggerCommand;
+
+		Thread t = new Thread("simpleInput_" + m_si_id)
+		{
+			@Override
+			public void run()
+			{	// In the thread we render the bottom section
+				Opbm	opbm			= m_si_opbm;
+				String	label			= m_si_label;
+				String	caption			= m_si_caption;
+				String	initValue		= m_si_initValue;
+				String	id				= m_si_id;
+				String	triggerCommand	= m_si_triggerCommand;
+
+				OpbmInput oi = new OpbmInput(opbm, caption, label, initValue, OpbmInput._BUTTONS23, id, triggerCommand);
+			}
+		};
+		t.start();
 	}
 
 	public void createInputWindow()
@@ -290,6 +333,8 @@ public final class OpbmInput
 
 		m_frame.setVisible(true);
 		m_frame.forceWindowToHaveFocus();
+		m_txtInput.requestFocusInWindow();
+		m_txtInput.selectAll();
 	}
 
 	/**
@@ -423,7 +468,11 @@ public final class OpbmInput
 	public static final int	_BUTTON3		= 4;
 	public static final int	_BUTTON4		= 8;
 	public static final int _BUTTONS12		= _BUTTON1 + _BUTTON2;
+	public static final int _BUTTONS14		= _BUTTON1 + _BUTTON4;
+	public static final int _BUTTONS23		= _BUTTON2 + _BUTTON3;
+	public static final int _BUTTONS34		= _BUTTON3 + _BUTTON4;
 	public static final int _BUTTONS123		= _BUTTON1 + _BUTTON2 + _BUTTON3;
+	public static final int _BUTTONS234		= _BUTTON2 + _BUTTON3 + _BUTTON4;
 	public static final int _BUTTONS1234	= _BUTTON1 + _BUTTON2 + _BUTTON3 + _BUTTON4;
 
 	private Opbm				m_opbm;

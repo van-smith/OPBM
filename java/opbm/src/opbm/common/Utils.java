@@ -1236,7 +1236,7 @@ public class Utils
 	 * @param max maximum value it should ever be
 	 * @return
 	 */
-	public static double between(double		value,
+	public static double ensureBetween(double		value,
 								 double		min,
 								 double		max)
 	{

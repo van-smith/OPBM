@@ -21,6 +21,9 @@
  *		#15				<rebootBeforeEachPass>yes</rebootBeforeEachPass>
  *		#16				<uninstallAfterFailure>yes</uninstallAfterFailure>
  *					</benchmarks>
+ *		#17			<resultsviewer>
+ *		#18				<cvinred>0.03</cvinred>
+ *					</resultsviewer>
  *		#14			<skin>developer</skin>
  *				</settings>
  *			</opbm>
@@ -332,10 +335,37 @@ public final class Settings
 		}
 		validateSkin();
 
+//////////
+// RESULTS VIEWER
+		m_resultsViewerXml = m_settingsXml.getChildNode("resultsviewer");
+		if (m_resultsViewerXml == null)
+		{	// #17 - Create it and set default value
+			++updateCount;
+			m_resultsViewerXml = new Xml("resultsViewer");
+			m_settingsXml.appendChild(m_resultsViewerXml);
+		}
+
+//////////
+// SKIN
+		m_resultsViewerCVinRedXml = m_resultsViewerXml.getChildNode("CVinRed");
+		if (m_resultsViewerCVinRedXml == null)
+		{	// #18 - Create it and set default value
+			++updateCount;
+			m_resultsViewerCVinRedXml = new Xml("CVinRed");
+			m_resultsViewerXml.appendChild(m_resultsViewerCVinRedXml);
+			m_resultsViewerCVinRedXml.setText("0.03");
+			// 3% by default
+			m_cvInRedThreshhold = 0.03;
+
+		} else {
+			// #11 - Grab value
+			m_cvInRedThreshhold = Utils.doubleValueOf(m_opbm.getMacroMaster().parseMacros(m_resultsViewerCVinRedXml.getText()), 0.03);
+		}
 
 		// All done!
 		if (updateCount != 0)
 		{	// Tell the user we had to reset some internal defaults
+			saveSettings();
 			System.out.println("Warning:  Updated " + Integer.toString(updateCount) + " default " + Utils.singularOrPlural(updateCount, "value", "values") + " in settings.xml");
 		}
 	}
@@ -385,6 +415,7 @@ public final class Settings
 		m_stopIfFailureXml.setText(Utils.evaluateLogicalToYesOrNo(m_stopIfFailure));
 		m_rebootBeforeEachPassXml.setText(Utils.evaluateLogicalToYesOrNo(m_rebootBeforeEachPass));
 		m_uninstallAfterFailuresXml.setText(Utils.evaluateLogicalToYesOrNo(m_uninstallAfterFailures));
+		m_resultsViewerCVinRedXml.setText(Utils.doubleToString(m_cvInRedThreshhold, 1, 2));
 		m_skinXml.setText(m_skin);
 
 		// Save the Xml to the local user's settings directory
@@ -478,6 +509,17 @@ public final class Settings
 	public float getHUDTranslucency()
 	{
 		return((float)m_hudTranslucency);
+	}
+
+	public double getCVInRed()
+	{
+		return(m_cvInRedThreshhold);
+	}
+
+	public void setCVInRed(double value)
+	{
+		m_cvInRedThreshhold = Utils.ensureBetween(value, 0.00, 1.00);
+		saveSettings();
 	}
 
 	public boolean getHUDDebugInfo()
@@ -606,6 +648,12 @@ public final class Settings
 		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.uninstallAfterFailure")) {
 			// They want offset to this node
 			return(m_uninstallAfterFailuresXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.resultsViewer")) {
+			// They want offset to this node
+			return(m_resultsViewerXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.resultsViewer.CVinRed")) {
+			// They want offset to this node
+			return(m_resultsViewerCVinRedXml);
 		} else if (element.equalsIgnoreCase("opbm.settings.skin")) {
 			// They want offset to this node
 			return(m_skinXml);
@@ -613,6 +661,7 @@ public final class Settings
 			return(null);
 		}
 	}
+
 
 	/**
 	 * Validates the settings for the settings.xml root Xml that's passed
@@ -626,7 +675,7 @@ public final class Settings
 		boolean isValid;
 		String translucency, count;
 		double value;
-		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml, rebootBeforeEachPassXml, uninstallAfterFailureXml;
+		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml, rebootBeforeEachPassXml, uninstallAfterFailureXml, resultsViewerXml, resultsViewerCVinRedXml;
 
 		isValid = false;
 		if (isFullSettings)
@@ -755,6 +804,22 @@ public final class Settings
 					break;
 				}
 
+//////////
+// RESULTS VIEWER
+				resultsViewerXml = settingsXml.getAttributeOrChildNode("resultsViewer");
+				if (resultsViewerXml == null)
+				{	// #17 - fail
+					break;
+				}
+
+//////////
+// CV IN RED
+				resultsViewerCVinRedXml = resultsViewerXml.getAttributeOrChildNode("cvinred");
+				if (resultsViewerCVinRedXml == null)
+				{	// #18 - fail
+					break;
+				}
+
 				// If we get here, everything's acceptable
 				isValid = true;
 				break;
@@ -777,6 +842,7 @@ public final class Settings
 	private boolean		m_stopIfFailure;
 	private boolean		m_rebootBeforeEachPass;
 	private boolean		m_uninstallAfterFailures;
+	private double		m_cvInRedThreshhold;
 	private String		m_skin;
 
 	// Tags to reach the entries in the Xml tree
@@ -795,5 +861,7 @@ public final class Settings
 	private	Xml			m_stopIfFailureXml;
 	private	Xml			m_rebootBeforeEachPassXml;
 	private	Xml			m_uninstallAfterFailuresXml;
+	private Xml			m_resultsViewerXml;
+	private Xml			m_resultsViewerCVinRedXml;
 	private	Xml			m_skinXml;
 }

@@ -150,10 +150,19 @@ public class Macros
 	// UNINSTALL AFTER FAILURE
 				} else if (macro.equalsIgnoreCase("uninstall_after_failure")) {
 					m_settings	= m_opbm.getSettingsMaster();
-					macroSubstitution = logicalEvaluation(m_settings.uninstallAfterFailure()).toUpperCase();
+					macroSubstitution = logicalEvaluation(m_settings.benchmarkStopsIfRetriesFail() && m_settings.uninstallAfterFailure()).toUpperCase();
 				} else if (macro.equalsIgnoreCase("uninstall_after_failure_color")) {
 					m_settings	= m_opbm.getSettingsMaster();
-					macroSubstitution = greenRedEvaluation(m_settings.uninstallAfterFailure()).toUpperCase();
+					macroSubstitution = greenRedEvaluation(m_settings.benchmarkStopsIfRetriesFail() && m_settings.uninstallAfterFailure()).toUpperCase();
+
+	//////////
+	// RESULTS VIEWER
+				} else if (macro.equalsIgnoreCase("results_viewer_cv")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = Utils.removeLeadingZeros(Utils.doubleToString(m_settings.getCVInRed(), 1, 2));
+				} else if (macro.equalsIgnoreCase("results_viewer_cv_percent")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = Utils.removeLeadingZeros(Utils.doubleToString(m_settings.getCVInRed() * 100.0, 3, 0)) + "%";
 
 
 	//////////

@@ -337,6 +337,18 @@ public class Commands
 			if (!fileName.isEmpty())
 				m_opbm.createAndShowResultsViewer(fileName);
 
+		} else if (command.equals("set_results_viewer_cv")) {
+			m_opbm.setResultsViewerCV();
+
+		} else if (command.equals("save_results_viewer_cv")) {
+			String value = m_opbm.getDialogResponseData("results_viewer_cv");
+			if (!value.isEmpty())
+			{	// Save the value and refresh
+				m_opbm.getSettingsMaster().setCVInRed(Utils.doubleValueOf(value, 3.0) / 100.0);
+				m_opbm.refreshLeftPanelsAfterMacroUpdate();
+			}
+
+
 //////////
 // SIMPLE WINDOW and DEVELOPER WINDOW
 		} else if (command.equals("simple")) {

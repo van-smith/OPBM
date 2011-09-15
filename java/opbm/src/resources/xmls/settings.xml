@@ -17,6 +17,9 @@
 			<rebootBeforeEachPass>Yes</rebootBeforeEachPass>
 			<uninstallAfterFailure>Yes</uninstallAfterFailure>
 		</benchmarks>
+		<resultsviewer>
+			<cvinred>0.03</cvinred>
+		</resultsviewer>
 		<skin>developer</skin>
 	</settings>
 </opbm>

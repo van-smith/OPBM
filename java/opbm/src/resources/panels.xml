@@ -65,14 +65,18 @@
 				<tooltip>Load system data into a debugInfo.xml file for email or public posting to/for the developer</tooltip>
 			</menu>
 			<spacer/>
-			<spacer/>
 			<heading>
 				<text>Maintenance:</text>
 			</heading>
 			<menu>
 				<text fgcolor="7f6f4f">Script Definition</text>
 				<command p1="Edit Scripts">leftpanel</command>
-				<tooltip>Setup scripts, including flows, abstracts, atoms, molecules, scenarios and suites.</tooltip>
+				<tooltip>Setup scripts by adding/editing atoms, molecules, scenarios and suites.</tooltip>
+			</menu>
+			<menu>
+				<text fgcolor="7f6f4f">UI Settings</text>
+				<command p1="UI Settings">leftpanel</command>
+				<tooltip>User interface settings</tooltip>
 			</menu>
 			<spacer/>
 			<text>Click on the links above to access</text>
@@ -493,51 +497,11 @@
 			</navigation>
 			<spacer/>
 			<heading>
-				<text>Run Atoms:</text>
+				<text>Run Atoms</text>
 			</heading>
-			<text>1) Select item in Atom Listing</text>
+			<spacer/>
+			<text>1) Select item in left Listing</text>
 			<text>2) Double-click to run sequence</text>
-			<text>3) Options below change the HUD</text>
-			<spacer/>
-			<spacer/>
-			<heading>
-				<text>Options:</text>
-			</heading>
-			<menu>
-				<text fgcolor="$debug_info_color$">Debug Info?  $debug_info$</text>
-				<command>toggle_debug_info</command>
-				<tooltip>Debug Information shows up on the HUD at the bottom four lines. They can be hidden to make the HUD smaller and cleaner.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$hud_color$">Show HUD?  $hud_translucency$</text>
-				<command>toggle_hud</command>
-				<tooltip>HUD options allow 25% translucency, 50%, 75%, 100%, or to be turned completely off.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$retry_color$">Retry Attempts: $retry_attempts$</text>
-				<command>toggle_retry_attempts</command>
-				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$halt_on_error_color$">Halt on Errors?  $halt_on_error$</text>
-				<command>toggle_halt_on_error</command>
-				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$uninstall_after_failure_color$">Uninstall on failure?  $uninstall_after_failure$</text>
-				<command>toggle_uninstall_after_failure</command>
-				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
-			</menu>
-			<spacer/>
-			<spacer/>
-			<text>The HUD is divided into five</text>
-			<text>component areas:</text>
-			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar (slash) counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 		<left name="Execute Molecules" bgcolor="ffffff">
@@ -553,51 +517,11 @@
 			</navigation>
 			<spacer/>
 			<heading>
-				<text>Run Molecules:</text>
+				<text>Run Molecules</text>
 			</heading>
-			<text>1) Select item in Molecule Listing</text>
+			<spacer/>
+			<text>1) Select item in left Listing</text>
 			<text>2) Double-click to run sequence</text>
-			<text>3) Options below change the HUD</text>
-			<spacer/>
-			<spacer/>
-			<heading>
-				<text>Options:</text>
-			</heading>
-			<menu>
-				<text fgcolor="$debug_info_color$">Debug Info?  $debug_info$</text>
-				<command>toggle_debug_info</command>
-				<tooltip>Debug Information shows up on the HUD at the bottom four lines. They can be hidden to make the HUD smaller and cleaner.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$hud_color$">Show HUD?  $hud_translucency$</text>
-				<command>toggle_hud</command>
-				<tooltip>HUD options allow 25% translucency, 50%, 75%, 100%, or to be turned completely off.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$retry_color$">Retry Attempts: $retry_attempts$</text>
-				<command>toggle_retry_attempts</command>
-				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$halt_on_error_color$">Halt on Errors?  $halt_on_error$</text>
-				<command>toggle_halt_on_error</command>
-				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$uninstall_after_failure_color$">Uninstall on failure?  $uninstall_after_failure$</text>
-				<command>toggle_uninstall_after_failure</command>
-				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
-			</menu>
-			<spacer/>
-			<spacer/>
-			<text>The HUD is divided into five</text>
-			<text>component areas:</text>
-			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar / counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 		<left name="Execute Scenarios" bgcolor="ffffff">
@@ -613,51 +537,11 @@
 			</navigation>
 			<spacer/>
 			<heading>
-				<text>Run Scenarios:</text>
+				<text>Run Scenarios</text>
 			</heading>
-			<text>1) Select item in Scenario Listing</text>
+			<spacer/>
+			<text>1) Select item in left Listing</text>
 			<text>2) Double-click to run sequence</text>
-			<text>3) Options below change the HUD</text>
-			<spacer/>
-			<spacer/>
-			<heading>
-				<text>Options:</text>
-			</heading>
-			<menu>
-				<text fgcolor="$debug_info_color$">Debug Info?  $debug_info$</text>
-				<command>toggle_debug_info</command>
-				<tooltip>Debug Information shows up on the HUD at the bottom four lines. They can be hidden to make the HUD smaller and cleaner.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$hud_color$">Show HUD?  $hud_translucency$</text>
-				<command>toggle_hud</command>
-				<tooltip>HUD options allow 25% translucency, 50%, 75%, 100%, or to be turned completely off.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$retry_color$">Retry Attempts: $retry_attempts$</text>
-				<command>toggle_retry_attempts</command>
-				<tooltip>Click to cycle through valid retry attempts range of 0-10 retries before failure is reported.</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$halt_on_error_color$">Halt on Errors?  $halt_on_error$</text>
-				<command>toggle_halt_on_error</command>
-				<tooltip>Should errors cause the benchmark execution to cease?</tooltip>
-			</menu>
-			<menu>
-				<text fgcolor="$uninstall_after_failure_color$">Uninstall on failure?  $uninstall_after_failure$</text>
-				<command>toggle_uninstall_after_failure</command>
-				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
-			</menu>
-			<spacer/>
-			<spacer/>
-			<text>The HUD is divided into five</text>
-			<text>component areas:</text>
-			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar (slash) counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
 		</left>
 
 		<left name="Execute Suites" bgcolor="ffffff">
@@ -673,15 +557,27 @@
 			</navigation>
 			<spacer/>
 			<heading>
-				<text>Run Suites:</text>
+				<text>Run Suites</text>
 			</heading>
-			<text>1) Select item in Suite Listing</text>
-			<text>2) Double-click to run sequence</text>
-			<text>3) Options below change the HUD</text>
 			<spacer/>
+			<text>1) Select item in left Listing</text>
+			<text>2) Double-click to run sequence</text>
+		</left>
+
+		<left name="UI Settings" bgcolor="fff4e2">
+			<navigation>
+				<text>Back</text>
+				<command>edit_back</command>
+				<tooltip>Return to $previous_panel$</tooltip>
+			</navigation>
+			<navigation>
+				<text>Home</text>
+				<command>home</command>
+				<tooltip>Return to $home_panel$</tooltip>
+			</navigation>
 			<spacer/>
 			<heading>
-				<text>Options:</text>
+				<text>HUD</text>
 			</heading>
 			<menu>
 				<text fgcolor="$debug_info_color$">Debug Info?  $debug_info$</text>
@@ -693,6 +589,10 @@
 				<command>toggle_hud</command>
 				<tooltip>HUD options allow 25% translucency, 50%, 75%, 100%, or to be turned completely off.</tooltip>
 			</menu>
+			<spacer/>
+			<heading>
+				<text>Benchmarks</text>
+			</heading>
 			<menu>
 				<text fgcolor="$retry_color$">Retry Attempts: $retry_attempts$</text>
 				<command>toggle_retry_attempts</command>
@@ -709,15 +609,14 @@
 				<tooltip>Should a run failure cause the uninstall atoms to run?</tooltip>
 			</menu>
 			<spacer/>
-			<spacer/>
-			<text>The HUD is divided into five</text>
-			<text>component areas:</text>
-			<spacer height="10"/>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#1 - Header$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#2 - Stop button$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#3 - Status info$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#4 - Statusbar / counter$/td$$/tr$$/table$</text>
-			<text>$table$$tr$$tdwidth20$$/td$$td$#5 - Debug info$/td$$/tr$$/table$</text>
+			<heading>
+				<text>Results Viewer</text>
+			</heading>
+			<menu>
+				<text>Results Viewer CV:  $results_viewer_cv_percent$</text>
+				<command>set_results_viewer_cv</command>
+				<tooltip>What's the threshhold for highlighted display in the Results Viewer CV column?  (Default is 0.03, or 3%)</tooltip>
+			</menu>
 		</left>
 
 	</panels>

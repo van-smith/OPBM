@@ -521,7 +521,7 @@ public final class ResultsViewerLine
 				else
 					text = Utils.removeLeadingZeros(Utils.doubleToString(cvTime * 100, 3, 1));
 
-				if ((mode == ResultsViewer._SCORES ? cvScore : cvTime) >= 0.03)
+				if ((mode == ResultsViewer._SCORES ? cvScore : cvTime) >= m_opbm.getSettingsMaster().getCVInRed())
 				{	// Make it red with yellow text
 					lower.setBackground(Color.RED);
 					lower.setForeground(Color.YELLOW);
