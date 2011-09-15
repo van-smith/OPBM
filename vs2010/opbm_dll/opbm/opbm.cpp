@@ -539,7 +539,7 @@ extern HMODULE ghModule;
 	// See notes about parameters and return codes above
 	{
 		AU3_PLUGIN_VAR*		pMyResult;
-		bool				llSuccess, llSuccess1, llSuccess2, llSuccess3, llSuccess4, llSuccess5, llSuccess6, llSuccess7, llSuccess8, llSuccess9;
+		bool				llSuccess, llSuccess1, llSuccess2, llSuccess3, llSuccess4, llSuccess5, llSuccess6, llSuccess7, llSuccess8, llSuccess9, llSuccess10;
 		int					length, lnFirstRun, lnLocalState, lnServiceState, lnChromoting, lnPreferences;
 		wchar_t				appdata[2048];
 		char				key[1024];
@@ -579,9 +579,12 @@ extern HMODULE ghModule;
 			// Turn off the auto-updater (set its disable checkbox value to 1)
 			sprintf_s(&key[0], sizeof(key), "%s\000", "HKLM\\SOFTWARE\\Policies\\Google\\Update\\DisableAutoUpdateChecksCheckboxValue");
 			llSuccess9	= SetRegistryKeyValueAsString( &key[0], "1" ) == 1 ? true : false;
+			// Turn off the auto-updater (set its check period to 0 minutes, which disables it per http://dev.chromium.org/administrators/turning-off-auto-updates)
+			sprintf_s(&key[0], sizeof(key), "%s\000", "HKLM\\SOFTWARE\\Policies\\Google\\Update\\AutoUpdateCheckPeriodMinutes");
+			llSuccess10	= SetRegistryKeyValueAsString( &key[0], "0" ) == 1 ? true : false;
 
 			// See if we were successful
-			llSuccess = llSuccess1 && llSuccess2 && llSuccess3 && llSuccess4 && llSuccess5 && llSuccess6 && llSuccess7 && llSuccess8 && llSuccess9;
+			llSuccess = llSuccess1 && llSuccess2 && llSuccess3 && llSuccess4 && llSuccess5 && llSuccess6 && llSuccess7 && llSuccess8 && llSuccess9 && llSuccess10;
 
 		} else {
 			// Nope, we cannot proceed

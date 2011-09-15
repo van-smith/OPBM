@@ -557,7 +557,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Chrome" shortname="Chrome">
-				<abstract name="Install Chrome" shortname="Install" sourcename="execute">
+				<abstract name="Install Chrome" shortname="Install" sourcename="execute" atomuuid="756a1a76-9345-4ae0-9490-84f32273189c">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -571,7 +571,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Chrome" shortname="Chrome">
-				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute" atomuuid="5464e0c2-a591-4aa9-9f5d-f281d7f2b51c">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
