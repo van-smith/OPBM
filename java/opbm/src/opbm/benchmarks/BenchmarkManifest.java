@@ -173,9 +173,7 @@ public final class BenchmarkManifest
 		if (manifestPathName.isEmpty())
 			createManifest();
 		else
-		{
 			reloadManifest(manifestPathName);
-		}
 	}
 
 	/**

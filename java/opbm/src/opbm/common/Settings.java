@@ -804,20 +804,23 @@ public final class Settings
 					break;
 				}
 
+				if (isFullSettings)
+				{
 //////////
 // RESULTS VIEWER
-				resultsViewerXml = settingsXml.getAttributeOrChildNode("resultsViewer");
-				if (resultsViewerXml == null)
-				{	// #17 - fail
-					break;
-				}
+					resultsViewerXml = settingsXml.getAttributeOrChildNode("resultsViewer");
+					if (resultsViewerXml == null)
+					{	// #17 - fail
+						break;
+					}
 
 //////////
 // CV IN RED
-				resultsViewerCVinRedXml = resultsViewerXml.getAttributeOrChildNode("cvinred");
-				if (resultsViewerCVinRedXml == null)
-				{	// #18 - fail
-					break;
+					resultsViewerCVinRedXml = resultsViewerXml.getAttributeOrChildNode("cvinred");
+					if (resultsViewerCVinRedXml == null)
+					{	// #18 - fail
+						break;
+					}
 				}
 
 				// If we get here, everything's acceptable
