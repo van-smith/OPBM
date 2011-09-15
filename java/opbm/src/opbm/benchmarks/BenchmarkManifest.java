@@ -1464,8 +1464,8 @@ public final class BenchmarkManifest
 // is done.
 //////
 	//
-	Opbm.m_debugSimulateRunAtomMode = true;
-	Opbm.m_debugSimulateRunAtomModeFailurePercent = 0.6;	// Fail 60% of the time
+	//Opbm.m_debugSimulateRunAtomMode = true;
+	//Opbm.m_debugSimulateRunAtomModeFailurePercent = 0.6;	// Fail 60% of the time
 	//
 //////
 // End
