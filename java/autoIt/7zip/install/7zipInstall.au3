@@ -18,8 +18,7 @@
 Dim $CurrentLoop
 Dim $LoopLimit
 Dim $InstallerWindowTitle
-dim $is386Installer
-
+Dim $is386Installer
 
 ; Begin at 2 (see adobeCommon for definition of 0 and 1)
 $gBaselines[2][0] = $LAUNCH_SEVENZIP_INSTALLER
@@ -43,10 +42,8 @@ Initialize7ZipScript()
 outputDebug( "Launch7ZipInstaller()" )
 Launch7ZipInstaller()
 
-outputDebug( "AcceptAndInstall()" )
-if not $is386Installer Then
-	AcceptAndInstallx64()
-Else
+If $is386Installer Then
+	outputDebug( "AcceptAndInstall()" )
 	AcceptAndInstalli386()
 EndIf
 
@@ -81,61 +78,20 @@ Func Launch7ZipInstaller()
 	; Wait for it to load
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 	
-	; Wait until it is done uncompressing and begins with its dialog
-	opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	If not $is386Installer Then
+		; The 64-bit installer works passively
+		If ProcessWaitClose( $gPID, 60 ) <> 1 Then
+			ErrorHandle( "Error with 7-Zip 64-bit installer" )
+		EndIf
+	Else
+		; Wait until it is done uncompressing and begins with its dialog
+		opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	EndIf
 	TimerEnd( $LAUNCH_SEVENZIP_INSTALLER )
 	
 	; Wait for the system to settle down, as the windows flash for a moment here
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 EndFunc
-
-Func AcceptAndInstallx64()
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Welcome")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-	
-	TimerBegin()
-	; Click the "Next" button
-	Send("{Enter}")
-	Sleep(250)
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + License Agreement")
-	opbmWinWaitActivate( $InstallerWindowTitle, "License Agreement", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-	
-	; Click the "I accept the terms in the License Agreement" checkbox
-	ControlClick( $InstallerWindowTitle, "License Agreement", "[CLASS:Button, INSTANCE:1]" )
-	Send("!a")
-	Sleep(100)
-	; Send a plus sign to guarantee it's in the "clicked" position, this enables the "next" button
-	Send("+")
-	Sleep(100)
-	; Click the next button
-	Send("!n")
-	Sleep(250)
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Custom Setup")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Custom Setup", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-	
-	; Click the next button
-	Send("!n")
-	Sleep(250)
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Ready to Install")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Ready to Install", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-	
-	; Click the install button
-	Send("!i")
-	Sleep(250)
-	
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Finish Button")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Finish button", 90, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-	
-	; Click the finish button
-	Send("{Enter}")
-	Sleep(250)
-	
-	; Wait until everything is completed
-	opbmWaitUntilSystemIdle( 10, 500, $gTimeout )
-	
-	TimerEnd( $INSTALL_SEVENZIP )
-EndFunc
-
 
 Func AcceptAndInstalli386()
 	outputDebug("Waiting for " & $InstallerWindowTitle & " + Welcome")

@@ -42,10 +42,8 @@ Initialize7ZipScript()
 outputDebug( "Launch7ZipUninstaller()" )
 Launch7ZipUninstaller()
 
-outputDebug( "Uninstall()" )
-If not $is386Installer Then
-	Uninstallx64()
-Else
+If $is386Installer Then
+	outputDebug( "Uninstall()" )
 	Uninstalli386()
 EndIf
 
@@ -80,7 +78,10 @@ Func Launch7ZipUninstaller()
 	
 	; Wait until it is done uncompressing and begins with its dialog
 	If not $is386Installer Then
-		opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+		; The 64-bit uninstaller is completely passive
+		If ProcessWaitClose( $gPID, 60 ) <> 1 Then
+			ErrorHandle( "Error with 7-Zip 64-bit uninstaller" )
+		EndIf
 	Else
 		opbmWinWaitActivate( $InstallerWindowTitle, "Uninstall 7-Zip", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Uninstall: Unable to find Window.")
 	EndIf
@@ -88,37 +89,6 @@ Func Launch7ZipUninstaller()
 	
 	; Wait for the system to settle down
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
-EndFunc
-
-Func Uninstallx64()
-	TimerBegin()
-	; Click the next button
-	Send( "!n" )
-	Sleep(250)
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Modify, repair, or remove")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Modify, repair, or remove", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-	
-	; Click the remove button
-	Send( "!r" )
-	Sleep(250)
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Remove 7-Zip")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Remove 7-Zip", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-	
-	; Click the second remove button
-	Send( "!r" )
-	Sleep(250)
-	; Clicking this button immediately begins the uninstall process
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Completing")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Completing", 60, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
-
-	; Click the "Finish" button
-	Send( "!f" )
-	Sleep(250)
-
-	; Wait for system to be idle
-	opbmWaitUntilSystemIdle( 10, 200, 10000 )
-	
-	TimerEnd( $UNINSTALL_SEVENZIP)
 EndFunc
 
 Func Uninstalli386()
