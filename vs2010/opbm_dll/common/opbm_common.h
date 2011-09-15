@@ -23,6 +23,8 @@
 	void			GetRunningDirectory				(char* dirname, int dirnameLength);
 	void			GetCSIDLDirectory				(char* dirname, int dirnameLength, char* csidl_name);
 	char*			GetRegistryKeyValue				(char* key);
+	char*			GetRegistryKeyValueWOW64		(char* key);
+	char*			GetRegistryKeyValueWOW32		(char* key);
 	int				caseNocaseCompare				(char* left, char* right, int length);
 	int				caseNocaseContains				(char* needle, char* haystack);
 	int				SetRegistryKeyValueAsString		(char* key, char* value);

@@ -490,12 +490,17 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 //		HKLM	- HKEY_LOCAL_MACHINE
 //		HKU		- HKEY_USERS
 //
-// This function attempts to read the key level, obtaining its value
+// This function attempts to read the key level, obtaining its value.
+// On 64-bit systems, registry key reflection is used, so it may fail
+// with a raw attempt.  If it fails, we iterate through both attempted
+// key reads, WOW64_64KEY, and WOW64_32KEY.  If all fail, then a failure
+// is returned.  The first value to read correctly is returned on success.
 //
 /////
 	char* GetRegistryKeyValue(char* key)
 	{
-		int skip;
+		int skip, result;
+		char localKey[2048];
 		HKEY hk, hkout;
 		DWORD type, length;
 		BYTE* intermediate;
@@ -503,10 +508,160 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 		char* converted;
 
 		// Break out our HKEY root, and keyname components
-		keyName = breakoutHkeyComponents(key, hk, skip);
-		if (RegOpenKeyExA( hk, key + skip, 0, KEY_READ, &hkout ) == ERROR_SUCCESS)
+		memset(localKey, 0, sizeof(localKey));
+		memcpy(localKey, key, min(strlen(key) + 1, sizeof(localKey)));
+		keyName = breakoutHkeyComponents(localKey, hk, skip);
+		if (RegOpenKeyExA( hk, localKey + skip, 0, KEY_READ, &hkout ) == ERROR_SUCCESS)
 		{	// Success, we can read the key value
-			if (RegQueryValueExA( hkout, keyName, 0, &type, NULL, &length ) == ERROR_SUCCESS)
+			if ((result = RegQueryValueExA( hkout, keyName, 0, &type, NULL, &length )) == ERROR_SUCCESS)
+			{
+				// Allocate a buffer to read the value
+				intermediate = (BYTE*)malloc(length);
+				if (!intermediate)
+					return(NULL);
+
+				RegQueryValueExA( hkout, keyName, 0, &type, intermediate, &length );
+				RegCloseKey(hkout);
+				switch (type)
+				{
+					case REG_BINARY:
+					case REG_EXPAND_SZ:
+					case REG_MULTI_SZ:
+					case REG_SZ:
+						// The intermediate buffer is the wholeness of the string
+						return((char*)intermediate);
+
+					case REG_DWORD:
+						// Convert the dword value to its string form
+						converted = (char*)malloc(32);
+						if (converted != NULL)
+						{
+							memset(converted, 0, 32);
+							sprintf_s(converted, length, "%u", *(DWORD*)intermediate);
+						}
+						free(intermediate);
+						return(converted);
+
+					case REG_QWORD:
+						// Convert the qword value to its string form
+						converted = (char*)malloc(32);
+						if (converted != NULL)
+						{
+							memset(converted, 0, 32);
+							sprintf_s(converted, length, "%I64u", *(__int64*)intermediate);
+						}
+						free(intermediate);
+						return(converted);
+
+					default:
+						// Unhandled type
+						free(intermediate);
+						return(NULL);
+				}
+
+			} else {
+				// Error, return NULL
+				return(GetRegistryKeyValueWOW64(key));
+			}
+
+		} else {
+			// Failure, return a NULL
+			return(GetRegistryKeyValueWOW64(key));
+
+		}
+	}
+
+	char* GetRegistryKeyValueWOW64(char* key)
+	{
+		int skip, result;
+		char localKey[2048];
+		HKEY hk, hkout;
+		DWORD type, length;
+		BYTE* intermediate;
+		char* keyName;
+		char* converted;
+
+		// Break out our HKEY root, and keyname components
+		memset(localKey, 0, sizeof(localKey));
+		memcpy(localKey, key, min(strlen(key) + 1, sizeof(localKey)));
+		keyName = breakoutHkeyComponents(localKey, hk, skip);
+		if (RegOpenKeyExA( hk, localKey + skip, 0, KEY_WOW64_64KEY | KEY_READ, &hkout ) == ERROR_SUCCESS)
+		{	// Success, we can read the key value
+			if ((result = RegQueryValueExA( hkout, keyName, 0, &type, NULL, &length )) == ERROR_SUCCESS)
+			{
+				// Allocate a buffer to read the value
+				intermediate = (BYTE*)malloc(length);
+				if (!intermediate)
+					return(NULL);
+
+				RegQueryValueExA( hkout, keyName, 0, &type, intermediate, &length );
+				RegCloseKey(hkout);
+				switch (type)
+				{
+					case REG_BINARY:
+					case REG_EXPAND_SZ:
+					case REG_MULTI_SZ:
+					case REG_SZ:
+						// The intermediate buffer is the wholeness of the string
+						return((char*)intermediate);
+
+					case REG_DWORD:
+						// Convert the dword value to its string form
+						converted = (char*)malloc(32);
+						if (converted != NULL)
+						{
+							memset(converted, 0, 32);
+							sprintf_s(converted, length, "%u", *(DWORD*)intermediate);
+						}
+						free(intermediate);
+						return(converted);
+
+					case REG_QWORD:
+						// Convert the qword value to its string form
+						converted = (char*)malloc(32);
+						if (converted != NULL)
+						{
+							memset(converted, 0, 32);
+							sprintf_s(converted, length, "%I64u", *(__int64*)intermediate);
+						}
+						free(intermediate);
+						return(converted);
+
+					default:
+						// Unhandled type
+						free(intermediate);
+						return(NULL);
+				}
+
+			} else {
+				// Error, return NULL
+				return(GetRegistryKeyValueWOW32(key));
+			}
+
+		} else {
+			// Failure, return a NULL
+			return(GetRegistryKeyValueWOW32(key));
+
+		}
+	}
+
+	char* GetRegistryKeyValueWOW32(char* key)
+	{
+		int skip, result;
+		char localKey[2048];
+		HKEY hk, hkout;
+		DWORD type, length;
+		BYTE* intermediate;
+		char* keyName;
+		char* converted;
+
+		// Break out our HKEY root, and keyname components
+		memset(localKey, 0, sizeof(localKey));
+		memcpy(localKey, key, min(strlen(key) + 1, sizeof(localKey)));
+		keyName = breakoutHkeyComponents(localKey, hk, skip);
+		if (RegOpenKeyExA( hk, localKey + skip, 0, KEY_WOW64_32KEY | KEY_READ, &hkout ) == ERROR_SUCCESS)
+		{	// Success, we can read the key value
+			if ((result = RegQueryValueExA( hkout, keyName, 0, &type, NULL, &length )) == ERROR_SUCCESS)
 			{
 				// Allocate a buffer to read the value
 				intermediate = (BYTE*)malloc(length);
