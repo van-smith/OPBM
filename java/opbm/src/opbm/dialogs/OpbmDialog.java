@@ -36,6 +36,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import opbm.Opbm;
+import opbm.common.Utils;
 import opbm.graphics.AlphaImage;
 
 public final class OpbmDialog
@@ -309,6 +310,55 @@ public final class OpbmDialog
 	{
 		if (m_frame != null)
 			m_frame.dispose();
+	}
+
+	/**
+	 * Creates a simple dialog for displaying something for an (optional)
+	 * period of time before auto-closing
+	 * @param message what to display
+	 * @param caption what to put in the caption (title bar)
+	 * @param timeoutSeconds how many seconds to pause before auto-closing
+	 * (use 0 to disable)
+	 */
+
+	public static Opbm		m_sd_opbm;
+	public static String	m_sd_uuid;
+	public static String	m_sd_message;
+	public static String	m_sd_caption;
+	public static int		m_sd_timeoutSeconds;
+
+	public static String simpleDialog(Opbm		opbm,
+									  String	message,
+									  String	caption,
+									  int		timeoutSeconds)
+	{
+		m_sd_opbm			= opbm;
+		m_sd_uuid			= Utils.getUUID();
+		m_sd_message		= message;
+		m_sd_caption		= caption;
+		m_sd_timeoutSeconds	= timeoutSeconds;
+		
+		Thread t = new Thread("simpleDialog_" + m_sd_uuid)
+		{
+			@Override
+			public void run()
+			{	// In the thread we render the bottom section
+				Opbm	opbm			= m_sd_opbm;
+				String	uuid			= m_sd_uuid;
+				String	message			= m_sd_message;
+				String	caption			= m_sd_caption;
+				int		timeoutSeconds	= m_sd_timeoutSeconds;
+
+				OpbmDialog od = new OpbmDialog(opbm, message, caption, OpbmDialog._OKAY_BUTTON, uuid, "");
+				if (timeoutSeconds != 0)
+				{	// Pause the active thread until the timeout period is reached, or until the user clicks the button
+					od.setTimeout(timeoutSeconds);
+					Utils.monitorDialogWithTimeout(opbm, uuid, timeoutSeconds);
+				}
+			}
+		};
+		t.start();
+		return(m_sd_uuid);
 	}
 
 	@Override

@@ -2239,6 +2239,105 @@ public class Xml
 	}
 
 	/**
+	 * Saves the current level node and all attributes and children to the
+	 * specified filename.  Non-static version of saveNode(Xml root, String fileName).
+	 *
+	 * @param fileName file name to write output
+	 * @see #saveNode(opbm.Xml, java.lang.String)
+	 */
+	public boolean saveNodeAsCSV(String fileName)
+	{
+		return(saveNodeAsCSV(this, fileName));
+	}
+
+	/**
+	 * Saves node (itself, attributes, and all children) to the specified
+	 * filename.
+	 *
+	 * @param csv <code>Xml</code> root node to the CSV structure to write
+	 * @param fileName file name to write output
+	 */
+	public static boolean saveNodeAsCSV(Xml csv, String fileName)
+	{
+		boolean result = false;
+
+		if (csv != null && csv.getName().equalsIgnoreCase("csv") && csv.getFirstChild() != null)
+		{	// We have a valid csv tag, and it has at least one child, so it's a likely candidate for success
+			try
+			{
+				File f;
+				FileOutputStream fo;
+
+				f = new File(fileName);
+				fo = new FileOutputStream(f);
+				DataOutputStream dataOut = new DataOutputStream(fo);
+
+				writeNodeAsCSVLine(csv.getFirstChild(), dataOut);
+
+				result = true;
+				dataOut.close();
+
+			} catch (FileNotFoundException ex) {
+			} catch (IOException ex) {
+			}
+		}
+		return(result);
+	}
+
+	/**
+	 * Writes a specific node, itself, and all its attributes, to the specified
+	 * <code>DataOutputStream</code>.  This method should not be called directly,
+	 * but is called from <code>saveNode()</code>.
+	 *
+	 * @param row <code>Xml</code> first row candidate to save
+	 * @param dos <code>DataOutputStream</code> to write to
+	 * @throws IOException for failed writes
+	 * @return number of data elements written (rows + columns)
+	 */
+	public static int writeNodeAsCSVLine(Xml row, DataOutputStream dos)
+														throws IOException
+	{
+		int elementsWritten;
+		int colNum;
+		Xml column;
+
+		elementsWritten = 0;
+		while (row != null)
+		{
+			if (row.getName().equalsIgnoreCase("row"))
+			{
+				column	= row.getFirstChild();
+				colNum	= 0;
+				while (column != null)
+				{
+					if (column.getName().equalsIgnoreCase("column"))
+					{
+						if (colNum != 0)
+						{	// Write the leading comma
+							dos.writeBytes(",");
+						}
+						// Write the content
+						dos.writeBytes(column.getText());
+						++elementsWritten;
+						++colNum;
+					}
+					// Move to next column (if any)
+					column = column.getNext();
+				}
+				// When we get here, this row is done
+
+				// Write a cr/lf to terminate this row
+				++elementsWritten;
+				dos.writeBytes("\n");
+			}
+			// Move to next row
+			row = row.getNext();
+		}
+		// When we get here, we're finished
+		return(elementsWritten);
+	}
+
+	/**
 	 * Non-static version of addUUIDToAllNodes(Xml node, boolean includeAttributes)
 	 */
 	public void addUUIDsToAllNodes(boolean includeAttributes)
@@ -2467,6 +2566,46 @@ public class Xml
 			// No higher level, return an empty string
 			return("");
 		}
+	}
+
+	/**
+	 * Creates a template used for creating CSV data, that can be written to
+	 * a CSV file, while being easily manipulated internally.
+	 *
+	 * CSV Xmls have this basic structure
+	 *		<csv>
+	 *			<row>
+	 *				<column>content at row 1, column 1</column>
+	 *				<column>content at row 1, column 2</column>
+	 *				<column>continues sequentially to row 1, column 3</column>
+	 *			</row>
+	 *			<row>
+	 *				<column>content at row 2, column 1</column>
+	 *				<column></column>
+	 *				<column></column>
+	 *				<column></column>
+	 *				<column>content at row 2, column 5</column>
+	 *			</row>
+	 *		</csv>
+	 *
+	 * By default, this structure is created:
+	 *		<csv>
+	 *			<row>
+	 *				<column></column>
+	 *			</row>
+	 *		</csv>
+	 *
+	 * @return Xml of the basic structure (pointer to csv node)
+	 */
+	public static Xml createNewCSVtemplate()
+	{
+		Xml csv = new Xml("csv");
+		Xml row = new Xml("row");
+		Xml col = new Xml("column");
+
+		csv.addChild(row);
+		row.addChild(col);
+		return(csv);
 	}
 
 	/**

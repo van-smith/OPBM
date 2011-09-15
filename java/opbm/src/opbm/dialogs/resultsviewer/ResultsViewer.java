@@ -894,36 +894,6 @@ public final class ResultsViewer
 		labelUnselectedOver.setIcon(new ImageIcon(img.getBufferedImage()));
 		m_csv.setBounds(60, 410+30, img.getWidth(), img.getHeight());
 		m_csv.renderHotTrackChange();
-
-/*
-		// Report icon
-		m_report = new JLabelHotTrack(this);
-		m_report.setType(JLabelHotTrack.CLICK_ACTION);
-		m_report.setIdentifier("csv");
-		labelUnselectedNeutral = new JLabel();
-		labelUnselectedNeutral.setVisible(false);
-		labelUnselectedNeutral.setToolTipText("View this report as a report");
-		m_pan.add(labelUnselectedNeutral);
-		m_pan.moveToFront(labelUnselectedNeutral);
-
-		labelUnselectedOver = new JLabel();
-		labelUnselectedOver.setVisible(false);
-		labelUnselectedOver.setToolTipText("View this data as a report");
-		m_pan.add(labelUnselectedOver);
-		m_pan.moveToFront(labelUnselectedOver);
-
-		m_report.setUnselectedNeutral(labelUnselectedNeutral);
-		m_report.setUnselectedOver(labelUnselectedOver);
-
-		// Create all the buttons for the various forms of activity
-		img	= new AlphaImage(Opbm.locateFile("report.png"));
-		labelUnselectedNeutral.setIcon(new ImageIcon(img.getBufferedImage()));
-		img	= new AlphaImage(img);
-		img.scaleBrightness(0.5);
-		labelUnselectedOver.setIcon(new ImageIcon(img.getBufferedImage()));
-		m_report.setBounds(65, 480, img.getWidth(), img.getHeight());
-		m_report.renderHotTrackChange();
- */
 	}
 
 	public void buildRenderList()
@@ -1106,17 +1076,35 @@ public final class ResultsViewer
 
 	public void clickActionCallback(JLabelHotTrack jlht)
 	{
-		Process process;
-
 		if (jlht.getIdentifier().equalsIgnoreCase("csv"))
 		{	// The CSV button was clicked
 			try
-			{	// Let their default/favorite spreadsheet load the results.csv file
-				Desktop.getDesktop().open(new File(Opbm.getHarnessCSVDirectory() + "results.csv"));
+			{
+				// Let their default/favorite spreadsheet load the csv file
+				generateResultsViewerCSV();
+				Desktop.getDesktop().open(new File(Opbm.getHarnessCSVDirectory() + "ResultsViewer.csv"));
+				OpbmDialog.simpleDialog(m_opbm, "ResultsViewer.csv was created and launched", "Using Default CSV Handler", 15);
 
 			} catch (Throwable t) {
 			}
 		}
+	}
+
+	/**
+	 * Generates a real-time version of whatever the user is viewing
+	 */
+	public void generateResultsViewerCSV()
+	{
+		Xml csv;
+		String filename;
+
+		csv = Xml.createNewCSVtemplate();
+
+		m_rootRVL.appendResultsViewerCSVHeaders(csv);
+		ResultsViewerLine.appendResultsViewerCSVData(m_rootRVL, csv);
+
+		filename = Opbm.getHarnessCSVDirectory() + "ResultsViewer.csv";
+		csv.saveNodeAsCSV(filename);
 	}
 
 	@Override
@@ -1303,7 +1291,6 @@ public final class ResultsViewer
 	private JLabelHotTrack				m_times;				// "Times" button
 	private JLabelHotTrack				m_scores;				// "Scores" button
 	private JLabelHotTrack				m_csv;					// "CSV" button
-	private JLabelHotTrack				m_report;				// "Report" button
 
 	// Threads which are used to render the bottom and graph portions, as these sometimes take a few seconds
 	private Thread						m_splashThread;			// The initial takes a few seconds, so this thread gives it a "Loading..." message

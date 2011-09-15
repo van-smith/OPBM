@@ -576,6 +576,173 @@ public final class ResultsViewerLine
 	}
 
 	/**
+	 * Appends headers for what this entry would display (since all lines in
+	 * the results viewer are required to be the same, as data parsed/input
+	 * from results.xml must be that way, then using the root node to control
+	 * the headers is the way of handling this.
+	 *
+	 *		<worklet name="Install 7-Zip" instances="3"
+	 *					score="37.02766763481087"
+	 *					time="38.543741810162366"
+	 *					shortname="I7Z"
+	 *					minTime="34.4005353780307"
+	 *					maxTime="42.9580467701266"
+	 *					avgTime="38.543741810162366"
+	 *					geoTime="38.38539923184427"
+	 *					cvTime="0.11117737596935459"
+	 *					minScore="32.9507510379721"
+	 *					maxScore="41.1476126358191"
+	 *					avgScore="37.02766763481087"
+	 *					geoScore="36.87599797127315"
+	 *					cvScore="0.11069020711842638"
+	 *					tags=""
+	 *					tested="yes"
+	 *					status="success">
+	 *			<run1 time="38.2726432823298" score="36.9846392306414" status=""></run1>
+	 *			<run2 time="34.4005353780307" score="41.1476126358191" status=""></run2>
+	 *			<run3 time="42.9580467701266" score="32.9507510379721" status=""></run3>
+	 *		</worklet>
+	 *
+	 * @param csv
+	 */
+	public void appendResultsViewerCSVHeaders(Xml csv)
+	{
+		int i, mode;
+		String text;
+		Xml row, col;
+
+		// Create the header row
+		row = new Xml("row");
+		csv.appendChild(row);
+
+		// Add labels
+		row.appendChild("column", "Level");
+		row.appendChild("column", "Description");
+
+		// Add tab's run data, times first, then scores
+		mode = ResultsViewer._TIMES;
+		while (mode == ResultsViewer._TIMES || mode == ResultsViewer._SCORES)
+		{
+			text = (mode == ResultsViewer._TIMES) ? "Time" : "Score";
+			for (i = 0; i < m_runList.size(); i++)
+			{
+				if (i == m_runList.size() - 2)
+				{	// CV
+					row.appendChild("column", "CV " + text);
+				} else if (i == m_runList.size() - 1) {
+					// Average
+					row.appendChild("column", "Average " + text);
+				} else {
+					// Run
+					row.appendChild("column", "Run " + Integer.toString(i + 1) + " " + text);
+				}
+			}
+			if (mode == ResultsViewer._TIMES)
+				mode = ResultsViewer._SCORES;
+			else
+				break;
+		}
+
+		// Add the fixed column data beyond that
+		row.appendChild("column", "minTime");
+		row.appendChild("column", "maxTime");
+		row.appendChild("column", "avgTime");
+		row.appendChild("column", "geoTime");
+		row.appendChild("column", "cvTime");
+		row.appendChild("column", "minScore");
+		row.appendChild("column", "maxScore");
+		row.appendChild("column", "avgScore");
+		row.appendChild("column", "geoScore");
+		row.appendChild("column", "cvScore");
+	}
+
+	/**
+	 * Appends this entry's line data to the CSV, and then calls for any
+	 * children and next siblings
+	 * @param csv
+	 */
+	public static void appendResultsViewerCSVData(ResultsViewerLine		rvl,
+												  Xml					csv)
+	{
+		int i, mode;
+		Xml row;
+		Double cvScore, cvTime, score, time;
+		String text;
+
+		// Process from this node on down through children and siblings
+		while (rvl != null)
+		{
+			// Append the row for this line of data
+			row = new Xml("row");
+			csv.appendChild(row);
+
+			// Add label
+			row.appendChild("column", Integer.toString(rvl.m_level + 1));		// Level
+			row.appendChild("column", rvl.m_nameboxLabel.getText().trim());		// Description
+
+			// Add tab's run data, times first, then scores
+			mode = ResultsViewer._TIMES;
+			while (mode == ResultsViewer._TIMES || mode == ResultsViewer._SCORES)
+			{
+				for (i = 0; i < rvl.m_runList.size(); i++)
+				{
+					time	= (Double)rvl.m_runList.getFourth(i);
+					score	= (Double)rvl.m_runList.getFifth(i);
+					if (i == rvl.m_runList.size() - 2)
+					{	// CV
+						cvScore = (Double)rvl.m_runList.getFifth(i);
+						cvTime	= (Double)rvl.m_runList.getFourth(i);
+						if (mode == ResultsViewer._SCORES)
+							text = Utils.removeLeadingZeros(Double.toString(cvScore * 100));
+						else
+							text = Utils.removeLeadingZeros(Double.toString(cvTime * 100));
+
+					} else if (i == rvl.m_runList.size() - 1) {
+						// Average
+						if (mode == ResultsViewer._SCORES)
+							text = Utils.removeLeadingZeros(Double.toString(score));
+						else
+							text = Utils.removeLeadingZeros(Double.toString(time));
+
+					} else {
+						// Run
+						if (mode == ResultsViewer._SCORES)
+						{
+							text = Utils.removeLeadingZeros(Double.toString(score));
+						} else {
+							text = Utils.removeLeadingZeros(Double.toString(time));
+						}
+					}
+					row.appendChild("column", text);
+				}
+				if (mode == ResultsViewer._TIMES)
+					mode = ResultsViewer._SCORES;
+				else
+					break;
+			}
+
+			// Add the fixed column data beyond that
+			row.appendChild("column", Double.toString(rvl.m_minTime));
+			row.appendChild("column", Double.toString(rvl.m_maxTime));
+			row.appendChild("column", Double.toString(rvl.m_avgTime));
+			row.appendChild("column", Double.toString(rvl.m_geoTime));
+			row.appendChild("column", Double.toString(rvl.m_cvTime));
+			row.appendChild("column", Double.toString(rvl.m_minScore));
+			row.appendChild("column", Double.toString(rvl.m_maxScore));
+			row.appendChild("column", Double.toString(rvl.m_avgScore));
+			row.appendChild("column", Double.toString(rvl.m_geoScore));
+			row.appendChild("column", Double.toString(rvl.m_cvScore));
+
+			// Do child
+			if (rvl.getChild() != null)
+				rvl.getChild().appendResultsViewerCSVData(rvl.getChild(), csv);
+
+			// Move to next sibling
+			rvl = rvl.getNext();
+		}
+	}
+
+	/**
 	 * Returns the last tab score, which is the average score for all completed runs
 	 * @return score
 	 */
