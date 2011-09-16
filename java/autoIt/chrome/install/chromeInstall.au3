@@ -38,7 +38,7 @@ KillChromeIfRunning()
 outputDebug( "Install()" )
 Install()
 
-KillChromeIfRunning()	; Will force-close if it is "resistant" to normal close attempts
+KillChromeIfRunning()	; Will force-close if it is "resistent" to normal close attempts
 
 ; Close any instances of the browser which may have auto-launched
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()

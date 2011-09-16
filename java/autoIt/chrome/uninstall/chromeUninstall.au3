@@ -56,18 +56,44 @@ Exit
 ;======================================================================================================================================
 
 Func LaunchUninstaller()
-	outputDebug( "Attempting to launch " & $CHROME_UNINSTALL_COMMAND)
+	Dim $filename1
+	Dim $filename2
+	Dim $filename3
 	
 	KillChromeIfRunning()
 	
-	TimerBegin()
-	$gPID = Run($CHROME_UNINSTALL_COMMAND, "C:\", @SW_MAXIMIZE)
+	$filename1	= GetCSIDLDirectory( "COMMON_PROGRAMS" ) & "Google Chrome\Uninstall Google Chrome.lnk"
+	$filename2	= GetCSIDLDirectory( "PROGRAMS" ) & "Google Chrome\Uninstall Google Chrome.lnk"
+	$filename3	= $CHROME_UNINSTALL_COMMAND
+	
+	If FileExists( $filename1 ) Then
+		TimerBegin()
+		outputDebug( "Attempting ShellExecute " & $filename1 )
+		$gPID = ShellExecute( $filename1, "C:\", @SW_SHOWMAXIMIZED )
+	Else
+		$gPID = 0
+	EndIf
+	
 	If $gPID = 0 Then
-		ErrorHandle( "Unable to launch Chrome uninstaller " & $CHROME_UNINSTALL_COMMAND )
+		If FileExists( $filename2 ) Then
+			TimerBegin()
+			outputDebug( "Attempting ShellExecute " & $filename2 )
+			$gPID = ShellExecute( $filename2, "C:\", @SW_SHOWMAXIMIZED )
+		Else
+			$gPID = 0
+		EndIf
+		
+		If $gPID = 0 Then
+			TimerBegin()
+			outputDebug( "Attempting to launch " & $filename3 )
+			$gPID = Run( $filename3, "C:\", @SW_SHOWMAXIMIZED )
+			If $gPID = 0 Then
+				ErrorHandle( "Unable to launch Chrome uninstaller " & $filename1 & " or " & $filename2 & " or " & $filename3 )
+			EndIf
+		EndIf
 	EndIf
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitActivate( "Uninstall Google Chrome", "", $gTimeout, $ERROR_PREFIX & "WinWait: Uninstall Google Chrome: Unable to find Window.")
-	
 	TimerEnd( $LAUNCH_CHROME_UNINSTALLER )
 EndFunc
 

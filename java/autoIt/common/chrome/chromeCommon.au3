@@ -81,8 +81,9 @@ Func InitializeChromeScript()
 EndFunc
 
 Func LaunchChrome()
-	Local $filename
-	outputDebug( "Attempting to launch " & $CHROME_EXECUTABLE )
+	Local $filename1
+	Local $filename2
+	Local $filename3
 	
 	If Not isChromeAlreadyInstalled() Then
 		outputError("Chrome is not installed.")
@@ -91,11 +92,37 @@ Func LaunchChrome()
 
 	KillChromeIfRunning()
 
-	TimerBegin()
+;	$filename1	= GetCSIDLDirectory( "COMMON_PROGRAMS" ) & "Google Chrome\Google Chrome.lnk"
+;	$filename2	= GetCSIDLDirectory( "PROGRAMS" ) & "Google Chrome\Google Chrome.lnk"
+	$filename3	= $CHROME_EXECUTABLE_TO_LAUNCH
 	
-	;filename = GetCSIDLDirectory( "COMMON_APPDATA" ) + "
-	
-	$gPID = Run( $CHROME_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
+;	If FileExists( $filename1 ) Then
+;		TimerBegin()
+;		outputDebug( "Attempting ShellExecute " & $filename1 )
+;		$gPID = ShellExecute( $filename1 & $OPBM_SPLASH_HTML , "C:\", @SW_SHOWMAXIMIZED )
+;	Else
+;		$gPID = 0
+;	EndIf
+;	
+;	If $gPID = 0 Then
+;		If FileExists( $filename2 ) Then
+;			TimerBegin()
+;			outputDebug( "Attempting ShellExecute " & $filename2 )
+;			$gPID = ShellExecute( $filename2 & $OPBM_SPLASH_HTML , "C:\", @SW_SHOWMAXIMIZED )
+;		Else
+;			$gPID = 0
+;		EndIf
+;		
+;		If $gPID = 0 Then
+			TimerBegin()
+			outputDebug( "Attempting to launch " & $filename3 )
+			$gPID = Run( $filename3, "C:\", @SW_SHOWMAXIMIZED )
+			If $gPID = 0 Then
+;				ErrorHandle( "Unable to launch Chrome via " & $filename1 & " or " & $filename2 & " or " & $filename3 )
+				ErrorHandle( "Unable to launch Chrome via " & $filename3 )
+			EndIf
+;		EndIf
+;	EndIf
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
 	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_CHROME )
