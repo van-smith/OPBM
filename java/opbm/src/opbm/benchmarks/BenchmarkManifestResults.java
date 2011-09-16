@@ -56,7 +56,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.1.0
+ * @version 1.2.0
  *
  */
 package opbm.benchmarks;
