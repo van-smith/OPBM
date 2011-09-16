@@ -81,6 +81,7 @@ Func InitializeChromeScript()
 EndFunc
 
 Func LaunchChrome()
+	Local $filename
 	outputDebug( "Attempting to launch " & $CHROME_EXECUTABLE )
 	
 	If Not isChromeAlreadyInstalled() Then
@@ -91,6 +92,9 @@ Func LaunchChrome()
 	KillChromeIfRunning()
 
 	TimerBegin()
+	
+	;filename = GetCSIDLDirectory( "COMMON_APPDATA" ) + "
+	
 	$gPID = Run( $CHROME_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
 	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )

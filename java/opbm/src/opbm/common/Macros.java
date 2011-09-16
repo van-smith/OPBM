@@ -156,6 +156,15 @@ public class Macros
 					macroSubstitution = greenRedEvaluation(m_settings.benchmarkStopsIfRetriesFail() && m_settings.uninstallAfterFailure()).toUpperCase();
 
 	//////////
+	// RUN SPINUPS
+				} else if (macro.equalsIgnoreCase("run_spinups")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = logicalEvaluation(m_settings.benchmarkRunSpinups()).toUpperCase();
+				} else if (macro.equalsIgnoreCase("run_spinups_color")) {
+					m_settings	= m_opbm.getSettingsMaster();
+					macroSubstitution = greenRedEvaluation(m_settings.benchmarkRunSpinups()).toUpperCase();
+
+	//////////
 	// RESULTS VIEWER
 				} else if (macro.equalsIgnoreCase("results_viewer_cv")) {
 					m_settings	= m_opbm.getSettingsMaster();

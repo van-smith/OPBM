@@ -16,6 +16,7 @@
 			<stopIfFailure>Yes</stopIfFailure>
 			<rebootBeforeEachPass>Yes</rebootBeforeEachPass>
 			<uninstallAfterFailure>Yes</uninstallAfterFailure>
+			<runSpinups>No</runSpinups>
 		</benchmarks>
 		<resultsviewer>
 			<cvinred>0.03</cvinred>

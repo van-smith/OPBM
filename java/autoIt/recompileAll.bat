@@ -7,6 +7,8 @@ call recompileAcrobatReader.bat
 echo .
 call recompileOffice2010.bat
 echo .
+call recompileCheckConflicts.bat
+echo .
 call recompileChrome.bat
 echo .
 call recompileFirefox.bat

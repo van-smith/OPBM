@@ -378,7 +378,7 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 	} else if (_stricmp(csidl_name, "COMMON_VIDEO") == 0) {
 		// All Users\My Video
 		csid = CSIDL_COMMON_VIDEO;
-	
+
 	} else if (_stricmp(csidl_name, "RESOURCES") == 0) {
 		// Resource Directory
 		csid = CSIDL_RESOURCES;

@@ -20,6 +20,7 @@
  *		#13				<stopIfFailure>yes</stopIfFailure>
  *		#15				<rebootBeforeEachPass>yes</rebootBeforeEachPass>
  *		#16				<uninstallAfterFailure>yes</uninstallAfterFailure>
+ *		#19				<runSpinups>No</runSpinups>
  *					</benchmarks>
  *		#17			<resultsviewer>
  *		#18				<cvinred>0.03</cvinred>
@@ -28,7 +29,7 @@
  *				</settings>
  *			</opbm>
  *
- * Last Updated:  Sep 12, 2011
+ * Last Updated:  Sep 16, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -36,7 +37,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.1.0
+ * @version 1.2.0
  *
  */
 
@@ -304,17 +305,32 @@ public final class Settings
 // UNINSTALL AFTER FAILURE
 		m_uninstallAfterFailuresXml = m_benchmarksXml.getChildNode("uninstallAfterFailure");
 		if (m_uninstallAfterFailuresXml == null)
-		{	// #15 - Create it and set default value
+		{	// #16 - Create it and set default value
 			++updateCount;
 			m_uninstallAfterFailuresXml = new Xml("uninstallAfterFailure");
 			m_benchmarksXml.appendChild(m_uninstallAfterFailuresXml);
-			// "stopIfFailure" goes on benchmarks node
 			m_uninstallAfterFailuresXml.setText("yes");
 			m_uninstallAfterFailures = true;
 
 		} else {
 			// #11 - Grab value
 			m_uninstallAfterFailures = m_opbm.getMacroMaster().parseMacros(m_uninstallAfterFailuresXml.getText()).equalsIgnoreCase("yes");
+		}
+
+//////////
+// RUN SPINUPS
+		m_runSpinupsXml = m_benchmarksXml.getChildNode("runSpinups");
+		if (m_runSpinupsXml == null)
+		{	// #19 - Create it and set default value
+			++updateCount;
+			m_runSpinupsXml = new Xml("runSpinups");
+			m_benchmarksXml.appendChild(m_runSpinupsXml);
+			m_runSpinupsXml.setText("no");
+			m_runSpinups = false;
+
+		} else {
+			// #11 - Grab value
+			m_runSpinups = m_opbm.getMacroMaster().parseMacros(m_runSpinupsXml.getText()).equalsIgnoreCase("yes");
 		}
 
 //////////
@@ -415,6 +431,7 @@ public final class Settings
 		m_stopIfFailureXml.setText(Utils.evaluateLogicalToYesOrNo(m_stopIfFailure));
 		m_rebootBeforeEachPassXml.setText(Utils.evaluateLogicalToYesOrNo(m_rebootBeforeEachPass));
 		m_uninstallAfterFailuresXml.setText(Utils.evaluateLogicalToYesOrNo(m_uninstallAfterFailures));
+		m_runSpinupsXml.setText(Utils.evaluateLogicalToYesOrNo(m_runSpinups));
 		m_resultsViewerCVinRedXml.setText(Utils.doubleToString(m_cvInRedThreshhold, 1, 2));
 		m_skinXml.setText(m_skin);
 
@@ -499,6 +516,16 @@ public final class Settings
 	public boolean uninstallAfterFailure()
 	{
 		return(m_uninstallAfterFailures);
+	}
+
+	public boolean benchmarkRunSpinups()
+	{
+		return(m_runSpinups);
+	}
+
+	public boolean runSpinups()
+	{
+		return(m_runSpinups);
 	}
 
 	public boolean getHUDVisible()
@@ -594,6 +621,12 @@ public final class Settings
 		saveSettings();
 	}
 
+	public void toggleRunSpinups()
+	{
+		m_runSpinups = !m_runSpinups;
+		saveSettings();
+	}
+
 	/**
 	 * Returns Xml pointer to the raw data element by name.  Note:  any changes
 	 * made here will be overwritten by the Settings class if the user changes
@@ -648,6 +681,9 @@ public final class Settings
 		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.uninstallAfterFailure")) {
 			// They want offset to this node
 			return(m_uninstallAfterFailuresXml);
+		} else if (element.equalsIgnoreCase("opbm.settings.benchmarks.runSpinups")) {
+			// They want offset to this node
+			return(m_runSpinupsXml);
 		} else if (element.equalsIgnoreCase("opbm.settings.resultsViewer")) {
 			// They want offset to this node
 			return(m_resultsViewerXml);
@@ -675,7 +711,7 @@ public final class Settings
 		boolean isValid;
 		String translucency, count;
 		double value;
-		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml, rebootBeforeEachPassXml, uninstallAfterFailureXml, resultsViewerXml, resultsViewerCVinRedXml;
+		Xml debuggerXml, singleStepXml, hudXml, hudVisibleXml, hudTranslucencyXml, hudDebugInfoXml, retryXml, retryEnabledXml, retryAttemptsXml, stopIfFailureXml, rebootBeforeEachPassXml, uninstallAfterFailureXml, runSpinupsXml, resultsViewerXml, resultsViewerCVinRedXml;
 
 		isValid = false;
 		if (isFullSettings)
@@ -804,23 +840,12 @@ public final class Settings
 					break;
 				}
 
-				if (isFullSettings)
-				{
 //////////
-// RESULTS VIEWER
-					resultsViewerXml = settingsXml.getAttributeOrChildNode("resultsViewer");
-					if (resultsViewerXml == null)
-					{	// #17 - fail
-						break;
-					}
-
-//////////
-// CV IN RED
-					resultsViewerCVinRedXml = resultsViewerXml.getAttributeOrChildNode("cvinred");
-					if (resultsViewerCVinRedXml == null)
-					{	// #18 - fail
-						break;
-					}
+// RUN SPINUPS
+				runSpinupsXml = settingsXml.getAttributeOrChildNode("runSpinups");
+				if (runSpinupsXml == null)
+				{	// #19 - fail
+					break;
 				}
 
 				// If we get here, everything's acceptable
@@ -845,6 +870,7 @@ public final class Settings
 	private boolean		m_stopIfFailure;
 	private boolean		m_rebootBeforeEachPass;
 	private boolean		m_uninstallAfterFailures;
+	private boolean		m_runSpinups;
 	private double		m_cvInRedThreshhold;
 	private String		m_skin;
 
@@ -864,6 +890,7 @@ public final class Settings
 	private	Xml			m_stopIfFailureXml;
 	private	Xml			m_rebootBeforeEachPassXml;
 	private	Xml			m_uninstallAfterFailuresXml;
+	private	Xml			m_runSpinupsXml;
 	private Xml			m_resultsViewerXml;
 	private Xml			m_resultsViewerCVinRedXml;
 	private	Xml			m_skinXml;

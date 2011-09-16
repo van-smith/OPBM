@@ -102,7 +102,8 @@ Func InitializeGlobalVariables()
 	If $gOpbmPluginHandle <> 0 Then 
 		errorHandle( $OPBM_DLL & " did not open" )
 	EndIf
-	outputDebug( "Plugin " & $OPBM_DLL & " opened properly" )
+	;outputDebug( "Plugin " & $OPBM_DLL & " opened properly" )
+	outputDebug( "Plugins loaded okay" )
 	If is32BitOS() Then
 		outputDebug( "Detected Windows 32-bit Operating System" )
 	Else

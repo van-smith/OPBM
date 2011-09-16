@@ -1508,20 +1508,21 @@ public final class BenchmarkManifest
 					// If it's a trial run, it will simply proceed
 
 				} else {
+					result = null;
 					if (isAnOfficialRun())
 					{	// Launch the spinup scripts first, anything beginning with the text "spinup ", as in "spinup something" or "spinup other thing"
-						result = runAtomsStartingWithThisPrefix("spinup ");
-						if (result.getFirstChild() != null)
-						{	// At least one thing was done, record it
-							m_bmr.appendAtomRunResult(result);
-							saveManifest();
+						if (m_opbm.getSettingsMaster().benchmarkRunSpinups())
+						{	// They want to run spinups
+							result = runAtomsStartingWithThisPrefix("spinup ");
+							if (result.getFirstChild() != null)
+							{	// At least one thing was done, record it
+								m_bmr.appendAtomRunResult(result);
+								saveManifest();
+							}
+							// Run the specifically-related-to-atom spinup atoms
+							System.out.println("Spinning up");
+							result = runAtomTags("atomOnSpinup", false);
 						}
-						// Run the specifically-related-to-atom spinup atoms
-						System.out.println("Spinning up");
-						result = runAtomTags("atomOnSpinup", false);
-
-					} else {
-						result = null;
 					}
 				}
 				if (result != null && result.getFirstChild() != null)

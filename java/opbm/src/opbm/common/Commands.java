@@ -380,6 +380,9 @@ public class Commands
 		} else if (command.equals("toggle_uninstall_after_failure")) {
 			m_settingsMaster.toggleUninstallAfterFailure();
 			m_opbm.refreshLeftPanelsAfterMacroUpdate();
+		} else if (command.equals("toggle_run_spinups")) {
+			m_settingsMaster.toggleRunSpinups();
+			m_opbm.refreshLeftPanelsAfterMacroUpdate();
 
 
 
