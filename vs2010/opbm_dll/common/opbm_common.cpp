@@ -280,7 +280,7 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 		csid = CSIDL_PRINTHOOD;
 	
 	} else if (_stricmp(csidl_name, "LOCAL_APPDATA") == 0) {
-		// <user name>\Local Settings\Applicaiton Data (non roaming)
+		// <user name>\Local Settings\Application Data (non roaming)
 		csid = CSIDL_LOCAL_APPDATA;
 	
 	} else if (_stricmp(csidl_name, "ALTSTARTUP") == 0) {

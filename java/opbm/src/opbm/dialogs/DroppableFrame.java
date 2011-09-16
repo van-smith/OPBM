@@ -91,6 +91,15 @@ public class DroppableFrame extends JFrame
 		Opbm.setMinMaxResizeBoundaries(getHWND(), minWidth, minHeight, maxWidth, maxHeight);
 	}
 
+	/**
+	 * Tells Windows to keep this window as the TOPMOST window always, even
+	 * when it loses focus.
+	 */
+	public void setPersistAlwaysOnTop()
+	{
+		Opbm.setPersistAlwaysOnTop(Opbm.getComponentHWND(this));
+	}
+
 	/** Updates the status bar with the specified label (used to indicate drop operation)
 	 *
 	 * @param statusBar label object to update

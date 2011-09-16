@@ -2134,7 +2134,7 @@ public final class BenchmarkManifest
 											m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 											System.out.println("Auto-uninstall: " + atomName);
 											m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-											if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+											if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
 												m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 										// End
 										//////////
@@ -2185,7 +2185,7 @@ public final class BenchmarkManifest
 									}
 								}
 								// If the user clicked stop, we're done
-								if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+								if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 									break;
 							}
 							// When we get here, we've tried to run every atom
@@ -2199,7 +2199,7 @@ public final class BenchmarkManifest
 								atomCandidate.appendAttribute(new Xml("autoUninstalled", successNames));
 							}
 							// If the user clicked stop, we're done
-							if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+							if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 							{	// We're done, clean up before leaving
 								if (!Opbm.m_debugSimulateRunAtomMode)
 									saveManifest();		// Save this result when not simulating a run in debug moe
@@ -2280,7 +2280,7 @@ public final class BenchmarkManifest
 										m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 										System.out.println(Utils.translateScriptsAbstractOptionsTagName(tagName) + ": " + atomName);
 										m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-										if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+										if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
 											m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 									// End
 									//////////
@@ -2318,7 +2318,7 @@ public final class BenchmarkManifest
 									autoExecute.appendChild(new Xml("warning", warning));
 								}
 								// If the user clicked stop, we're done
-								if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+								if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 									return(autoExecute);
 							}
 						}
@@ -2371,7 +2371,7 @@ public final class BenchmarkManifest
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 					System.out.println("Running: " + name);
 					m_bpa.processAbstract_Atom(candidate, success, failure);
-					if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+					if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
 						m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 				// End
 				//////////
@@ -2394,7 +2394,7 @@ public final class BenchmarkManifest
 					autoExecute.appendChild(thisAtomResults);
 
 					// If the user clicked stop, we're done
-					if (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP)
+					if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
 						return(autoExecute);
 				}
 			}

@@ -141,7 +141,7 @@ public final class ResultsViewerLine
 
 		// Process through all of the runs
 		while (run != null)
-		{
+		{	// But only those entries (candidates) that are actual "runN" entries
 			if (run.getName().toLowerCase().startsWith("run"))
 			{	// Load this run entry
 				rawName	= run.getName();

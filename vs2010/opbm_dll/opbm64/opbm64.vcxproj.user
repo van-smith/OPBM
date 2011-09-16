@@ -4,7 +4,7 @@
     <LocalDebuggerCommand>C:\Program Files\Java\jdk1.7.0\bin\java.exe</LocalDebuggerCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>-jar dist\opbm.jar</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-jar opbm.jar</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>c:\cana\java\opbm\</LocalDebuggerWorkingDirectory>

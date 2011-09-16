@@ -376,6 +376,8 @@ public final class HUD extends DroppableFrame
 
 	public void updateDefaults()
 	{
+		// Bring it back to the front
+		setPersistAlwaysOnTop();
 		if (m_status2.getText().equalsIgnoreCase("Status updates..."))
 			m_status2.setText("");
 

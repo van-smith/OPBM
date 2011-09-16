@@ -498,6 +498,41 @@
 
 
 
+
+
+	
+//////////
+//
+// setPersistAlwaysOnTop()
+//
+// Sets an HWND to be moved to the top, and remain there always
+//
+/////
+	// setPersistAlwaysOnTop()
+	JNIEXPORT jint JNICALL Java_opbm_Opbm_setPersistAlwaysOnTop(JNIEnv* env, jclass cls, jint hwnd)
+	{
+		int result;
+
+		// Set the window 
+		if (IsWindow((HWND)hwnd))
+		{	// Tell Windows to put it at the top, and keep it there
+			result = SetWindowPos((HWND)hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+			return((result != 0) ? 0 : -2);
+
+		} else {
+			// Failure, HWND is not valid
+			return(-1);
+		}
+	}
+
+
+
+
+
+
+
+
+	
 //////////
 //
 // snapshotProcesses()

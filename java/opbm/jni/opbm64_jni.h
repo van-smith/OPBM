@@ -97,6 +97,14 @@ JNIEXPORT jint JNICALL Java_opbm_Opbm_setMinMaxResizeBoundaries
 
 /*
  * Class:     opbm_Opbm
+ * Method:    setPersistAlwaysOnTop
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_opbm_Opbm_setPersistAlwaysOnTop
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     opbm_Opbm
  * Method:    snapshotProcesses
  * Signature: ()V
  */
