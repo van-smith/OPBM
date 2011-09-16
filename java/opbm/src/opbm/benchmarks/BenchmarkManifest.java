@@ -73,6 +73,7 @@ import opbm.common.Macros;
 import opbm.common.Tuple;
 import opbm.common.Utils;
 import opbm.common.Xml;
+import opbm.dialogs.OpbmColumns;
 import opbm.dialogs.OpbmDialog;
 
 public final class BenchmarkManifest
@@ -140,6 +141,8 @@ public final class BenchmarkManifest
 		m_bmr					= new BenchmarkManifestResults(opbm, this);
 		m_type					= type;
 		m_name					= m_opbm.getRunName();
+		m_conflicts				= new ArrayList<String>(0);
+		m_resolutions			= new ArrayList<String>(0);
 
 		m_suiteName				= "";
 		m_scenarioName			= "";
@@ -1423,8 +1426,8 @@ public final class BenchmarkManifest
 	 */
 	public void run()
 	{
-		boolean prevIsRecordingCounts;
-		Xml result;
+		boolean prevIsRecordingCounts, showResultsViewer;
+		Xml result, car;
 
 		if (m_isManifestInError)
 		{	// We cannot run this manifest because it's in error
@@ -1471,44 +1474,66 @@ public final class BenchmarkManifest
 // End
 //////////
 
-		// If this is a trial or official run...
-		if (isATrialRun() || isAnOfficialRun())
-		{	// Run the appropriate tags based on where we are
+		showResultsViewer = true;
+		if (runHasNotYetStarted())
+		{	// Check for any conflicts on this run
 			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
 			m_bpa.m_isRecordingCounts = false;
-			if (runHasNotYetStarted())
-			{	// Run the pre-run atoms
-				result = runAtomTags("atomBeforeRuns");
-				// If is an official run, the next thing it will do is reboot,
-				// at which time it will run the spinups below
-				// If it's a trial run, it will simply proceed
-
-			} else {
-				if (isAnOfficialRun())
-				{	// Launch the spinup scripts first, anything beginning with the text "spinup ", as in "spinup something" or "spinup other thing"
-					result = runAtomsStartingWithThisPrefix("spinup ");
-					if (result.getFirstChild() != null)
-					{	// At least one thing was done, record it
-						m_bmr.appendAtomRunResult(result);
-						saveManifest();
-					}
-					// Run the specifically-related-to-atom spinup atoms
-					System.out.println("Spinning up");
-					result = runAtomTags("atomOnSpinup");
-
-				} else {
-					result = null;
+			result = runAtomTags("atomCheckConflicts", true);
+			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
+			if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && !m_conflicts.isEmpty() && !m_resolutions.isEmpty())
+			{	// See if any results contain "conflict," responses
+				car = createXmlOfConflictsAndResolutions();
+				if (car != null && car.getFirstChild() != null)
+				{	// Display them to the user, and then terminate
+					OpbmColumns oc		= new OpbmColumns(m_opbm, car, Utils.createSimpleTwoColumnDisplay(750, 500, "Conflicts and Resolutions", "Conflict", "conflict", "50%", "Resolution", "resolution", "50%"));
+					m_processing		= false;
+					showResultsViewer	= false;
 				}
 			}
-			if (result != null && result.getFirstChild() != null)
-			{	// At least one thing was done, record it
-				m_bmr.appendAtomRunResult(result);
-				saveManifest();
-			}
-			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
+		}
 
-			// If the user clicked stop, we're done processing
-			m_processing = (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP);
+		if (m_processing)
+		{
+			// If this is a trial or official run...
+			if (isATrialRun() || isAnOfficialRun())
+			{	// Run the appropriate tags based on where we are
+				prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
+				m_bpa.m_isRecordingCounts = false;
+				if (runHasNotYetStarted())
+				{	// Run the pre-run atoms
+					result = runAtomTags("atomBeforeRuns", false);
+					// If is an official run, the next thing it will do is reboot,
+					// at which time it will run the spinups below
+					// If it's a trial run, it will simply proceed
+
+				} else {
+					if (isAnOfficialRun())
+					{	// Launch the spinup scripts first, anything beginning with the text "spinup ", as in "spinup something" or "spinup other thing"
+						result = runAtomsStartingWithThisPrefix("spinup ");
+						if (result.getFirstChild() != null)
+						{	// At least one thing was done, record it
+							m_bmr.appendAtomRunResult(result);
+							saveManifest();
+						}
+						// Run the specifically-related-to-atom spinup atoms
+						System.out.println("Spinning up");
+						result = runAtomTags("atomOnSpinup", false);
+
+					} else {
+						result = null;
+					}
+				}
+				if (result != null && result.getFirstChild() != null)
+				{	// At least one thing was done, record it
+					m_bmr.appendAtomRunResult(result);
+					saveManifest();
+				}
+				m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
+
+				// If the user clicked stop, we're done processing
+				m_processing = (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP);
+			}
 		}
 
 		// Continue processing until we're done
@@ -1533,11 +1558,11 @@ public final class BenchmarkManifest
 		saveManifest();
 
 		// When the run is completely over, run the post-run atoms
-		if ((isATrialRun() || isAnOfficialRun()) && runIsNowCompletelyOver())
+		if ((m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP) && (isATrialRun() || isAnOfficialRun()) && runIsNowCompletelyOver())
 		{	// Run the post-run atoms
 			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
 			m_bpa.m_isRecordingCounts = false;
-			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns"));
+			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns", false));
 			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
 
@@ -1547,13 +1572,11 @@ public final class BenchmarkManifest
 //		2)  the user clicked stop, and we're done now
 //		3)  the benchmark is completely run finished, and we're done now
 /////
-		if (m_bp.m_bpAtom.m_lastAtomWasFailure || (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP) || m_controlLastWorklet.getAttribute("uuid").equalsIgnoreCase("finished"))
-		{	// We are finished, so tally up!
-			computeForResultsXml(false, true);
-		}
+		// We are finished, so tally up!
+		computeForResultsXml(false, true);
 
 		// If the last thing that happened was a failure, and we are supposed to uninstall stuff after failures, we need to do that
-		if (m_bp.m_bpAtom.m_lastAtomWasFailure && m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
+		if ((m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP) && m_bp.m_bpAtom.m_lastAtomWasFailure && m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
 		{	// If there were failures, and they want to run the uninstall scripts after processing
 			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
 			m_bpa.m_isRecordingCounts = false;
@@ -1563,7 +1586,7 @@ public final class BenchmarkManifest
 		}
 
 		// Finish up, show the results viewer
-		m_benchmarksMaster.benchmarkShutdown();
+		m_benchmarksMaster.benchmarkShutdown(showResultsViewer);
 	}
 
 	/**
@@ -2191,9 +2214,13 @@ public final class BenchmarkManifest
 	}
 
 	/**
-	 * Called to run the specified tags for all atom items in scripts.xml
+	 * runs the specified tags for all atom items in scripts.xml
+	 * @param tagName name of the tag to execute
+	 * @param recordConflictsAndResolutions should conflicts and resolutions
+	 * be recorded for all atoms?
 	 */
-	public Xml runAtomTags(String tagName)
+	public Xml runAtomTags(String		tagName,
+						   boolean		recordConflictsAndResolutions)
 	{
 		int i, j, k, previousDebuggerOrHUDAction;
 		boolean executed;
@@ -2256,6 +2283,13 @@ public final class BenchmarkManifest
 											m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 									// End
 									//////////
+
+										if (recordConflictsAndResolutions)
+										{	// Grab the conflicts and resolutions array
+											m_conflicts.addAll(m_bp.m_conflicts);
+											m_resolutions.addAll(m_bp.m_resolutions);
+										}
+
 										thisAtomResults = new Xml(tagName);
 										thisAtomResults.appendAttribute(new Xml("name", atomName));
 										thisAtomResults.appendAttribute(new Xml("uuid", Utils.getUUID()));
@@ -2366,6 +2400,36 @@ public final class BenchmarkManifest
 		}
 		// Return the list of things we've executed
 		return(autoExecute);
+	}
+
+	/**
+	 * Process through all m_conflicts and m_resolution entries, creating an
+	 * Xml data list for display in OpbmColumns
+	 * @return the created Xml used for input to OpbmColumns
+	 */
+	public Xml createXmlOfConflictsAndResolutions()
+	{
+		int i;
+		Xml car, item, conflict, resolution;
+
+		car = new Xml("data");
+		if (!m_conflicts.isEmpty())
+		{
+			for (i = 0; i < m_conflicts.size(); i++)
+			{
+				item		= new Xml("item");
+				car.appendChild(item);
+
+				conflict	= new Xml("conflict",		m_conflicts.get(i));
+				resolution	= new Xml("resolution",		(i <= m_resolutions.size()) ? m_resolutions.get(i) : "Error in conflict/resolution listing");
+
+				item.appendChild(conflict);
+				item.appendChild(resolution);
+			}
+		}
+		m_conflicts.clear();
+		m_resolutions.clear();
+		return(car);
 	}
 
 	/**
@@ -2577,6 +2641,10 @@ public final class BenchmarkManifest
 	private String						m_error;
 	private int							m_passThis;
 	private int							m_passMax;
+
+	// When checking for conflicts, grab the conflicts and resolutions reported by the scripts
+	private	List<String>				m_conflicts;
+	private	List<String>				m_resolutions;
 
 	// Change as the levels are traversed during add operations
 	private String						m_suiteName;

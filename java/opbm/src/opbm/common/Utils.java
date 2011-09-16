@@ -1617,6 +1617,167 @@ public class Utils
 		return(translation);
 	}
 
+	/**
+	 * Creates a display for use with the OpbmColumns class, of the form:
+	 *		<display width="640" height="480" caption="whatever">
+	 *			<column header="Conflict" element="conflict" width="50%"/>
+	 *			<column header="Resolution" element="resolution" width="50%"/>
+	 *		</display>
+	 *
+	 * @param width how wide should the window be (without decoration)
+	 * @param height how high should the window be (without titlebar or decoration)
+	 * @param column1Header name of the column header
+	 * @param column1Element name of the element to display there
+	 * @param column1Width width for that column
+	 * @param column2Header name of the column header
+	 * @param column2Element name of the element to display there
+	 * @param column2Width width for that column
+	 * @return
+	 */
+	public static Xml createSimpleTwoColumnDisplay(int		width,
+												   int		height,
+												   String	caption,
+												   String	column1Header,
+												   String	column1Element,
+												   String	column1Width,
+												   String	column2Header,
+												   String	column2Element,
+												   String	column2Width)
+	{
+		Xml display, column1, column2;
+
+		display = new Xml("display");
+		column1 = new Xml("column");
+		column2 = new Xml("column");
+		display.appendChild(column1);
+		display.appendChild(column2);
+
+		display.appendAttribute("width",	Integer.toString(width));
+		display.appendAttribute("height",	Integer.toString(height));
+		display.appendAttribute("caption",	caption);
+
+		column1.appendAttribute("header",	column1Header);
+		column1.appendAttribute("element",	column1Element);
+		column1.appendAttribute("width",	column1Width);
+
+		column2.appendAttribute("header",	column2Header);
+		column2.appendAttribute("element",	column2Element);
+		column2.appendAttribute("width",	column2Width);
+
+		return(display);
+	}
+
+	/**
+	 * Converts the RRGGBB format (from HTML syntax) into the specified Color
+	 * class value
+	 * @param rrggbb
+	 * @param defaultIfNotValid
+	 * @return Color specified, or the default value if not a valid format
+	 */
+	public static Color extractColorFromRRGGBBformat(String		rrggbb,
+													 Color		defaultIfNotValid)
+	{
+		int r, g, b;
+
+		if (verifyIsHexadecimal(rrggbb, 6))
+		{	// It's a valid hexadecimal format
+			r	= getTwoDigitHexValue(rrggbb);
+			g	= getTwoDigitHexValue(rrggbb.substring(2));
+			b	= getTwoDigitHexValue(rrggbb.substring(4));
+			return(new Color(r, g, b));
+
+		} else {
+			// Invalid, return the default
+			return(defaultIfNotValid);
+		}
+	}
+
+	/**'
+	 * Checks every character of the input to determine if it is a hexadecimal
+	 * character or not.  If any are not hex characters, then return false
+	 * @param input the string to evaluate
+	 * @param length the length of the characters there at that string
+	 */
+	public static boolean verifyIsHexadecimal(String	input,
+											  int		length)
+	{
+		int i;
+
+		if (input.length() >= length)
+		{	// The string is at least long enough
+			for (i = 0; i < length; i++)
+			{	// Try each character repeatedly until we're done with the string
+				if (!"0123456789abcdefABCDEF".contains(input.substring(i, i+1)))
+				{	// Invalid
+					return(false);
+				}
+			}
+			// We're good
+			return(true);
+		}
+		// input is too short
+		return(false);
+	}
+
+	/**
+	 * Returns the value of the characters specified by the two-digit
+	 * hexadecimal value.
+	 * @param xx
+	 * @return
+	 */
+	private static int getTwoDigitHexValue(String xx)
+	{
+		int msn, lsn;	// most-significant and least-significant nibbles
+
+		if (verifyIsHexadecimal(xx, 2))
+		{	// It's valid
+			msn		= getOneDigitHexValue(xx);
+			lsn		= getOneDigitHexValue(xx.substring(1));
+			return((msn << 4) + lsn);
+
+		} else {
+			// It's not a valid hexadecimal value
+			return(0);
+		}
+	}
+
+	/**
+	 * Returns the value of the nibble character specified by the one-digit
+	 * hexadecimal value
+	 * @param x a single hexadecimal digit, which must be valid
+	 * @return the value
+	 */
+	private static int getOneDigitHexValue(String x)
+	{
+		char c;
+
+		if (verifyIsHexadecimal(x, 1))
+		{	// It's valid
+			c = x.charAt(0);
+			if (c >= '0' && c <= '9')
+			{	// It's 0-9
+				return(c - '0');
+
+			} else if (c >= 'A' && c <= 'F') {
+				// It's A-F
+				return(c - 'A' + 10);
+
+			} else if (c >= 'a' && c <= 'f') {
+				// It's a-f
+				return(c - 'a' + 10);
+
+			} else {
+				// We should never get here
+				return(0);
+			}
+
+
+		} else {
+			// It's not a valid hexadecimal value
+			return(0);
+		}
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

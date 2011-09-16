@@ -1,8 +1,8 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class is the top-level class of the OPBM.  It creates a GUI, loads
- * necessary files, beings processing based on context, etc.
+ * This class handles simple dialog input and responses, displaying some text,
+ * and then receiving one of four button responses.
  *
  * Last Updated:  Sep 12, 2011
  *
@@ -12,7 +12,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.1.0
+ * @version 1.2.0
  *
  */
 
@@ -107,7 +107,7 @@ public final class OpbmDialog
 		int actual_width, actual_height, width, height, buttonCenters, buttonBackoff, buttonWidth, buttonCount, thisButton, buttonTop;
 
 		width = 450;
-		height = 200;
+		height = 315;
 		m_frame = new DroppableFrame(m_opbm, false, false);
 		m_frame.setTitle(m_caption.isEmpty() ? "OPBM Dialog" : m_caption);
 
@@ -139,6 +139,8 @@ public final class OpbmDialog
 		m_pan = new JLayeredPane();
 		m_pan.setLayout(null);
 		m_pan.setBounds(0, 0, width, height);
+		m_pan.setBackground(Color.WHITE);
+		m_pan.setOpaque(true);
 		m_pan.setVisible(true);
 		m_pan.setBorder(BorderFactory.createEmptyBorder());
 		c.add(m_pan);
@@ -160,12 +162,12 @@ public final class OpbmDialog
 
 		// Create the visible label contents
 		m_lblMessage = new JLabel();
-		m_lblMessage.setBounds(15, 52, 419, 50);
+		m_lblMessage.setBounds(15, 52, 420, 200);
 		m_lblMessage.setHorizontalAlignment(JLabel.CENTER);
-		m_lblMessage.setVerticalAlignment(JLabel.CENTER);
+		m_lblMessage.setVerticalAlignment(JLabel.TOP);
 		m_lblMessage.setFont(fontLabel);
 		// We force the text to center at a location we want using html tags
-		m_lblMessage.setText(String.format("<html><div align='center' valign='center' WIDTH=%d><table><tr><td width='60'></td><td>%s</td></tr></table></div><html>", 419, m_message));
+		m_lblMessage.setText(String.format("<html><div align='center' valign='center' WIDTH=%d><table><tr><td width='50'></td><td>%s</td></tr></table></div><html>", 420, m_message));
  		m_lblMessage.setVisible(true);
 		m_pan.add(m_lblMessage);
 		m_pan.moveToFront(m_lblMessage);
@@ -234,7 +236,7 @@ public final class OpbmDialog
 
 			// Position the buttons
 			thisButton	= 1;
-			buttonTop	= 135;
+			buttonTop	= 265;
 			if (m_btnOkay != null)
 			{	// Position and make visible this button
 				m_btnOkay.setBounds( + (thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);

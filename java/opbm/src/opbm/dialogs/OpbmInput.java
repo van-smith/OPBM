@@ -1,10 +1,10 @@
 /*
  * OPBM - Office Productivity Benchmark
  *
- * This class is the top-level class of the OPBM.  It creates a GUI, loads
- * necessary files, beings processing based on context, etc.
+ * This class allows the user to populate content in an input box, and then
+ * receives their response via a choice of up to four buttons.
  *
- * Last Updated:  Sep 12, 2011
+ * Last Updated:  Sep 15, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -12,7 +12,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.1.0
+ * @version 1.2.0
  *
  */
 

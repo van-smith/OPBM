@@ -1366,8 +1366,8 @@ public class BenchmarksAtom
 								process = builder.start();
 
 								// Grab the output
-								m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
-								m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
+								m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp, m_bp.m_hud);
+								m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp, m_bp.m_hud);
 								m_bp.m_errorGobbler.start();
 								m_bp.m_outputGobbler.start();
 
@@ -1672,8 +1672,8 @@ public class BenchmarksAtom
 			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /r");
 
 			// Grab the output
-			m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp.m_hud);
-			m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp.m_hud);
+			m_bp.m_errorGobbler		= new StreamGobbler(process.getErrorStream(),	m_bp.m_errorArray,	"STDERR", name, m_bp, m_bp.m_hud);
+			m_bp.m_outputGobbler	= new StreamGobbler(process.getInputStream(),	m_bp.m_outputArray,	"STDOUT", name, m_bp, m_bp.m_hud);
 			m_bp.m_errorGobbler.start();
 			m_bp.m_outputGobbler.start();
 

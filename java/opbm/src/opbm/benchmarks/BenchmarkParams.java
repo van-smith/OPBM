@@ -310,6 +310,41 @@ public class BenchmarkParams
 		}
 	}
 
+	/**
+	 * Clear the conflicts list (if any) to remove old, stale data
+	 */
+	public void clearConflicts()
+	{
+		m_conflicts.clear();
+	}
+
+	/**
+	 * Clear the resolutions list (if any) to remove old, stale data
+	 */
+	public void clearResolutions()
+	{
+		m_resolutions.clear();
+	}
+
+	/**
+	 * Add a conflict to the conflict array list.  They should be added
+	 * with a 1:1 ratio with resolutions.
+	 * @param conflict text describing the conflict
+	 */
+	public void addConflict(String conflict)
+	{
+		m_conflicts.add(conflict);
+	}
+
+	/**
+	 * Add a resolution to the resolution array list.  They should be added
+	 * with a 1:1 ratio with conflicts.
+	 * @param resolution text describing the resolution
+	 */
+	public void addResolution(String resolution)
+	{
+		m_resolutions.add(resolution);
+	}
 
 	public Opbm					m_opbm;
 	public Macros				m_macroMaster;
@@ -361,6 +396,9 @@ public class BenchmarkParams
 
 	public List<String>			m_outputArray;
 	public StreamGobbler		m_outputGobbler;
+
+	public List<String>			m_conflicts;
+	public List<String>			m_resolutions;
 
 // Timing line elements
 // Used to process the timing lines

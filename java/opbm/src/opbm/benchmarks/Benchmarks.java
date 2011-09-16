@@ -375,7 +375,7 @@ public class Benchmarks
 	/**
 	 * When the benchmark is complete, this method is called
 	 */
-	public void benchmarkShutdown()
+	public void benchmarkShutdown(boolean showResultsViewer)
 	{
 		String fileName;
 
@@ -405,7 +405,7 @@ public class Benchmarks
 		m_bp.m_opbm.showAllResultsViewerWindowsInQueue();
 
 		// Launch the results viewer
-		if (!m_bp.m_opbm.willTerminateAfterRun())
+		if (showResultsViewer && !m_bp.m_opbm.willTerminateAfterRun())
 		{	// They are not going to automatically terminate, so we show the results viewer
 			ResultsViewer rv = m_bp.m_opbm.createAndShowResultsViewer(fileName);
 			if (rv != null)
@@ -434,8 +434,9 @@ public class Benchmarks
 		bp.m_bpAtom.m_returnValue			= 0;
 		bp.m_bpAtom.m_lastAtomWasFailure	= false;
 		bp.m_wui							= new WaitUntilIdle(bp);
-
 		bp.m_benchmarkStack					= new ArrayList<Xml>(0);
+		bp.m_conflicts						= new ArrayList<String>(0);
+		bp.m_resolutions					= new ArrayList<String>(0);
 
 		bp.m_debuggerActive					= bp.m_settingsMaster.isInDebugMode();
 		bp.m_singleStepping					= bp.m_settingsMaster.isSingleStepping();

@@ -153,12 +153,12 @@
 			<abstract name="execute">
 				<logical>execute</logical>
 				<real>{(colon)executable, Full executable path(colon)}</real>
-				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)}</variables>
+				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)} {(colon)atomCheckConflicts, Run these atoms to find and enumerate conflicts(colon)}</variables>
 			</abstract>
 			<abstract name="executeParams">
 				<logical>execute_params</logical>
 				<real>{(colon)executable, Full executable path(colon)} {(colon)p1, First parameter(colon)} {(colon)p2, Second parameter(colon)} {(colon)p3, Third parameter(colon)} {(colon)p4, Fourth parameter(colon)} {(colon)p5, Fifth parameter(colon)} {(colon)p6, Sixth parameter(colon)} {(colon)p7, Seventh parameter(colon)} {(colon)p8, Eighth parameter(colon)} {(colon)p9, Ninth parameter(colon)} {(colon)p10, Tenth parameter(colon)}</real>
-				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)}</variables>
+				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)} {(colon)atomCheckConflicts, Run these atoms to find and enumerate conflicts(colon)}</variables>
 			</abstract>
 			<abstract name="rebootAndTerminate">
 				<logical>reboot_and_terminate</logical>
@@ -181,6 +181,7 @@
 			<atom name="PowerPoint Open" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup>Launch and Close PowerPoint</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -195,6 +196,7 @@
 			<atom name="PowerPoint War" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
 					<options>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -321,6 +323,7 @@
 			<atom name="Install 7zip" shortname="7zip">
 				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall 7zip</atomBeforeRuns>
@@ -733,6 +736,7 @@
 			<atom name="Simulate Failure" shortname="Sim">
 				<abstract name="Simulate Failure" shortname="Fail" sourcename="execute">
 					<options>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -839,6 +843,21 @@
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
 						<executable>..\autoIT\spinup\excel\launchAndClose.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Simulate Check Conflicts and Resolutions" shortname="SimCaR">
+				<abstract name="Simulate Check Conflicts and Resolutions" shortname="SimCaR" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\simulated\checkSimulated.exe</executable>
 					</options>
 				</abstract>
 			</atom>
