@@ -51,6 +51,10 @@ Const $WORD_HAS_FINISHED_SEARCHING_THE_DOCUMENT	= "Word has finished searching t
 Const $FIND_AND_REPLACE							= "Find and Replace"
 Const $ALICE_SET_FONT_EFFECTS					= "Setting font effects"
 Const $ALICE_UPDATING_IMAGE_TEXT_ALIGNMENT		= "Updating image's text alignment"
+Const $WORD_ISLAND								= "Type Word Island"
+Const $WORD_ISLAND_SAVE							= "Save Word Island"
+Dim   $directoryOutput							; Used in this script, but must be set after initialization because they use opbm.dll plugin functions
+Dim   $filenameIsland							= "rrIsland.docx"
 
 ; Setup references for timing items
 Dim $gBaselineSize
@@ -65,7 +69,8 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_WORD_SCORE
 Func InitializeWordScript()
 	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+	$gPID = WinGetProcess ( $MICROSOFT_WORD_WINDOW )
+
 	; Start script timer
 	$gScriptBeginTime = TimerInit()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
@@ -73,7 +78,7 @@ EndFunc
 
 Func LaunchWord()
 	Local $filename
-	
+
 	; See which version we're running, either 64-bit (default) or 32-bit (fallback)
 	If FileExists($FILENAME_WORD_X64) Then
 		$filename = $FILENAME_WORD_X64
@@ -82,31 +87,33 @@ Func LaunchWord()
 	Else
 		ErrorHandle("Word 2010 not found in " & $FILENAME_WORD_X64 & " or " & $FILENAME_WORD_I386 & ", unable to launch.")
 	EndIf
-	
+
 	; Opbm sets some registry keys at startup
 	outputDebug( $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS )
 	Office2010SaveRegistryKeys()
 	Office2010InstallRegistryKeys()
-	
+
 	; Launch the process
 	outputDebug( "Attempting to launch " & $filename)
 	TimerBegin()
 	$gPID = Run( $filename, "C:\", @SW_MAXIMIZE )
 	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, $DOCUMENT1, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word. Unable to find Window." )
-	
+
 	; Note the time
 	TimerEnd( $LAUNCH_MICROSOFT_WORD )
 EndFunc
 
 Func CloseWord()
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
+
 	; Exit word
 	TimerBegin()
 	; File -> Exit
 	Send("!fx")
 	; "Save Changes?" No
-	Send("!n")	
+	Send("!n")
 	TimerEnd( $CLOSE_MICROSOFT_WORD )
-	
+
 	; Restore registry keys
 	Office2010RestoreRegistryKeys()
 EndFunc

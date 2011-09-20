@@ -7,7 +7,7 @@
 	Initial creation date: 8.31.2011
 
 	Description: AutoIT file containing common Microsoft Access 2010 data and functions
-	
+
 	Usage:	accessCommon is not directly exceutable
 
 #ce ======================================================================================================================================
@@ -28,14 +28,17 @@ Const $LAUNCH_MICROSOFT_ACCESS   		= "Launch Microsoft Access 2010"
 Const $CLOSE_MICROSOFT_ACCESS			= "Close Microsoft Access 2010"
 
 ; accessEarthquake.au3
-Const $EARTHQUAKE_OPEN_DB				= "Open Earthqauke database"
-Const $EARTHQUAKE_SAVE_AND_CLOSE_DB		= "Save and close Earthqauke database"
-Const $EARTHQUAKE_IMPORT				= "Time to import earthquake text file"
-Const $EARTHQUAKE_SORT_MAG				= "Time to sort db by magnitude"
+Const $ACCESS_COPY_EARTHQUAKE			= "Copy earthqauke database"
+Const $ACCESS_OPEN_EARTHQUAKE			= "Open earthqauke database"
+Const $ACCESS_EARTHQUAKE_QUERIES		= "Run earthquake queries"
+Const $ACCESS_EARTHQUAKE_REPORTS		= "Run earthquake reports"
+Const $ACCESS_COMPACT_EARTHQUAKE		= "Compact earthquake database"
 Const $MICROSOFT_ACCESS					= "Microsoft Access"
 Const $OPEN								= "Open"
 Const $STATUS_BAR						= "Status Bar"
 
+Dim $directoryOutput
+Dim $filenameEarthquakeDb				= "earthquake.accdb"
 
 ; Setup references for timing items
 Dim $gBaselineSize
@@ -49,7 +52,7 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_ACCESS_SCORE
 
 Func launchAccess()
 	Local $filename
-	
+
 	; Find out which version we're running
 	If FileExists( $FILENAME_ACCESS_AMD64 ) Then
 		$filename = $FILENAME_ACCESS_AMD64
@@ -60,7 +63,7 @@ Func launchAccess()
 	Else
 		ErrorHandle("Cannot launch application: Access 2010 not found at " & $FILENAME_ACCESS_AMD64 & " or " & $FILENAME_ACCESS_X86 & ".")
 	EndIf
-	
+
 	; Opbm sets some registry keys at startup
 	outputDebug( $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS )
 	;Office2010SaveRegistryKeys()
@@ -83,7 +86,7 @@ Func closeAccess()
 	opbmWinWaitClose( $MICROSOFT_ACCESS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Access: Window did not close." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $CLOSE_MICROSOFT_ACCESS )
-	
+
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
 	;Office2010RestoreRegistryKeys()
 EndFunc
@@ -92,6 +95,23 @@ Func initializeAccessScript()
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
 	outputDebug( "InitializeGlobalVariables()" )
-	InitializeGlobalVariables()	
-	$gPID = WinGetProcess ( $MICROSOFT_ACCESS )	
+	InitializeGlobalVariables()
+	$gPID = WinGetProcess ( $MICROSOFT_ACCESS )
+EndFunc
+
+Func runQuery( $queryName )
+	; go to search box
+	Send( "^f" )
+	opbmWaitUntilSystemIdle( 10, 100, 20000 )
+	; select all text in search box
+	Send( "^a" )
+	opbmWaitUntilSystemIdle( 10, 100, 20000 )
+	outputDebug( "Access is executing: " & $queryName )
+	; enter the query
+	Send( $queryName )
+	Send( "{ENTER}" )
+	opbmWaitUntilSystemIdle( 5, 100, 20000 )
+	opbmWinWaitActivate( $MICROSOFT_ACCESS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Access. Unable to find Window." )
+	; close the query window (this is necessary because it is not possible to reliably switch focus to the search box).
+	Send( "^{F4}" )
 EndFunc

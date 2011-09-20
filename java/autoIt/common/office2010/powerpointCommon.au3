@@ -7,7 +7,7 @@
 	Initial creation date: 8.31.2011
 
 	Description: AutoIT file containing common Microsoft Access 2010 data and functions
-	
+
 	Usage:	accessCommon is not directly exceutable
 
 #ce ======================================================================================================================================
@@ -27,16 +27,20 @@ Const $LAUNCH_MICROSOFT_POWERPOINT   	= "Launch Microsoft PowerPoint 2010"
 Const $CLOSE_MICROSOFT_POWERPOINT		= "Close Microsoft PowerPoint 2010"
 
 ; powerpointWar.au3
-Const $WAR_CLOSE_EMPTY_PRESENTATION    	= "Close empty presentation" 
+Const $WAR_CLOSE_EMPTY_PRESENTATION    	= "Close empty presentation"
 Const $WAR_OPEN_PRESENTATION			= "Open War presentation"
 Const $WAR_SAVE_AND_CLOSE_PPTX			= "Save and close War presentation"
+Const $WAR_CREATE_WMV					= "Create War WMV"
 Const $WAR_PLAY_PRESENTATION			= "Time to play War presentation"
 Const $MICROSOFT_POWERPOINT				= "Microsoft PowerPoint"
 Const $NEW_PRESENTATION					= "Presentation1"
 Const $OPEN								= "Open"
+Const $SAVE_AS							= "Save As"
 Const $STATUS_BAR						= "Status Bar"
 
-
+Dim $directoryOutput
+Dim $filenameWarPptx					= "theComingWar.pptx"
+Dim $filenameWarWmv						= "theComingWar.wmv"
 ; Setup references for timing items
 Dim $gBaselineSize
 $gBaselineSize = 20
@@ -49,7 +53,7 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_POWERPOINT_SCORE
 
 Func launchPowerPoint()
 	Local $filename
-	
+
 	; Find out which version we're running
 	If FileExists( $FILENAME_POWERPOINT_AMD64 ) Then
 		$filename = $FILENAME_POWERPOINT_AMD64
@@ -60,7 +64,7 @@ Func launchPowerPoint()
 	Else
 		ErrorHandle("Cannot launch application: PowerPoint 2010 not found at " & $FILENAME_POWERPOINT_AMD64 & " or " & $FILENAME_POWERPOINT_X86 & ".")
 	EndIf
-	
+
 	; Opbm sets some registry keys at startup
 	outputDebug( $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS )
 	;Office2010SaveRegistryKeys()
@@ -83,7 +87,7 @@ Func closePowerPoint()
 	opbmWinWaitClose( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint: Window did not close." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $CLOSE_MICROSOFT_POWERPOINT )
-	
+
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
 	;Office2010RestoreRegistryKeys()
 EndFunc
@@ -92,6 +96,6 @@ Func initializePowerPointScript()
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
 	outputDebug( "InitializeGlobalVariables()" )
-	InitializeGlobalVariables()	
+	InitializeGlobalVariables()
 	$gPID = WinGetProcess ( $MICROSOFT_POWERPOINT )
 EndFunc
