@@ -120,7 +120,7 @@ Func rotateHedge()
 ;	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 
 	opbmWinWaitActivate( $MICROSOFT_PUBLISHER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Publisher. Unable to find Window." )
-	TimerEnd( $HEDGE_PAGE )
+	TimerEnd( $HEDGE_ROTATE )
 EndFunc
 
 Func saveAsXps()
@@ -142,6 +142,8 @@ Func saveAsXps()
 	Send("!s")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitActivate( $XPS_VIEWER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft XPS Viewer. Unable to find Window." )
+	; maximize XPS window:
+	Send( "! x" )
 	TimerEnd( $HEDGE_SAVE_XPS )
 EndFunc
 

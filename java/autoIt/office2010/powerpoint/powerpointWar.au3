@@ -58,15 +58,18 @@ Func OpenWar()
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Send( "{ENTER}" )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	opbmWaitUntilSystemIdle( 5, 100, 1200000 )
 	TimerEnd( $WAR_OPEN_PRESENTATION )
 EndFunc
 
 Func saveWarAsWmv()
 	opbmWinWaitActivate( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
+	Sleep( 1000 )
 
 	Send( "!fa" )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	opbmWinWaitActivate( $SAVE_AS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint Save As: Unable to find Window." )
+	Sleep( 1000 )
 	; Send its full pathname
 	Send( $filenameWarWmv )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
@@ -75,9 +78,11 @@ Func saveWarAsWmv()
 	; Alt+t to choose type, w to choose "WMV"
 	Send("!tw")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Sleep( 1000 )
 	; Choose "Save" button
 	TimerBegin()
 	Send("!s")
+	Sleep( 5000 )
 	opbmWaitUntilSystemIdle( 5, 100, 1200000 )
 	opbmWinWaitActivate( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
 	TimerEnd( $WAR_CREATE_WMV )

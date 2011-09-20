@@ -371,7 +371,7 @@
 						<retryEnabled></retryEnabled>
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
-						<executable>..\autoIT\office2010\word\wordClose.exe</executable>
+						<executable>..\autoIT\office2010\word\closeWord.exe</executable>
 					</options>
 				</abstract>
 			</atom>
