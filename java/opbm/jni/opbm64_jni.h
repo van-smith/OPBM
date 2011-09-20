@@ -153,6 +153,30 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_SetRegistryKeyValueAsBinary
 
 /*
  * Class:     opbm_Opbm
+ * Method:    Office2010SaveKeys
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_opbm_Opbm_Office2010SaveKeys
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    Office2010InstallKeys
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_opbm_Opbm_Office2010InstallKeys
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     opbm_Opbm
+ * Method:    Office2010RestoreKeys
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_opbm_Opbm_Office2010RestoreKeys
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     opbm_Opbm
  * Method:    waitUntilSystemIdle
  * Signature: (III)F
  */

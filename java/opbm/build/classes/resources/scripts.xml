@@ -223,7 +223,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Open" shortname="Pub">
-				<abstract name="Open Publisher 2010" shortname="Open" sourcename="execute">
+				<abstract name="Open Publisher 2010" shortname="OpenP" sourcename="execute">
 					<options>
 						<atomOnSpinup>Launch and Close Publisher</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -251,7 +251,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Close" shortname="Pub">
-				<abstract name="Close Publisher 2010" shortname="Close" sourcename="execute">
+				<abstract name="Close Publisher 2010" shortname="CloseP" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -265,7 +265,7 @@
 				</abstract>
 			</atom>
 			<atom name="Access Open" shortname="Access">
-				<abstract name="Open Microsoft Access" shortname="Open" sourcename="execute">
+				<abstract name="Open Microsoft Access" shortname="OpenA" sourcename="execute">
 					<options>
 						<atomOnSpinup>Launch and Close Access</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -278,8 +278,22 @@
 					</options>
 				</abstract>
 			</atom>
+			<atom name="Access Earthquake" shortname="Access">
+				<abstract name="Access earthquake database" shortname="Quake" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..\autoIT\office2010\access\accessEarthquake.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Access Close" shortname="Access">
-				<abstract name="Close Microsoft Access" shortname="Close" sourcename="execute">
+				<abstract name="Close Microsoft Access" shortname="CloseA" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -317,6 +331,47 @@
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
 						<executable>..\autoIT\office2010\word\alice.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Word Open" shortname="Word">
+				<abstract name="Open Microsoft Word" shortname="OpenW" sourcename="execute">
+					<options>
+						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\office2010\word\wordOpen.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Word Island" shortname="Word">
+				<abstract name="Microsoft Word Island" shortname="WordI" sourcename="execute">
+					<options>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\office2010\word\wordIsland.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Word Close" shortname="Word">
+				<abstract name="Close Microsoft Word" shortname="CloseW" sourcename="execute">
+					<options>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..\autoIT\office2010\word\closeWord.exe</executable>
 					</options>
 				</abstract>
 			</atom>
@@ -878,6 +933,7 @@
 			</molecule>
 			<molecule name="Database" shortname="Access">
 				<atom name="Access Open" shortname="Open" sourcename="Access Open"></atom>
+				<atom name="Access Earthquake" shortname="Quake" sourcename="Access Earthquake"></atom>
 				<atom name="Access Close" shortname="Close" sourcename="Access Close"></atom>
 			</molecule>
 			<molecule name="Publisher" shortname="Publisher">
@@ -887,9 +943,6 @@
 			</molecule>
 			<molecule name="Spreadsheet" shortname="Excel">
 				<atom name="Excel Heat" shortname="Heat" sourcename="Excel Heat"></atom>
-			</molecule>
-			<molecule name="Word Processing" shortname="Word">
-				<atom name="Word Alice" shortname="Alice" sourcename="Word Alice"></atom>
 			</molecule>
 			<molecule name="JavaScript" shortname="Browser">
 				<atom name="Chrome SunSpider" shortname="CSpider" sourcename="Chrome SunSpider"></atom>
@@ -919,6 +972,12 @@
 				<atom name="Uninstall Firefox" shortname="Firefox" sourcename="Uninstall Firefox"></atom>
 				<atom name="Uninstall Opera" shortname="Opera" sourcename="Uninstall Opera"></atom>
 				<atom name="Uninstall Safari" shortname="Safari" sourcename="Uninstall Safari"></atom>
+			</molecule>
+			<molecule name="Word Processing" shortname="Word">
+				<atom name="Word Alice" shortname="Alice" sourcename="Word Alice"></atom>
+				<atom name="Word Open" shortname="OpenW" sourcename="Word Open"></atom>
+				<atom name="Word Island" shortname="OpenI" sourcename="Word Island"></atom>
+				<atom name="Word Close" shortname="CloseW" sourcename="Word Close"></atom>
 			</molecule>
 		</molecules>
 		<scenarios>

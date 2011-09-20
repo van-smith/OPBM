@@ -80,27 +80,30 @@ public final class Opbm extends	ModalApp
 			System.out.println("Running 64-bit JVM");
 		}
 	}
-	public native static void	sendWindowToForeground(String title);
+	public native static void		sendWindowToForeground(String title);
 	// Note:  All of these get__Directory() functions ALWAYS return a path ending in a backslash
-	public native static String	getHarnessCSVDirectory();					// Returns c:\\users\\user\\documents\\obbm\\results\\csv\\
-	public native static String	getHarnessXMLDirectory();					// Returns c:\\users\\user\\documents\\opbm\\results\\xml\
-	public native static String	getHarnessTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\temp\\
-	public native static String	getScriptCSVDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\
-	public native static String	getScriptTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\temp\\
-	public native static String	getSettingsDirectory();						// Returns c:\\users\\user\\documents\\opbm\\settings\\
-	public native static String	getRunningDirectory();						// Returns c:\\users\\user\\documents\\opbm\\running\\
-	public native static String	getCSIDLDirectory(String name);				// Returns directory specified by the CSIDL option
+	public native static String		getHarnessCSVDirectory();					// Returns c:\\users\\user\\documents\\obbm\\results\\csv\\
+	public native static String		getHarnessXMLDirectory();					// Returns c:\\users\\user\\documents\\opbm\\results\\xml\
+	public native static String		getHarnessTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\temp\\
+	public native static String		getScriptCSVDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\
+	public native static String		getScriptTempDirectory();					// Returns c:\\users\\user\\documents\\opbm\\scriptOutput\\temp\\
+	public native static String		getSettingsDirectory();						// Returns c:\\users\\user\\documents\\opbm\\settings\\
+	public native static String		getRunningDirectory();						// Returns c:\\users\\user\\documents\\opbm\\running\\
+	public native static String		getCSIDLDirectory(String name);				// Returns directory specified by the CSIDL option
 	// End Note
-	public static native int	getComponentHWND(Component c);				// Returns the HWND for the specified component, or -1 if does not exist
-	public static native int	setMinMaxResizeBoundaries(int hwnd, int minWidth, int minHeight, int maxWidth, int maxHeight);	// Sets a window to never be resized above or below these minimum widths/heights
-	public static native int	setPersistAlwaysOnTop(int hwnd);			// Sets a window's status to be always on top, and to remain on top
-	public native static void	snapshotProcesses();						// Takes a snapshot of the currently running processes
-	public native static void	stopProcesses();							// Stops all processes that were not running when the snapshot was taken
-	public native static String	GetRegistryKeyValue(String key);			// Requests the registry key value
-	public native static String	SetRegistryKeyValueAsString(String key, String value);				// Writes the registry key and value as a REG_SZ
-	public native static String	SetRegistryKeyValueAsDword(String key, int value);					// Writes the registry key and value as a REG_DWORD
-	public native static String	SetRegistryKeyValueAsBinary(String key, String value, int length);	// Writes the registry key and value as a REG_BINARY
-	public native static float	waitUntilSystemIdle(int percent, int durationMS, int timeoutMS);	// Waits up to timeoutMS for a period durationMS long of percent-or-lower total system activity
+	public native static int		getComponentHWND(Component c);				// Returns the HWND for the specified component, or -1 if does not exist
+	public native static int		setMinMaxResizeBoundaries(int hwnd, int minWidth, int minHeight, int maxWidth, int maxHeight);	// Sets a window to never be resized above or below these minimum widths/heights
+	public native static int		setPersistAlwaysOnTop(int hwnd);			// Sets a window's status to be always on top, and to remain on top
+	public native static void		snapshotProcesses();						// Takes a snapshot of the currently running processes
+	public native static void		stopProcesses();							// Stops all processes that were not running when the snapshot was taken
+	public native static String		GetRegistryKeyValue(String key);			// Requests the registry key value
+	public native static String		SetRegistryKeyValueAsString(String key, String value);				// Writes the registry key and value as a REG_SZ
+	public native static String		SetRegistryKeyValueAsDword(String key, int value);					// Writes the registry key and value as a REG_DWORD
+	public native static String		SetRegistryKeyValueAsBinary(String key, String value, int length);	// Writes the registry key and value as a REG_BINARY
+	public native static void		Office2010SaveKeys();						// Saves the current registry keys to a temporary area
+	public native static void		Office2010InstallKeys();					// Installs registry keys required by OPBM
+	public native static void		Office2010RestoreKeys();					// Restores the user's previous registry key settings
+	public native static float		waitUntilSystemIdle(int percent, int durationMS, int timeoutMS);	// Waits up to timeoutMS for a period durationMS long of percent-or-lower total system activity
 
 
 
@@ -2933,6 +2936,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.16 05:36pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.20 02:24pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

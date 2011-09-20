@@ -790,6 +790,58 @@
 
 //////////
 //
+// Office2010SaveKeys()
+//
+// Saves the user's registry key settings for known-needed Office2010 registry keys
+//
+/////
+	// Office2010SaveKeys()
+	JNIEXPORT void JNICALL Java_opbm_Opbm_Office2010SaveKeys(JNIEnv* env, jclass cls)
+	{
+		Office2010SaveKeys();
+	}
+
+
+
+
+//////////
+//
+// Office2010InstallKeys()
+//
+// Installs the registry key settings for known-needed Office2010 values
+//
+/////
+	// Office2010InstallKeys()
+	JNIEXPORT void JNICALL Java_opbm_Opbm_Office2010InstallKeys(JNIEnv* env, jclass cls)
+	{
+		char	successString[256];
+
+		Office2010InstallKeys(successString);
+	}
+
+
+
+
+//////////
+//
+// Office2010RestoreKeys()
+//
+// Restore's the user's registry key settings for known-needed Office2010 registry keys
+//
+/////
+	// Office2010RestoreKeys()
+	JNIEXPORT void JNICALL Java_opbm_Opbm_Office2010RestoreKeys(JNIEnv* env, jclass cls)
+	{
+		char	successString[256];
+
+		Office2010RestoreKeys(successString);
+	}
+
+
+
+
+//////////
+//
 // waitUntilSystemIdle()
 //
 // Waits until the system overall utilization drops down below the

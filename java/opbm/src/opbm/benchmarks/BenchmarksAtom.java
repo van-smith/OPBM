@@ -1630,6 +1630,9 @@ public class BenchmarksAtom
 		int i, max;
 		Process process;
 
+		// Restore the user's registry key settings
+		Opbm.Office2010RestoreKeys();
+
 		if (m_bp != null && m_bp.m_hud != null)
 			m_bp.m_hud.setRebooting();
 

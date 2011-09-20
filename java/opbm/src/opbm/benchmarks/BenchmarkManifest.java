@@ -1474,6 +1474,12 @@ public final class BenchmarkManifest
 // End
 //////////
 
+		// Save and install the Office 2010 registry keys
+		Opbm.Office2010SaveKeys();
+		Opbm.Office2010InstallKeys();
+
+
+		// Begin processing atoms
 		showResultsViewer = true;
 		if (runHasNotYetStarted())
 		{	// Check for any conflicts on this run
@@ -1566,6 +1572,9 @@ public final class BenchmarkManifest
 			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns", false));
 			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
+
+		// Restore the user's previous registry keys
+		Opbm.Office2010RestoreKeys();
 
 //////////
 // We compute totals if one of these conditions is true:

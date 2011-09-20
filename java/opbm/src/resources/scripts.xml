@@ -419,7 +419,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall 7zip" shortname="7zip">
-				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute" atomuuid="ef8bf121-cf41-4750-8cbf-17b00f30fb06">
+				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -447,7 +447,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Opera" shortname="Opera">
-				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute" atomuuid="bb9c41bd-e381-470c-8444-9ef4263563eb">
+				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -517,7 +517,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Safari" shortname="Safari">
-				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute" atomuuid="b8264877-e4fb-486b-aa13-423cc6f63e90">
+				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -629,7 +629,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Chrome" shortname="Chrome">
-				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute" atomuuid="f915b788-effd-43a1-8003-f61296bd3837">
+				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -685,7 +685,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Firefox" shortname="Firefox">
-				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
+				<abstract name="Install Firefox" shortname="Install" sourcename="execute" atomuuid="d0492ab9-38f1-4a35-bdb0-7b3a884fb0b9">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -699,7 +699,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Firefox" shortname="Firefox">
-				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute" atomuuid="34cd7eb4-0b5a-4e1e-958e-4bba9828c8a8">
+				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -769,7 +769,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Acrobat Reader" shortname="Acrobat">
-				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute" atomuuid="17d42a6a-cc69-44d2-a249-3c969e76352b">
+				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>

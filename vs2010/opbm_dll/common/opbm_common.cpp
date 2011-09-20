@@ -7,6 +7,37 @@
 /////
 
 
+// "Run macros?" key:			Security\\AccessVBOM
+// "Disable Warnings?" key:		Security\\VBAWarnings
+char gcOffice2010_AccessVBOM_Excel[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\AccessVBOM";
+char gcOffice2010_VBAWarnings_Excel[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\VBAWarnings";
+char* gcOffice2010_AccessVBOM_ExcelSave			= NULL;
+char* gcOffice2010_VBAWarnings_ExcelSave		= NULL;
+
+char gcOffice2010_AccessVBOM_PowerPoint[]		= "HKCU\\Software\\Microsoft\\Office\\14.0\\PowerPoint\\Security\\AccessVBOM";
+char gcOffice2010_VBAWarnings_PowerPoint[]		= "HKCU\\Software\\Microsoft\\Office\\14.0\\PowerPoint\\Security\\VBAWarnings";
+char* gcOffice2010_AccessVBOM_PowerPointSave	= NULL;
+char* gcOffice2010_VBAWarnings_PowerPointSave	= NULL;
+
+char gcOffice2010_AccessVBOM_Publisher[]		= "HKCU\\Software\\Microsoft\\Office\\14.0\\Publisher\\Security\\AccessVBOM";
+char gcOffice2010_VBAWarnings_Publisher[]		= "HKCU\\Software\\Microsoft\\Office\\14.0\\Publisher\\Security\\VBAWarnings";
+char* gcOffice2010_AccessVBOM_PublisherSave		= NULL;
+char* gcOffice2010_VBAWarnings_PublisherSave	= NULL;
+
+char gcOffice2010_AccessVBOM_Access[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Access\\Security\\AccessVBOM";
+char gcOffice2010_VBAWarnings_Access[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Access\\Security\\VBAWarnings";
+char* gcOffice2010_AccessVBOM_AccessSave		= NULL;
+char* gcOffice2010_VBAWarnings_AccessSave		= NULL;
+
+char gcOffice2010_AccessVBOM_Outlook[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Outlook\\Security\\AccessVBOM";
+char gcOffice2010_VBAWarnings_Outlook[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Outlook\\Security\\VBAWarnings";
+char* gcOffice2010_AccessVBOM_OutlookSave		= NULL;
+char* gcOffice2010_VBAWarnings_OutlookSave		= NULL;
+
+char gcOffice2010_AccessVBOM_Word[]				= "HKCU\\Software\\Microsoft\\Office\\14.0\\Word\\Security\\AccessVBOM";
+char gcOffice2010_VBAWarnings_Word[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Word\\Security\\VBAWarnings";
+char* gcOffice2010_AccessVBOM_WordSave			= NULL;
+char* gcOffice2010_VBAWarnings_WordSave			= NULL;
 
 
 void GetHarnessCSVDirectory(char* dirname, int dirnameLength)
@@ -951,4 +982,410 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 			keyName = NULL;
 
 		return(keyName);
+	}
+
+
+
+
+//////////
+//
+// Called as a helper function, to save all of the known-needed registry keys for Office2010 apps
+//
+/////
+	void Office2010SaveKeys()
+	{
+		char	key[1024];		// Holds the keys that are updated/searched
+//////////
+// Excel
+		// Clear out any previous saved key contents (if any)
+		if (gcOffice2010_AccessVBOM_ExcelSave != NULL)
+		{
+			free(gcOffice2010_AccessVBOM_ExcelSave);
+			gcOffice2010_AccessVBOM_ExcelSave = NULL;
+		}
+		if (gcOffice2010_VBAWarnings_ExcelSave != NULL)
+		{
+			free(gcOffice2010_VBAWarnings_ExcelSave);
+			gcOffice2010_VBAWarnings_ExcelSave = NULL;
+		}
+
+		// Save Excel 2010's existing "run macros" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Excel);
+		gcOffice2010_AccessVBOM_ExcelSave = GetRegistryKeyValue( &key[0] );
+		// Save Excel 2010's existing "disable warnings" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Excel);
+		gcOffice2010_VBAWarnings_ExcelSave = GetRegistryKeyValue( &key[0] );
+
+
+//////////
+// Access
+		// Clear out any previous saved key contents (if any)
+		if (gcOffice2010_AccessVBOM_AccessSave != NULL)
+		{
+			free(gcOffice2010_AccessVBOM_AccessSave);
+			gcOffice2010_AccessVBOM_AccessSave = NULL;
+		}
+		if (gcOffice2010_VBAWarnings_AccessSave != NULL)
+		{
+			free(gcOffice2010_VBAWarnings_AccessSave);
+			gcOffice2010_VBAWarnings_AccessSave = NULL;
+		}
+
+		// Save Access 2010's existing "run macros" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Access);
+		gcOffice2010_AccessVBOM_AccessSave = GetRegistryKeyValue( &key[0] );
+		// Save Access 2010's existing "disable warnings" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Access);
+		gcOffice2010_VBAWarnings_AccessSave = GetRegistryKeyValue( &key[0] );
+
+
+//////////
+// Publisher
+		// Clear out any previous saved key contents (if any)
+		if (gcOffice2010_AccessVBOM_PublisherSave != NULL)
+		{
+			free(gcOffice2010_AccessVBOM_PublisherSave);
+			gcOffice2010_AccessVBOM_PublisherSave = NULL;
+		}
+		if (gcOffice2010_VBAWarnings_PublisherSave != NULL)
+		{
+			free(gcOffice2010_VBAWarnings_PublisherSave);
+			gcOffice2010_VBAWarnings_PublisherSave = NULL;
+		}
+
+		// Save Publisher 2010's existing "run macros" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Publisher);
+		gcOffice2010_AccessVBOM_PublisherSave = GetRegistryKeyValue( &key[0] );
+		// Save Publisher 2010's existing "disable warnings" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Publisher);
+		gcOffice2010_VBAWarnings_PublisherSave = GetRegistryKeyValue( &key[0] );
+
+
+//////////
+// PowerPoint
+		// Clear out any previous saved key contents (if any)
+		if (gcOffice2010_AccessVBOM_PowerPointSave != NULL)
+		{
+			free(gcOffice2010_AccessVBOM_PowerPointSave);
+			gcOffice2010_AccessVBOM_PowerPointSave = NULL;
+		}
+		if (gcOffice2010_VBAWarnings_PowerPointSave != NULL)
+		{
+			free(gcOffice2010_VBAWarnings_PowerPointSave);
+			gcOffice2010_VBAWarnings_PowerPointSave = NULL;
+		}
+
+		// Save PowerPoint 2010's existing "run macros" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_PowerPoint);
+		gcOffice2010_AccessVBOM_PowerPointSave = GetRegistryKeyValue( &key[0] );
+		// Save PowerPoint 2010's existing "disable warnings" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_PowerPoint);
+		gcOffice2010_VBAWarnings_PowerPointSave = GetRegistryKeyValue( &key[0] );
+
+
+//////////
+// Outlook
+		// Clear out any previous saved key contents (if any)
+		if (gcOffice2010_AccessVBOM_OutlookSave != NULL)
+		{
+			free(gcOffice2010_AccessVBOM_OutlookSave);
+			gcOffice2010_AccessVBOM_OutlookSave = NULL;
+		}
+		if (gcOffice2010_VBAWarnings_OutlookSave != NULL)
+		{
+			free(gcOffice2010_VBAWarnings_OutlookSave);
+			gcOffice2010_VBAWarnings_OutlookSave = NULL;
+		}
+
+		// Save Outlook 2010's existing "run macros" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Outlook);
+		gcOffice2010_AccessVBOM_OutlookSave = GetRegistryKeyValue( &key[0] );
+		// Save Outlook 2010's existing "disable warnings" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Outlook);
+		gcOffice2010_VBAWarnings_OutlookSave = GetRegistryKeyValue( &key[0] );
+
+
+//////////
+// Word
+		// Clear out any previous saved key contents (if any)
+		if (gcOffice2010_AccessVBOM_WordSave != NULL)
+		{
+			free(gcOffice2010_AccessVBOM_WordSave);
+			gcOffice2010_AccessVBOM_WordSave = NULL;
+		}
+		if (gcOffice2010_VBAWarnings_WordSave != NULL)
+		{
+			free(gcOffice2010_VBAWarnings_WordSave);
+			gcOffice2010_VBAWarnings_WordSave = NULL;
+		}
+
+		// Save Word 2010's existing "run macros" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Word);
+		gcOffice2010_AccessVBOM_WordSave = GetRegistryKeyValue( &key[0] );
+		// Save Word 2010's existing "disable warnings" key
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Word);
+		gcOffice2010_VBAWarnings_WordSave = GetRegistryKeyValue( &key[0] );
+	}
+
+
+
+
+//////////
+//
+// Called as a helper function, to install all of the known-needed registry keys for Office2010 apps.
+// Returns a successing string of 0 or 1 indicating failure or success
+//
+/////
+	void Office2010InstallKeys(char* successString)
+	{
+		char	key[1024];		// Holds the keys that are updated/searched
+		char*	sptr;
+		char*	kptr;
+
+		// IE data is stored in registry keys.  We create or set the keys specified in the ie_keys array.
+		memset(&successString[0], 0, sizeof(successString));
+		sptr = &successString[0];
+		kptr = &key[0];
+
+//////////
+// Excel
+		// Set Excel 2010 key to run macros, and to disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Excel);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Excel);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+
+//////////
+// Access
+		// Set Access 2010 key to run macros, and to disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Access);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Access);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+
+
+//////////
+// Publisher
+		// Set Publisher 2010 key to run macros, and to disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Publisher);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Publisher);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+
+
+//////////
+// PowerPoint
+		// Set PowerPoint 2010 key to run macros, and to disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_PowerPoint);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_PowerPoint);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+
+
+//////////
+// Outlook
+		// Set Outlook 2010 key to run macros, and to disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Outlook);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Outlook);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+
+
+//////////
+// Word
+		// Set Word 2010 key to run macros, and to disable warnings
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Word);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Word);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+	}
+
+
+
+
+//////////
+//
+// Called as a helper function, to restore all of the previously saved known-needed registry keys for Office2010 apps.
+//
+/////
+	void Office2010RestoreKeys(char* successString)
+	{
+		char				key[1024];			// Holds the keys that are updated/searched
+		char*				sptr;
+		char*				kptr;
+		int					lnOffice2010_AccessVBOM;
+		int					lnOffice2010_VBAWarnings;
+
+		// Office2010 data is stored in registry keys.  We create or set the keys specified in the ie_keys array.
+		memset(&successString[0], 0, sizeof(successString));
+		sptr = &successString[0];
+		kptr = &key[0];
+
+
+//////////
+// Excel
+		// Restore keys for those items previously saved
+		if (gcOffice2010_AccessVBOM_ExcelSave != NULL)
+		{
+			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM_ExcelSave);
+			// Restore Office2010's "run macros" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Excel);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
+			free(gcOffice2010_AccessVBOM_ExcelSave);
+			gcOffice2010_AccessVBOM_ExcelSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_VBAWarnings_ExcelSave != NULL)
+		{
+			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings_ExcelSave);
+			// Restore Office2010's "disable warnings" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Excel);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
+			free(gcOffice2010_VBAWarnings_ExcelSave);
+			gcOffice2010_VBAWarnings_ExcelSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+
+//////////
+// Access
+		// Restore keys for those items previously saved
+		if (gcOffice2010_AccessVBOM_AccessSave != NULL)
+		{
+			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM_AccessSave);
+			// Restore Office2010's "run macros" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Access);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
+			free(gcOffice2010_AccessVBOM_AccessSave);
+			gcOffice2010_AccessVBOM_AccessSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_VBAWarnings_AccessSave != NULL)
+		{
+			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings_AccessSave);
+			// Restore Office2010's "disable warnings" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Access);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
+			free(gcOffice2010_VBAWarnings_AccessSave);
+			gcOffice2010_VBAWarnings_AccessSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+
+//////////
+// Publisher
+		// Restore keys for those items previously saved
+		if (gcOffice2010_AccessVBOM_PublisherSave != NULL)
+		{
+			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM_PublisherSave);
+			// Restore Office2010's "run macros" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Publisher);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
+			free(gcOffice2010_AccessVBOM_PublisherSave);
+			gcOffice2010_AccessVBOM_PublisherSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_VBAWarnings_PublisherSave != NULL)
+		{
+			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings_PublisherSave);
+			// Restore Office2010's "disable warnings" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Publisher);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
+			free(gcOffice2010_VBAWarnings_PublisherSave);
+			gcOffice2010_VBAWarnings_PublisherSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+
+//////////
+// PowerPoint
+		// Restore keys for those items previously saved
+		if (gcOffice2010_AccessVBOM_PowerPointSave != NULL)
+		{
+			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM_PowerPointSave);
+			// Restore Office2010's "run macros" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_PowerPoint);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
+			free(gcOffice2010_AccessVBOM_PowerPointSave);
+			gcOffice2010_AccessVBOM_PowerPointSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_VBAWarnings_PowerPointSave != NULL)
+		{
+			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings_PowerPointSave);
+			// Restore Office2010's "disable warnings" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_PowerPoint);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
+			free(gcOffice2010_VBAWarnings_PowerPointSave);
+			gcOffice2010_VBAWarnings_PowerPointSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+
+//////////
+// Outlook
+		// Restore keys for those items previously saved
+		if (gcOffice2010_AccessVBOM_OutlookSave != NULL)
+		{
+			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM_OutlookSave);
+			// Restore Office2010's "run macros" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Outlook);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
+			free(gcOffice2010_AccessVBOM_OutlookSave);
+			gcOffice2010_AccessVBOM_OutlookSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_VBAWarnings_OutlookSave != NULL)
+		{
+			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings_OutlookSave);
+			// Restore Office2010's "disable warnings" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Outlook);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
+			free(gcOffice2010_VBAWarnings_OutlookSave);
+			gcOffice2010_VBAWarnings_OutlookSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+
+//////////
+// Word
+		// Restore keys for those items previously saved
+		if (gcOffice2010_AccessVBOM_WordSave != NULL)
+		{
+			lnOffice2010_AccessVBOM = atoi(gcOffice2010_AccessVBOM_WordSave);
+			// Restore Office2010's "run macros" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Word);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_AccessVBOM )) + '0';
+			free(gcOffice2010_AccessVBOM_WordSave);
+			gcOffice2010_AccessVBOM_WordSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_VBAWarnings_WordSave != NULL)
+		{
+			lnOffice2010_VBAWarnings = atoi(gcOffice2010_VBAWarnings_WordSave);
+			// Restore Office2010's "disable warnings" prior key setting
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Word);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
+			free(gcOffice2010_VBAWarnings_WordSave);
+			gcOffice2010_VBAWarnings_WordSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
 	}

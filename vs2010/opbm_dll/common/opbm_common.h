@@ -8,6 +8,38 @@
 	extern int		hwndMaxCount;
 	extern int		hwndsClosed;
 
+	// "Run macros?" key:			Security\\AccessVBOM
+	// "Disable Warnings?" key:		Security\\VBAWarnings
+	extern char gcOffice2010_AccessVBOM_Excel[];
+	extern char gcOffice2010_VBAWarnings_Excel[];
+	extern char* gcOffice2010_AccessVBOM_ExcelSave;
+	extern char* gcOffice2010_VBAWarnings_ExcelSave;
+
+	extern char gcOffice2010_AccessVBOM_PowerPoint[];
+	extern char gcOffice2010_VBAWarnings_PowerPoint[];
+	extern char* gcOffice2010_AccessVBOM_PowerPointSave;
+	extern char* gcOffice2010_VBAWarnings_PowerPointSave;
+
+	extern char gcOffice2010_AccessVBOM_Publisher[];
+	extern char gcOffice2010_VBAWarnings_Publisher[];
+	extern char* gcOffice2010_AccessVBOM_PublisherSave;
+	extern char* gcOffice2010_VBAWarnings_PublisherSave;
+
+	extern char gcOffice2010_AccessVBOM_Access[];
+	extern char gcOffice2010_VBAWarnings_Access[];
+	extern char* gcOffice2010_AccessVBOM_AccessSave;
+	extern char* gcOffice2010_VBAWarnings_AccessSave;
+
+	extern char gcOffice2010_AccessVBOM_Outlook[];
+	extern char gcOffice2010_VBAWarnings_Outlook[];
+	extern char* gcOffice2010_AccessVBOM_OutlookSave;
+	extern char* gcOffice2010_VBAWarnings_OutlookSave;
+
+	extern char gcOffice2010_AccessVBOM_Word[];
+	extern char gcOffice2010_VBAWarnings_Word[];
+	extern char* gcOffice2010_AccessVBOM_WordSave;
+	extern char* gcOffice2010_VBAWarnings_WordSave;
+
 
 //////////
 //
@@ -33,3 +65,7 @@
 	char*			breakoutHkeyComponents			(char* key, HKEY& hk, int& skip);
 	BOOL CALLBACK	EnumWindowsCallbackProc			(HWND hwnd, LPARAM lParam);
 	BOOL CALLBACK	ComparativeWindowsCallbackProc	(HWND hwnd, LPARAM lParam);
+
+	void			Office2010SaveKeys				();
+	void			Office2010InstallKeys			(char* successString);
+	void			Office2010RestoreKeys			(char* successString);
