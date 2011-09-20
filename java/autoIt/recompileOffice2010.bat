@@ -54,4 +54,19 @@ echo    +-- Word Alice in Wonderland
 cd office2010\word
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in alice.au3 > ..\..\compile\alice.txt
 cd ..\..
+
+echo    +-- Close Word
+cd office2010\word
+"C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in closeWord.au3 > ..\..\compile\closeWord.txt
+cd ..\..
+
+echo    +-- Word Island
+cd office2010\word
+"C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in wordIsland.au3 > ..\..\compile\wordIsland.txt
+cd ..\..
+
+echo    +-- Word Open
+cd office2010\word
+"C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in wordOpen.au3 > ..\..\compile\wordOpen.txt
+cd ..\..
 echo        [Finished]
