@@ -1539,7 +1539,7 @@ public final class BenchmarkManifest
 				m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 
 				// If the user clicked stop, we're done processing
-				m_processing = (m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP);
+				m_processing = !(m_bp.m_debuggerOrHUDAction == BenchmarkParams._STOP_USER_CLICKED_STOP);
 			}
 		}
 
