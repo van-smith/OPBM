@@ -26,7 +26,7 @@ $gBaselines[2][1] = $LAUNCH_SEVENZIP_UNINSTALLER_SCORE
 $gBaselines[3][0] = $UNINSTALL_SEVENZIP
 $gBaselines[3][1] = $UNINSTALL_SEVENZIP_SCORE
 
-outputDebug( "Starting up Adobe Acrobat Un-installer" )
+outputDebug( "Starting up 7zip Un-installer" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
