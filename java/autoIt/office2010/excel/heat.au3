@@ -23,40 +23,40 @@ $gBaselines[5][1] = $HEAT_TIME_TO_ITERATE_N_TIMES_SCORE
 Dim $CurrentLoop
 Dim $LoopLimit
 
-if $CmdLine[0] > 0 then 
-	$LoopLimit = $CmdLine[1] 
-Else 
+if $CmdLine[0] > 0 then
+	$LoopLimit = $CmdLine[1]
+Else
 	$LoopLimit = 1
 EndIf
 For $CurrentLoop = 1 to $LoopLimit
 	outputStatus( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
+
 	outputStatus( "InitializeExcelScript()" )
 	InitializeExcelScript()
 	$gErrorTrap = FileCopy($FILENAME_SPREADSHEET_BACKUP, $FILENAME_SPREADSHEET, 1)
 	If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & "FileCopy: " & $FILENAME_SPREADSHEET_BACKUP & ": Unable to copy file.")
-	
+
 	outputStatus( "LaunchExcel()" )
 	LaunchExcel()
-	
+
 	FirstRunCheck()
-	
+
 	outputStatus( "CloseEmptyWorksheet()" )
 	CloseEmptyWorksheet()
-	
+
 	outputStatus( "OpenSurfaceChartWorksheet()" )
 	OpenSurfaceChartWorksheet()
-	
+
 	outputStatus( "IterateCalculations()" )
 	IterateCalculations()
-	
+
 	outputStatus( "CloseSurfaceChartWorksheet()" )
 	CloseSurfaceChartWorksheet()
-	
+
 	outputStatus( "CloseExcel()" )
 	CloseExcel()
-	
+
 	outputStatus( "FinalizeScript()" )
 	opbmFinalizeScript( "office2010ExcelHeat.csv" )
 	outputStatus( "Removing temporary file" )
@@ -69,6 +69,14 @@ Exit
 ;======================================================================================================================================
 
 Func CloseEmptyWorksheet()
+	; if the worksheet is not maximized, maximize it:
+	dim $bResult
+	$bResult = WinWait( $BOOK1, "", 1 )
+	If $bResult = 0 Then
+		opbmWinWaitActivate( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
+		Send( "^{F10}" )
+	EndIf
+	; close empty worksheet:
 	TimerBegin()
 	Send("!fc")
 	opbmWinWaitActivate( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
@@ -84,7 +92,7 @@ Func OpenSurfaceChartWorksheet()
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	ControlSend( $OPEN, $OPEN, "Edit1", $FILENAME_SPREADSHEET, 1)
 	Send("{ENTER}")
-	
+
 	; The following is necessary to properly regain focus
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Send("{PGDN}")
@@ -104,17 +112,17 @@ EndFunc
 Func IterateCalculations()
 	Local $i
 	Local $filename
-	
+
 	opbmWinWaitActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
 	TimerBegin()
 	for $i = 1 to $NBR_OF_CALCULATIONS
 		Send( "{F9}" )
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
-		
+
 		; Ctrl+Home is used to force a redraw after each iteration by moving to cell A1
 		Send("^{HOME}")
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
-		
+
 		; Every 4th iteration, write a file
 		If Mod($i, 4) = 1 Then
 			; Create the filename for this iteration
@@ -129,7 +137,7 @@ Func IterateCalculations()
 			Send("^+E")
 			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
 		EndIf
-		
+
 		; Depending on where we are in the computation, change the graph type
 		If $i = 5 Then
 			; Switch to a different perspective, send macro command Ctrl+Shift+A
@@ -150,7 +158,7 @@ Func IterateCalculations()
 			opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, 20000 )
 		EndIf
 	Next
-	
+
 	TimerEnd( $HEAT_TIME_TO_ITERATE_N_TIMES )
 EndFunc
 
@@ -160,7 +168,7 @@ Func CloseSurfaceChartWorksheet()
 	Send("!fc")
 	opbmWinWaitActivate( $MICROSOFT_EXCEL, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Unable to find Window." )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	
+
 	;save changes to the spreadsheet:
 	Send("!n")
 	opbmWinWaitActivate( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Unable to find Window." )
