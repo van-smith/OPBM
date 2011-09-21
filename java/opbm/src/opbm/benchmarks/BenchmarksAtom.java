@@ -1522,7 +1522,8 @@ public class BenchmarksAtom
 
 					if (stopIfFailure)
 					{	// We have to force the stop now
-						m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
+						if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+							m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOPPED_DUE_TO_FAILURE_ON_ALL_RETRIES;
 					} else {
 						// We mark this entry as finished, because we're not stopping if it fails
 						if (m_bp.m_bm != null)

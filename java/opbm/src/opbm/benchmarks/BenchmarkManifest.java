@@ -2143,7 +2143,7 @@ public final class BenchmarkManifest
 											m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 											System.out.println("Auto-uninstall: " + atomName);
 											m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-											if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
+											if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
 												m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 										// End
 										//////////
@@ -2289,7 +2289,7 @@ public final class BenchmarkManifest
 										m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 										System.out.println(Utils.translateScriptsAbstractOptionsTagName(tagName) + ": " + atomName);
 										m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-										if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
+										if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
 											m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 									// End
 									//////////
@@ -2380,7 +2380,7 @@ public final class BenchmarkManifest
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
 					System.out.println("Running: " + name);
 					m_bpa.processAbstract_Atom(candidate, success, failure);
-					if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP)
+					if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
 						m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
 				// End
 				//////////

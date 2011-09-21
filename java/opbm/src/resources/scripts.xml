@@ -685,7 +685,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Firefox" shortname="Firefox">
-				<abstract name="Install Firefox" shortname="Install" sourcename="execute" atomuuid="d0492ab9-38f1-4a35-bdb0-7b3a884fb0b9">
+				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
