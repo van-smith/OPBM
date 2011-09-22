@@ -106,7 +106,7 @@ public final class HUD extends DroppableFrame
 			setTranslucency(m_translucency);
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation(dim.width - actualWidth - 5, dim.height - actualHeight - 5);
+		setLocation(dim.width - actualWidth - 5, dim.height - actualHeight - 5 - 40);	// -40 for the task bar
 		setLayout(null);			// We handle all redraws
 
 		Container c = getContentPane();
