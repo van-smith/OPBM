@@ -922,7 +922,6 @@
 				<atom name="Install 7zip" shortname="7zip" sourcename="Install 7zip"></atom>
 				<atom name="Install Acrobat Reader" shortname="Acrobat" sourcename="Install Acrobat Reader"></atom>
 				<atom name="Install Firefox" shortname="Firefox" sourcename="Install Firefox"></atom>
-				<atom name="Install Opera" shortname="Opera" sourcename="Install Opera"></atom>
 				<atom name="Install Safari" shortname="Safari" sourcename="Install Safari"></atom>
 			</molecule>
 			<molecule name="Presentation" shortname="Ppoint">
@@ -968,7 +967,6 @@
 				<atom name="Uninstall 7zip" shortname="7zip" sourcename="Uninstall 7zip"></atom>
 				<atom name="Uninstall Acrobat Reader" shortname="Acrobat" sourcename="Uninstall Acrobat Reader"></atom>
 				<atom name="Uninstall Firefox" shortname="Firefox" sourcename="Uninstall Firefox"></atom>
-				<atom name="Uninstall Opera" shortname="Opera" sourcename="Uninstall Opera"></atom>
 				<atom name="Uninstall Safari" shortname="Safari" sourcename="Uninstall Safari"></atom>
 			</molecule>
 			<molecule name="Word Processing" shortname="Word">
