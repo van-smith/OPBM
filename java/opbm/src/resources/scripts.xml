@@ -921,7 +921,6 @@
 			<molecule name="Install Applications" shortname="Install">
 				<atom name="Install 7zip" shortname="7zip" sourcename="Install 7zip"></atom>
 				<atom name="Install Acrobat Reader" shortname="Acrobat" sourcename="Install Acrobat Reader"></atom>
-				<atom name="Install Chrome" shortname="Chrome" sourcename="Install Chrome"></atom>
 				<atom name="Install Firefox" shortname="Firefox" sourcename="Install Firefox"></atom>
 				<atom name="Install Opera" shortname="Opera" sourcename="Install Opera"></atom>
 				<atom name="Install Safari" shortname="Safari" sourcename="Install Safari"></atom>
@@ -968,7 +967,6 @@
 			<molecule name="Uninstall Applications" shortname="Uninstall">
 				<atom name="Uninstall 7zip" shortname="7zip" sourcename="Uninstall 7zip"></atom>
 				<atom name="Uninstall Acrobat Reader" shortname="Acrobat" sourcename="Uninstall Acrobat Reader"></atom>
-				<atom name="Uninstall Chrome" shortname="Chrome" sourcename="Uninstall Chrome"></atom>
 				<atom name="Uninstall Firefox" shortname="Firefox" sourcename="Uninstall Firefox"></atom>
 				<atom name="Uninstall Opera" shortname="Opera" sourcename="Uninstall Opera"></atom>
 				<atom name="Uninstall Safari" shortname="Safari" sourcename="Uninstall Safari"></atom>
@@ -986,10 +984,10 @@
 				<molecule name="Presentation" shortname="Present" sourcename="Presentation"></molecule>
 				<molecule name="Database" shortname="Data" sourcename="Database"></molecule>
 				<molecule name="Publisher" shortname="Pub" sourcename="Publisher"></molecule>
-				<molecule name="Word Processing" shortname="Word" sourcename="Word Processing"></molecule>
 				<molecule name="Spreadsheet" shortname="Excel" sourcename="Spreadsheet"></molecule>
 				<molecule name="JavaScript" shortname="Browser" sourcename="JavaScript"></molecule>
 				<molecule name="File Operations" shortname="File" sourcename="File Operations"></molecule>
+				<molecule name="Word Processing" shortname="Word" sourcename="Word Processing"></molecule>
 				<molecule name="Uninstall Applications" shortname="Uninstall" sourcename="Uninstall Applications"></molecule>
 			</scenario>
 		</scenarios>
