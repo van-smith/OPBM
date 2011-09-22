@@ -1463,6 +1463,9 @@ public class Utils
 	{
 		int count;
 
+		if (timeoutSeconds == 0)
+			timeoutSeconds = 1000000;	// Wait for a million seconds
+
 		count = 0;
 		try {
 			while (count < timeoutSeconds * 5)

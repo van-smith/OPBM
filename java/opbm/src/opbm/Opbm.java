@@ -199,7 +199,8 @@ public final class Opbm extends	ModalApp
 					@Override
 					public void run()
 					{
-						m_noExit = false;
+						boolean isSilent = false;
+						boolean wasFound;
 						List<String>	args	= new ArrayList<String>(0);
 						List<Xml>		list	= new ArrayList<Xml>(0);
 						Xml target;
@@ -207,6 +208,8 @@ public final class Opbm extends	ModalApp
 						int i, j, count, iterations, runCount;
 						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "", true, false);
 						OpbmDialog od;
+
+						m_noExit = false;
 
 						// Load the command line options, including those from files, into the execution sequence
 						// Arguments get loaded into "List<String> args" rather than m_args[]
@@ -233,6 +236,9 @@ public final class Opbm extends	ModalApp
 							if (line.toLowerCase().startsWith("-noexit"))
 							{	// They don't want to exit when any automated runs are complete
 								m_noExit = true;
+
+							} else if (line.toLowerCase().startsWith("-silent")) {
+								isSilent = true;
 
 							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
 								// They want to launch the simple skinned window
@@ -276,21 +282,32 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(6 + digits.length() + 2)))
-										{
-											// This is the benchmark they want to run
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Atom \"" + name + "\" for " + digits + " iterations to compilation");
 											bm.addToCompiledList("atom", name, iterations);
 										}
 									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown atom \"" + line.substring(6 + digits.length() + 2) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown atom: " + line.substring(6 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
+										}
+									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml");
+									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of Atoms");
 									System.exit(-1);
 								}
 
@@ -302,16 +319,27 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(6)))
-										{
-											// This is the benchmark they want to run
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Atom \"" + name + "\" to compilation");
 											bm.addToCompiledList("atom", name, 1);
+										}
+									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown atom: \"" + line.substring(6) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown atom: " + line.substring(6), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
 										}
 									}
 
@@ -329,21 +357,32 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
-										{
-											// This is the benchmark they want to run
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Molecule \"" + name + "\" for " + digits + " iterations to compilation");
 											bm.addToCompiledList("molecule", name, iterations);
 										}
 									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown molecule: \"" + line.substring(10 + digits.length() + 2) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown molecule: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
+										}
+									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml");
+									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of molecules");
 									System.exit(-1);
 								}
 
@@ -355,21 +394,32 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
-										{
-											// This is the benchmark they want to run
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Molecule \"" + name + "\" to compilation");
 											bm.addToCompiledList("molecule", name, 1);
 										}
 									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown molecule: \"" + line.substring(10) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown molecule: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
+										}
+									}
 
 								} else {
-									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
+									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of molecules");
 									System.exit(-1);
 								}
 
@@ -382,21 +432,32 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
-										{
-											// This is the benchmark they want to run
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Scenario \"" + name + "\" for " + digits + " iterations to compilation");
 											bm.addToCompiledList("scenario", name, iterations);
 										}
 									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown scenario: \"" + line.substring(10 + digits.length() + 2) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown scenario: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
+										}
+									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml");
+									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of Scenarios");
 									System.exit(-1);
 								}
 
@@ -408,21 +469,32 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
-										{
-											// This is the benchmark they want to run
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Scenario \"" + name + "\" to compilation");
 											bm.addToCompiledList("scenario", name, 1);
 										}
 									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown scenario: \"" + line.substring(10) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown scenario: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
+										}
+									}
 
 								} else {
-									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
+									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Scenarios");
 									System.exit(-1);
 								}
 
@@ -435,21 +507,32 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.suites.suite", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
-										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
-										{
-											// This is the benchmark they want to run
+										if (name.replace(" ", "").equalsIgnoreCase(line.substring(7 + digits.length() + 2)))
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Suite \"" + name + "\" for " + digits + " iterations to compilation");
 											bm.addToCompiledList("suite", name, iterations);
 										}
 									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown suite: \"" + line.substring(7 + digits.length() + 2) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown suite: " + line.substring(7 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
+										}
+									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml");
+									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of Suites");
 									System.exit(-1);
 								}
 
@@ -461,21 +544,32 @@ public final class Opbm extends	ModalApp
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.suites.suite", false);
 								if (!list.isEmpty())
 								{
+									wasFound = false;
 									for (j = 0; j < list.size(); j++)
 									{
 										target	= list.get(j);
 										name	= m_macroMaster.parseMacros(target.getAttribute("name"));
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(7)))
-										{
-											// This is the benchmark they want to run
+										{	// This is the benchmark they want to run
+											wasFound = true;
 											++runCount;
 											System.out.println("OPBM command line: Adding Suite \"" + name + "\" to compilation");
 											bm.addToCompiledList("suite", name, 1);
 										}
 									}
+									if (!wasFound)
+									{	// Display a message
+										System.out.println("Ignoring unknown suite: \"" + line.substring(7) + "\"");
+										if (!isSilent)
+										{
+											od = new OpbmDialog(m_opbm, "Ignoring unknown suite: " + line.substring(7), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+											// Simulates a modal message
+										}
+									}
 
 								} else {
-									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
+									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Suites");
 									System.exit(-1);
 								}
 
@@ -498,6 +592,8 @@ public final class Opbm extends	ModalApp
 
 							} else if (line.toLowerCase().startsWith("-noexit")) {
 								// handled above in pre-this-loop processing
+							} else if (line.toLowerCase().startsWith("-silent")) {
+								// handled above in pre-this-loop processing
 							} else if (line.toLowerCase().startsWith("-home:")) {
 								// handled above in pre-this-loop processing
 							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
@@ -510,12 +606,12 @@ public final class Opbm extends	ModalApp
 							} else {
 								// Ignore the unknown option
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
-								od = new OpbmDialog(m_opbm, "Ignoring unknown command line option: " + line, "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-								// Wait up to 10 seconds before auto-closing the window
-								od.setTimeout(10);
-								// The 10-second timeout is in case the script is running in an automated environment,
-								// so the user dialog box won't cause it to hang forever, but the user will see it for a spell before continuing
-								Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 10);
+								if (!isSilent)
+								{
+									od = new OpbmDialog(m_opbm, "Ignoring unknown command line option: " + line, "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+									Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
+									// Simulates a modal message
+								}
 							}
 						}
 
@@ -2936,6 +3032,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.21 08:42pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.21 09:19pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
