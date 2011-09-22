@@ -200,6 +200,7 @@ public final class Opbm extends	ModalApp
 					public void run()
 					{
 						boolean isSilent = false;
+						boolean errorsWereReported = false;
 						boolean wasFound;
 						List<String>	args	= new ArrayList<String>(0);
 						List<Xml>		list	= new ArrayList<Xml>(0);
@@ -297,6 +298,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown atom \"" + line.substring(6 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
@@ -307,7 +309,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of Atoms");
+									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of Atoms");
 									System.exit(-1);
 								}
 
@@ -334,6 +336,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown atom: \"" + line.substring(6) + "\"");
 										if (!isSilent)
 										{
@@ -344,7 +347,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
+									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
 									System.exit(-1);
 								}
 
@@ -372,6 +375,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown molecule: \"" + line.substring(10 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
@@ -382,7 +386,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of molecules");
+									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of molecules");
 									System.exit(-1);
 								}
 
@@ -409,6 +413,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown molecule: \"" + line.substring(10) + "\"");
 										if (!isSilent)
 										{
@@ -419,7 +424,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of molecules");
+									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of molecules");
 									System.exit(-1);
 								}
 
@@ -447,6 +452,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown scenario: \"" + line.substring(10 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
@@ -457,7 +463,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of Scenarios");
+									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of Scenarios");
 									System.exit(-1);
 								}
 
@@ -484,6 +490,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown scenario: \"" + line.substring(10) + "\"");
 										if (!isSilent)
 										{
@@ -494,7 +501,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Scenarios");
+									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of Scenarios");
 									System.exit(-1);
 								}
 
@@ -522,6 +529,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown suite: \"" + line.substring(7 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
@@ -532,7 +540,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line: Error loading scripts.xml to obtain list of Suites");
+									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of Suites");
 									System.exit(-1);
 								}
 
@@ -559,6 +567,7 @@ public final class Opbm extends	ModalApp
 									}
 									if (!wasFound)
 									{	// Display a message
+										errorsWereReported = true;
 										System.out.println("Ignoring unknown suite: \"" + line.substring(7) + "\"");
 										if (!isSilent)
 										{
@@ -569,7 +578,7 @@ public final class Opbm extends	ModalApp
 									}
 
 								} else {
-									System.out.println("OPBM command line:  Error loading scripts.xml to obtain list of Suites");
+									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of Suites");
 									System.exit(-1);
 								}
 
@@ -605,6 +614,7 @@ public final class Opbm extends	ModalApp
 
 							} else {
 								// Ignore the unknown option
+								errorsWereReported = true;
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
 								if (!isSilent)
 								{
@@ -624,9 +634,9 @@ public final class Opbm extends	ModalApp
 								System.out.println("Fatal Error: Unable to run the prepared compilation.");
 						}
 
-						if (!m_noExit && runCount != 0)
-						{	// If we get here, they don't want us to exit, or we did a run without any errors and we're ready to exit
-							System.exit(0);
+						if (!m_noExit && (runCount != 0 || (isSilent && errorsWereReported)))
+						{	// If we get here, they want us to exit, or we did a run without any errors and we're ready to exit, or we had errors with a -silent switch
+							System.exit(errorsWereReported ? -1 : 0);
 						}
 						// Done doing command-line things
 						m_executingFromCommandLine = false;
@@ -3032,6 +3042,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.21 09:19pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.21 09:45pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
