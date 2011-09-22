@@ -1468,7 +1468,7 @@ public final class BenchmarkManifest
 //////
 	//
 	//Opbm.m_debugSimulateRunAtomMode = true;
-	//Opbm.m_debugSimulateRunAtomModeFailurePercent = 0.6;	// Fail 60% of the time
+	//Opbm.m_debugSimulateRunAtomModeFailurePercent = 0.1;	// Fail 10% of the time
 	//
 //////
 // End
@@ -1586,7 +1586,7 @@ public final class BenchmarkManifest
 		computeForResultsXml(false, true);
 
 		// If the last thing that happened was a failure, and we are supposed to uninstall stuff after failures, we need to do that
-		if ((m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP) && m_bp.m_bpAtom.m_lastAtomWasFailure && m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
+		if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP && m_bp.m_bpAtom.m_lastAtomWasFailure && m_opbm.getSettingsMaster().benchmarkUninstallAfterFailures())
 		{	// If there were failures, and they want to run the uninstall scripts after processing
 			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
 			m_bpa.m_isRecordingCounts = false;

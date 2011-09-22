@@ -4,7 +4,7 @@
  * This class is the top-level class of the OPBM.  It creates a GUI, loads
  * necessary files, beings processing based on context, etc.
  *
- * Last Updated:  Sep 16, 2011
+ * Last Updated:  Sep 21, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -3042,6 +3042,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.21 09:45pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.22 07:48am";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
