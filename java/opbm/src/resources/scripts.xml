@@ -447,7 +447,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Opera" shortname="Opera">
-				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute" atomuuid="5aa94894-3495-4433-9f33-8b3b26c8c31c">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>

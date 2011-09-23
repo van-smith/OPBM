@@ -1265,7 +1265,7 @@ public class BenchmarksAtom
 						if (command != null && !command.isEmpty())
 						{
 							commandsAndParameters.clear();
-							commandsAndParameters.add(command);
+							commandsAndParameters.add("\"" + command + "\"");
 							if (p1  != null && !p1.isEmpty())	commandsAndParameters.add(p1);
 							if (p2  != null && !p2.isEmpty())	commandsAndParameters.add(p2);
 							if (p3  != null && !p3.isEmpty())	commandsAndParameters.add(p3);
