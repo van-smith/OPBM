@@ -20,7 +20,7 @@ Const $CHROME_UNINSTALLER				= $CHROME_DIRECTORY		&	"\12.0.742.122\Installer\set
 ;Const $CHROME_UNINSTALLER				= $EXE_DIRECTORY		&	"\ChromeStandaloneSetup.exe"
 Const $CHROME_UNINSTALL_COMMAND			= $CHROME_UNINSTALLER	&	" --uninstall"
 Const $CHROME_EXECUTABLE				= $CHROME_DIRECTORY		&	"\chrome.exe"
-Const $CHROME_EXECUTABLE_TO_LAUNCH		= $CHROME_DIRECTORY		&	"\chrome.exe " & chr(34) & $OPBM_SPLASH_HTML & chr(34)
+Const $CHROME_EXECUTABLE_TO_LAUNCH		= $CHROME_DIRECTORY		&	"\chrome.exe " & $OPBM_SPLASH_HTML
 
 
 ; Constants used throughout for various scripts
