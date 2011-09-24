@@ -376,7 +376,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install 7zip" shortname="7zip">
-				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
+				<abstract name="Install 7zip" shortname="Install" sourcename="execute" atomuuid="e19829fe-bb1c-4718-b61f-7c817b5c3d3a">
 					<options>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
@@ -433,7 +433,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Opera" shortname="Opera">
-				<abstract name="Install Opera" shortname="Install" sourcename="execute">
+				<abstract name="Install Opera" shortname="Install" sourcename="execute" atomuuid="209b4aab-fb8e-47b5-909d-f3be71c9e97f">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
