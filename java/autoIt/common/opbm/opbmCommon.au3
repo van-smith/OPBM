@@ -347,6 +347,33 @@ Func opbmWinWaitActivate( $title, $text = "", $timeout = 0, $errorText = "" )
 	Return $lReturnCode
 EndFunc
 
+Func opbmWinWaitForEitherOfTwoWindows( $window1title, $window1text, $window2title, $window2text, $timeout )
+	Local $lReturnCode
+	Local $count
+	
+	$count = 0
+	While (true)
+		; Attempt to find the window
+		If WinExists ( $window1title, $window1text ) Then
+			; The first window was found
+			$lReturnCode = 1
+			ExitLoop
+		EndIf
+		If WinExists ( $window2title, $window2text ) Then
+			; The second window was found
+			$lReturnCode = 2
+			ExitLoop
+		EndIf
+		; Wait for a second
+		Sleep( 1000 )
+		$count = $count + 1
+		If $count > $timeout Then
+			lReturnCode = 0
+		EndIf
+	WEnd
+	return $lReturnCode
+EndFunc
+
 Func opbmWinActivate( $title, $text = "", $timeout = 0, $errorText = "" )
 	Dim $lReturnCode = 1
 	; See if it's already active, if not, activate it

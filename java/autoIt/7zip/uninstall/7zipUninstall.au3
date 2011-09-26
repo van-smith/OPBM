@@ -95,21 +95,31 @@ Func Uninstallx64()
 	; Click the next button
 	Send( "!n" )
 	Sleep(250)
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Modify, repair, or remove")
+	;outputDebug("Waiting for " & $InstallerWindowTitle & " + Modify, repair, or remove")
 	opbmWinWaitActivate( $InstallerWindowTitle, "Modify, repair, or remove", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
 	
 	; Click the remove button
 	Send( "!r" )
 	Sleep(250)
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Remove 7-Zip")
+	;outputDebug("Waiting for " & $InstallerWindowTitle & " + Remove 7-Zip")
 	opbmWinWaitActivate( $InstallerWindowTitle, "Remove 7-Zip", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
 	
 	; Click the second remove button
 	Send( "!r" )
 	Sleep(250)
 	; Clicking this button immediately begins the uninstall process
-	outputDebug("Waiting for " & $InstallerWindowTitle & " + Completing")
-	opbmWinWaitActivate( $InstallerWindowTitle, "Completing", 60, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	;outputDebug("Waiting for " & $InstallerWindowTitle & " + Completing")
+	If opbmWinWaitForEitherOfTwoWindows( $InstallerWindowTitle, "Completing", $InstallerWindowTitle, "Files in Use", 60 ) = 2 Then
+		; It was the second window
+		outputDebug( "Warning: Ignoring files in use" )
+		; Ignore the condition
+		WinActivate( $InstallerWindowTitle, "Files in Use" )
+		Send( "!i" )
+		Sleep(250)
+		opbmWinWaitActivate( $InstallerWindowTitle, "Completing", 60, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	Else
+		opbmWinWaitActivate( $InstallerWindowTitle, "Completing", 2, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")
+	EndIf
 
 	; Click the "Finish" button
 	Send( "!f" )
