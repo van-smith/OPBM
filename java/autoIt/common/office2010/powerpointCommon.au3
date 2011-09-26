@@ -51,10 +51,9 @@ $gBaselines[1][0] = $CLOSE_MICROSOFT_POWERPOINT
 $gBaselines[1][1] = $CLOSE_MICROSOFT_POWERPOINT_SCORE
 
 
-Func launchPowerPoint()
+Func isPowerPointInstalled()
 	Local $filename
-
-	; Find out which version we're running
+	
 	If FileExists( $FILENAME_POWERPOINT_AMD64 ) Then
 		$filename = $FILENAME_POWERPOINT_AMD64
 		outputDebug( "Running 64-bit Office" )
@@ -62,6 +61,18 @@ Func launchPowerPoint()
 		$filename = $FILENAME_POWERPOINT_X86
 		outputDebug( "Running 32-bit Office" )
 	Else
+		$filename = "not found"
+	EndIf
+	
+	return $filename
+EndFunc
+
+Func launchPowerPoint()
+	Local $filename
+
+	; Find out which version we're running
+	$filename = isPowerpointInstalled()
+	If $filename = "not found" Then
 		ErrorHandle("Cannot launch application: PowerPoint 2010 not found at " & $FILENAME_POWERPOINT_AMD64 & " or " & $FILENAME_POWERPOINT_X86 & ".")
 	EndIf
 
@@ -92,10 +103,15 @@ Func closePowerPoint()
 	;Office2010RestoreRegistryKeys()
 EndFunc
 
-Func initializePowerPointScript()
+Func initializePowerPointScript( $retrieveProcess = 1 )
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
+	
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	$gPID = WinGetProcess ( $MICROSOFT_POWERPOINT )
+	
+	If $retrieveProcess = 1 Then
+		$gPID = WinGetProcess ( $MICROSOFT_POWERPOINT )
+		outputDebug( "PowerPoint PID: " & $gPID )
+	EndIf
 EndFunc

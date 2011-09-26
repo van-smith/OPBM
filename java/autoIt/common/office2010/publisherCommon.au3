@@ -53,9 +53,9 @@ $gBaselines[1][0] = $CLOSE_MICROSOFT_PUBLISHER
 $gBaselines[1][1] = $CLOSE_MICROSOFT_PUBLISHER_SCORE
 
 
-Func launchPublisher()
+Func isPublisherInstalled()
 	Local $filename
-
+	
 	; Find out which version we're running
 	If FileExists( $FILENAME_PUBLISHER_AMD64 ) Then
 		$filename = $FILENAME_PUBLISHER_AMD64
@@ -64,6 +64,18 @@ Func launchPublisher()
 		$filename = $FILENAME_PUBLISHER_X86
 		outputDebug( "Running 32-bit Office" )
 	Else
+		$filename = "not found"
+	EndIf
+	
+	return $filename
+EndFunc
+
+Func launchPublisher()
+	Local $filename
+
+	; Find out which version we're running
+	$filename = isPublisherInstalled()
+	If $filename = "not found" Then
 		ErrorHandle("Cannot launch application: Publisher 2010 not found at " & $FILENAME_PUBLISHER_AMD64 & " or " & $FILENAME_PUBLISHER_X86 & ".")
 	EndIf
 
@@ -96,11 +108,15 @@ Func closePublisher()
 	;Office2010RestoreRegistryKeys()
 EndFunc
 
-Func initializePublisherScript()
+Func initializePublisherScript( $retrieveProcess = 1 )
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
+	
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	$gPID = WinGetProcess ( $MICROSOFT_PUBLISHER )
-	outputDebug( "Publisher PID: " & $gPID )
+	
+	If $retrieveProcess = 1 Then
+		$gPID = WinGetProcess ( $MICROSOFT_PUBLISHER )
+		outputDebug( "Publisher PID: " & $gPID )
+	EndIf
 EndFunc

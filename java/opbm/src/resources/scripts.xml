@@ -181,7 +181,7 @@
 			<atom name="PowerPoint Open" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
-						<atomCheckConflicts></atomCheckConflicts>
+						<atomCheckConflicts>PowerPoint Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close PowerPoint</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -225,6 +225,7 @@
 			<atom name="Publisher Open" shortname="Pub">
 				<abstract name="Open Publisher 2010" shortname="OpenP" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Publisher Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Publisher</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -267,6 +268,7 @@
 			<atom name="Access Open" shortname="Access">
 				<abstract name="Open Microsoft Access" shortname="OpenA" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Access Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Access</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -307,8 +309,9 @@
 				</abstract>
 			</atom>
 			<atom name="Excel Heat" shortname="Excel">
-				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
+				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute" atomuuid="679a6826-66eb-4fce-abf5-9b473b2f6638">
 					<options>
+						<atomCheckConflicts>Excel Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Excel</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -323,6 +326,7 @@
 			<atom name="Word Alice" shortname="Word">
 				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Word Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -337,6 +341,7 @@
 			<atom name="Word Open" shortname="Word">
 				<abstract name="Open Microsoft Word" shortname="OpenW" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Word Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -461,8 +466,9 @@
 				</abstract>
 			</atom>
 			<atom name="Opera SunSpider" shortname="Opera">
-				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute" atomuuid="7f059bbd-f00b-4ddf-815e-660f7421087a">
 					<options>
+						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -477,6 +483,7 @@
 			<atom name="Opera Kraken" shortname="Opera">
 				<abstract name="Opera Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -491,6 +498,7 @@
 			<atom name="Opera Google V8" shortname="Opera">
 				<abstract name="Opera Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -575,6 +583,7 @@
 			<atom name="IE SunSpider" shortname="IE9">
 				<abstract name="IE SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<atomCheckConflicts>IE9 Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -589,6 +598,7 @@
 			<atom name="IE Kraken" shortname="IE9">
 				<abstract name="IE Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomCheckConflicts>IE9 Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -603,6 +613,7 @@
 			<atom name="IE Google V8" shortname="IE9">
 				<abstract name="IE Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomCheckConflicts>IE9 Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -643,8 +654,9 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome SunSpider" shortname="Chrome">
-				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute" atomuuid="73b2516c-a8f6-4154-8330-b7e9a9c61ba7">
 					<options>
+						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -659,6 +671,7 @@
 			<atom name="Chrome Kraken" shortname="Chrome">
 				<abstract name="Chrome Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -673,6 +686,7 @@
 			<atom name="Chrome Google V8" shortname="Chrome">
 				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -890,6 +904,7 @@
 			<atom name="Launch and Close Excel" shortname="SpinXl">
 				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
 					<options>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -901,8 +916,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Simulate Check Conflicts and Resolutions" shortname="SimCaR">
-				<abstract name="Simulate Check Conflicts and Resolutions" shortname="SimCaR" sourcename="execute">
+			<atom name="Chrome Conflict Check" shortname="ChromeCC">
+				<abstract name="Chrome Conflict Check" shortname="ChromeCC" sourcename="execute">
 					<options>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
@@ -912,7 +927,112 @@
 						<stopIfFailure></stopIfFailure>
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
-						<executable>..\autoIT\checkConflicts\simulated\checkSimulated.exe</executable>
+						<executable>..\autoIT\checkConflicts\chrome\chromeMustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="IE9 Conflict Check" shortname="IE9CC">
+				<abstract name="IE9 Conflict Check" shortname="IE9CC" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\ie9\ie9MustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Opera Conflict Check" shortname="OperaCC">
+				<abstract name="Opera Conflict Check" shortname="OperaCC" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\opera\operaMustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Access Conflict Check" shortname="AccessCC">
+				<abstract name="Access Conflict Check" shortname="AccessCC" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\office2010\accessMustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Excel Conflict Check" shortname="ExcelCC">
+				<abstract name="Excel Conflict Check" shortname="ExcelCC" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\office2010\excelMustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="PowerPoint Conflict Check" shortname="PPCC">
+				<abstract name="PowerPoint Conflict Check" shortname="PPCC" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\office2010\powerpointMustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Publisher Conflict Check" shortname="PubCC">
+				<abstract name="Publisher Conflict Check" shortname="PubCC" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\office2010\publisherMustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Word Conflict Check" shortname="WordCC">
+				<abstract name="Word Conflict Check" shortname="WordCC" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\office2010\wordMustBeInstalled.exe</executable>
 					</options>
 				</abstract>
 			</atom>

@@ -1485,8 +1485,12 @@ public final class BenchmarkManifest
 		{	// Check for any conflicts on this run
 			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
 			m_bpa.m_isRecordingCounts = false;
-			result = runAtomTags("atomCheckConflicts", true);
+			result = runAtomTags("atomCheckConflicts", true, false);
 			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
+
+			if (m_bp.m_debuggerOrHUDAction >= BenchmarkParams._STOP)
+				m_processing = false;
+
 			if (m_bp.m_debuggerOrHUDAction < BenchmarkParams._STOP && !m_conflicts.isEmpty() && !m_resolutions.isEmpty())
 			{	// See if any results contain "conflict," responses
 				car = createXmlOfConflictsAndResolutions();
@@ -1508,7 +1512,7 @@ public final class BenchmarkManifest
 				m_bpa.m_isRecordingCounts = false;
 				if (runHasNotYetStarted())
 				{	// Run the pre-run atoms
-					result = runAtomTags("atomBeforeRuns", false);
+					result = runAtomTags("atomBeforeRuns", false, false);
 					// If is an official run, the next thing it will do is reboot,
 					// at which time it will run the spinups below
 					// If it's a trial run, it will simply proceed
@@ -1527,7 +1531,7 @@ public final class BenchmarkManifest
 							}
 							// Run the specifically-related-to-atom spinup atoms
 							System.out.println("Spinning up");
-							result = runAtomTags("atomOnSpinup", false);
+							result = runAtomTags("atomOnSpinup", false, false);
 						}
 					}
 				}
@@ -1569,7 +1573,7 @@ public final class BenchmarkManifest
 		{	// Run the post-run atoms
 			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
 			m_bpa.m_isRecordingCounts = false;
-			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns", false));
+			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns", false, false));
 			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
 
@@ -2232,15 +2236,17 @@ public final class BenchmarkManifest
 	 * be recorded for all atoms?
 	 */
 	public Xml runAtomTags(String		tagName,
-						   boolean		recordConflictsAndResolutions)
+						   boolean		recordConflictsAndResolutions,
+						   boolean		runDuplicates)
 	{
-		int i, j, k, previousDebuggerOrHUDAction;
-		boolean executed;
+		int i, j, k, l, previousDebuggerOrHUDAction;
+		boolean executed, alreadyRanThisOne;
 		Xml candidate, thisAtom, autoExecute, success, failure, thisAtomResults, options, tag;
 		String atomsList, atomName, warning;
 		List<String>	atoms				= new ArrayList<String>(0);		// atom names found in <tagName> tag
 		List<Xml>		scriptsAtoms		= new ArrayList<Xml>(0);		// atoms from scripts.xml
 		List<Xml>		manifestAbstracts	= new ArrayList<Xml>(0);		// abstracts from manifest.xml, those that are actively being run
+		List<String>	runList			= new ArrayList<String>(0);		// list of atoms already run
 
 		// Load all of the atoms present in scripts.xml
 		Xml.getNodeList(scriptsAtoms, m_opbm.getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
@@ -2280,45 +2286,63 @@ public final class BenchmarkManifest
 									thisAtom = scriptsAtoms.get(k);
 									if (thisAtom.getChildNode("abstract") != null && thisAtom.getAttribute("name").equalsIgnoreCase(atomName))
 									{	// We found it, see if we still need to execute it
+										alreadyRanThisOne = false;
+										if (!runDuplicates)
+										{	// See if this one has already been run
+											for (l = 0; l < runList.size(); l++)
+											{	// Check the atomName against the list already run
+												if (runList.get(l).equalsIgnoreCase(atomName))
+												{	// Yes, we've already run this atom
+													alreadyRanThisOne = true;
+													break;
+												}
+											}
+										}
 										executed = true;
-										success	= new Xml("success");
-										failure	= new Xml("failure");
-										// If success, executed = true, otherwise executed = false
+										if (runDuplicates || (!runDuplicates && !alreadyRanThisOne))
+										{	// Add this one to the run list
+											runList.add(atomName);
 
-									//////////
-									// Physically conduct the work of the atom
-										previousDebuggerOrHUDAction = m_bp.m_debuggerOrHUDAction;	// Save the state of the thing
-										m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
-										System.out.println(Utils.translateScriptsAbstractOptionsTagName(tagName) + ": " + atomName);
-										m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
-										if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
-											m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
-									// End
-									//////////
+											// Create xml for the result
+											success	= new Xml("success");
+											failure	= new Xml("failure");
+											// If success, executed = true, otherwise executed = false
 
-										if (recordConflictsAndResolutions)
-										{	// Grab the conflicts and resolutions array
-											m_conflicts.addAll(m_bp.m_conflicts);
-											m_resolutions.addAll(m_bp.m_resolutions);
+										//////////
+										// Physically conduct the work of the atom
+											previousDebuggerOrHUDAction = m_bp.m_debuggerOrHUDAction;	// Save the state of the thing
+											m_bp.m_debuggerOrHUDAction = BenchmarkParams._NO_ACTION;
+											System.out.println(Utils.translateScriptsAbstractOptionsTagName(tagName) + ": " + atomName);
+											m_bpa.processAbstract_Atom(thisAtom.getChildNode("abstract"), success, failure);
+											if (m_bp.m_debuggerOrHUDAction != BenchmarkParams._STOP_USER_CLICKED_STOP)
+												m_bp.m_debuggerOrHUDAction = previousDebuggerOrHUDAction;	// Return the list of things we've executed
+										// End
+										//////////
+
+											if (recordConflictsAndResolutions)
+											{	// Grab the conflicts and resolutions array
+												m_conflicts.addAll(m_bp.m_conflicts);
+												m_resolutions.addAll(m_bp.m_resolutions);
+											}
+
+											thisAtomResults = new Xml(tagName);
+											thisAtomResults.appendAttribute(new Xml("name", atomName));
+											thisAtomResults.appendAttribute(new Xml("uuid", Utils.getUUID()));
+
+											// Create an entry identifying this atom
+											thisAtomResults.appendChild(success);
+											thisAtomResults.appendChild(failure);
+											if (success.getFirstChild() != null)
+											{	// There was a success
+												thisAtomResults.appendAttribute("result", "success");
+											} else {
+												// Only failures
+												thisAtomResults.appendAttribute("result", "fail");
+											}
+
+											// Store the results good or bad
+											autoExecute.appendChild(thisAtomResults);
 										}
-
-										thisAtomResults = new Xml(tagName);
-										thisAtomResults.appendAttribute(new Xml("name", atomName));
-										thisAtomResults.appendAttribute(new Xml("uuid", Utils.getUUID()));
-
-										// Create an entry identifying this atom
-										thisAtomResults.appendChild(success);
-										thisAtomResults.appendChild(failure);
-										if (success.getFirstChild() != null)
-										{	// There was a success
-											thisAtomResults.appendAttribute("result", "success");
-										} else {
-											// Only failures
-											thisAtomResults.appendAttribute("result", "fail");
-										}
-
-										// Store the results good or bad
-										autoExecute.appendChild(thisAtomResults);
 										break;
 									}
 								}

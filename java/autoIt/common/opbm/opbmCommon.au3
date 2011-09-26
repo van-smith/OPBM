@@ -318,8 +318,6 @@ Func ErrorHandle( $Text, $ShowMsgBox = False, $aExit = True )
 ;	EndIf
 	If $aExit Then
 		opbmCloseAllWindowsNotPreviouslyNoted()
-		; Upon exit, we potentially need to restore the registry for the specified operation we're running
-		checkRegistryKeysNeedingRestored()
 		Exit -1
 	EndIf
 EndFunc
