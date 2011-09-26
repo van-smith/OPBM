@@ -447,7 +447,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Opera" shortname="Opera">
-				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute" atomuuid="5aa94894-3495-4433-9f33-8b3b26c8c31c">
+				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -916,8 +916,42 @@
 					</options>
 				</abstract>
 			</atom>
+			<atom name="Startup Settle Down" shortname="settle">
+				<abstract name="Startup Settle Down" shortname="settle" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\opbm\internal\startupSettleDown.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Reboot Time" shortname="time">
+				<abstract name="Reboot Time" shortname="time" sourcename="execute">
+					<options>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\opbm\internal\rebootTime.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 		</atoms>
 		<molecules>
+			<molecule name="Bootup Data" shortname="bootdata">
+				<atom name="Startup Settle Down" shortname="settle" sourcename="Startup Settle Down"></atom>
+				<atom name="Reboot Time" shortname="time" sourcename="Reboot Time"></atom>
+			</molecule>
 			<molecule name="Install Applications" shortname="Install">
 				<atom name="Install 7zip" shortname="7zip" sourcename="Install 7zip"></atom>
 				<atom name="Install Acrobat Reader" shortname="Acrobat" sourcename="Install Acrobat Reader"></atom>
@@ -978,6 +1012,7 @@
 		</molecules>
 		<scenarios>
 			<scenario name="OPBM" shortname="OPBM">
+				<molecule name="Bootup Data" shortname="bootdata" sourcename="Bootup Data"></molecule>
 				<molecule name="Install Applications" shortname="Install" sourcename="Install Applications"></molecule>
 				<molecule name="Presentation" shortname="Present" sourcename="Presentation"></molecule>
 				<molecule name="Database" shortname="Data" sourcename="Database"></molecule>

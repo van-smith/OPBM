@@ -368,8 +368,8 @@ public class Utils
 	 * @param ended end time
 	 * @return milliseconds between
 	 */
-	public static long millisecondsBetweenTimestamps(String		timestampBegan,
-													 String		timestampEnded)
+	public static long getMillisecondsBetweenTimestamps(String		timestampBegan,
+														String		timestampEnded)
 	{
 		String msBegan, msEnded;
 		long bms, ems;
@@ -381,6 +381,27 @@ public class Utils
 		ems		= Long.valueOf(msEnded);
 
 		return(ems - bms);
+	}
+
+	/**
+	 * Verifies that the before timestamp is before the after timestamp
+	 * @param timestampBefore
+	 * @param timestampAfter
+	 * @return true if the timestampBefore is less than or equal to timestampAfter
+	 */
+	public static boolean ensureTimestampsAreInOrder(String		timestampBefore,
+													 String		timestampAfter)
+	{
+		long before, after;
+		String msBefore, msAfter;
+
+		msBefore	= timestampBefore.substring(29);
+		msAfter		= timestampAfter.substring(29);
+
+		before		= Long.valueOf(msBefore);
+		after		= Long.valueOf(msAfter);
+
+		return(before <= after);
 	}
 
 	/**

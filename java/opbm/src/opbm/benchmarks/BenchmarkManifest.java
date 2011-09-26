@@ -1561,7 +1561,7 @@ public final class BenchmarkManifest
 		// to the benchmark being over.  If we are rebooting, then we simply
 		// shut down and continue.
 		// Record the time of this event
-		m_bmr.appendResultsAnnotation("shutdown", Utils.getTimestamp(), "");
+		appendShutdownAnnotation();
 		saveManifest();
 
 		// When the run is completely over, run the post-run atoms
@@ -1612,6 +1612,8 @@ public final class BenchmarkManifest
 			{	// And it IS a reboot command
 				// Indicate it's finished
 				setLastWorkletFinished();
+				// Indicate that we're shutting down
+				appendShutdownAnnotation();
 				// Save it to disk for the restart
 				saveManifest();
 				// If the reboot fails, it will report a failed reboot
@@ -2645,6 +2647,16 @@ public final class BenchmarkManifest
 	{
 		m_controlLastWorkletFinished.setText("no");
 	}
+
+	/**
+	 * Appends the shutdown annotation
+	 */
+	public void appendShutdownAnnotation()
+	{
+		m_bmr.appendResultsAnnotation("shutdown", Utils.getTimestamp(), "");
+	}
+
+	public BenchmarkManifestResults getBMR()	{	return(m_bmr);		}
 
 	// Error conditions
 	private boolean						m_isManifestInError;

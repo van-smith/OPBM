@@ -229,6 +229,18 @@ Func outputError( $outputString )
 	ConsoleWrite( "error," & $outputString & @CRLF )
 EndFunc
 
+Func outputConflict( $outputString )
+	ConsoleWrite( "conflict," & $outputString & @CRLF )
+EndFunc
+
+Func outputResolution( $outputString )
+	ConsoleWrite( "resolution," & $outputString & @CRLF )
+EndFunc
+
+Func outputInternalCommand( $outputString )
+	ConsoleWrite( "command," & $outputString & @CRLF )
+EndFunc
+
 Func TimerWriteTimesToCSV( $CSVPath )
 	Local $lFileTimerCsv
 	Local $i
@@ -475,40 +487,12 @@ Func TaskKillProcessByID( $pid, $nameToDisplay )
 	EndIf
 EndFunc
 
-; August 12, 2011
-; ! Used only by apps that launch Office2010 !
-;
-; Should be used at startup by calling these two in this order:
-;	Office2010SaveRegistryKeys()
-;	Office2010InstallRegistryKeys()
-;
-; and then a clean termination procedure is to call one of these:
-;	Office2010RestoreRegistryKeys()
-;	checkRegistryKeysNeedingRestored()
-;
-; Note:  A better solution would be to have the harness handle all registry key saving / restoring automatically.
-; Note:  The called functions reside in common\opbm\dlls\opbm.dll
 Func Office2010SaveRegistryKeys()
-	$gcRegistryKeyRestorer = "Office2010"
-	Office2010SaveKeys()
+; no longer used, moved to OPBM Java app
 EndFunc
 Func Office2010InstallRegistryKeys()
-	Office2010InstallKeys()
+; no longer used, moved to OPBM Java app
 EndFunc
 Func Office2010RestoreRegistryKeys()
-	Office2010RestoreKeys()
-EndFunc
-
-; If the $gcRegistryKeyRestorer variable contains something recognized, restore those registry key settings
-; Note:  There is logic within opbm.dll which prevents improperly called registry keys from being restored,
-;        if for example they had never been saved in the first place.
-Func checkRegistryKeysNeedingRestored()
-	$gcRegistryKeyRestorer = StringLower( $gcRegistryKeyRestorer )
-	If $gcRegistryKeyRestorer = "office2010" Then
-		; Undo any registry key settings handled by Office2010 startup code
-		outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
-		Office2010RestoreRegistryKeys()
-	;ElseIf $registryKeyRestorer = "something else"
-	;ElseIf $registryKeyRestorer = "another thing"
-	EndIf
+; no longer used, moved to OPBM Java app
 EndFunc

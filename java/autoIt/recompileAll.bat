@@ -17,6 +17,8 @@ call recompileIE.bat
 echo .
 call recompileOpera.bat
 echo .
+call recompileOpbm.bat
+echo .
 call recompileSafari.bat
 echo .
 call recompileSpinup.bat

@@ -169,6 +169,13 @@ Const $OPERA_RUN_SUNSPIDER_SCORE					= 14.1010537385
 Const $LAUNCH_OPERA_1150_UNINSTALLER_SCORE			= 0.577146593
 Const $UNINSTALL_OPERA_1150_SCORE					= 0.514981939
 
+; opbmInternal.au3 (used by rebootTime.au3, startupSettleDown.au3)
+Const $STARTUP_SETTLE_DOWN_SCORE					= 60.0		; placeholder
+;Const $REBOOT_TIME_SCORE							= ; not used
+; The reboot time is recorded as an internal function of the harness
+; It is scored there also.  See the HUD's stream gobbler's commands.
+; And specifically see BenchmarkParams' getRebootTimeScore() method.
+
 ; safariCommon.au3
 Const $LAUNCH_SAFARI_SCORE							= 0.7298296366
 Const $CLOSE_SAFARI_SCORE							= 0.8986433763

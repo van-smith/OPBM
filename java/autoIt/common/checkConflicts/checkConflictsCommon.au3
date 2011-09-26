@@ -7,11 +7,3 @@ Func initializeCheckConflictsScript()
 	HotKeySet("{ESC}", "Terminate")
 	InitializeGlobalVariables()
 EndFunc
-
-Func outputConflict( $outputString )
-	ConsoleWrite( "conflict," & $outputString & @CRLF )
-EndFunc
-
-Func outputResolution( $outputString )
-	ConsoleWrite( "resolution," & $outputString & @CRLF )
-EndFunc

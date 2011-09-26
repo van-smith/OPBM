@@ -1700,6 +1700,52 @@ public class BenchmarkManifestResults
 		return(newXml);
 	}
 
+	/**
+	 * Called to return the time between the last reboot and restart, by
+	 * examining the annotation entries in manifest.xml's
+	 * opbm.resultsdata.rawresults
+	 * @return the interval between the noted shutdown and restart times
+	 */
+	public String getLastRebootTime()
+	{
+		Xml candidate, lastStartup, lastShutdown;
+		String result;
+
+		lastStartup		= null;
+		lastShutdown	= null;
+		candidate		= m_rawResults.getFirstChild();
+		while (candidate != null)
+		{	// See if this is a startup or shutdown annotation
+			if (candidate.getName().equalsIgnoreCase("annotation"))
+			{	// It's an annotation, see if it's a startup or shutdown annotation
+				if (candidate.getAttributeNode("startup") != null)
+				{	// It's a startup
+					lastStartup = candidate.getAttributeNode("startup");
+
+				} else if (candidate.getAttributeNode("shutdown") != null) {
+					lastShutdown = candidate.getAttributeNode("shutdown");
+
+				}
+			}
+			// Move to the next sibling
+			candidate = candidate.getNext();
+		}
+		if (lastStartup != null && lastShutdown != null)
+		{	// When we get here, we have our set, see if they're in the right order
+			if (Utils.ensureTimestampsAreInOrder(lastShutdown.getText(), lastStartup.getText()))
+			{	// Startup occurred after shutdown
+				result = Double.toString((double)Utils.getMillisecondsBetweenTimestamps(lastShutdown.getText(), lastStartup.getText()) / 1000.0);
+			} else {
+				// Something's not recorded properly in manifest.xml, there should be a shutdown, and then a startup in that order
+				result = "0.00000000000";
+			}
+		} else {
+			// The result
+			result = "0.00000000000";
+		}
+		return(result);
+	}
+
 	public Xml getResultsDataRoot()				{	return(m_resultsdataRoot);		}
 	public Xml getResultsDataRawResults()		{	return(m_rawResults);			}
 	public Xml getResultsDataResults()			{	return(m_results);				}

@@ -189,7 +189,7 @@ public class BenchmarkParams
 	 */
 	public void accumulateLastWorkletTime()
 	{
-		m_lastWorkletAccumulationTotal += Utils.millisecondsBetweenTimestamps(m_lastWorkletStart, m_lastWorkletEnd);
+		m_lastWorkletAccumulationTotal += Utils.getMillisecondsBetweenTimestamps(m_lastWorkletStart, m_lastWorkletEnd);
 	}
 
 	/**
@@ -344,6 +344,32 @@ public class BenchmarkParams
 	public void addResolution(String resolution)
 	{
 		m_resolutions.add(resolution);
+	}
+
+	public void processHUDcommand(String command)
+	{
+		String result, line;
+
+		if (command.equalsIgnoreCase("record_reboot_time"))
+		{	// They want the time between the last reboot and restart recorded
+			result	= m_bm.getBMR().getLastRebootTime();
+			line	= "timing,Reboot Time," + result + "," + getRebootTimeScore(result);
+			m_outputArray.add(Utils.getTimestamp() + ": " + line);
+			m_hud.updateTiming(line.substring(7), line);		// Update the status display with this information
+
+		} else {
+			// Unknown command
+			System.out.println("Ignoring unknown internal command: " + command);
+		}
+	}
+
+	//
+	public String getRebootTimeScore(String seconds)
+	{
+		Double value = Double.valueOf(seconds);
+
+		// Baseline score for reboot time is 150.0 seconds
+		return(Double.toString(150.0 * 100.0 / value));
 	}
 
 	public Opbm					m_opbm;
