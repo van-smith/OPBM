@@ -17,8 +17,8 @@ Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 ; Executables used to install, uninstall, or execute Firefox
 Const $FIREFOX_INSTALLER				= $EXE_DIRECTORY		&	"\Firefox Setup 5.0.1.exe"
 Const $FIREFOX_UNINSTALLER				= $FIREFOX_DIRECTORY	&	"\uninstall\helper.exe"
-Const $FIREFOX_EXECUTABLE				= $FIREFOX_DIRECTORY	&	"\firefox.exe"
-Const $FIREFOX_EXECUTABLE_TO_LAUNCH		= $FIREFOX_DIRECTORY	&	"\firefox.exe " & $OPBM_SPLASH_HTML
+Const $FIREFOX_EXECUTABLE				= chr(34) & $FIREFOX_DIRECTORY	&	"\firefox.exe" & chr(34)
+Const $FIREFOX_EXECUTABLE_TO_LAUNCH		= chr(34) & $FIREFOX_DIRECTORY	&	"\firefox.exe" & chr(34) & " " & $OPBM_SPLASH_HTML
 
 ; Constants used throughout for various scripts
 Const $LAUNCH_FIREFOX 					= "Launch Firefox 5.0.1"
@@ -63,6 +63,9 @@ Next
 
 Func isFirefoxAlreadyInstalled()
 	If FileExists( $FIREFOX_EXECUTABLE ) Then
+		return True
+	EndIf	
+	If FileExists( StringReplace( $FIREFOX_EXECUTABLE, chr(34), "" ) ) Then
 		return True
 	EndIf	
 	return False

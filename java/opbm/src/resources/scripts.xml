@@ -309,7 +309,7 @@
 				</abstract>
 			</atom>
 			<atom name="Excel Heat" shortname="Excel">
-				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute" atomuuid="679a6826-66eb-4fce-abf5-9b473b2f6638">
+				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
 					<options>
 						<atomCheckConflicts>Excel Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Excel</atomOnSpinup>
@@ -466,7 +466,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera SunSpider" shortname="Opera">
-				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute" atomuuid="7f059bbd-f00b-4ddf-815e-660f7421087a">
+				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
@@ -511,7 +511,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Safari" shortname="Safari">
-				<abstract name="Install Safari" shortname="Install" sourcename="execute">
+				<abstract name="Install Safari" shortname="Install" sourcename="execute" atomuuid="987dc609-5a55-43f2-ab37-5594c6062cfa">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -525,7 +525,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Safari" shortname="Safari">
-				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute" atomuuid="fd7594ce-fd4f-45f6-a78f-5c755a42958c">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -539,7 +539,7 @@
 				</abstract>
 			</atom>
 			<atom name="Safari SunSpider" shortname="Safari">
-				<abstract name="Safari SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Safari SunSpider" shortname="Spider" sourcename="execute" atomuuid="78678d8d-5e93-42b7-b5ab-d1f0e5bb1f6a">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -654,7 +654,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome SunSpider" shortname="Chrome">
-				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute" atomuuid="73b2516c-a8f6-4154-8330-b7e9a9c61ba7">
+				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
@@ -699,7 +699,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Firefox" shortname="Firefox">
-				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
+				<abstract name="Install Firefox" shortname="Install" sourcename="execute" atomuuid="acd8923a-4c95-485d-83af-4fb33aa7300e">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -713,7 +713,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Firefox" shortname="Firefox">
-				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute" atomuuid="8202443a-19e2-4e29-99f5-df24c66fcdde">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -727,7 +727,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox SunSpider" shortname="Firefox">
-				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute" atomuuid="cb984522-a22e-4615-aa05-8368a5c38ebe">
 					<options>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>

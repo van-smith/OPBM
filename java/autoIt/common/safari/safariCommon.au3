@@ -15,8 +15,8 @@ Const $KRAKEN_URL						= $DATA_DIRECTORY		&	"\driver.html"
 Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 
 ; Executables used to install, uninstall, or execute Firefox
-Const $SAFARI_INSTALLER					= $EXE_DIRECTORY		&	"\SafariSetup.exe"
-Const $SAFARI_UNINSTALLER				= $EXE_DIRECTORY		&	"\SafariSetup.exe"
+Const $SAFARI_INSTALLER					= chr(34) & $EXE_DIRECTORY		&	"\SafariSetup.exe" & chr(34)
+Const $SAFARI_UNINSTALLER				= chr(34) & $EXE_DIRECTORY		&	"\SafariSetup.exe" & chr(34)
 Const $SAFARI_EXECUTABLE				= $SAFARI_DIRECTORY		&	"\safari.exe"
 Const $SAFARI_EXECUTABLE_TO_LAUNCH		= $SAFARI_EXECUTABLE	&	" " & chr(34) & "file:///" & StringReplace( $OPBM_SPLASH_HTML, chr(34), "") & chr(34)
 Const $SAFARI_UNINSTALL_COMMAND			= $SAFARI_UNINSTALLER
