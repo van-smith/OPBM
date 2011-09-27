@@ -38,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import opbm.Opbm;
+import opbm.common.Utils;
 
 public final class DeveloperWindow	extends DroppableFrame
 								 implements WindowListener
@@ -55,20 +56,7 @@ public final class DeveloperWindow	extends DroppableFrame
 		m_width		= 1100;
 		m_height	= 645;
 		// However, if it can be bigger, it is best to be around 1400 x 800
-		// So we check the size of the host video display to see if it can be bigger, and if so, then we make it bigger
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice[] gs = ge.getScreenDevices();
-
-		// Get size of each screen
-		maxSize = new Dimension(m_width, m_height);
-		for (i = 0; i < gs.length; i++)
-		{
-			DisplayMode dm = gs[i].getDisplayMode();
-			if (dm.getWidth() > maxSize.getWidth() && dm.getHeight() > maxSize.getHeight())
-			{	// Update the max
-				maxSize.setSize(dm.getWidth(), dm.getHeight());
-			}
-		}
+		maxSize = Utils.getDesktopMaxScreen(m_width, m_height);
 		// If we get here, and we're bigger than m_width and m_height, adjust m_width and m_height to 95% of the max size
 		if (maxSize.getWidth() * 0.90f > m_width)
 			m_width = Math.min((int)(maxSize.getWidth() * 0.90f), 1500);

@@ -855,7 +855,7 @@ extern HMODULE ghModule;
 
 
 		// No parameters are passed
-		Office2010SaveKeys();
+		// Legacy code, moved to the harness, no longer supported for scripts
 
 
 		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
@@ -892,15 +892,16 @@ extern HMODULE ghModule;
 	// See notes about parameters and return codes above
 	{
 		AU3_PLUGIN_VAR*		pMyResult;
-		char				successString[256];	// Holds sequence like "11110101101011" indicating the success of each read/write
+
 
 		// No parameters are passed
-		Office2010InstallKeys(successString);
+		// Legacy code, moved to the harness, no longer supported for scripts
+
 
 		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
 		pMyResult = AU3_AllocVar();
 		//AU3_SetInt32(pMyResult, (int)result);
-		AU3_SetString(pMyResult, successString);
+		AU3_SetString(pMyResult, "1");
 		
 
 		/* Pass back the result, error code and extended code.
@@ -932,17 +933,16 @@ extern HMODULE ghModule;
 	// See notes about parameters and return codes above
 	{
 		AU3_PLUGIN_VAR*		pMyResult;
-		char				successString[256];	// Holds sequence like "11110101101011" indicating the success of each read/write
 
 
 		// No parameters are passed
-		Office2010RestoreKeys(successString);
+		// Legacy code, moved to the harness, no longer supported for scripts
 
 
 		// Allocate and build the return variable, an integer which is assigned to 1 or 0 indicating success
 		pMyResult = AU3_AllocVar();
 		//AU3_SetInt32(pMyResult, (int)result);
-		AU3_SetString(pMyResult, successString);
+		AU3_SetString(pMyResult, "1");
 		
 
 		/* Pass back the result, error code and extended code.

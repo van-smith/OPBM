@@ -45,6 +45,8 @@
 		int		minHeight;
 		int		maxWidth;
 		int		maxHeight;
+		int		desktopWidth;
+		int		desktopHeight;
 		WNDPROC	prefWndProc;
 	};
 	SHwndMinMax gsHwndMinMax[2048];
@@ -432,18 +434,21 @@
 	JNIEXPORT jint JNICALL Java_opbm_Opbm_setMinMaxResizeBoundaries(JNIEnv* env, jclass cls,
 																	jint hwnd,
 																	jint minWidth, jint minHeight,
-																	jint maxWidth, jint maxHeight)
+																	jint maxWidth, jint maxHeight,
+																	jint desktopWidth, jint desktopHeight)
 	{
 		// We create a hook for the window, and intercept the WM_GETMINMAXINFO message occurs, and update the info
 		if (IsWindow((HWND)hwnd))
 		{	// Let's add it
 			if (gsHwndMinMaxCount < 2048)
 			{	// We're good
-				gsHwndMinMax[gsHwndMinMaxCount].hwnd		= (HWND)hwnd;
-				gsHwndMinMax[gsHwndMinMaxCount].minWidth	= minWidth;
-				gsHwndMinMax[gsHwndMinMaxCount].minHeight	= minHeight;
-				gsHwndMinMax[gsHwndMinMaxCount].maxWidth	= maxWidth;
-				gsHwndMinMax[gsHwndMinMaxCount].maxHeight	= maxHeight;
+				gsHwndMinMax[gsHwndMinMaxCount].hwnd			= (HWND)hwnd;
+				gsHwndMinMax[gsHwndMinMaxCount].minWidth		= minWidth;
+				gsHwndMinMax[gsHwndMinMaxCount].minHeight		= minHeight;
+				gsHwndMinMax[gsHwndMinMaxCount].maxWidth		= maxWidth;
+				gsHwndMinMax[gsHwndMinMaxCount].maxHeight		= maxHeight;
+				gsHwndMinMax[gsHwndMinMaxCount].desktopWidth	= desktopWidth;
+				gsHwndMinMax[gsHwndMinMaxCount].desktopHeight	= desktopHeight;
 				gsHwndMinMax[gsHwndMinMaxCount].prefWndProc	= (WNDPROC)SetWindowLongPtr((HWND)hwnd, GWLP_WNDPROC, (LONG_PTR)&MinMaxWindowProc);
 				// Success
 				++gsHwndMinMaxCount;
@@ -475,8 +480,8 @@
 					mmi = (MINMAXINFO*)lParam;
 					mmi->ptMaxSize.x		= gsHwndMinMax[i].maxWidth;
 					mmi->ptMaxSize.y		= gsHwndMinMax[i].maxHeight;
-					mmi->ptMaxPosition.x	= 0;
-					mmi->ptMaxPosition.y	= 0;
+					mmi->ptMaxPosition.x	= (gsHwndMinMax[i].desktopWidth  - gsHwndMinMax[i].maxWidth)  / 2;
+					mmi->ptMaxPosition.y	= (gsHwndMinMax[i].desktopHeight - gsHwndMinMax[i].maxHeight) / 2;
 					// Set the minimum and maximum tracking size (when the user is resizing, what's the smallest and biggest window they see)
 					mmi->ptMinTrackSize.x	= gsHwndMinMax[i].minWidth;
 					mmi->ptMinTrackSize.y	= gsHwndMinMax[i].minHeight;

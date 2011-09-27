@@ -22,6 +22,10 @@ package opbm.common;
 import opbm.dialogs.OpbmFileFilter;
 import opbm.graphics.AlphaImage;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1832,6 +1836,32 @@ public class Utils
 	public static boolean isNo(String test)
 	{
 		return(!isYes(test));
+	}
+
+	/**
+	 * For multiple-monitor systems, queries the maximum size available
+	 */
+	public static Dimension getDesktopMaxScreen(int		minWidth,
+												int		minHeight)
+	{
+		int i;
+		Dimension maxSize;
+
+		// So we check the size of the host video display to see if it can be bigger, and if so, then we make it bigger
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] gs = ge.getScreenDevices();
+
+		// Get size of each screen
+		maxSize = new Dimension(minWidth, minHeight);
+		for (i = 0; i < gs.length; i++)
+		{
+			DisplayMode dm = gs[i].getDisplayMode();
+			if (dm.getWidth() > maxSize.getWidth() && dm.getHeight() > maxSize.getHeight())
+			{	// Update the max
+				maxSize.setSize(dm.getWidth(), dm.getHeight());
+			}
+		}
+		return(maxSize);
 	}
 
 	private static final String		errMsg = "Error attempting to launch web browser";
