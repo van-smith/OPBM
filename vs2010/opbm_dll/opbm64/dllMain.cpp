@@ -361,61 +361,68 @@
 		jint lock;
 		HMODULE _hAWT = 0;
 
-		// Load AWT Library
-		if (!_hAWT)
-			_hAWT = LoadLibrary(L"jawt.dll");	// for Java 1.4+
+		try {
+			// Load AWT Library
+			if (!_hAWT)
+				_hAWT = LoadLibrary(L"jawt.dll");	// for Java 1.4+
 
-		if (!_hAWT)
-			_hAWT = LoadLibrary(L"awt.dll");	// for Java 1.3
+			if (!_hAWT)
+				_hAWT = LoadLibrary(L"awt.dll");	// for Java 1.3
 
-		if (_hAWT)
-		{
-			PJAWT_GETAWT JAWT_GetAWT = (PJAWT_GETAWT)GetProcAddress(_hAWT, "JAWT_GetAWT");
-			if (JAWT_GetAWT)
+			if (_hAWT)
 			{
-				awt.version = JAWT_VERSION_1_4;		// Init here with JAWT_VERSION_1_3 or JAWT_VERSION_1_4
-				// Get AWT API Interface
-				result = JAWT_GetAWT(env, &awt);
-				if (result != JNI_FALSE)
+				PJAWT_GETAWT JAWT_GetAWT = (PJAWT_GETAWT)GetProcAddress(_hAWT, "JAWT_GetAWT");
+				if (JAWT_GetAWT)
 				{
-					ds = awt.GetDrawingSurface(env, obj);
-					if (ds != NULL)
+					awt.version = JAWT_VERSION_1_4;		// Init here with JAWT_VERSION_1_3 or JAWT_VERSION_1_4
+					// Get AWT API Interface
+					result = JAWT_GetAWT(env, &awt);
+					if (result != JNI_FALSE)
 					{
-						lock = ds->Lock(ds);
-						if ((lock & JAWT_LOCK_ERROR) == 0)
+						ds = awt.GetDrawingSurface(env, obj);
+						if (ds != NULL)
 						{
-							dsi = ds->GetDrawingSurfaceInfo(ds);
-							if (dsi)
+							lock = ds->Lock(ds);
+							if ((lock & JAWT_LOCK_ERROR) == 0)
 							{
-								dsi_win = (JAWT_Win32DrawingSurfaceInfo*)dsi->platformInfo;
-								if (dsi_win)
-									hWnd = dsi_win->hwnd;
-								else
-									hWnd = (HWND) -1;	// Failed to obtain the handle (not running on Windows)
+								dsi = ds->GetDrawingSurfaceInfo(ds);
+								if (dsi)
+								{
+									dsi_win = (JAWT_Win32DrawingSurfaceInfo*)dsi->platformInfo;
+									if (dsi_win)
+										hWnd = dsi_win->hwnd;
+									else
+										hWnd = (HWND) -1;	// Failed to obtain the handle (not running on Windows)
 
-								ds->FreeDrawingSurfaceInfo(dsi);
+									ds->FreeDrawingSurfaceInfo(dsi);
+
+								} else {
+									hWnd = (HWND)-2;	// Failed to get the drawing surface info block
+								}
+								ds->Unlock(ds);
 
 							} else {
-								hWnd = (HWND)-2;	// Failed to get the drawing surface info block
+								hWnd = (HWND)-3;	// Failed to lock the drawing surface to obtain information about it
 							}
-							ds->Unlock(ds);
+							awt.FreeDrawingSurface(ds);
 
 						} else {
-							hWnd = (HWND)-3;	// Failed to lock the drawing surface to obtain information about it
+							hWnd = (HWND)-4;	// Failed to get the drawing surface from the compoment
 						}
-						awt.FreeDrawingSurface(ds);
-
 					} else {
-						hWnd = (HWND)-4;	// Failed to get the drawing surface from the compoment
+						hWnd = (HWND)-5;	// Failed to obtain a proper result from _JAWT_GetAWT()
 					}
 				} else {
-					hWnd = (HWND)-5;	// Failed to obtain a proper result from _JAWT_GetAWT()
+					hWnd = (HWND)-6;	// Failed to find "_JAWT_GetAWT()" function
 				}
 			} else {
-				hWnd = (HWND)-6;	// Failed to find "_JAWT_GetAWT()" function
+				hWnd = (HWND)-7;	// Failed to load awt.dll
 			}
-		} else {
-			hWnd = (HWND)-7;	// Failed to load awt.dll
+
+		} catch (char* unusedAndIgnoredThrownValueVariable) {
+			// If we get here, something failed
+			// Indicate the try..catch failure
+			hWnd = (HWND)-8;
 		}
 		return (jint)hWnd;
 	}
@@ -437,32 +444,39 @@
 																	jint maxWidth, jint maxHeight,
 																	jint desktopWidth, jint desktopHeight)
 	{
-		// We create a hook for the window, and intercept the WM_GETMINMAXINFO message occurs, and update the info
-		if (IsWindow((HWND)hwnd))
-		{	// Let's add it
-			if (gsHwndMinMaxCount < 2048)
-			{	// We're good
-				gsHwndMinMax[gsHwndMinMaxCount].hwnd			= (HWND)hwnd;
-				gsHwndMinMax[gsHwndMinMaxCount].minWidth		= minWidth;
-				gsHwndMinMax[gsHwndMinMaxCount].minHeight		= minHeight;
-				gsHwndMinMax[gsHwndMinMaxCount].maxWidth		= maxWidth;
-				gsHwndMinMax[gsHwndMinMaxCount].maxHeight		= maxHeight;
-				gsHwndMinMax[gsHwndMinMaxCount].desktopWidth	= desktopWidth;
-				gsHwndMinMax[gsHwndMinMaxCount].desktopHeight	= desktopHeight;
-				gsHwndMinMax[gsHwndMinMaxCount].prefWndProc	= (WNDPROC)SetWindowLongPtr((HWND)hwnd, GWLP_WNDPROC, (LONG_PTR)&MinMaxWindowProc);
-				// Success
-				++gsHwndMinMaxCount;
-				return(0);
+		try {
+			// We create a hook for the window, and intercept the WM_GETMINMAXINFO message occurs, and update the info
+			if (IsWindow((HWND)hwnd))
+			{	// Let's add it
+				if (gsHwndMinMaxCount < 2048)
+				{	// We're good
+					gsHwndMinMax[gsHwndMinMaxCount].hwnd			= (HWND)hwnd;
+					gsHwndMinMax[gsHwndMinMaxCount].minWidth		= minWidth;
+					gsHwndMinMax[gsHwndMinMaxCount].minHeight		= minHeight;
+					gsHwndMinMax[gsHwndMinMaxCount].maxWidth		= maxWidth;
+					gsHwndMinMax[gsHwndMinMaxCount].maxHeight		= maxHeight;
+					gsHwndMinMax[gsHwndMinMaxCount].desktopWidth	= desktopWidth;
+					gsHwndMinMax[gsHwndMinMaxCount].desktopHeight	= desktopHeight;
+					gsHwndMinMax[gsHwndMinMaxCount].prefWndProc	= (WNDPROC)SetWindowLongPtr((HWND)hwnd, GWLP_WNDPROC, (LONG_PTR)&MinMaxWindowProc);
+					// Success
+					++gsHwndMinMaxCount;
+					return(0);
+
+				} else {
+					// Failuire, too many hooks
+					return(-2);
+				}
 
 			} else {
-				// Failuire, too many hooks
-				return(-2);
+				// Failure, HWND is not valid
+				return(-1);
 			}
 
-		} else {
-			// Failure, HWND is not valid
-			return(-1);
+		} catch (char* unusedAndIgnoredThrownValueVariable) {
+			// If we get here, something failed
 		}
+		// Indicate the try..catch failure
+		return(-3);
 	}
 
 	LRESULT CALLBACK MinMaxWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -470,30 +484,35 @@
 		int i;
 		MINMAXINFO* mmi;
 
-		for (i = 0; i < gsHwndMinMaxCount; i++)
-		{
-			if (hwnd == gsHwndMinMax[i].hwnd)
-			{	// This is our man, see if it's our message
-				if (msg == WM_GETMINMAXINFO)
-				{	// It is
-					// When maximized, window is at upper-left
-					mmi = (MINMAXINFO*)lParam;
-					mmi->ptMaxSize.x		= gsHwndMinMax[i].maxWidth;
-					mmi->ptMaxSize.y		= gsHwndMinMax[i].maxHeight;
-					mmi->ptMaxPosition.x	= (gsHwndMinMax[i].desktopWidth  - gsHwndMinMax[i].maxWidth)  / 2;
-					mmi->ptMaxPosition.y	= (gsHwndMinMax[i].desktopHeight - gsHwndMinMax[i].maxHeight) / 2;
-					// Set the minimum and maximum tracking size (when the user is resizing, what's the smallest and biggest window they see)
-					mmi->ptMinTrackSize.x	= gsHwndMinMax[i].minWidth;
-					mmi->ptMinTrackSize.y	= gsHwndMinMax[i].minHeight;
-					mmi->ptMaxTrackSize.x	= gsHwndMinMax[i].maxWidth;
-					mmi->ptMaxTrackSize.y	= gsHwndMinMax[i].maxHeight;
-					return(DefWindowProc(hwnd, msg, wParam, lParam));
+		try {
+			for (i = 0; i < gsHwndMinMaxCount; i++)
+			{
+				if (hwnd == gsHwndMinMax[i].hwnd)
+				{	// This is our man, see if it's our message
+					if (msg == WM_GETMINMAXINFO)
+					{	// It is
+						// When maximized, window is at upper-left
+						mmi = (MINMAXINFO*)lParam;
+						mmi->ptMaxSize.x		= gsHwndMinMax[i].maxWidth;
+						mmi->ptMaxSize.y		= gsHwndMinMax[i].maxHeight;
+						mmi->ptMaxPosition.x	= (gsHwndMinMax[i].desktopWidth  - gsHwndMinMax[i].maxWidth)  / 2;
+						mmi->ptMaxPosition.y	= (gsHwndMinMax[i].desktopHeight - gsHwndMinMax[i].maxHeight) / 2;
+						// Set the minimum and maximum tracking size (when the user is resizing, what's the smallest and biggest window they see)
+						mmi->ptMinTrackSize.x	= gsHwndMinMax[i].minWidth;
+						mmi->ptMinTrackSize.y	= gsHwndMinMax[i].minHeight;
+						mmi->ptMaxTrackSize.x	= gsHwndMinMax[i].maxWidth;
+						mmi->ptMaxTrackSize.y	= gsHwndMinMax[i].maxHeight;
+						return(DefWindowProc(hwnd, msg, wParam, lParam));
 
-				} else {
-					// Nope, pass it on
-					return(CallWindowProc(gsHwndMinMax[i].prefWndProc, hwnd, msg, wParam, lParam));
+					} else {
+						// Nope, pass it on
+						return(CallWindowProc(gsHwndMinMax[i].prefWndProc, hwnd, msg, wParam, lParam));
+					}
 				}
 			}
+
+		} catch (char* unusedAndIgnoredThrownValueVariable) {
+			// If we get here, something failed
 		}
 		return(0);
 	}
@@ -518,16 +537,23 @@
 	{
 		int result;
 
-		// Set the window 
-		if (IsWindow((HWND)hwnd))
-		{	// Tell Windows to put it at the top, and keep it there
-			result = SetWindowPos((HWND)hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-			return((result != 0) ? 0 : -2);
+		try {
+			// Set the window 
+			if (IsWindow((HWND)hwnd))
+			{	// Tell Windows to put it at the top, and keep it there
+				result = SetWindowPos((HWND)hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+				return((result != 0) ? 0 : -2);
 
-		} else {
-			// Failure, HWND is not valid
-			return(-1);
+			} else {
+				// Failure, HWND is not valid
+				return(-1);
+			}
+
+		} catch (char* unusedAndIgnoredThrownValueVariable) {
+			// If we get here, something failed
 		}
+		// Indicate the try..catch failure
+		return(-2);
 	}
 
 
@@ -579,51 +605,56 @@
 		DWORD lProcIDsSize;
 		HANDLE handle;
 
-		// Close windows
-		hwndsClosed = 0;
-		EnumWindows(&ComparativeWindowsCallbackProc, 0);
+		try {
+			// Close windows
+			hwndsClosed = 0;
+			EnumWindows(&ComparativeWindowsCallbackProc, 0);
 
-		// Wait three seconds (for windo
-		Sleep(3000);
+			// Wait one seconds (for Windows to settle down, and for any dialog boxes to finish displaying)
+			Sleep(1000);
 
-		// Close processes
-		if (gProcIDsSize != 0)
-		{
-			// Get a list of current processes, and kill every one that's not in our original list
-			if (EnumProcesses(&lProcIDs[0], sizeof(lProcIDs), &lProcIDsSize))
+			// Close processes
+			if (gProcIDsSize != 0)
 			{
-				// Convert byte count to dword count
-				lProcIDsSize /= 4;
-
-				// Compare against everything that existed previously
-				// Iterate through the current ones, see if they're found in the old ones
-				for (i = 0; i < lProcIDsSize; i++)	// current ones
+				// Get a list of current processes, and kill every one that's not in our original list
+				if (EnumProcesses(&lProcIDs[0], sizeof(lProcIDs), &lProcIDsSize))
 				{
-					for (j = 0; j < gProcIDsSize; j++)	// old ones
+					// Convert byte count to dword count
+					lProcIDsSize /= 4;
+
+					// Compare against everything that existed previously
+					// Iterate through the current ones, see if they're found in the old ones
+					for (i = 0; i < lProcIDsSize; i++)	// current ones
 					{
-						// If we find a match, it's a process to keep
-						if (lProcIDs[i] == gProcIDs[j])
+						for (j = 0; j < gProcIDsSize; j++)	// old ones
 						{
-							// We found a match, keep it
-							break;
+							// If we find a match, it's a process to keep
+							if (lProcIDs[i] == gProcIDs[j])
+							{
+								// We found a match, keep it
+								break;
+							}
+							// If we get here, it wasn't found, keep checking
 						}
-						// If we get here, it wasn't found, keep checking
-					}
-					// If we get here, we either left the loop early by finding a match, or not
-					if (j >= gProcIDsSize)
-					{
-						// If we get here, we did not find this one
-						// So, we are desiring to terminate this process with extreme prejudice (ie, immediately)
-						handle = OpenProcess(PROCESS_TERMINATE, FALSE, lProcIDs[i]);
-						if (handle != NULL)
+						// If we get here, we either left the loop early by finding a match, or not
+						if (j >= gProcIDsSize)
 						{
-							// Terminate the process (or try to, Windows may not allow us to)
-							result = TerminateProcess(handle, -1);
+							// If we get here, we did not find this one
+							// So, we are desiring to terminate this process with extreme prejudice (ie, immediately)
+							handle = OpenProcess(PROCESS_TERMINATE, FALSE, lProcIDs[i]);
+							if (handle != NULL)
+							{
+								// Terminate the process (or try to, Windows may not allow us to)
+								result = TerminateProcess(handle, -1);
+							}
+							// If we get here, we've done our earnest best... nothing else to do
 						}
-						// If we get here, we've done our earnest best... nothing else to do
 					}
 				}
 			}
+
+		} catch (char* unusedAndIgnoredThrownValueVariable) {
+			// If we get here, something failed
 		}
 	}
 

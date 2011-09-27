@@ -403,7 +403,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install 7zip" shortname="7zip">
-				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
+				<abstract name="Install 7zip" shortname="Install" sourcename="execute" atomuuid="12a39f94-9188-4da6-b767-8251aff0efd0">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -451,7 +451,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall 7zip" shortname="7zip">
-				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
+				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute" atomuuid="9a1bc59f-d0c7-4aa9-b1eb-38e2e8a1b43e">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
