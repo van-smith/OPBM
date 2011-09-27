@@ -1568,7 +1568,7 @@ public class BenchmarksAtom
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
 				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
-				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
+				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", Utils.getRestarterString());
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))
@@ -1589,7 +1589,7 @@ public class BenchmarksAtom
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
 				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
-				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
+				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", Utils.getRestarterString());
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))

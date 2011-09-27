@@ -1864,6 +1864,17 @@ public class Utils
 		return(maxSize);
 	}
 
+	/**
+	 * Returns the string that would be used in the HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce\opbm
+	 * registry key for restarting the application on an official run after
+	 * rebooting.
+	 * @return the full path required to execute the resetarter in RunOnce\opbm
+	 */
+	public static String getRestarterString()
+	{
+		return("\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

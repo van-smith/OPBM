@@ -118,6 +118,21 @@ public class Benchmarks
 	 */
 	public void benchmarkOfficialRun(boolean automated)
 	{
+		if (Utils.getRestarterString().length() > 255)
+		{	// Give the user an error message that the official run cannot be run because the path is too long
+			Thread t = new Thread("OPBM_Benchmarks_launchOfficialRun")
+			{
+				@Override
+				public void run()
+				{
+					OpbmDialog od = new OpbmDialog(m_opbm, "The application directory is too deep to restart after reboot. Please run OPBM from a path closer to C:\\", "Failure", OpbmDialog._CANCEL_BUTTON, "path", "");
+					od.setTimeout(30);
+					Utils.monitorDialogWithTimeout(m_opbm, "path", 30);
+				}
+			};
+			t.start();
+			return;
+		}
 		m_opbm.setOfficialRun();
 		if (!automated)
 		{	// User is manually keying the benchmark, so give them the dialog option
