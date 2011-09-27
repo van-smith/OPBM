@@ -2969,7 +2969,7 @@ public final class Opbm extends	ModalApp
 	{
 		// Remove any restarter registry keys that may have been deposited earlier
 		// All other exits are handled elsewhere, and leave any setup registry keys as they were
-//		Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "");
+		Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "");
 
 		// Return the code they specified
 		System.exit(returnCode);
@@ -3052,6 +3052,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.27 02:39pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.27 05:26pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
