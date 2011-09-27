@@ -1802,6 +1802,38 @@ public class Utils
 		}
 	}
 
+	/**
+	 * Evaluates a string and returns true if it's Yes, True or 1
+	 * @param test
+	 * @return
+	 */
+	public static boolean isYes(String test)
+	{
+		boolean result = true;
+		if (test.toLowerCase().startsWith("y"))
+		{	// It's yes
+		} else if (test.toLowerCase().startsWith("t")) {
+			// It's true
+		} else if (test.toLowerCase().startsWith("1")) {
+			// It's one
+
+		} else {
+			// Nope
+			result = false;
+		}
+		return(result);
+	}
+
+	/**
+	 * Evaluates a string and returns if it's not Yes, True or 1
+	 * @param test
+	 * @return
+	 */
+	public static boolean isNo(String test)
+	{
+		return(!isYes(test));
+	}
+
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

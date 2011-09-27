@@ -153,12 +153,12 @@
 			<abstract name="execute">
 				<logical>execute</logical>
 				<real>{(colon)executable, Full executable path(colon)}</real>
-				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)} {(colon)atomCheckConflicts, Run these atoms to find and enumerate conflicts(colon)}</variables>
+				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)} {(colon)atomCheckConflicts, Run these atoms to find and enumerate conflicts(colon)} {(colon)runOnlyOnOfficialRun, Run this atom only on an Official Run?(colon)}</variables>
 			</abstract>
 			<abstract name="executeParams">
 				<logical>execute_params</logical>
 				<real>{(colon)executable, Full executable path(colon)} {(colon)p1, First parameter(colon)} {(colon)p2, Second parameter(colon)} {(colon)p3, Third parameter(colon)} {(colon)p4, Fourth parameter(colon)} {(colon)p5, Fifth parameter(colon)} {(colon)p6, Sixth parameter(colon)} {(colon)p7, Seventh parameter(colon)} {(colon)p8, Eighth parameter(colon)} {(colon)p9, Ninth parameter(colon)} {(colon)p10, Tenth parameter(colon)}</real>
-				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)} {(colon)atomCheckConflicts, Run these atoms to find and enumerate conflicts(colon)}</variables>
+				<variables>{(colon)retryEnabled, Should this atom retry on failure? (Overrides settings.xml)(colon)} {(colon)retryAttempts, Retry how many times? (Overrides settings.xml)(colon)} {(colon)stopIfFailure, Should this atom stop on a failure? (Overrides settings.xml)(colon)} {(colon)atomOnFailure, Run these atoms on failure(colon)} {(colon)atomBeforeRuns, Run these atoms before Trial or Official Runs(colon)} {(colon)atomAfterRuns, Run these atoms after Trial or Official Runs(colon)} {(colon)atomOnSpinup, Run these spinup atoms after the machine reboots(colon)} {(colon)atomCheckConflicts, Run these atoms to find and enumerate conflicts(colon)} {(colon)runOnlyOnOfficialRun, Run this atom only on an Official Run?(colon)}</variables>
 			</abstract>
 			<abstract name="rebootAndTerminate">
 				<logical>reboot_and_terminate</logical>
@@ -181,6 +181,7 @@
 			<atom name="PowerPoint Open" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>PowerPoint Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close PowerPoint</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -196,6 +197,7 @@
 			<atom name="PowerPoint War" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -211,6 +213,8 @@
 			<atom name="PowerPoint Close" shortname="PPoint">
 				<abstract name="Close PowerPoint 2010" shortname="Close" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -225,6 +229,7 @@
 			<atom name="Publisher Open" shortname="Pub">
 				<abstract name="Open Publisher 2010" shortname="OpenP" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Publisher Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Publisher</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -240,6 +245,8 @@
 			<atom name="Publisher Hedge" shortname="Pub">
 				<abstract name="Open Publisher 2010 HEDGE Flyer" shortname="Hedge" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -254,6 +261,8 @@
 			<atom name="Publisher Close" shortname="Pub">
 				<abstract name="Close Publisher 2010" shortname="CloseP" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -268,6 +277,7 @@
 			<atom name="Access Open" shortname="Access">
 				<abstract name="Open Microsoft Access" shortname="OpenA" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Access Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Access</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -283,6 +293,8 @@
 			<atom name="Access Earthquake" shortname="Access">
 				<abstract name="Access earthquake database" shortname="Quake" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -297,6 +309,8 @@
 			<atom name="Access Close" shortname="Access">
 				<abstract name="Close Microsoft Access" shortname="CloseA" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -311,6 +325,7 @@
 			<atom name="Excel Heat" shortname="Excel">
 				<abstract name="Surface Heat Simulation" shortname="Heat" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Excel Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Excel</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -326,6 +341,7 @@
 			<atom name="Word Alice" shortname="Word">
 				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Word Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -341,6 +357,7 @@
 			<atom name="Word Open" shortname="Word">
 				<abstract name="Open Microsoft Word" shortname="OpenW" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Word Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -356,6 +373,9 @@
 			<atom name="Word Island" shortname="Word">
 				<abstract name="Microsoft Word Island" shortname="WordI" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
 						<atomOnFailure></atomOnFailure>
@@ -369,6 +389,8 @@
 			<atom name="Word Close" shortname="Word">
 				<abstract name="Close Microsoft Word" shortname="CloseW" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -383,6 +405,7 @@
 			<atom name="Install 7zip" shortname="7zip">
 				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -398,6 +421,8 @@
 			<atom name="7zip Run Test" shortname="7zip">
 				<abstract name="7zip Run Test" shortname="Run" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -412,6 +437,8 @@
 			<atom name="File I/O Run Test" shortname="fileio">
 				<abstract name="File I/O Run Test" shortname="fileio" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -426,6 +453,8 @@
 			<atom name="Uninstall 7zip" shortname="7zip">
 				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -440,6 +469,8 @@
 			<atom name="Install Opera" shortname="Opera">
 				<abstract name="Install Opera" shortname="Install" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Opera</atomBeforeRuns>
@@ -454,6 +485,8 @@
 			<atom name="Uninstall Opera" shortname="Opera">
 				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -468,6 +501,7 @@
 			<atom name="Opera SunSpider" shortname="Opera">
 				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -483,6 +517,7 @@
 			<atom name="Opera Kraken" shortname="Opera">
 				<abstract name="Opera Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -498,6 +533,7 @@
 			<atom name="Opera Google V8" shortname="Opera">
 				<abstract name="Opera Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -511,8 +547,10 @@
 				</abstract>
 			</atom>
 			<atom name="Install Safari" shortname="Safari">
-				<abstract name="Install Safari" shortname="Install" sourcename="execute" atomuuid="987dc609-5a55-43f2-ab37-5594c6062cfa">
+				<abstract name="Install Safari" shortname="Install" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Safari</atomBeforeRuns>
@@ -525,8 +563,10 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Safari" shortname="Safari">
-				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute" atomuuid="fd7594ce-fd4f-45f6-a78f-5c755a42958c">
+				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -539,8 +579,10 @@
 				</abstract>
 			</atom>
 			<atom name="Safari SunSpider" shortname="Safari">
-				<abstract name="Safari SunSpider" shortname="Spider" sourcename="execute" atomuuid="78678d8d-5e93-42b7-b5ab-d1f0e5bb1f6a">
+				<abstract name="Safari SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -555,6 +597,8 @@
 			<atom name="Safari Kraken" shortname="Safari">
 				<abstract name="Safari Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -569,6 +613,8 @@
 			<atom name="Safari Google V8" shortname="Safari">
 				<abstract name="Safari Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -583,6 +629,7 @@
 			<atom name="IE SunSpider" shortname="IE9">
 				<abstract name="IE SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>IE9 Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -598,6 +645,7 @@
 			<atom name="IE Kraken" shortname="IE9">
 				<abstract name="IE Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>IE9 Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -613,6 +661,7 @@
 			<atom name="IE Google V8" shortname="IE9">
 				<abstract name="IE Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>IE9 Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -628,6 +677,8 @@
 			<atom name="Install Chrome" shortname="Chrome">
 				<abstract name="Install Chrome" shortname="Install" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Chrome</atomBeforeRuns>
@@ -642,6 +693,8 @@
 			<atom name="Uninstall Chrome" shortname="Chrome">
 				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -656,6 +709,7 @@
 			<atom name="Chrome SunSpider" shortname="Chrome">
 				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -671,6 +725,7 @@
 			<atom name="Chrome Kraken" shortname="Chrome">
 				<abstract name="Chrome Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -686,6 +741,7 @@
 			<atom name="Chrome Google V8" shortname="Chrome">
 				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -699,8 +755,10 @@
 				</abstract>
 			</atom>
 			<atom name="Install Firefox" shortname="Firefox">
-				<abstract name="Install Firefox" shortname="Install" sourcename="execute" atomuuid="acd8923a-4c95-485d-83af-4fb33aa7300e">
+				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Firefox</atomBeforeRuns>
@@ -713,8 +771,10 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Firefox" shortname="Firefox">
-				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute" atomuuid="8202443a-19e2-4e29-99f5-df24c66fcdde">
+				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -727,8 +787,10 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox SunSpider" shortname="Firefox">
-				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute" atomuuid="cb984522-a22e-4615-aa05-8368a5c38ebe">
+				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -743,6 +805,8 @@
 			<atom name="Firefox Kraken" shortname="Firefox">
 				<abstract name="Firefox Kraken" shortname="Kraken" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -757,6 +821,8 @@
 			<atom name="Firefox Google V8" shortname="Firefox">
 				<abstract name="Firefox Google V8" shortname="V8" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -771,6 +837,8 @@
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
 				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns>Uninstall Acrobat Reader</atomBeforeRuns>
@@ -785,6 +853,8 @@
 			<atom name="Uninstall Acrobat Reader" shortname="Acrobat">
 				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -805,6 +875,7 @@
 			<atom name="Simulate Failure" shortname="Sim">
 				<abstract name="Simulate Failure" shortname="Fail" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -820,6 +891,8 @@
 			<atom name="Simulate Success" shortname="Sim">
 				<abstract name="Simulate success" shortname="Succeed" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -834,6 +907,8 @@
 			<atom name="Spinup Pausing 60 Seconds" shortname="Spinup">
 				<abstract name="Spinup Pause 60 Seconds" shortname="Spinup" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -848,6 +923,8 @@
 			<atom name="Launch and Close PowerPoint" shortname="SpinPP">
 				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -862,6 +939,8 @@
 			<atom name="Launch and Close Publisher" shortname="SpinPub">
 				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -876,6 +955,8 @@
 			<atom name="Launch and Close Access" shortname="SpinAcc">
 				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -890,6 +971,8 @@
 			<atom name="Launch and Close Word" shortname="SpinWord">
 				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -904,6 +987,7 @@
 			<atom name="Launch and Close Excel" shortname="SpinXl">
 				<abstract name="Spinup" shortname="Spinup" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -919,6 +1003,7 @@
 			<atom name="Chrome Conflict Check" shortname="ChromeCC">
 				<abstract name="Chrome Conflict Check" shortname="ChromeCC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -934,6 +1019,7 @@
 			<atom name="IE9 Conflict Check" shortname="IE9CC">
 				<abstract name="IE9 Conflict Check" shortname="IE9CC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -949,6 +1035,7 @@
 			<atom name="Opera Conflict Check" shortname="OperaCC">
 				<abstract name="Opera Conflict Check" shortname="OperaCC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -964,6 +1051,7 @@
 			<atom name="Access Conflict Check" shortname="AccessCC">
 				<abstract name="Access Conflict Check" shortname="AccessCC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -979,6 +1067,7 @@
 			<atom name="Excel Conflict Check" shortname="ExcelCC">
 				<abstract name="Excel Conflict Check" shortname="ExcelCC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -994,6 +1083,7 @@
 			<atom name="PowerPoint Conflict Check" shortname="PPCC">
 				<abstract name="PowerPoint Conflict Check" shortname="PPCC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -1009,6 +1099,7 @@
 			<atom name="Publisher Conflict Check" shortname="PubCC">
 				<abstract name="Publisher Conflict Check" shortname="PubCC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -1024,6 +1115,7 @@
 			<atom name="Word Conflict Check" shortname="WordCC">
 				<abstract name="Word Conflict Check" shortname="WordCC" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -1039,6 +1131,7 @@
 			<atom name="Startup Settle Down" shortname="settle">
 				<abstract name="Startup Settle Down" shortname="settle" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun>Yes</runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -1054,6 +1147,7 @@
 			<atom name="Reboot Time" shortname="time">
 				<abstract name="Reboot Time" shortname="time" sourcename="execute">
 					<options>
+						<runOnlyOnOfficialRun>Yes</runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>

@@ -349,12 +349,14 @@ public final class BenchmarkManifest
 	{
 		boolean error;
 
+		m_buildingOfficial = true;
 		error = addAllSuites(3);	// Three passes on an official run
 		// All done
 		if (!error)
 			buildFinalize();
 
 		// Indicate success or failure
+		m_buildingOfficial = false;
 		return(!error);
 	}
 
@@ -780,8 +782,9 @@ public final class BenchmarkManifest
 	{
 		int i, j, count;
 		List<Xml> nodes = new ArrayList<Xml>(0);
-		Xml element;
+		Xml element, options, runOnlyOnOfficialRun;
 		String type;
+		boolean okayToAdd;
 
 		// Grab every suite element
 		Xml.getNodeList(nodes, atom.getFirstChild(), "[flow,abstract]", false);
@@ -807,8 +810,38 @@ public final class BenchmarkManifest
 				addElement(element, false);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element, true);
-				++count;
+				// For some abstracts, we only add them if we are building an official run
+
+				// See if we're supposed to run this entry
+				okayToAdd	= true;
+/*
+ * Will only add entries that are for an official run.
+ * REMEMBER also needs code to remove empty molecules, scenarios and suites.
+				options		= element.getChildNode("options");
+				if (options != null)
+				{	// We're good
+					runOnlyOnOfficialRun = options.getChildNode("runOnlyOnOfficialRun");
+					if (runOnlyOnOfficialRun != null && !runOnlyOnOfficialRun.getText().isEmpty())
+					{	// There's an entry here, see if it says "Yes"
+						if (Utils.isYes(runOnlyOnOfficialRun.getText()))
+						{	// It is only to be run on an Official Run
+							if (!m_buildingOfficial)
+							{	// They're trying to run an atom on something that is only run on an official run
+								// And this is not an official run
+								okayToAdd = false;
+							}
+							// If we get here, we're good
+						}
+						//else it's not to be run only on an official run
+					}
+				}
+
+ */
+				if (okayToAdd)
+				{	// We're good
+					addElement(element, true);
+					++count;
+				}
 
 			}
 		}
@@ -2682,11 +2715,14 @@ public final class BenchmarkManifest
 
 	public BenchmarkManifestResults getBMR()	{	return(m_bmr);		}
 
+
 	// Error conditions
 	private boolean						m_isManifestInError;
 	private String						m_error;
 	private int							m_passThis;
 	private int							m_passMax;
+	private boolean						m_buildingOfficial;
+
 
 	// When checking for conflicts, grab the conflicts and resolutions reported by the scripts
 	private	List<String>				m_conflicts;
