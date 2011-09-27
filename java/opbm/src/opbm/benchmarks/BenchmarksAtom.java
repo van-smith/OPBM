@@ -1430,7 +1430,7 @@ public class BenchmarksAtom
 								failure = true;
 								for (i = 0; record && i < m_bp.m_errorArray.size(); i++)
 								{	// If an error script ends in "is not installed" we do not continue retrying
-									if (m_bp.m_errorArray.get(i).toLowerCase().endsWith("is not installed"))
+									if (m_isRunningCleanupPhase && m_bp.m_errorArray.get(i).toLowerCase().endsWith("is not installed"))
 									{	// The software was not installed, so we do not continue to retry
 										// Set a condition that will immediately exit on this condition, when the app is not installed (no retry becuase it doesn't make sense to retry an app that's telling the harness it's not installed)
 										retryCount = retryAttempts;
@@ -1461,7 +1461,7 @@ public class BenchmarksAtom
 									if (!failure && m_bp.m_outputArray.get(i).toLowerCase().contains(" error,"))
 									{	// This was an error, we have a failure
 										failure = true;
-										if (m_bp.m_outputArray.get(i).toLowerCase().endsWith("is not installed"))
+										if (m_isRunningCleanupPhase && m_bp.m_outputArray.get(i).toLowerCase().endsWith("is not installed"))
 										{	// The software was not installed, so we do not continue to retry
 											// Set a condition that will immediately exit on this condition, when the app is not installed (no retry becuase it doesn't make sense to retry an app that's telling the harness it's not installed)
 											retryCount = retryAttempts;
@@ -1774,4 +1774,6 @@ public class BenchmarksAtom
 	public	int					m_returnValue;
 	public	boolean				m_lastAtomWasFailure;
 	public	boolean				m_isRecordingCounts;
+	public	boolean				m_isRunningCleanupPhase;
+
 }

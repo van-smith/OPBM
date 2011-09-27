@@ -443,6 +443,7 @@ public class Benchmarks
 		bp.m_bpAtom.m_executeCounter		= 0;
 		bp.m_bpAtom.m_failureCounter		= 0;
 		bp.m_bpAtom.m_isRecordingCounts		= true;
+		bp.m_bpAtom.m_isRunningCleanupPhase	= false;
 		bp.m_atomVariables					= new ArrayList<Variables>(0);
 		bp.m_atomStack						= new ArrayList<Stack>(0);
 		bp.m_bpAtom.m_timingEvents			= new ArrayList<Xml>(0);

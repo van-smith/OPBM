@@ -1541,8 +1541,10 @@ public final class BenchmarkManifest
 				m_bpa.m_isRecordingCounts = false;
 				if (runHasNotYetStarted())
 				{	// Run the pre-run atoms
+					m_bpa.m_isRunningCleanupPhase = true;
 					result = runAtomTags("atomBeforeRuns", false, false);
-					// If is an official run, the next thing it will do is reboot,
+					m_bpa.m_isRunningCleanupPhase = false;
+			// If is an official run, the next thing it will do is reboot,
 					// at which time it will run the spinups below
 					// If it's a trial run, it will simply proceed
 
@@ -1602,7 +1604,9 @@ public final class BenchmarkManifest
 		{	// Run the post-run atoms
 			prevIsRecordingCounts = m_bpa.m_isRecordingCounts;
 			m_bpa.m_isRecordingCounts = false;
+			m_bpa.m_isRunningCleanupPhase = true;
 			m_bmr.appendAtomRunResult(runAtomTags("atomAfterRuns", false, false));
+			m_bpa.m_isRunningCleanupPhase = false;
 			m_bpa.m_isRecordingCounts = prevIsRecordingCounts;
 		}
 
