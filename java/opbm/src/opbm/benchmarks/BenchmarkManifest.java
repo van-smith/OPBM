@@ -814,9 +814,6 @@ public final class BenchmarkManifest
 
 				// See if we're supposed to run this entry
 				okayToAdd	= true;
-/*
- * Will only add entries that are for an official run.
- * REMEMBER also needs code to remove empty molecules, scenarios and suites.
 				options		= element.getChildNode("options");
 				if (options != null)
 				{	// We're good
@@ -836,7 +833,6 @@ public final class BenchmarkManifest
 					}
 				}
 
- */
 				if (okayToAdd)
 				{	// We're good
 					addElement(element, true);

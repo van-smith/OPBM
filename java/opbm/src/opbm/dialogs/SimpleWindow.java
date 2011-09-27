@@ -360,7 +360,7 @@ public class SimpleWindow extends DroppableFrame
 	{
 		if (jlht.getIdentifier().equalsIgnoreCase("sw_quit"))
 		{	// Quit is clicked
-			System.exit(0);
+			Opbm.quit(0);
 
 		} else if (jlht.getIdentifier().equalsIgnoreCase("sw_trial")) {
 			// Trial Run is clicked

@@ -150,7 +150,7 @@ public final class Opbm extends	ModalApp
 		{	// Already another app instance running
 			System.out.println("Another process is running, bringing it to foreground.");
 			sendWindowToForeground(m_title);
-			System.exit(-1);
+			quit(-1);
 		}
 
 		System.out.println("Detected auto-logon is " + (isAutoLogonEnabled() ? "enabled" : "disabled"));
@@ -310,7 +310,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of Atoms");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-atom:")) {
@@ -348,7 +348,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of Atoms");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-molecule("))
@@ -387,7 +387,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of molecules");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-molecule:")) {
@@ -425,7 +425,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of molecules");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-scenario(")) {
@@ -464,7 +464,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of Scenarios");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-scenario:")) {
@@ -502,7 +502,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of Scenarios");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-suite(")) {
@@ -541,7 +541,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line: Error loading scripts.xml to obtain list of Suites");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-suite:")) {
@@ -579,7 +579,7 @@ public final class Opbm extends	ModalApp
 
 								} else {
 									System.out.println("Fatal OPBM command line:  Error loading scripts.xml to obtain list of Suites");
-									System.exit(-1);
+									quit(-1);
 								}
 
 							} else if (line.toLowerCase().startsWith("-trial")) {
@@ -636,7 +636,7 @@ public final class Opbm extends	ModalApp
 
 						if (!m_noExit && (runCount != 0 || (isSilent && errorsWereReported)))
 						{	// If we get here, they want us to exit, or we did a run without any errors and we're ready to exit, or we had errors with a -silent switch
-							System.exit(errorsWereReported ? -1 : 0);
+							quit(errorsWereReported ? -1 : 0);
 						}
 						// Done doing command-line things
 						m_executingFromCommandLine = false;
@@ -2965,6 +2965,16 @@ public final class Opbm extends	ModalApp
 		return(m_title);
 	}
 
+	public static void quit(int returnCode)
+	{
+		// Remove any restarter registry keys that may have been deposited earlier
+		// All other exits are handled elsewhere, and leave any setup registry keys as they were
+//		Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "");
+
+		// Return the code they specified
+		System.exit(returnCode);
+	}
+
 	/**
 	 * Main app entry point
 	 * @param args command line parameters
@@ -3042,6 +3052,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.26 02:37pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.09.27 12:40pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

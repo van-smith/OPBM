@@ -112,7 +112,7 @@ public class Commands
 // Quit
 		if (command.equals("quit")) {
 			// Exiting the system
-			System.exit(0);
+			Opbm.quit(0);
 
 
 //////////

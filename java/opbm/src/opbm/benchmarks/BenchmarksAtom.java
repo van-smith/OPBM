@@ -1666,7 +1666,7 @@ public class BenchmarksAtom
 	//
 	if (Opbm.m_debugSimulateRunAtomMode)
 	{
-		System.exit(0);
+		Opbm.quit(0);
 	}
 	//
 //////
@@ -1709,7 +1709,7 @@ public class BenchmarksAtom
 		// Wait up to 60 seconds for the system to shut down
 		try {
 			if (!m_bp.m_errorArray.isEmpty() || !m_bp.m_outputArray.isEmpty())
-			{	// Wait a moment so they can read the output
+			{	// Wait a short while so they can read the output
 				try {
 					Thread.sleep(10000);
 
@@ -1751,8 +1751,8 @@ public class BenchmarksAtom
 		if (m_bp != null && m_bp.m_bm != null)
 			m_bp.m_bm.runExecuteSetRebootingFailed();
 
-		// Exit the system
-		System.exit(0);
+		// Exit the system after the watchdog
+		Opbm.quit(0);
 	}
 
 	private BenchmarkParams		m_bp;
