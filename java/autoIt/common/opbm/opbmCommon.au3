@@ -126,14 +126,12 @@ Func opbmCloseAllWindowsNotPreviouslyNoted()
 EndFunc
 
 Func opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
-	; Wait for any lingering windows to appear
-	Sleep(2000)
-	WaitUntilSystemIdle( 10, 1000, 20000 )
+	; Wait for any lingering windows to appear (up to five seconds, minimum of one)
+	WaitUntilSystemIdle( 10, 1000, 5000 )
 	opbmCloseAllWindowsNotPreviouslyNoted()
 	
-	; Repeat (in case we were on a dialog that needed closed)
-	Sleep(2000)
-	WaitUntilSystemIdle( 10, 1000, 20000 )
+	; Repeat (in case we were on a dialog that needed closed, up to five seconds, minimum of one)
+	WaitUntilSystemIdle( 10, 1000, 5000 )
 	opbmCloseAllWindowsNotPreviouslyNoted()
 EndFunc
 
