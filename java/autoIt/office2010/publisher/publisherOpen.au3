@@ -19,4 +19,6 @@ initializePublisherScript()
 outputDebug( "launchPublisher()" )
 launchPublisher()
 
+FirstRunCheck()
+
 Exit

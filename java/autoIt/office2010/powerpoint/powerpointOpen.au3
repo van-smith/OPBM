@@ -10,7 +10,6 @@
 	
 	Usage:	powerpointOpen
 
-
 #ce ======================================================================================================================================
 
 #include <../../common/office2010/powerpointCommon.au3>
@@ -19,5 +18,7 @@ outputDebug( "InitializePowerPointScript()" )
 initializePowerPointScript()
 outputDebug( "LaunchPowerPoint()" )
 launchPowerPoint()
+
+FirstRunCheck()
 
 Exit
