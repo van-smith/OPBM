@@ -15,8 +15,8 @@ Const $KRAKEN_URL						= $DATA_DIRECTORY		&	"\driver.html"
 Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 
 ; Executables used to install, uninstall, or execute Firefox
-Const $FIREFOX_INSTALLER				= $EXE_DIRECTORY		&	"\Firefox Setup 5.0.1.exe"
-Const $FIREFOX_UNINSTALLER				= $FIREFOX_DIRECTORY	&	"\uninstall\helper.exe"
+Const $FIREFOX_INSTALLER				= chr(34) & $EXE_DIRECTORY		&	"\Firefox Setup 5.0.1.exe" & chr(34)
+Const $FIREFOX_UNINSTALLER				= chr(34) & $FIREFOX_DIRECTORY	&	"\uninstall\helper.exe" & chr(34)
 Const $FIREFOX_EXECUTABLE				= chr(34) & $FIREFOX_DIRECTORY	&	"\firefox.exe" & chr(34)
 Const $FIREFOX_EXECUTABLE_TO_LAUNCH		= chr(34) & $FIREFOX_DIRECTORY	&	"\firefox.exe" & chr(34) & " " & $OPBM_SPLASH_HTML
 
