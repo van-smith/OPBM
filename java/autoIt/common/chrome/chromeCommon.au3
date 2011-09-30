@@ -16,11 +16,11 @@ Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 
 ; Executables used to install, uninstall, or execute Chrome
 Const $CHROME_INSTALLER					= $EXE_DIRECTORY		&	"\ChromeStandaloneSetup.exe"
-Const $CHROME_UNINSTALLER				= $CHROME_DIRECTORY		&	"\12.0.742.122\Installer\setup.exe"
+Const $CHROME_UNINSTALLER				= chr(34) & $CHROME_DIRECTORY				&	"\12.0.742.122\Installer\setup.exe" & chr(34)
 ;Const $CHROME_UNINSTALLER				= $EXE_DIRECTORY		&	"\ChromeStandaloneSetup.exe"
-Const $CHROME_UNINSTALL_COMMAND			= $CHROME_UNINSTALLER	&	" --uninstall"
-Const $CHROME_EXECUTABLE				= chr(34) & $CHROME_DIRECTORY		&	"\chrome.exe" & chr(34)
-Const $CHROME_EXECUTABLE_TO_LAUNCH		= chr(34) & $CHROME_DIRECTORY		&	"\chrome.exe" & chr(34) & " " & $OPBM_SPLASH_HTML
+Const $CHROME_UNINSTALL_COMMAND			= chr(34) & $CHROME_UNINSTALLER				& chr(34) &	" --uninstall"
+Const $CHROME_EXECUTABLE				= chr(34) & $CHROME_DIRECTORY				&	"\chrome.exe" & chr(34)
+Const $CHROME_EXECUTABLE_TO_LAUNCH		= chr(34) & $CHROME_DIRECTORY				&	"\chrome.exe" & chr(34) & " " & $OPBM_SPLASH_HTML
 
 
 ; Constants used throughout for various scripts
