@@ -239,6 +239,13 @@ Func outputInternalCommand( $outputString )
 	ConsoleWrite( "command," & $outputString & @CRLF )
 EndFunc
 
+; Added to allow a raw message to be passed, so that additional
+; information can be logged to the output capture without it being
+; processed by the HUD's visual components.
+Func outputMessage( $outputString )
+	ConsoleWrite( $outputString & @CRLF )
+EndFunc
+
 Func TimerWriteTimesToCSV( $CSVPath )
 	Local $lFileTimerCsv
 	Local $i
