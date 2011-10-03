@@ -76,6 +76,26 @@
   <ItemGroup>
     <ClCompile Include="jbm.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\jbm_common.h" />
+    <ClInclude Include="jbm.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="jbm.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\connection.bmp" />
+    <None Include="graphics\connection_empty_slot.bmp" />
+    <None Include="graphics\connection_slot_filled.bmp" />
+    <None Include="graphics\connection_unused_slot.bmp" />
+    <None Include="graphics\statusbar_high_left.bmp" />
+    <None Include="graphics\statusbar_high_middle.bmp" />
+    <None Include="graphics\statusbar_high_right.bmp" />
+    <None Include="graphics\statusbar_low_left.bmp" />
+    <None Include="graphics\statusbar_low_middle.bmp" />
+    <None Include="graphics\statusbar_low_right.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

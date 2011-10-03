@@ -179,7 +179,7 @@
 		</abstracts>
 		<atoms>
 			<atom name="PowerPoint Open" shortname="PPoint">
-				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute" atomuuid="ec833bd2-0caa-4045-9f26-3e445e9c4c2e">
+				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>PowerPoint Conflict Check</atomCheckConflicts>
@@ -195,7 +195,7 @@
 				</abstract>
 			</atom>
 			<atom name="PowerPoint War" shortname="PPoint">
-				<abstract name="Open PowerPoint 2010 War" shortname="War" sourcename="execute" atomuuid="cda39205-3130-45cc-8f4b-bf299c22b4eb">
+				<abstract name="Open PowerPoint 2010 War" shortname="War" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -211,7 +211,7 @@
 				</abstract>
 			</atom>
 			<atom name="PowerPoint Close" shortname="PPoint">
-				<abstract name="Close PowerPoint 2010" shortname="Close" sourcename="execute" atomuuid="9ebb05a1-0af4-4b4c-a257-211f2096ad27">
+				<abstract name="Close PowerPoint 2010" shortname="Close" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -227,7 +227,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Open" shortname="Pub">
-				<abstract name="Open Publisher 2010" shortname="OpenP" sourcename="execute" atomuuid="7b5767e2-482c-4f87-83ef-db7f2d214234">
+				<abstract name="Open Publisher 2010" shortname="OpenP" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Publisher Conflict Check</atomCheckConflicts>
@@ -243,7 +243,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Hedge" shortname="Pub">
-				<abstract name="Open Publisher 2010 HEDGE Flyer" shortname="Hedge" sourcename="execute" atomuuid="c93aea7d-f814-48e9-82e8-2fc94a1139bb">
+				<abstract name="Open Publisher 2010 HEDGE Flyer" shortname="Hedge" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -259,7 +259,7 @@
 				</abstract>
 			</atom>
 			<atom name="Publisher Close" shortname="Pub">
-				<abstract name="Close Publisher 2010" shortname="CloseP" sourcename="execute" atomuuid="f7f90b06-e092-41da-b418-00e3fd21873e">
+				<abstract name="Close Publisher 2010" shortname="CloseP" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -275,7 +275,7 @@
 				</abstract>
 			</atom>
 			<atom name="Access Open" shortname="Access">
-				<abstract name="Open Microsoft Access" shortname="OpenA" sourcename="execute" atomuuid="51ab50bc-c578-4cc2-9175-7f4c63ddb442">
+				<abstract name="Open Microsoft Access" shortname="OpenA" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Access Conflict Check</atomCheckConflicts>
@@ -291,7 +291,7 @@
 				</abstract>
 			</atom>
 			<atom name="Access Earthquake" shortname="Access">
-				<abstract name="Access earthquake database" shortname="Quake" sourcename="execute" atomuuid="490e0259-7119-43fc-85bf-7c95c15e3045">
+				<abstract name="Access earthquake database" shortname="Quake" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -307,7 +307,7 @@
 				</abstract>
 			</atom>
 			<atom name="Access Close" shortname="Access">
-				<abstract name="Close Microsoft Access" shortname="CloseA" sourcename="execute" atomuuid="48a7daa5-8d73-4691-83c2-90a1ed68dbf0">
+				<abstract name="Close Microsoft Access" shortname="CloseA" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>

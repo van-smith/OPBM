@@ -1,29 +1,35 @@
 //////////
 //
 // DllMain.cpp
+// JNI DLL 32-/64-bit Support for Java Benchmark
+//
+// -----
+// Last Updated:  Sep 30, 2011
+//
+// by Van Smith
+// Cossatot Analytics Laboratories, LLC. (Cana Labs)
+//
+// (c) Copyright Cana Labs.
+// Free software licensed under the GNU GPL2.
+//
+// version 1.0
 //
 /////
 //
-// This source file is supportive of the Java Benchmark application.
-// It is arranged a little unusually because of the requirements of
-// Java communicating with "native" C/C++ functions.
-//
-// To facilitate simplicity, the source code required to carry out the
-// C++ work is included in benchmark.cpp, and this DllMain serves as a
-// spawning point for that code.  This file handles all of the peculiarities
-// of the Java JNI interface code, and sends raw C++ data types to the
-// functions in benchmark.cpp.
+// This source file provides support for instances of the Java
+// Benchmark, and their separate-process needs to communicate
+// with a running untility called JBM (Java Benchmark Monitor)
+// which provides a visual HUD on the overall status of the
+// multi-process benchmark execution.
 //
 /////
 	#include <SDKDDKVer.h>
 	#define WIN32_LEAN_AND_MEAN
 	#include "windows.h"
 	#include "winbase.h"
-	#include "benchmark_jni.h"		// JNI include file derived from netbeans benchmark.jar
+	#include "benchmark_jni.h"			// JNI include file derived from netbeans benchmark.jar
+	#include "..\common\jbm_common.h"	// JBM common variables
 	#include <malloc.h>
-
-	// Should be defined for the maximum number of instances of running JVMs that will be encountered
-	#define _MAX_CONNECTIONS 32		// 32-cores should be sufficient
 
 
 
@@ -35,18 +41,29 @@
 /////
 	// Handles synchronized access in certain operations
 	CRITICAL_SECTION*	gCriticalSection = NULL;
+
+	// Refer to jbm_common.h for info on pipe protocols
 	struct SConnections
 	{
-		char*	uuid;
-		char*	name;
-		int		handle;
-		int		testMax;
-		int		testCurrent;
-		float	testCompleted;
+		char*		uuid;							// Caller's UUID assigned this handle
+		char*		name;							// Name of the current test being run by caller
+		int			handle;							// Handle of this entry
+		int			testMax;						// How many tests maximum
+		int			testCurrent;					// What number is the current test (base-1)
+		float		testCompleted;					// What % of the test has been completed
+
+		// Used for communication with JBM (see jbm_common.h)
+		bool		wasLastPipeWriteSuccessful;		// Was the last pipe write successful?
+		HANDLE		pipeHandle;						// Handle to the named pipe (created here, opened in JBM)
+		SPipeData	pipeData;						// The pipe data to communicate to JBM (see jbm_common.h)
 	};	// Each connection will create an instance
-	SConnections	gsConnections[_MAX_CONNECTIONS];
+	SConnections	gsConnections[_JBM_MAX_CONNECTIONS];
+
 	int				nextHandle = 0;
 	HWND			ghWndJBM = NULL;
+
+	// Forward declarations
+	void writePipeDataToJBM(SConnections* sc);
 
 
 
@@ -61,10 +78,9 @@
 // Main app entry point
 //
 /////
-	BOOL APIENTRY DllMain( HMODULE hModule,
-						   DWORD  ul_reason_for_call,
-						   LPVOID lpReserved
-						 )
+	BOOL APIENTRY DllMain( HMODULE	hModule,
+						   DWORD	ul_reason_for_call,
+						   LPVOID	lpReserved )
 	{
 		switch (ul_reason_for_call)
 		{
@@ -79,15 +95,23 @@
 					InitializeCriticalSection(gCriticalSection);
 				} else {
 					// Failure
+					MessageBoxA(NULL, "Unable to allocate necessary memory.", "Fatal Error", MB_OK | MB_ICONERROR);
 					return FALSE;
 				}
 			}
+
 			if (ghWndJBM == NULL)
 			{	// Locate the JBM process, which must be running beforehand
 				EnterCriticalSection(gCriticalSection);
 
-				ghWndJBM = 
-
+				ghWndJBM = FindWindow( _JBM_Class_Name, _JBM_Window_Name);
+				if (ghWndJBM == NULL)
+				{	// Error, JBM is not yet running
+					LeaveCriticalSection(gCriticalSection);
+					MessageBoxA(NULL, "Java Benchmark Monitor is not running.", "Fatal Error", MB_OK | MB_ICONERROR);
+					return FALSE;
+				}
+				// We're good
 				LeaveCriticalSection(gCriticalSection);
 			}
 			break;
@@ -103,6 +127,8 @@
 
 
 
+
+
 //////////
 //
 // firstConnectN(JString uuid, JString instanceTitle, JInt testCount)
@@ -113,24 +139,27 @@
 // Returns:
 //		-1			- Failure in creating a new entry
 //		-2			- The uuid specified already exists, and cannot be re-used
+//		-3			- Unable to communicate with JBM due to data pipe failure
 //		1 or above	- A valid handle to reference this instance
 //
 /////
 	// firstConnectN()
 	JNIEXPORT jint JNICALL Java_benchmark_Benchmark_firstConnectN(JNIEnv* env, jclass cls, jstring uuid, jstring instanceTitle, jint testCount)
 	{
-		int i, length, lengthInstanceTitle;
-		jint result;
-		const char* cuuidptr;
-		const char* cinstanceTitleptr;
-		jboolean isCopy, isCopyInstanceTitle;
+		int				i, length, lengthInstanceTitle;
+		jint			result;
+		const char*		cuuidptr;
+		const char*		cinstanceTitleptr;
+		jboolean		isCopy, isCopyInstanceTitle;
+		wchar_t			pipeName[sizeof(_JBM_Pipe_Name_Prefix) + 4 + 1];
+		SConnections*	sc;
 
 		EnterCriticalSection(gCriticalSection);
 
 		// See if we need to initialize everything
 		if (nextHandle == 0)
 		{	// Yes, nothing's been initialized yet
-			for (i = 0; i < _MAX_CONNECTIONS; i++)
+			for (i = 0; i < _JBM_MAX_CONNECTIONS; i++)
 			{	// Initialize each entry to an empty state
 				gsConnections[i].uuid			= NULL;
 				gsConnections[i].name			= NULL;
@@ -151,7 +180,7 @@
 			lengthInstanceTitle		= env->GetStringLength(instanceTitle);
 			cuuidptr				= env->GetStringUTFChars(uuid,			&isCopy);
 			cinstanceTitleptr		= env->GetStringUTFChars(instanceTitle, &isCopyInstanceTitle);
-			for (i = 0; i < _MAX_CONNECTIONS; i++)
+			for (i = 0; i < _JBM_MAX_CONNECTIONS; i++)
 			{	// For each entry, we are looking to see if it's already been assigned a handle
 				if (gsConnections[i].uuid != NULL)
 				{	// We found an entry, see if it's this one
@@ -168,26 +197,69 @@
 			// Check our status
 			if (result == -1)
 			{	// If we get here, it wasn't found, add it
-				for (i = 0; i < _MAX_CONNECTIONS; i++)
+				for (i = 0; i < _JBM_MAX_CONNECTIONS; i++)
 				{	// Find an empty slot
 					if (gsConnections[i].uuid == NULL)
 					{	// We found an entry, see if it's this one
-						gsConnections[i].uuid			= (char*)malloc(length				+ 1);
-						gsConnections[i].name			= (char*)malloc(lengthInstanceTitle	+ 1);
-						gsConnections[i].handle			= nextHandle;
-						gsConnections[i].testMax		= -1;
-						gsConnections[i].testCurrent	= -1;
-						gsConnections[i].testCompleted	= -1.0f;
+						sc = &gsConnections[i];
+						sc->uuid			= (char*)malloc(length				+ 1);
+						sc->name			= (char*)malloc(lengthInstanceTitle	+ 1);
+						sc->handle			= nextHandle;
+						sc->testMax			= -1;
+						sc->testCurrent		= -1;
+						sc->testCompleted	= -1.0f;
+						//gsConnections[i].namedPipe	= (assigned below)
 
 						// Copy the strings
-						ZeroMemory(gsConnections[i].uuid, length				+ 1);
-						ZeroMemory(gsConnections[i].name, lengthInstanceTitle	+ 1);
-						memcpy(gsConnections[i].uuid, cuuidptr,				length);
-						memcpy(gsConnections[i].name, cinstanceTitleptr,	lengthInstanceTitle);
+						ZeroMemory(sc->uuid, length					+ 1);
+						ZeroMemory(sc->name, lengthInstanceTitle	+ 1);
+						memcpy(sc->uuid, cuuidptr,			length);
+						memcpy(sc->name, cinstanceTitleptr,	lengthInstanceTitle);
 
-						// Grab the handle
-						result = gsConnections[i].handle;
+						// Update the handle for the next call
 						++nextHandle;
+
+						// Create the named pipe to use between this instance and the JBM
+						wsprintf(pipeName, _JBM_Pipe_wsprintf_string, _JBM_Pipe_Name_Prefix, gsConnections[i].handle);
+						sc->pipeHandle	= CreateNamedPipe(pipeName,
+														  PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
+														  PIPE_READMODE_BYTE | PIPE_NOWAIT,
+														  2,
+														  sizeof(SPipeData),
+														  sizeof(SPipeData),
+														  0,
+														  NULL);
+
+						if (sc->pipeHandle != INVALID_HANDLE_VALUE)
+						{	// We're good
+
+							// Tell the JBM process we have another entry added to the mix
+							SendMessage(ghWndJBM, _JBM_NEW_INSTANCE_REPORTING_IN, sc->handle, NULL);
+
+							// Write our first entry, indicating we have not started yet
+							sc->pipeData.hasStarted					= false;
+							sc->pipeData.hasCompleted				= false;
+							sc->pipeData.overallPercentCompleted	= 0.0;
+							sc->pipeData.testPercentCompleted		= 0.0;
+							sc->pipeData.lastTestTimeInSeconds		= 0.0;
+							ZeroMemory(sc->pipeData.instance.name,	sizeof(sc->pipeData.instance.name));
+							ZeroMemory(sc->pipeData.test.name,		sizeof(sc->pipeData.test.name));
+							memcpy(sc->pipeData.instance.name, sc->name, min(lengthInstanceTitle, sizeof(sc->pipeData.instance.name)));
+
+							// Write the data for the initial read
+							writePipeDataToJBM(sc);
+
+							// Tell the JBM process we have another entry added to the mix
+							SendMessage(ghWndJBM, _JBM_NEW_INSTANCE_FIRST_DATA, sc->handle, NULL);
+
+							// All done
+							// Grab our return result
+							result = sc->handle;
+
+						} else {
+							// Invalid handle returned, which means the pipe is not valid
+							result = -3;
+						}
 						break;
 					}
 				}
@@ -201,6 +273,18 @@
 
 		LeaveCriticalSection(gCriticalSection);
 		return(result);
+	}
+
+	// Write data to the named pipe, and set its success flag
+	void writePipeDataToJBM(SConnections* sc)
+	{
+		DWORD numwritten;
+
+		sc->pipeData.instance.length = strlen(sc->pipeData.instance.name);
+		sc->pipeData.test.length = strlen(sc->pipeData.test.name);
+
+		WriteFile(sc->pipeHandle, &sc->pipeData, sizeof(sc->pipeData), &numwritten, NULL);
+		sc->wasLastPipeWriteSuccessful = (numwritten == sizeof(sc->pipeData));
 	}
 
 

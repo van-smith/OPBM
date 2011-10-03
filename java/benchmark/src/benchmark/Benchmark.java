@@ -72,7 +72,6 @@ public class Benchmark
 	public native static void		reportCompletionN(int handle, float percent);						// Called to update the completion status of the current test
 	public native static void		streamN(int handle, int test);										// Test from miniBench, written in C++
 
-
 	/**
 	 * Main test entry point, executes each test in sequence
 	 */
@@ -144,7 +143,10 @@ public class Benchmark
 	}
 
 	/**
-	 * Main app entry point, initiates the test after pausing several seconds
+	 * Main app entry point, initiates the test after pausing several seconds.
+	 * Command line syntax is:  "benchmark.jar 1" (where 1 is the instance,
+	 * must be a value >= 1 and <= the maximum value passed to JBM.exe as its
+	 * parameter)
 	 * @param args
 	 */
 	public static void main(String[] args) throws InterruptedException
@@ -157,7 +159,7 @@ public class Benchmark
 		Benchmark bm = new Benchmark();
 
 		// Grab our title
-		title = (args.length == 0) ? "Java Benchmark" : args[0].replace("_", " ");
+		title = "JVM #" + args[0];
 
 		// Assign a UUID and report in to the monitor app
 		m_uuid		= Utils.getUUID();
