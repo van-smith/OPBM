@@ -26,12 +26,17 @@
 	#define		_JBM_EMPTY_SLOT						1					// Show red
 	#define		_JBM_SLOT_FILLED					2					// Show green
 	#define		_JBM_RUNNING						3					// Show normally
+	#define		_JBM_FINISHED						4					// Show normally
+
 	#define		_JBM_BACKGROUND_WIDTH				146
 	#define		_JBM_BACKGROUND_HEIGHT				146
+
 	#define		_HEADER_FOREGROUND					RGB(255,255,255)	// Header
 	#define		_HEADER_BACKGROUND					RGB(209,200,172)
 	#define		_TEST_FOREGROUND					RGB(0,0,255)		// Currently running test
 	#define		_TEST_BACKGROUND					RGB(241,230,198)
+	#define		_PERCENT_FOREGROUND					RGB(128,128,255)	// Percent text
+	#define		_PERCENT_BACKGROUND					RGB(209,200,172)
 	#define		_HISTORY_FOREGROUND					RGB(0,0,0)			// Previous test and times
 	#define		_HISTORY_BACKGROUND					RGB(241,230,198)
 
@@ -45,6 +50,7 @@
 	{
 		int					status;					// _JBM_EMPTY_SLOT, _JBM_SLOT_FILLED or _JBM_RUNNING
 		RECT				rc;						// Rectangle in the window where this entry gets written-to/updated
+		HBITMAP				doubleBufferBitmap;		// Bitmap used for a double-buffer
 		HANDLE				pipeHandle;				// Handle to the pipe used to read this item's pipe data
 		SPipeData			pipeData;				// Copy of the most recently read pipe data
 		SPipeDataNames		testHistory[4];			// Holds a history of prior tests that were run
@@ -87,8 +93,10 @@
 	void				readEvents						(void);
 	LRESULT CALLBACK	WndProc							(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	void				paintThisProcess				(SProcesses* sp, HDC hdc, HDC hdc2, RECT rcSlot);
+	float				verifyPercent					(float percent);
 	void				setRectRelativeTo				(RECT* rcOutter, RECT* rcInner, int left, int top, int right, int bottom);
-	void				drawStatusBar					(HDC hdc, HDC hdc2, RECT& rc, float percent);
+	void				drawStatusBar					(HDC hdc, HDC hdc2, RECT& rc, float percent, char* text);
 	void				drawStatusBarSegment			(HDC hdc, HDC hdc2, RECT& rc, HBITMAP left, HBITMAP middle, HBITMAP right, int leftWidth, int middleWidth, int rightWidth, char* text);
 	void				connectToThisInstancePipeData	(int slot);
 	void				loadPipeData					(int slot, int newStatus);
+	void				checkIfAllAreFinished			(void);

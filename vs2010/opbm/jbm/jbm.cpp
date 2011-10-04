@@ -56,6 +56,7 @@
 	int main(int argc, char* argv[])
 	{
 		verifyParameter(argc, argv);
+		determineLayout();
 		loadBitmaps();
 		createFonts();
 		createWindow();
@@ -121,9 +122,6 @@
 			exit(-1);
 		}
 		// If we get here, we're good
-
-		// Set the default layout based on the number of processes
-		determineLayout();
 	}
 
 
@@ -220,8 +218,9 @@
 			{
 				for (x = 0; x < gnWidth; x++)
 				{	// Initialize this entry
-					lsp->status		= (count <= _JBM_MAX_CONNECTIONS) ? _JBM_EMPTY_SLOT : _JBM_UNUSED_SLOT;
-					lsp->pipeHandle	= INVALID_HANDLE_VALUE;
+					lsp->status				= (count <= gnProcessCount) ? _JBM_EMPTY_SLOT : _JBM_UNUSED_SLOT;
+					lsp->pipeHandle			= INVALID_HANDLE_VALUE;
+					lsp->doubleBufferBitmap	= CreateCompatibleBitmap(GetDC(GetDesktopWindow()), _JBM_BACKGROUND_WIDTH, _JBM_BACKGROUND_HEIGHT);
 
 					SetRect(&lsp->rc, left, top, left + _JBM_BACKGROUND_WIDTH, top + _JBM_BACKGROUND_HEIGHT);
 
@@ -278,14 +277,14 @@
 	{
 		int height;
 
-		height = -MulDiv(12, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
-		ghfHeader	= CreateFontA(height, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Calibri");
+		height = -MulDiv(11, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
+		ghfHeader	= CreateFontA(height, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Calibri");
 
 		height = -MulDiv(8, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
-		ghfPercent	= CreateFontA(height, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Calibri");
+		ghfPercent	= CreateFontA(height, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Calibri");
 
 		height = -MulDiv(10, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
-		ghfTests	= CreateFontA(height, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Calibri");
+		ghfTests	= CreateFontA(height, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Calibri");
 	}
 
 
@@ -374,11 +373,11 @@
 
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT m, WPARAM w, LPARAM l)
 	{
-		int				x, y, left, top, count;
+		int				i, x, y, left, top, count;
 		SProcesses*		lsp;
-		HDC				lhdc, lhdc2;
+		HDC				lhdcDoubleBuffer, lhdc1, lhdc2;
 		PAINTSTRUCT		ps;
-		RECT			rcSlot;
+		RECT			rcSlot, rcZero;
 
 		switch (m)
 		{
@@ -389,8 +388,10 @@
 				break;
 
 			case WM_PAINT:
-				lhdc	= BeginPaint(hwnd, &ps);
-				lhdc2	= CreateCompatibleDC(lhdc);
+				lhdcDoubleBuffer = BeginPaint(hwnd, &ps);
+				lhdc1	= CreateCompatibleDC(lhdcDoubleBuffer);
+				lhdc2	= CreateCompatibleDC(lhdcDoubleBuffer);
+				SetRect(&rcZero, 0, 0, _JBM_BACKGROUND_WIDTH, _JBM_BACKGROUND_HEIGHT);
 
 				if (gsProcesses != NULL)
 				{	// We only draw the processes if everything was setup correctly
@@ -408,8 +409,12 @@
 								lsp->status = _JBM_UNUSED_SLOT;
 
 							// Paint it
-							paintThisProcess(lsp, lhdc, lhdc2, rcSlot);
+							SelectObject(lhdc1, (HGDIOBJ)lsp->doubleBufferBitmap);
+							paintThisProcess(lsp, lhdc1, lhdc2, rcZero);
 							CopyRect(&lsp->rc, &rcSlot);
+
+							// Update the double-buffer DC
+							BitBlt(lhdcDoubleBuffer, rcSlot.left, rcSlot.top, rcSlot.left + _JBM_BACKGROUND_WIDTH, rcSlot.top + _JBM_BACKGROUND_HEIGHT, lhdc1, 0, 0, SRCCOPY);
 
 							// Move to next process
 							++lsp;
@@ -425,22 +430,58 @@
 				}
 
 				DeleteDC(lhdc2);
+				DeleteDC(lhdc1);
 				EndPaint(hwnd, &ps);
 				break;
 
 			case _JBM_NEW_INSTANCE_REPORTING_IN:
 				// A new instance has reported in, connect to its pipe
-				connectToThisInstancePipeData((int)w - 1);
+				connectToThisInstancePipeData((int)w);
 				break;
 
 			case _JBM_NEW_INSTANCE_FIRST_DATA:
 				// A new instance has reported its first data set
-				loadPipeData((int)w - 1, _JBM_SLOT_FILLED);
+				loadPipeData((int)w, _JBM_SLOT_FILLED);
 				break;
 
 			case _JBM_HAS_UPDATED_PIPE_DATA:
 				// An existing instance has reported in, load it
-				loadPipeData((int)w - 1, _JBM_RUNNING);
+				loadPipeData((int)w, _JBM_RUNNING);
+				break;
+
+			case _JBM_ARE_ALL_INSTANCES_LOADED:
+				// They want to know if all slots are loaded yet
+				if (gsProcesses != NULL)
+				{
+					lsp		= gsProcesses;
+					count	= 0;
+					for (i = 0; i < gnProcessCount; i++)
+					{	// See how many have been filled
+						count += (lsp->status >= _JBM_SLOT_FILLED) ? 1 : 0;
+						++lsp;
+					}
+					if (count == gnProcessCount)
+						return(1);
+					//else return 0 below
+				}
+				//else return 0 below
+				break;
+
+			case _JBM_REQUEST_A_NEW_HANDLE:
+				// They want us to assign a handle to them
+				for (i = 0; i < gnProcessCount; i++)
+				{	// Search for a slot that's 
+					if (gsProcesses[i].status == _JBM_EMPTY_SLOT)
+					{	// Return this slot
+						return(i);
+					}
+				}
+				// If we get here, no slots available
+				return(-1);
+
+			case _JBM_THIS_INSTANCE_IS_FINISHED:
+				loadPipeData((int)w, _JBM_FINISHED);
+				checkIfAllAreFinished();
 				break;
 
 			default:
@@ -455,6 +496,7 @@
 	{
 		bool lbIsRunning;
 		RECT rc;
+		char text[256];
 
 		// Copy over the background
 		lbIsRunning = false;
@@ -473,6 +515,7 @@
 				break;
 
 			case _JBM_RUNNING:
+			case _JBM_FINISHED:
 				lbIsRunning = true;
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnection);
 				break;
@@ -529,24 +572,19 @@
 
 				// Update the status bar for the current test
 				setRectRelativeTo(&rcSlot, &rc, 2,46,144,58);
-				drawStatusBar(hdc, hdc2, rc, sp->pipeData.testPercentCompleted);
+				sprintf_s(text, sizeof(text), "Test: %3.0f%%\000", verifyPercent(sp->pipeData.testPercentCompleted) * 100.0f);
+				drawStatusBar(hdc, hdc2, rc, verifyPercent(sp->pipeData.testPercentCompleted), text);
 
 				// Update the status bar for the overall completion
 				setRectRelativeTo(&rcSlot, &rc, 2,59,144,72);
-				drawStatusBar(hdc, hdc2, rc, sp->pipeData.overallPercentCompleted);
+				sprintf_s(text, sizeof(text), "Overall: %3.0f%%\000", verifyPercent(sp->pipeData.overallPercentCompleted) * 100.0f);
+				drawStatusBar(hdc, hdc2, rc, verifyPercent(sp->pipeData.overallPercentCompleted), text);
 			}
 		}
 	}
 
-	void setRectRelativeTo(RECT* rcOutter, RECT* rcInner, int left, int top, int right, int bottom)
+	float verifyPercent(float percent)
 	{
-		SetRect(rcInner, rcOutter->left + left, rcOutter->top + top, rcOutter->left + right, rcOutter->top + bottom);
-	}
-
-	void drawStatusBar(HDC hdc, HDC hdc2, RECT& rc, float percent)
-	{
-		char text[256];
-
 		// Verify the percent value is in range
 		if (percent >= 1.0f && percent <= 100.0f)
 		{	// It's in the range 0..100, so make it in the range 0..1
@@ -557,19 +595,40 @@
 		if (percent > 1.0f)
 			percent = 1.0f;
 
-		// Set the font/colors for the percentage portions
-		SelectObject(hdc, (HGDIOBJ)ghfPercent);
-		SetTextColor(hdc, _HEADER_FOREGROUND);
-		SetBkColor(hdc, _HEADER_BACKGROUND);
-		SetBkMode(hdc, TRANSPARENT);
+		return(percent);
+	}
+
+	void setRectRelativeTo(RECT* rcOutter, RECT* rcInner, int left, int top, int right, int bottom)
+	{
+		SetRect(rcInner, rcOutter->left + left, rcOutter->top + top, rcOutter->left + right, rcOutter->top + bottom);
+	}
+
+	void drawStatusBar(HDC hdc, HDC hdc2, RECT& rc, float percent, char* text)
+	{
+		float width;
+		RECT lrc;
+
+		// Grab the overall width
+		width = (float)(rc.right - rc.left);
 
 		// Do the highlighted portion
-		sprintf_s(text, sizeof(text), "Test: %3.0f", percent);
-		drawStatusBarSegment(hdc, hdc2, rc, ghbmpStatusbarHighLeft, ghbmpStatusbarHighMiddle, ghbmpStatusbarHighRight, 2, 1, 2, text);
+		lrc.left	= rc.left;
+		lrc.top		= rc.top;
+		lrc.right	= (int)((float)lrc.left + (width * percent));
+		lrc.bottom	= rc.bottom;
+		drawStatusBarSegment(hdc, hdc2, lrc, ghbmpStatusbarHighLeft, ghbmpStatusbarHighMiddle, ghbmpStatusbarHighRight, 2, 1, 2, text);
 
 		// Do the lowlighted portion
-		sprintf_s(text, sizeof(text), "Overall: %3.0f", percent);
-		drawStatusBarSegment(hdc, hdc2, rc, ghbmpStatusbarLowLeft, ghbmpStatusbarLowMiddle, ghbmpStatusbarLowRight, 2, 1, 2, text);
+		lrc.left	= lrc.right + 1;
+		lrc.right	= rc.right;
+		drawStatusBarSegment(hdc, hdc2, lrc, ghbmpStatusbarLowLeft, ghbmpStatusbarLowMiddle, ghbmpStatusbarLowRight, 2, 1, 2, text);
+
+		// Overlay the text
+		SelectObject(hdc, (HGDIOBJ)ghfPercent);
+		SetTextColor(hdc, _PERCENT_FOREGROUND);
+		SetBkColor(hdc, _PERCENT_BACKGROUND);
+		SetBkMode(hdc, TRANSPARENT);
+		DrawTextA(hdc, text, strlen(text), &rc, DT_CENTER | DT_TOP | DT_SINGLELINE);
 	}
 
 	void drawStatusBarSegment(HDC hdc, HDC hdc2, RECT& rc, HBITMAP left, HBITMAP middle, HBITMAP right, int leftWidth, int middleWidth, int rightWidth, char* text)
@@ -586,7 +645,7 @@
 
 		// Paint the middle
 		SelectObject(hdc2, (HGDIOBJ)middle);
-		for (x = rc.left + leftWidth; x < width - rightWidth; x++)
+		for (x = rc.left + leftWidth; x < rc.right - rightWidth; x++)
 		{	// Repeat the middle portion until we fill in the whole area
 			BitBlt(hdc, x, rc.top, middleWidth, height, hdc2, 0, 0, SRCCOPY);
 		}
@@ -594,9 +653,6 @@
 		// Paint the right side
 		SelectObject(hdc2, (HGDIOBJ)right);
 		BitBlt(hdc, rc.right - rightWidth, rc.top, rightWidth, height, hdc2, 0, 0, SRCCOPY);
-
-		// Overlay the text
-		DrawTextA(hdc, text, strlen(text), &rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	}
 
 	void connectToThisInstancePipeData(int slot)
@@ -611,7 +667,7 @@
 			sp = gsProcesses + slot;
 
 			// Connect to the pipe for this one
-			wsprintf(pipeName, _JBM_Pipe_wsprintf_string, _JBM_Pipe_Name_Prefix, slot + 1);
+			wsprintf(pipeName, _JBM_Pipe_wsprintf_string, _JBM_Pipe_Name_Prefix, slot);
 			sp->pipeHandle = CreateFile(pipeName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 			if (sp->pipeHandle != INVALID_HANDLE_VALUE)
 			{	// The connection has been made
@@ -644,5 +700,23 @@
 					InvalidateRect(ghWnd, &sp->rc, FALSE);
 				}
 			}
+		}
+	}
+
+	void checkIfAllAreFinished(void)
+	{
+		SProcesses* lsp;
+		int i, count;
+
+		count	= 0;
+		lsp		= gsProcesses;
+		for (i = 0; i < gnProcessCount; i++)
+		{
+			count += (lsp->status == _JBM_FINISHED) ? 1 : 0;
+			++lsp;
+		}
+		if (count == gnProcessCount)
+		{	// All are finished
+			exit(0);
 		}
 	}
