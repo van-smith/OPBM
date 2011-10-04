@@ -54,6 +54,8 @@ Func openWar()
 	Send( "!fo" )
 	opbmWinWaitActivate( $OPEN, $OPEN, $gTimeout, $ERROR_PREFIX & "WinWait: Open: Unable to find Window." )
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+; for Debugging
+outputMessage( $filenameWarPptx )
 	ControlSend( $OPEN, $OPEN, "Edit1", $filenameWarPptx, 1)
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	Send( "{ENTER}" )

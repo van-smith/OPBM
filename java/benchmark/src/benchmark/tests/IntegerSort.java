@@ -24,6 +24,8 @@
 
 package benchmark.tests;
 
+import benchmark.Benchmark;
+
 public class IntegerSort
 {
 	/**
@@ -40,6 +42,16 @@ public class IntegerSort
 	 */
 	public void run()
 	{
+		int i;
+
+		for (i = 0; i < 20; i++)
+		{
+			Benchmark.reportCompletionN(m_handle, (float)i / 20);
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException ex) {
+			}
+		}
 	}
 
 	// Class variables

@@ -48,7 +48,6 @@ import benchmark.tests.SHA256;
 import benchmark.tests.IntegerSort;
 import benchmark.tests.AesEncrypt;
 import benchmark.tests.AesDecrypt;
-import opbm.common.Utils;
 
 public class Benchmark
 {
@@ -67,11 +66,18 @@ public class Benchmark
 		}
 	}
 	public native static int		firstConnectN(String uuid, String instanceTitle, int testCount);	// Called to connect to the monitor app, identifying itself
-	public native static boolean	okayToBeginN(int handle);											// Called after firstConnectN() to see if all other JVMs have launched and reported in yet
+	public native static boolean	okayToBeginN();														// Called after firstConnectN() to see if all other JVMs have launched and reported in yet
 	public native static void		reportTestN(int handle, int test, String name);						// Called to indicate a new test has started
 	public native static void		reportCompletionN(int handle, float percent);						// Called to update the completion status of the current test
 	public native static void		streamN(int handle, int test);										// Test from miniBench, written in C++
 
+	/**
+	 * Constructor
+	 */
+	public Benchmark(int handle)
+	{
+		m_handle = handle;
+	}
 
 	/**
 	 * Main test entry point, executes each test in sequence
@@ -83,7 +89,11 @@ public class Benchmark
 		aesDecrypt(_TEST_AES_DECRYPT);			// Test #3
 		sha256(_TEST_SHA_256);					// Test #4
 		string(_TEST_STRING);					// Test #5
-		streamN(m_handle, _TEST_STREAM);		// Test #6
+		stream(_TEST_STREAM);					// Test #6
+
+		// Tell the JBM we're done
+		reportTestN(m_handle, _TEST_MAX_COUNT + 1, "Finished");					// Set counter beyond max
+		reportCompletionN(m_handle, 1.0f);										// Indicate 100% finished
 	}
 
 	/**
@@ -144,60 +154,85 @@ public class Benchmark
 	}
 
 	/**
-	 * Main app entry point, initiates the test after pausing several seconds
+	 * Performs STREAM test.  STREAM is part of miniBench, and is a C++ app.
+	 * It runs in a JNI DLL.
+	 * @param test
+	 */
+	public void stream(int test)
+	{
+		reportTestN(m_handle, test, "STREAM");
+		streamN(m_handle, _TEST_STREAM);
+	}
+
+	/**
+	 * Main app entry point, initiates the test after pausing several seconds.
+	 * Command line syntax is:  "benchmark.jar 1" (where 1 is the instance,
+	 * must be a value >= 1 and <= the maximum value passed to JBM.exe as its
+	 * parameter)
 	 * @param args
 	 */
 	public static void main(String[] args) throws InterruptedException
 	{
-		int waitCount;
+		int waitCount, handle;
 		boolean continueWaiting;
 		String title;
 
-		// Create our benchmark instance
-		Benchmark bm = new Benchmark();
+		if (args[0] == null)
+		{	// No command line parameter for the name of this instance was provided
+			System.out.println("Syntax:  benchmark.jar \"Instance Title\"");
+			System.exit(-1);
+		}
 
 		// Grab our title
-		title = (args.length == 0) ? "Java Benchmark" : args[0].replace("_", " ");
+		title = args[0];
 
 		// Assign a UUID and report in to the monitor app
 		m_uuid		= Utils.getUUID();
-		m_handle	= firstConnectN(m_uuid, title, _TEST_MAX_COUNT);
-		if (m_handle < 0)
+		handle		= firstConnectN(m_uuid, title, _TEST_MAX_COUNT);
+		if (handle < 0)
 		{	// Some error connecting
 			System.out.println("Error connecting to monitor app. Please ensure monitor app is running first.");
+			System.exit(-2);
 		}
+		System.out.println("Benchmark given handle \"" + Integer.toString(handle) + "\".");
+		Benchmark bm = new Benchmark(handle);
 
 		// Wait until all launched JVM instances report in, allowing the
 		// compute portions of the test to be accurate, rather than incurring
 		// overhead due to disk loading, JVM initialization, etc.
 		// Wait for up to _TIMEOUT_SECONDS before terminating in error.
-		continueWaiting	= true;
-		waitCount		= 0;
-		while (continueWaiting && waitCount < _TIMEOUT_SECONDS)
+		continueWaiting		= true;
+		waitCount			= 0;
+		while (continueWaiting && waitCount < _TIMEOUT_SECONDS * 5)
 		{
-			if (okayToBeginN(m_handle))
+			if (okayToBeginN())
 			{	// We're good, let's go
 				break;
 			}
-			// Pause for one second before asking again
+			// Pause before asking again
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(200);
 			} catch (InterruptedException ex) {
 			}
 
 			++waitCount;
 		}
-		if (waitCount >= _TIMEOUT_SECONDS)
-		{	// All of the JVMs did not launch within two minutes
-
+		if (waitCount >= _TIMEOUT_SECONDS * 5)
+		{	// All of the JVMs did not launch within the timeout
+			System.out.println("Error waiting for all JVMs to launch. Timeout after " + Integer.toString(_TIMEOUT_SECONDS) + " seconds.");
+			System.exit(-3);
 		}
+
+		// Create our benchmark instance
+		System.out.println("Benchmark \"" + args[0] + "\" starts.");
 		bm.run();
+		System.out.println("Benchmark \"" + args[0] + "\" ends.");
 	}
 
 
 	// Class variables
 	private static String		m_uuid;											// UUID assigned at startup, used to identify this instance to the monitor app
-	private static int			m_handle;										// Handle returned upon first connect, used to relay info from this app to the monitor app
+	private int					m_handle;
 
 	// Class constants
 	private static final int	_TIMEOUT_SECONDS	= 120;

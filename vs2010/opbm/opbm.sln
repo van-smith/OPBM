@@ -10,8 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "restarter", "restarter\rest
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spinup", "spinup\spinup.vcxproj", "{0D79112B-70B6-4D8E-9622-915B7B46B646}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jbm", "jbm\jbm.vcxproj", "{2D06772B-C018-4953-9573-51E2F402061A}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "benchmark\benchmark.vcxproj", "{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}"
 EndProject
 Global
@@ -58,12 +56,6 @@ Global
 		{0D79112B-70B6-4D8E-9622-915B7B46B646}.Release|Win32.ActiveCfg = Release|Win32
 		{0D79112B-70B6-4D8E-9622-915B7B46B646}.Release|Win32.Build.0 = Release|Win32
 		{0D79112B-70B6-4D8E-9622-915B7B46B646}.Release|x64.ActiveCfg = Release|Win32
-		{2D06772B-C018-4953-9573-51E2F402061A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2D06772B-C018-4953-9573-51E2F402061A}.Debug|Win32.Build.0 = Debug|Win32
-		{2D06772B-C018-4953-9573-51E2F402061A}.Debug|x64.ActiveCfg = Debug|Win32
-		{2D06772B-C018-4953-9573-51E2F402061A}.Release|Win32.ActiveCfg = Release|Win32
-		{2D06772B-C018-4953-9573-51E2F402061A}.Release|Win32.Build.0 = Release|Win32
-		{2D06772B-C018-4953-9573-51E2F402061A}.Release|x64.ActiveCfg = Release|Win32
 		{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}.Debug|Win32.Build.0 = Debug|Win32
 		{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}.Debug|x64.ActiveCfg = Debug|x64

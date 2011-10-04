@@ -34,10 +34,10 @@ JNIEXPORT jint JNICALL Java_benchmark_Benchmark_firstConnectN
 /*
  * Class:     benchmark_Benchmark
  * Method:    okayToBeginN
- * Signature: (I)Z
+ * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL Java_benchmark_Benchmark_okayToBeginN
-  (JNIEnv *, jclass, jint);
+  (JNIEnv *, jclass);
 
 /*
  * Class:     benchmark_Benchmark
