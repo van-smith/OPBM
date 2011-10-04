@@ -31,6 +31,7 @@ const wchar_t	_JBM_Pipe_wsprintf_string[]				= L"%s%04u\000";
 #define			_JBM_ARE_ALL_INSTANCES_LOADED			WM_USER + 4
 #define			_JBM_REQUEST_A_NEW_HANDLE				WM_USER + 5
 #define			_JBM_THIS_INSTANCE_IS_FINISHED			WM_USER + 6
+#define			_JBM_THIS_INSTANCE_HAS_EXITED			WM_USER + 7
 
 
 // Data used in the named pipe to communicate with JBM

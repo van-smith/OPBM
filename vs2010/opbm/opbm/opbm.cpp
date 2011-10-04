@@ -57,7 +57,7 @@ extern HMODULE ghModule;
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 28;
+	int numberOfCustomAU3Functions = 29;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
 			/* Function Name,					   Min,	   Max
@@ -89,7 +89,8 @@ extern HMODULE ghModule;
 /* 25 */	{ "GetHarnessTempDirectory",			0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
 /* 26 */	{ "GetCSIDLDirectory",					1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
 /* 27 */	{ "Is32BitOS",							0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
-/* 28 */	{ "Is64BitOS",							0,		0}			/* Returns whether or not the installed OS is a 64-bit version or not */
+/* 28 */	{ "Is64BitOS",							0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
+/* 29 */	{ "GetCoreCount",						0,		0}			/* Returns the number of CPU cores on the system */
 			/* Don't forget to update numberOfCustomAU3Functions above */
 	};
 
@@ -1560,6 +1561,43 @@ extern HMODULE ghModule;
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
 		AU3_SetInt32(pMyResult, is64Bits);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// GetCoreCount()
+//
+// Returns the number of cores on the system.
+//
+// Parameters:  
+//
+// 		GetCoreCount()
+//
+/////
+	AU3_PLUGIN_DEFINE(GetCoreCount)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					count;
+
+		// Ask Windows how many cores are available?
+		SYSTEM_INFO sysinfo;
+		GetSystemInfo( &sysinfo );
+		count = sysinfo.dwNumberOfProcessors;
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, count);
 
 		*p_AU3_Result		= pMyResult;
 		*n_AU3_ErrorCode	= 0;

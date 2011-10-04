@@ -64,11 +64,18 @@ public class Benchmark
 			System.loadLibrary("benchmark64");
 			System.out.println("Running 64-bit JVM");
 		}
+		if (!didBenchmarkDllLoadOkayN())
+		{	// Did the benchmarkNN.dll load okay? (it has to connect with a running JBM to have successfully launched)
+			System.out.println("Unable to run this benchmark. Unable to find JBM.");
+			System.exit(-1);
+		}
 	}
+	public native static boolean	didBenchmarkDllLoadOkayN();											// Called after the DLL is loaded in the static block above to see if it loaded okay, and found the JBM okay
 	public native static int		firstConnectN(String uuid, String instanceTitle, int testCount);	// Called to connect to the monitor app, identifying itself
 	public native static boolean	okayToBeginN();														// Called after firstConnectN() to see if all other JVMs have launched and reported in yet
 	public native static void		reportTestN(int handle, int test, String name);						// Called to indicate a new test has started
 	public native static void		reportCompletionN(int handle, float percent);						// Called to update the completion status of the current test
+	public native static void		reportExitingN(int handle);											// Tell JBM that we're exiting
 	public native static void		streamN(int handle, int test);										// Test from miniBench, written in C++
 
 	/**
@@ -203,7 +210,7 @@ public class Benchmark
 		// Wait for up to _TIMEOUT_SECONDS before terminating in error.
 		continueWaiting		= true;
 		waitCount			= 0;
-		while (continueWaiting && waitCount < _TIMEOUT_SECONDS * 5)
+		while (continueWaiting && waitCount < _TIMEOUT_SECONDS * 10)
 		{
 			if (okayToBeginN())
 			{	// We're good, let's go
@@ -211,13 +218,13 @@ public class Benchmark
 			}
 			// Pause before asking again
 			try {
-				Thread.sleep(200);
+				Thread.sleep(100);
 			} catch (InterruptedException ex) {
 			}
 
 			++waitCount;
 		}
-		if (waitCount >= _TIMEOUT_SECONDS * 5)
+		if (waitCount >= _TIMEOUT_SECONDS * 10)
 		{	// All of the JVMs did not launch within the timeout
 			System.out.println("Error waiting for all JVMs to launch. Timeout after " + Integer.toString(_TIMEOUT_SECONDS) + " seconds.");
 			System.exit(-3);
@@ -227,6 +234,13 @@ public class Benchmark
 		System.out.println("Benchmark \"" + args[0] + "\" starts.");
 		bm.run();
 		System.out.println("Benchmark \"" + args[0] + "\" ends.");
+
+		// Save the benchmark timing data
+// REMEMBER
+
+		// All done
+		reportExitingN(handle);
+		System.exit(0);
 	}
 
 

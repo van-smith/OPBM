@@ -25,6 +25,14 @@ extern "C" {
 #define benchmark_Benchmark__TEST_MAX_COUNT 6L
 /*
  * Class:     benchmark_Benchmark
+ * Method:    didBenchmarkDllLoadOkayN
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_benchmark_Benchmark_didBenchmarkDllLoadOkayN
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     benchmark_Benchmark
  * Method:    firstConnectN
  * Signature: (Ljava/lang/String;Ljava/lang/String;I)I
  */
@@ -54,6 +62,14 @@ JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestN
  */
 JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportCompletionN
   (JNIEnv *, jclass, jint, jfloat);
+
+/*
+ * Class:     benchmark_Benchmark
+ * Method:    reportExitingN
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportExitingN
+  (JNIEnv *, jclass, jint);
 
 /*
  * Class:     benchmark_Benchmark

@@ -87,7 +87,7 @@ Func InitializeGlobalVariables()
 	;		SetRegistryKeyDword( $key, $dwordValue )
 	;		GetRegistryKey( $key )
 	;;;;;;;;FixupPathnames( $pathname )				; (future function) Converts "c:\some\dir\..\path\" to "c:\some\path" (removes "dir\..")
-	;		; The following DO include the trailing backslash
+	;;;;;;;;The following ALWAYS include the trailing backslash!
 	;		GetScriptCSVDirectory()					; Returns c:\users\user\documents\opbm\scriptOutput\
 	;		GetScriptTempDirectory()				; Returns c:\users\user\documents\opbm\scriptOutput\temp\
 	;		GetHarnessXmlDirectory()				; Returns c:\users\user\documents\opbm\results\xml\
@@ -98,6 +98,7 @@ Func InitializeGlobalVariables()
 	;			Returns:  c:\users\user\documents\
 	;		is32BitOS()		; Is the OS installed a 32-bit OS?
 	;		is64BitOS()		; Is the OS installed a 64-bit OS?
+	;		GetCoreCount()	; Returns the number of cores on the system
 	$gOpbmPluginHandle = PluginOpen( $OPBM_DLL )
 	If $gOpbmPluginHandle <> 0 Then 
 		errorHandle( $OPBM_DLL & " did not open" )

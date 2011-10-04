@@ -24,9 +24,10 @@
 /////
 	#define		_JBM_UNUSED_SLOT					0					// Show grayscale
 	#define		_JBM_EMPTY_SLOT						1					// Show red
-	#define		_JBM_SLOT_FILLED					2					// Show green
+	#define		_JBM_SLOT_FILLED					2					// Show yellow
 	#define		_JBM_RUNNING						3					// Show normally
-	#define		_JBM_FINISHED						4					// Show normally
+	#define		_JBM_FINISHED						4					// Show yellow
+	#define		_JBM_EXITED							5					// Show red
 
 	#define		_JBM_BACKGROUND_WIDTH				146
 	#define		_JBM_BACKGROUND_HEIGHT				146
@@ -68,10 +69,10 @@
 //////////
 // Bitmaps, fonts, graphics elements loaded/needed by this app
 /////
-	HBITMAP		ghbmpConnection				= NULL;
-	HBITMAP		ghbmpConnectionUnusedSlot	= NULL;
+	HBITMAP		ghbmpConnectionRunning		= NULL;
 	HBITMAP		ghbmpConnectionEmptySlot	= NULL;
-	HBITMAP		ghbmpConnectionSlotFilled	= NULL;
+	HBITMAP		ghbmpConnectionRed			= NULL;
+	HBITMAP		ghbmpConnectionYellow		= NULL;
 	HBITMAP		ghbmpStatusbarHighLeft		= NULL;
 	HBITMAP		ghbmpStatusbarHighMiddle	= NULL;
 	HBITMAP		ghbmpStatusbarHighRight		= NULL;
@@ -99,4 +100,5 @@
 	void				drawStatusBarSegment			(HDC hdc, HDC hdc2, RECT& rc, HBITMAP left, HBITMAP middle, HBITMAP right, int leftWidth, int middleWidth, int rightWidth, char* text);
 	void				connectToThisInstancePipeData	(int slot);
 	void				loadPipeData					(int slot, int newStatus);
-	void				checkIfAllAreFinished			(void);
+	void				setSlotStatus					(int slot, int newStatus);
+	void				checkIfAllHaveExited			(void);

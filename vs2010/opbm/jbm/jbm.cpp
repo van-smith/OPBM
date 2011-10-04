@@ -88,14 +88,17 @@
 
 		// They need only one parameter, no more, no less
 		if (argc != 2)
-			bShowUsageError = true;			// Usage *IS* required
+		{	// Correct usage *IS* required
+			bShowUsageError = true;
 
-		// Check the paramter, which should be a process count
-		gnProcessCount = atoi(argv[1]);
-		if (gnProcessCount < 1 || gnProcessCount > _JBM_MAX_CONNECTIONS)
-		{
-			bShowUsageError		= true;		// Show the usage also
-			bShowParameterError = true;		// And the parameters must be correct
+		} else {
+			// Check the paramter, which should be a process count
+			gnProcessCount = atoi(argv[1]);
+			if (gnProcessCount < 1 || gnProcessCount > _JBM_MAX_CONNECTIONS)
+			{
+				bShowUsageError		= true;		// Show the usage also
+				bShowParameterError = true;		// And the parameters must be correct
+			}
 		}
 
 		// Report any errors
@@ -253,10 +256,10 @@
 /////
 	void loadBitmaps(void)
 	{
-		ghbmpConnection				= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION));
-		ghbmpConnectionUnusedSlot	= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_UNUSED_SLOT));
+		ghbmpConnectionRunning		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION));
 		ghbmpConnectionEmptySlot	= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_EMPTY_SLOT));
-		ghbmpConnectionSlotFilled	= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_SLOT_FILLED));
+		ghbmpConnectionRed			= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_UNUSED_SLOT));
+		ghbmpConnectionYellow		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_SLOT_FILLED));
 		ghbmpStatusbarHighLeft		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_STATUSBAR_HIGH_LEFT));
 		ghbmpStatusbarHighMiddle	= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_STATUSBAR_HIGH_MIDDLE));
 		ghbmpStatusbarHighRight		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_STATUSBAR_HIGH_RIGHT));
@@ -481,7 +484,11 @@
 
 			case _JBM_THIS_INSTANCE_IS_FINISHED:
 				loadPipeData((int)w, _JBM_FINISHED);
-				checkIfAllAreFinished();
+				break;
+
+			case _JBM_THIS_INSTANCE_HAS_EXITED:
+				setSlotStatus((int)w, _JBM_EXITED);
+				checkIfAllHaveExited();
 				break;
 
 			default:
@@ -502,27 +509,28 @@
 		lbIsRunning = false;
 		switch (sp->status)
 		{
-			case _JBM_UNUSED_SLOT:
-				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionUnusedSlot);
-				break;
-
 			case _JBM_EMPTY_SLOT:
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionEmptySlot);
 				break;
 
+			case _JBM_UNUSED_SLOT:
+			case _JBM_EXITED:
+				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionRed);
+				break;
+
+			case _JBM_FINISHED:
 			case _JBM_SLOT_FILLED:
-				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionSlotFilled);
+				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionYellow);
 				break;
 
 			case _JBM_RUNNING:
-			case _JBM_FINISHED:
 				lbIsRunning = true;
-				SelectObject(hdc2, (HGDIOBJ)ghbmpConnection);
+				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionRunning);
 				break;
 		}
 		BitBlt(hdc, rcSlot.left, rcSlot.top, rcSlot.left + _JBM_BACKGROUND_WIDTH, rcSlot.top + _JBM_BACKGROUND_HEIGHT, hdc2, 0, 0, SRCCOPY);
 
-		if (sp->status != _JBM_UNUSED_SLOT)
+		if (sp->status > _JBM_UNUSED_SLOT)
 		{
 			// Update the header
 			SelectObject(hdc, (HGDIOBJ)ghfHeader);
@@ -533,10 +541,10 @@
 			if (sp->pipeData.instance.name[0] != 0)
 				DrawTextA(hdc, sp->pipeData.instance.name, sp->pipeData.instance.length, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 			else
-				DrawTextA(hdc, "Waiting...", 15, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+				DrawTextA(hdc, "Waiting...", 10, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 			// When the process is running, update additional information
-			if (lbIsRunning)
+			if (sp->status >= _JBM_RUNNING)
 			{	// Update the test currently running
 				SelectObject(hdc, (HGDIOBJ)ghfTests);
 				SetTextColor(hdc, _TEST_FOREGROUND);
@@ -703,7 +711,22 @@
 		}
 	}
 
-	void checkIfAllAreFinished(void)
+	void setSlotStatus(int slot, int newStatus)
+	{
+		SProcesses* sp;
+
+		if (slot >= 0 && slot < _JBM_MAX_CONNECTIONS)
+		{	// We have a valid slot, see what we need to do
+			// Grab this instance
+			sp = gsProcesses + slot;
+			// Set the status
+			sp->status = newStatus;
+			// Repaint the item
+			InvalidateRect(ghWnd, &sp->rc, FALSE);
+		}
+	}
+
+	void checkIfAllHaveExited(void)
 	{
 		SProcesses* lsp;
 		int i, count;
@@ -712,7 +735,7 @@
 		lsp		= gsProcesses;
 		for (i = 0; i < gnProcessCount; i++)
 		{
-			count += (lsp->status == _JBM_FINISHED) ? 1 : 0;
+			count += (lsp->status == _JBM_EXITED) ? 1 : 0;
 			++lsp;
 		}
 		if (count == gnProcessCount)

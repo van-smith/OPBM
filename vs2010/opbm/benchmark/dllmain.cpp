@@ -86,11 +86,7 @@
 			if (ghWndJBM == NULL)
 			{	// Locate the JBM process, which must be running beforehand
 				ghWndJBM = FindWindow( _JBM_Class_Name, _JBM_Window_Name);
-				if (ghWndJBM == NULL)
-				{	// Error, JBM is not yet running
-					MessageBoxA(NULL, "JBM Java Benchmark Monitor is not running.", "Fatal Error", MB_OK | MB_ICONERROR);
-					return FALSE;
-				}
+				// Determination of whether or not it was found is in didBenchmarkDllLoadOkayN() below
 			}
 			break;
 
@@ -100,6 +96,28 @@
 		}
 
 		return TRUE;
+	}
+
+
+
+
+//////////
+//
+// didBenchmarkDllLoadOkayN()
+//
+// Called to see if the JBM was found.
+//
+/////
+	// didBenchmarkDllLoadOkayN()
+	JNIEXPORT jboolean JNICALL Java_benchmark_Benchmark_didBenchmarkDllLoadOkayN(JNIEnv* env, jclass cls)
+	{
+		jboolean result = false;
+
+		if (ghWndJBM != NULL)
+		{	// We have a handle
+			result = true;
+		}
+		return(result);
 	}
 
 
@@ -331,6 +349,22 @@
 		// Write the data
 		writePipeDataToJBM(sc);
 		SendMessage(ghWndJBM, message, handle, NULL);
+	}
+
+
+
+
+//////////
+//
+// reportExitingN(JInt handle)
+//
+// Called to indicate the instance is exiting (terminating)
+//
+/////
+	// reportExitingN()
+	JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportExitingN(JNIEnv* env, jclass cls, jint handle)
+	{
+		SendMessage(ghWndJBM, _JBM_THIS_INSTANCE_HAS_EXITED, handle, NULL);
 	}
 
 
