@@ -47,7 +47,7 @@ Func initializePowerPointWarScript()
 	If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & "FileCopy: " & $FILENAME_PPTX & ": Unable to copy file.")
 EndFunc
 
-Func OpenWar()
+Func openWar()
 	local $i
 	opbmWinWaitActivate( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
 	TimerBegin()
@@ -60,30 +60,35 @@ Func OpenWar()
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWaitUntilSystemIdle( 5, 100, 1200000 )
 	TimerEnd( $WAR_OPEN_PRESENTATION )
+	Sleep( 3000 )
 EndFunc
 
 Func saveWarAsWmv()
 	opbmWinWaitActivate( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
-	Sleep( 1000 )
 
+	; open file save as:
 	Send( "!fa" )
-	opbmWaitUntilSystemIdle( 10, 100, 5000 )
+	opbmWaitUntilSystemIdle( 5, 100, 5000 )
 	opbmWinWaitActivate( $SAVE_AS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint Save As: Unable to find Window." )
 	Sleep( 1000 )
 	; Send its full pathname
 	Send( $filenameWarWmv )
+	Sleep( 3000 )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 
 	; Save as WMV
 	; Alt+t to choose type, w to choose "WMV"
-	Send("!tw")
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Send( "!t" )
+	Sleep( 1000 )
+	Send( "w" )
 	Sleep( 1000 )
 	; Choose "Save" button
 	TimerBegin()
-	Send("!s")
+	Send( "!s" )
+	; it's safe to sleep five seconds because the operation takes over a minute on a fast system:
 	Sleep( 5000 )
-	opbmWaitUntilSystemIdle( 5, 100, 1200000 )
+	; wait until the system hits 5% CPU usage for 1 second with a timeout of 1,200 seconds:
+	opbmWaitUntilSystemIdle( 5, 1000, 1200000 )
 	opbmWinWaitActivate( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
 	TimerEnd( $WAR_CREATE_WMV )
 EndFunc
@@ -96,7 +101,8 @@ Func playPresentation()
 	dim $lSearchColor = "00FF0000"
 	dim $lColor
 	dim $i
-	for $i = 1 to 2000
+	; the following loop will exit in 400 seconds ( 4,000 * 0.1s
+	for $i = 1 to 4000
 		$lColor = PixelGetColor( 600, 20 )
 		;outputDebug( "Pixel color " & Hex( $lColor ) )
 		if Hex( $lColor ) = $lSearchColor then
@@ -106,7 +112,9 @@ Func playPresentation()
 	Next
 	opbmWaitUntilSystemIdle( 5, 100, 5000 )
 	TimerEnd( $WAR_PLAY_PRESENTATION )
-	Sleep( 2000 )
+	; sleep 6 seconds
+	Sleep( 6000 )
+	; click to close slideshow
 	MouseClick( "left", 600, 20 )
 	Sleep( 2000 )
 	;Send( "{ESC}" )
