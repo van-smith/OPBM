@@ -94,6 +94,12 @@ public class StreamGobbler extends Thread
 					// It is a tag identifying a resolution to the previously noted conflict
 					m_bp.addResolution(line.substring(11).trim());
 
+				} else if (line.toLowerCase().startsWith("command,")) {
+					// It's an internal command to be run inside of OPBM
+					// There is currently only one internal command identified:
+					//		"command,record_reboot_time"
+					m_bp.processHUDcommand(line.substring(8).trim());
+
 // The following are not actually processed in any separate way at this stage,
 // though the HUD could be modified to show a list of tests conducted.  But
 // rather they are recorded for conveying information into manifest.xml and to

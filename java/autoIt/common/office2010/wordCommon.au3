@@ -76,15 +76,26 @@ Func InitializeWordScript()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 EndFunc
 
-Func LaunchWord()
+Func isWordInstalled()
 	Local $filename
-
-	; See which version we're running, either 64-bit (default) or 32-bit (fallback)
+	
 	If FileExists($FILENAME_WORD_X64) Then
 		$filename = $FILENAME_WORD_X64
 	ElseIf FileExists( $FILENAME_WORD_I386 ) Then
 		$filename = $FILENAME_WORD_I386
 	Else
+		$filename = "not found"
+	EndIf
+	
+	return $filename
+EndFunc
+
+Func LaunchWord()
+	Local $filename
+
+	; See which version we're running, either 64-bit (default) or 32-bit (fallback)
+	$filename = isWordInstalled()
+	If $filename = "not found" Then
 		ErrorHandle("Word 2010 not found in " & $FILENAME_WORD_X64 & " or " & $FILENAME_WORD_I386 & ", unable to launch.")
 	EndIf
 

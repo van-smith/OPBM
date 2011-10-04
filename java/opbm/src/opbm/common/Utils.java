@@ -22,6 +22,10 @@ package opbm.common;
 import opbm.dialogs.OpbmFileFilter;
 import opbm.graphics.AlphaImage;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -368,8 +372,8 @@ public class Utils
 	 * @param ended end time
 	 * @return milliseconds between
 	 */
-	public static long millisecondsBetweenTimestamps(String		timestampBegan,
-													 String		timestampEnded)
+	public static long getMillisecondsBetweenTimestamps(String		timestampBegan,
+														String		timestampEnded)
 	{
 		String msBegan, msEnded;
 		long bms, ems;
@@ -381,6 +385,27 @@ public class Utils
 		ems		= Long.valueOf(msEnded);
 
 		return(ems - bms);
+	}
+
+	/**
+	 * Verifies that the before timestamp is before the after timestamp
+	 * @param timestampBefore
+	 * @param timestampAfter
+	 * @return true if the timestampBefore is less than or equal to timestampAfter
+	 */
+	public static boolean ensureTimestampsAreInOrder(String		timestampBefore,
+													 String		timestampAfter)
+	{
+		long before, after;
+		String msBefore, msAfter;
+
+		msBefore	= timestampBefore.substring(29);
+		msAfter		= timestampAfter.substring(29);
+
+		before		= Long.valueOf(msBefore);
+		after		= Long.valueOf(msAfter);
+
+		return(before <= after);
 	}
 
 	/**
@@ -1779,6 +1804,75 @@ public class Utils
 			// It's not a valid hexadecimal value
 			return(0);
 		}
+	}
+
+	/**
+	 * Evaluates a string and returns true if it's Yes, True or 1
+	 * @param test
+	 * @return
+	 */
+	public static boolean isYes(String test)
+	{
+		boolean result = true;
+		if (test.toLowerCase().startsWith("y"))
+		{	// It's yes
+		} else if (test.toLowerCase().startsWith("t")) {
+			// It's true
+		} else if (test.toLowerCase().startsWith("1")) {
+			// It's one
+
+		} else {
+			// Nope
+			result = false;
+		}
+		return(result);
+	}
+
+	/**
+	 * Evaluates a string and returns if it's not Yes, True or 1
+	 * @param test
+	 * @return
+	 */
+	public static boolean isNo(String test)
+	{
+		return(!isYes(test));
+	}
+
+	/**
+	 * For multiple-monitor systems, queries the maximum size available
+	 */
+	public static Dimension getDesktopMaxScreen(int		minWidth,
+												int		minHeight)
+	{
+		int i;
+		Dimension maxSize;
+
+		// So we check the size of the host video display to see if it can be bigger, and if so, then we make it bigger
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] gs = ge.getScreenDevices();
+
+		// Get size of each screen
+		maxSize = new Dimension(minWidth, minHeight);
+		for (i = 0; i < gs.length; i++)
+		{
+			DisplayMode dm = gs[i].getDisplayMode();
+			if (dm.getWidth() > maxSize.getWidth() && dm.getHeight() > maxSize.getHeight())
+			{	// Update the max
+				maxSize.setSize(dm.getWidth(), dm.getHeight());
+			}
+		}
+		return(maxSize);
+	}
+
+	/**
+	 * Returns the string that would be used in the HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce\opbm
+	 * registry key for restarting the application on an official run after
+	 * rebooting.
+	 * @return the full path required to execute the resetarter in RunOnce\opbm
+	 */
+	public static String getRestarterString()
+	{
+		return("\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
 	}
 
 	private static final String		errMsg = "Error attempting to launch web browser";

@@ -19,4 +19,6 @@ initializeAccessScript()
 outputDebug( "launchAccess()" )
 launchAccess()
 
+FirstRunCheck()
+
 Exit

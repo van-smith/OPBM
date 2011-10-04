@@ -85,10 +85,12 @@ public class DroppableFrame extends JFrame
 	public void setMinMaxResizeBoundaries(int	minWidth,
 										  int	minHeight,
 										  int	maxWidth,
-										  int	maxHeight)
+										  int	maxHeight,
+										  int	desktopWidth,
+										  int	desktopHeight)
 	{
 		// Calls Win32 functions to intercept the WM_GETMINMAXINFO message, whereby it tells Windows how big the window can be
-		Opbm.setMinMaxResizeBoundaries(getHWND(), minWidth, minHeight, maxWidth, maxHeight);
+		Opbm.setMinMaxResizeBoundaries(getHWND(), minWidth, minHeight, maxWidth, maxHeight, desktopWidth, desktopHeight);
 	}
 
 	/**

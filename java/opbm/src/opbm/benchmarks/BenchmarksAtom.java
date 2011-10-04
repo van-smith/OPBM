@@ -1427,9 +1427,16 @@ public class BenchmarksAtom
 							// For each line of errors, save the entry
 							if (!m_bp.m_errorArray.isEmpty())
 							{	// We had at least one error, which marks this as a failure
-								failure		= true;
+								failure = true;
 								for (i = 0; record && i < m_bp.m_errorArray.size(); i++)
+								{	// If an error script ends in "is not installed" we do not continue retrying
+									if (m_isRunningCleanupPhase && m_bp.m_errorArray.get(i).toLowerCase().endsWith("is not installed"))
+									{	// The software was not installed, so we do not continue to retry
+										// Set a condition that will immediately exit on this condition, when the app is not installed (no retry becuase it doesn't make sense to retry an app that's telling the harness it's not installed)
+										retryCount = retryAttempts;
+									}
 									xmlError.appendChild(Utils.processExecutableLine("error", m_bp.m_errorArray.get(i)));
+								}
 								m_bp.m_errorArray.clear();
 
 							} else {
@@ -1454,6 +1461,11 @@ public class BenchmarksAtom
 									if (!failure && m_bp.m_outputArray.get(i).toLowerCase().contains(" error,"))
 									{	// This was an error, we have a failure
 										failure = true;
+										if (m_isRunningCleanupPhase && m_bp.m_outputArray.get(i).toLowerCase().endsWith("is not installed"))
+										{	// The software was not installed, so we do not continue to retry
+											// Set a condition that will immediately exit on this condition, when the app is not installed (no retry becuase it doesn't make sense to retry an app that's telling the harness it's not installed)
+											retryCount = retryAttempts;
+										}
 									}
 									xmlOutput.appendChild(Utils.processExecutableLine("output", m_bp.m_outputArray.get(i)));
 								}
@@ -1568,7 +1580,7 @@ public class BenchmarksAtom
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
 				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
-				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
+				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", Utils.getRestarterString());
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))
@@ -1589,7 +1601,7 @@ public class BenchmarksAtom
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
 				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
-				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
+				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", Utils.getRestarterString());
 				if (m_bp.m_hud != null)
 					m_bp.m_hud.updateDebug(result);
 				if (result.equalsIgnoreCase("success"))
@@ -1666,7 +1678,7 @@ public class BenchmarksAtom
 	//
 	if (Opbm.m_debugSimulateRunAtomMode)
 	{
-		System.exit(0);
+		Opbm.quit(0);
 	}
 	//
 //////
@@ -1709,7 +1721,7 @@ public class BenchmarksAtom
 		// Wait up to 60 seconds for the system to shut down
 		try {
 			if (!m_bp.m_errorArray.isEmpty() || !m_bp.m_outputArray.isEmpty())
-			{	// Wait a moment so they can read the output
+			{	// Wait a short while so they can read the output
 				try {
 					Thread.sleep(10000);
 
@@ -1751,8 +1763,8 @@ public class BenchmarksAtom
 		if (m_bp != null && m_bp.m_bm != null)
 			m_bp.m_bm.runExecuteSetRebootingFailed();
 
-		// Exit the system
-		System.exit(0);
+		// Exit the system after the watchdog
+		Opbm.quit(0);
 	}
 
 	private BenchmarkParams		m_bp;
@@ -1762,4 +1774,6 @@ public class BenchmarksAtom
 	public	int					m_returnValue;
 	public	boolean				m_lastAtomWasFailure;
 	public	boolean				m_isRecordingCounts;
+	public	boolean				m_isRunningCleanupPhase;
+
 }

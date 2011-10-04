@@ -50,10 +50,22 @@ $gBaselines[1][0] = $CLOSE_MICROSOFT_ACCESS
 $gBaselines[1][1] = $CLOSE_MICROSOFT_ACCESS_SCORE
 
 
-Func launchAccess()
-	Local $filename
+Func initializeAccessScript( $retrieveProcess = 1)
+	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
+	HotKeySet("{ESC}", "Terminate")
+	
+	outputDebug( "InitializeGlobalVariables()" )
+	InitializeGlobalVariables()
+	
+	If $retrieveProcess = 1 Then
+		$gPID = WinGetProcess ( $MICROSOFT_ACCESS )
+		outputDebug( "Access PID: " & $gPID )
+	EndIf
+EndFunc
 
-	; Find out which version we're running
+Func isAccessInstalled()
+	Local $filename
+	
 	If FileExists( $FILENAME_ACCESS_AMD64 ) Then
 		$filename = $FILENAME_ACCESS_AMD64
 		outputDebug( "Running 64-bit Office" )
@@ -61,6 +73,18 @@ Func launchAccess()
 		$filename = $FILENAME_ACCESS_X86
 		outputDebug( "Running 32-bit Office" )
 	Else
+		$filename = "not found"
+	EndIf
+	
+	return $filename
+EndFunc
+
+Func launchAccess()
+	Local $filename
+
+	; Find out which version we're running
+	$filename = isAccessInstalled()
+	If $filename = "not found" Then
 		ErrorHandle("Cannot launch application: Access 2010 not found at " & $FILENAME_ACCESS_AMD64 & " or " & $FILENAME_ACCESS_X86 & ".")
 	EndIf
 
@@ -89,14 +113,6 @@ Func closeAccess()
 
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
 	;Office2010RestoreRegistryKeys()
-EndFunc
-
-Func initializeAccessScript()
-	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
-	HotKeySet("{ESC}", "Terminate")
-	outputDebug( "InitializeGlobalVariables()" )
-	InitializeGlobalVariables()
-	$gPID = WinGetProcess ( $MICROSOFT_ACCESS )
 EndFunc
 
 Func runQuery( $queryName )

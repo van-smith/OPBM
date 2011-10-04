@@ -2,6 +2,16 @@
 #AutoIt3Wrapper_outfile=heat.exe
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
+;======================================================================================================================================
+; Cossatot Analytics Laboratories, LLC.
+;
+; Written July 2011 by:
+; ---------------------
+;	Van Smith
+;
+; Usage:	heat [repeat_count]
+;
+;======================================================================================================================================
 #include <../../common/office2010/excelCommon.au3>
 
 ; Defined in excelCommon.au3, but overridden here for "heat"-specific launch and close entries

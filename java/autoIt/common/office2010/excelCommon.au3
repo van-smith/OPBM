@@ -1,3 +1,16 @@
+#cs ======================================================================================================================================
+
+	Office Productivity Benchmark (OPBM)
+	Copyright 2011 Cossatot Analytics Laboratories, LLC.
+
+	Written by:	Van Smith (van@canalabs.com)
+	Initial creation date: 6.05.2011
+
+	Description: AutoIT file containing common Microsoft Excel 2010 data and functions
+
+	Usage:	excelCommon is not directly exceutable
+
+#ce ======================================================================================================================================
 Const $ROOT_DIR = @ScriptDir & "\..\.."
 
 #include <..\opbm\opbmCommon.au3>
@@ -66,10 +79,9 @@ Func ExcelGotoCell($cell)
 	opbmWinActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
 EndFunc
 
-Func LaunchExcel()
+Func isExcelInstalled()
 	Local $filename
 	
-	; Find out which version we're running
 	If FileExists($FILENAME_EXCEL_X64) Then
 		$filename = $FILENAME_EXCEL_X64
 		outputDebug( "Running 64-bit Office" )
@@ -77,6 +89,18 @@ Func LaunchExcel()
 		$filename = $FILENAME_EXCEL_I386
 		outputDebug( "Running 32-bit Office" )
 	Else
+		$filename = "not found"
+	EndIf
+	
+	return $filename
+EndFunc
+
+Func LaunchExcel()
+	Local $filename
+	
+	; Find out which version we're running
+	$filename = isExcelInstalled()
+	If $filename = "not found" Then
 		ErrorHandle("Launch: Excel 2010 not found in " & $FILENAME_EXCEL_X64 & " or " & $FILENAME_EXCEL_I386 & ", unable to launch.")
 	EndIf
 	

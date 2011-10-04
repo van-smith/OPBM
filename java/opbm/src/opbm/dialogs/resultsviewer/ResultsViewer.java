@@ -2,7 +2,8 @@
  * OPBM - Office Productivity Benchmark
  *
  * This class is the top-level class of the OPBM.  It creates a GUI, loads
- * necessary files, beings processing based on context, etc.
+ * necessary files, beings processing based on context, etc.  See the load()
+ * method for initial population.
  *
  * Last Updated:  Sep 16, 2011
  *
@@ -595,7 +596,7 @@ public final class ResultsViewer
 	 */
 	public void createResultsViewer(boolean visible)
 	{
-		Dimension minSize, maxSize;
+		Dimension minSize, maxSize, desktopSize;
 
 		m_frame = new DroppableFrame(m_opbm, false, true);
 		m_opbm.addResultsViewerToQueue(m_frame);
@@ -612,11 +613,12 @@ public final class ResultsViewer
 								m_height + fi.top  + fi.bottom);
 		maxSize = new Dimension(1000 + fi.left + fi.right,
 								1050 + fi.top  + fi.bottom);
+		desktopSize = Utils.getDesktopMaxScreen(m_width, m_height);
 		m_frame.setSize(minSize);
 		m_frame.setMinimumSize(minSize);
 		m_frame.setPreferredSize(minSize);
 		m_frame.setMaximumSize(maxSize);
-		m_frame.setMinMaxResizeBoundaries(m_actual_width, m_actual_height, m_actual_width, 1050 + fi.top + fi.bottom);
+		m_frame.setMinMaxResizeBoundaries(m_actual_width, m_actual_height, m_actual_width, 1050 + fi.top + fi.bottom, desktopSize.width, desktopSize.height);
 		m_frame.pack();
 
 		m_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1022,6 +1024,8 @@ public final class ResultsViewer
 				rect = m_scrollbarBottom.getBounds();
 				rect.height = m_height - rect.y;
 				m_scrollbarBottom.setBounds(rect);
+				m_scrollbarBottom.setVisible(false);
+				m_scrollbarBottom.setVisible(true);
 			}
 		}
 	}

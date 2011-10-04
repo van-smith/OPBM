@@ -87,7 +87,7 @@ Func InitializeGlobalVariables()
 	;		SetRegistryKeyDword( $key, $dwordValue )
 	;		GetRegistryKey( $key )
 	;;;;;;;;FixupPathnames( $pathname )				; (future function) Converts "c:\some\dir\..\path\" to "c:\some\path" (removes "dir\..")
-	;		; The following DO include the trailing backslash
+	;;;;;;;;The following ALWAYS include the trailing backslash!
 	;		GetScriptCSVDirectory()					; Returns c:\users\user\documents\opbm\scriptOutput\
 	;		GetScriptTempDirectory()				; Returns c:\users\user\documents\opbm\scriptOutput\temp\
 	;		GetHarnessXmlDirectory()				; Returns c:\users\user\documents\opbm\results\xml\
@@ -98,6 +98,7 @@ Func InitializeGlobalVariables()
 	;			Returns:  c:\users\user\documents\
 	;		is32BitOS()		; Is the OS installed a 32-bit OS?
 	;		is64BitOS()		; Is the OS installed a 64-bit OS?
+	;		GetCoreCount()	; Returns the number of cores on the system
 	$gOpbmPluginHandle = PluginOpen( $OPBM_DLL )
 	If $gOpbmPluginHandle <> 0 Then 
 		errorHandle( $OPBM_DLL & " did not open" )
@@ -126,14 +127,12 @@ Func opbmCloseAllWindowsNotPreviouslyNoted()
 EndFunc
 
 Func opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
-	; Wait for any lingering windows to appear
-	Sleep(2000)
-	WaitUntilSystemIdle( 10, 1000, 20000 )
+	; Wait for any lingering windows to appear (up to five seconds, minimum of one)
+	WaitUntilSystemIdle( 10, 1000, 5000 )
 	opbmCloseAllWindowsNotPreviouslyNoted()
 	
-	; Repeat (in case we were on a dialog that needed closed)
-	Sleep(2000)
-	WaitUntilSystemIdle( 10, 1000, 20000 )
+	; Repeat (in case we were on a dialog that needed closed, up to five seconds, minimum of one)
+	WaitUntilSystemIdle( 10, 1000, 5000 )
 	opbmCloseAllWindowsNotPreviouslyNoted()
 EndFunc
 
@@ -229,6 +228,25 @@ Func outputError( $outputString )
 	ConsoleWrite( "error," & $outputString & @CRLF )
 EndFunc
 
+Func outputConflict( $outputString )
+	ConsoleWrite( "conflict," & $outputString & @CRLF )
+EndFunc
+
+Func outputResolution( $outputString )
+	ConsoleWrite( "resolution," & $outputString & @CRLF )
+EndFunc
+
+Func outputInternalCommand( $outputString )
+	ConsoleWrite( "command," & $outputString & @CRLF )
+EndFunc
+
+; Added to allow a raw message to be passed, so that additional
+; information can be logged to the output capture without it being
+; processed by the HUD's visual components.
+Func outputMessage( $outputString )
+	ConsoleWrite( $outputString & @CRLF )
+EndFunc
+
 Func TimerWriteTimesToCSV( $CSVPath )
 	Local $lFileTimerCsv
 	Local $i
@@ -306,8 +324,6 @@ Func ErrorHandle( $Text, $ShowMsgBox = False, $aExit = True )
 ;	EndIf
 	If $aExit Then
 		opbmCloseAllWindowsNotPreviouslyNoted()
-		; Upon exit, we potentially need to restore the registry for the specified operation we're running
-		checkRegistryKeysNeedingRestored()
 		Exit -1
 	EndIf
 EndFunc
@@ -333,6 +349,33 @@ Func opbmWinWaitActivate( $title, $text = "", $timeout = 0, $errorText = "" )
 	EndIf
 	; If we get here, we're good
 	Return $lReturnCode
+EndFunc
+
+Func opbmWinWaitForEitherOfTwoWindows( $window1title, $window1text, $window2title, $window2text, $timeout )
+	Local $lReturnCode
+	Local $count
+	
+	$count = 0
+	While (true)
+		; Attempt to find the window
+		If WinExists ( $window1title, $window1text ) Then
+			; The first window was found
+			$lReturnCode = 1
+			ExitLoop
+		EndIf
+		If WinExists ( $window2title, $window2text ) Then
+			; The second window was found
+			$lReturnCode = 2
+			ExitLoop
+		EndIf
+		; Wait for a second
+		Sleep( 1000 )
+		$count = $count + 1
+		If $count > $timeout Then
+			lReturnCode = 0
+		EndIf
+	WEnd
+	return $lReturnCode
 EndFunc
 
 Func opbmWinActivate( $title, $text = "", $timeout = 0, $errorText = "" )
@@ -475,40 +518,12 @@ Func TaskKillProcessByID( $pid, $nameToDisplay )
 	EndIf
 EndFunc
 
-; August 12, 2011
-; ! Used only by apps that launch Office2010 !
-;
-; Should be used at startup by calling these two in this order:
-;	Office2010SaveRegistryKeys()
-;	Office2010InstallRegistryKeys()
-;
-; and then a clean termination procedure is to call one of these:
-;	Office2010RestoreRegistryKeys()
-;	checkRegistryKeysNeedingRestored()
-;
-; Note:  A better solution would be to have the harness handle all registry key saving / restoring automatically.
-; Note:  The called functions reside in common\opbm\dlls\opbm.dll
 Func Office2010SaveRegistryKeys()
-	$gcRegistryKeyRestorer = "Office2010"
-	Office2010SaveKeys()
+; no longer used, moved to OPBM Java app
 EndFunc
 Func Office2010InstallRegistryKeys()
-	Office2010InstallKeys()
+; no longer used, moved to OPBM Java app
 EndFunc
 Func Office2010RestoreRegistryKeys()
-	Office2010RestoreKeys()
-EndFunc
-
-; If the $gcRegistryKeyRestorer variable contains something recognized, restore those registry key settings
-; Note:  There is logic within opbm.dll which prevents improperly called registry keys from being restored,
-;        if for example they had never been saved in the first place.
-Func checkRegistryKeysNeedingRestored()
-	$gcRegistryKeyRestorer = StringLower( $gcRegistryKeyRestorer )
-	If $gcRegistryKeyRestorer = "office2010" Then
-		; Undo any registry key settings handled by Office2010 startup code
-		outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
-		Office2010RestoreRegistryKeys()
-	;ElseIf $registryKeyRestorer = "something else"
-	;ElseIf $registryKeyRestorer = "another thing"
-	EndIf
+; no longer used, moved to OPBM Java app
 EndFunc

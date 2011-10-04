@@ -376,8 +376,10 @@ public final class HUD extends DroppableFrame
 
 	public void updateDefaults()
 	{
-		// Bring it back to the front
-		setPersistAlwaysOnTop();
+		// Bring it back to the front, but only when not rebooting (shutting down)
+		if (!m_rebooting)
+			setPersistAlwaysOnTop();
+
 		if (m_status2.getText().equalsIgnoreCase("Status updates..."))
 			m_status2.setText("");
 

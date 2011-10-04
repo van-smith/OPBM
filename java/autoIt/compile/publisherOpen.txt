@@ -1,9 +1,0 @@
-                       Ultimate Packer for eXecutables
-                          Copyright (C) 1996 - 2008
-UPX 3.03w       Markus Oberhumer, Laszlo Molnar & John Reiser   Apr 27th 2008
-
-        File size         Ratio      Format      Name
-   --------------------   ------   -----------   -----------
-    646144 ->    300544   46.51%    win32/pe     publisherOpen.exe
-
-Packed 1 file.

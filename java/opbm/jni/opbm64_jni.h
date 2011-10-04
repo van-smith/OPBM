@@ -90,10 +90,10 @@ JNIEXPORT jint JNICALL Java_opbm_Opbm_getComponentHWND
 /*
  * Class:     opbm_Opbm
  * Method:    setMinMaxResizeBoundaries
- * Signature: (IIIII)I
+ * Signature: (IIIIIII)I
  */
 JNIEXPORT jint JNICALL Java_opbm_Opbm_setMinMaxResizeBoundaries
-  (JNIEnv *, jclass, jint, jint, jint, jint, jint);
+  (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint, jint);
 
 /*
  * Class:     opbm_Opbm
