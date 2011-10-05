@@ -114,13 +114,13 @@ Func SetSecurityUpdatesToManual()
 	Send( "!en" )
 	Sleep(500)
 	
-	opbmWinWaitActivate( $PREFERENCES, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader Preferences: Unable to find Window.")
+	opbmWinWaitActivate( $PREFERENCES, "", $gTimeout * 2, $ERROR_PREFIX & "WinWait: Acrobat Reader Preferences: Unable to find Window.")
 	; We arrive on a list of categories, but we don't know where we might be
 	; Move to top of list
 	Send( "{end}" )
 	Sleep(100)
 	; This process takes a long time to load the first time
-	opbmWaitUntilSystemIdle( 10, 1000, $gTimeout )
+	opbmWaitUntilSystemIdle( 10, 1000, 120000 )
 	
 	; Choose the "Do &not download or install updates automatically"
 	Send( "!n" )
