@@ -9,10 +9,13 @@
 
 // "Run macros?" key:			Security\\AccessVBOM
 // "Disable Warnings?" key:		Security\\VBAWarnings
+// Welcome screen key:			Common\\General\\ShowFirstRunOptin
 char gcOffice2010_AccessVBOM_Excel[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\AccessVBOM";
 char gcOffice2010_VBAWarnings_Excel[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Excel\\Security\\VBAWarnings";
+char gcOffice2010_WelcomeScreen_Excel[]			= "HKCU\\Software\\Microsoft\\Office\\14.0\\Common\\General\\ShownFirstRunOptin";
 char* gcOffice2010_AccessVBOM_ExcelSave			= NULL;
 char* gcOffice2010_VBAWarnings_ExcelSave		= NULL;
+char* gcOffice2010_WelcomeScreen_ExcelSave		= NULL;
 
 char gcOffice2010_AccessVBOM_PowerPoint[]		= "HKCU\\Software\\Microsoft\\Office\\14.0\\PowerPoint\\Security\\AccessVBOM";
 char gcOffice2010_VBAWarnings_PowerPoint[]		= "HKCU\\Software\\Microsoft\\Office\\14.0\\PowerPoint\\Security\\VBAWarnings";
@@ -1008,6 +1011,11 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 			free(gcOffice2010_VBAWarnings_ExcelSave);
 			gcOffice2010_VBAWarnings_ExcelSave = NULL;
 		}
+		if (gcOffice2010_WelcomeScreen_ExcelSave != NULL)
+		{
+			free(gcOffice2010_WelcomeScreen_ExcelSave);
+			gcOffice2010_WelcomeScreen_ExcelSave = NULL;
+		}
 
 		// Save Excel 2010's existing "run macros" key
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Excel);
@@ -1015,6 +1023,9 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 		// Save Excel 2010's existing "disable warnings" key
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Excel);
 		gcOffice2010_VBAWarnings_ExcelSave = GetRegistryKeyValue( &key[0] );
+		// Office 2010's Welcome Screen setting
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_WelcomeScreen_Excel);
+		gcOffice2010_WelcomeScreen_ExcelSave = GetRegistryKeyValue( &key[0] );
 
 
 //////////
@@ -1149,10 +1160,12 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 
 //////////
 // Excel
-		// Set Excel 2010 key to run macros, and to disable warnings
+		// Set Excel 2010 key to run macros, and to disable warnings, and Office 2010 in general to not show its welcome screen
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_AccessVBOM_Excel);
 		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
 		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_VBAWarnings_Excel);
+		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
+		sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_WelcomeScreen_Excel);
 		*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr,		1 )) + '0';
 
 //////////
@@ -1215,6 +1228,7 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 		char*				kptr;
 		int					lnOffice2010_AccessVBOM;
 		int					lnOffice2010_VBAWarnings;
+		int					lnOffice2010_WelcomeScreen;
 
 		// Office2010 data is stored in registry keys.  We create or set the keys specified in the ie_keys array.
 		memset(&successString[0], 0, sizeof(successString));
@@ -1245,6 +1259,18 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_VBAWarnings )) + '0';
 			free(gcOffice2010_VBAWarnings_ExcelSave);
 			gcOffice2010_VBAWarnings_ExcelSave = NULL;
+		} else {
+			*(sptr++)	= '0';
+		}
+
+		if (gcOffice2010_WelcomeScreen_ExcelSave != NULL)
+		{
+			lnOffice2010_WelcomeScreen = atoi(gcOffice2010_WelcomeScreen_ExcelSave);
+			// Restore Office2010's Welcome Screen
+			sprintf_s(&key[0], sizeof(key), "%s\000", gcOffice2010_WelcomeScreen_Excel);
+			*(sptr++)	= ((char)SetRegistryKeyValueAsDword( kptr, lnOffice2010_WelcomeScreen )) + '0';
+			free(gcOffice2010_WelcomeScreen_ExcelSave);
+			gcOffice2010_WelcomeScreen_ExcelSave = NULL;
 		} else {
 			*(sptr++)	= '0';
 		}

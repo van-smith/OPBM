@@ -12,8 +12,10 @@
 	// "Disable Warnings?" key:		Security\\VBAWarnings
 	extern char gcOffice2010_AccessVBOM_Excel[];
 	extern char gcOffice2010_VBAWarnings_Excel[];
+	extern char gcOffice2010_WelcomeScreen_Excel[];
 	extern char* gcOffice2010_AccessVBOM_ExcelSave;
 	extern char* gcOffice2010_VBAWarnings_ExcelSave;
+	extern char* gcOffice2010_WelcomeScreen_ExcelSave;
 
 	extern char gcOffice2010_AccessVBOM_PowerPoint[];
 	extern char gcOffice2010_VBAWarnings_PowerPoint[];
