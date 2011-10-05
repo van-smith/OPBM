@@ -594,7 +594,7 @@
 	float verifyPercent(float percent)
 	{
 		// Verify the percent value is in range
-		if (percent >= 1.0f && percent <= 100.0f)
+		if (percent > 1.0f && percent <= 100.0f)
 		{	// It's in the range 0..100, so make it in the range 0..1
 			percent = percent / 100.0f;
 		}

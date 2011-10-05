@@ -43,6 +43,8 @@
  */
 
 package benchmark;
+import benchmark.common.Utils;
+import benchmark.tests.AesData;
 import benchmark.tests.StringTest;
 import benchmark.tests.SHA256;
 import benchmark.tests.IntegerSort;
@@ -66,7 +68,7 @@ public class Benchmark
 		}
 		if (!didBenchmarkDllLoadOkayN())
 		{	// Did the benchmarkNN.dll load okay? (it has to connect with a running JBM to have successfully launched)
-			System.out.println("Unable to run this benchmark. Unable to find JBM.");
+			System.out.println("Unable to run this benchmark:  Unable to find JBM. Make sure JBM is running first.");
 			System.exit(-1);
 		}
 	}
@@ -83,7 +85,8 @@ public class Benchmark
 	 */
 	public Benchmark(int handle)
 	{
-		m_handle = handle;
+		m_handle	= handle;
+		m_aesData	= new AesData();		// Strings for AES encrypt/decrypt, setup in the string benchmark
 	}
 
 	/**
@@ -91,14 +94,16 @@ public class Benchmark
 	 */
 	public void run()
 	{
-		integerSort(_TEST_INTEGER_SORT);		// Test #1
-		aesEncrypt(_TEST_AES_ENCRYPT);			// Test #2
-		aesDecrypt(_TEST_AES_DECRYPT);			// Test #3
-		sha256(_TEST_SHA_256);					// Test #4
-		string(_TEST_STRING);					// Test #5
-		stream(_TEST_STREAM);					// Test #6
+		m_testNumber = 1;
 
-		// Tell the JBM we're done
+		integerSort();
+		string();			// This test Generates the random strings needed by aesEncrypt() and aesDecrypt()
+		aesEncrypt();
+		aesDecrypt();
+		sha256();
+		stream();
+
+		// Tell the JBM we're done by setting the current test beyond the max, and reporting 100.0% finished
 		reportTestN(m_handle, _TEST_MAX_COUNT + 1, "Finished");					// Set counter beyond max
 		reportCompletionN(m_handle, 1.0f);										// Indicate 100% finished
 	}
@@ -107,45 +112,35 @@ public class Benchmark
 	 * Performs sort on 128KB of 64-bit integer array
 	 * @param test the test number to report to the monitor app through native interface
 	 */
-	public void integerSort(int test)
+	private static final int _MAX_INTEGER_TESTS = 5;
+	public void integerSort()
 	{
-		reportTestN(m_handle, test, "Integer Sort");
-		IntegerSort is = new IntegerSort(m_handle);
+		IntegerSort is;
+
+		// #1 - 8KB test
+		reportTestN(m_handle, m_testNumber++, "Integer Sort 8KB");
+		is = new IntegerSort(m_handle, 1500, 1024);
 		is.run();
-	}
 
-	/**
-	 * Performs AES encrypt test, constructs 2,000 AES encrypted strings
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void aesEncrypt(int test)
-	{
-		reportTestN(m_handle, test, "AES Encrypt");
-		AesEncrypt ae = new AesEncrypt(m_handle);
-		ae.run();
-	}
+		// #2 - 64KB test
+		reportTestN(m_handle, m_testNumber++, "Integer Sort 64KB");
+		is = new IntegerSort(m_handle, 750, 8192);
+		is.run();
 
-	/**
-	 * Performs AES decrypt test, decrypts strings previously constructed in
-	 * aesEncrypt()
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void aesDecrypt(int test)
-	{
-		reportTestN(m_handle, test, "AES Decrypt");
-		AesDecrypt ad = new AesDecrypt(m_handle);
-		ad.run();
-	}
+		// #3 - 256KB test
+		reportTestN(m_handle, m_testNumber++, "Integer Sort 256KB");
+		is = new IntegerSort(m_handle, 200, 32768);
+		is.run();
 
-	/**
-	 * Performs SHA-256 encryption test
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void sha256(int test)
-	{
-		reportTestN(m_handle, test, "SHA-256");
-		SHA256 sh = new SHA256(m_handle);
-		sh.run();
+		// #4 - 1MB test
+		reportTestN(m_handle, m_testNumber++, "Integer Sort 1MB");
+		is = new IntegerSort(m_handle, 75, 128000);
+		is.run();
+
+		// #5 - 8MB test
+		reportTestN(m_handle, m_testNumber++, "Integer Sort 8MB");
+		is = new IntegerSort(m_handle, 10, 1024000);
+		is.run();
 	}
 
 	/**
@@ -153,11 +148,61 @@ public class Benchmark
 	 * selection from a fixed string.
 	 * @param test the test number to report to the monitor app through native interface
 	 */
-	public void string(int test)
+	private static final int _MAX_STRING_TESTS = 2;
+	public void string()
 	{
-		reportTestN(m_handle, test, "String Builder");
 		StringTest st = new StringTest(m_handle);
 		st.run();
+	}
+
+	/**
+	 * Performs AES encrypt test, constructs 2,000 AES encrypted strings
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	private static final int _MAX_AES_ENCRYPT_TESTS = 1;
+	public void aesEncrypt()
+	{	// Report the test we're on
+		reportTestN(m_handle, m_testNumber++, "AES Encrypt");
+
+		// Try to setup our cipher encryption engine
+		AesData.initializeCipherEncryptEngine();
+
+		// If it's valid, run the test
+		if (AesData.m_isValid)
+		{	// We're good
+			AesEncrypt ae = new AesEncrypt(m_handle);
+			ae.run();
+		}
+	}
+
+	/**
+	 * Performs AES decrypt test, decrypts strings previously constructed in
+	 * aesEncrypt()
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	private static final int _MAX_AES_DECRYPT_TESTS = 1;
+	public void aesDecrypt()
+	{	// Report the test we're on
+		reportTestN(m_handle, m_testNumber++, "AES Decrypt");
+
+		// If it's valid, run the test
+		if (AesData.m_isValid)
+		{	// We're good
+			AesDecrypt ad = new AesDecrypt(m_handle);
+			ad.run();
+		}
+	}
+
+	/**
+	 * Performs SHA-256 encryption test
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	private static final int _MAX_SHA_256_TESTS = 1;
+	public void sha256()
+	{
+		reportTestN(m_handle, m_testNumber++, "SHA-256");
+		SHA256 sh = new SHA256(m_handle);
+		sh.run();
 	}
 
 	/**
@@ -165,10 +210,11 @@ public class Benchmark
 	 * It runs in a JNI DLL.
 	 * @param test
 	 */
-	public void stream(int test)
+	private static final int _MAX_STREAM_TESTS = 1;
+	public void stream()
 	{
-		reportTestN(m_handle, test, "STREAM");
-		streamN(m_handle, _TEST_STREAM);
+		reportTestN(m_handle, m_testNumber++, "STREAM");
+		streamN(m_handle, m_testNumber);
 	}
 
 	/**
@@ -246,17 +292,12 @@ public class Benchmark
 
 	// Class variables
 	private static String		m_uuid;											// UUID assigned at startup, used to identify this instance to the monitor app
-	private int					m_handle;
+	private static int			m_handle;
+	public	static int			m_testNumber;
+
+	private static AesData		m_aesData;
 
 	// Class constants
 	private static final int	_TIMEOUT_SECONDS	= 120;
-
-	// The following values must sync with those in benchmark.h
-	private static final int	_TEST_INTEGER_SORT	= 1;
-	private static final int	_TEST_AES_ENCRYPT	= 2;
-	private static final int	_TEST_AES_DECRYPT	= 3;
-	private static final int	_TEST_SHA_256		= 4;
-	private static final int	_TEST_STRING		= 5;
-	private static final int	_TEST_STREAM		= 6;
-	private static final int	_TEST_MAX_COUNT		= 6;
+	private static final int	_TEST_MAX_COUNT		= _MAX_INTEGER_TESTS + _MAX_AES_ENCRYPT_TESTS + _MAX_AES_DECRYPT_TESTS + _MAX_SHA_256_TESTS + _MAX_STRING_TESTS + _MAX_STREAM_TESTS;
 }

@@ -1373,6 +1373,7 @@ public class BenchmarksAtom
 
 								// Wait for the process to finish, checking once a second to see if the user has clicked stop
 								process.waitFor();
+
 								m_bp.setLastWorkletEnd(Utils.getTimestamp());
 								m_bp.accumulateLastWorkletTime();
 								// Returns 0 if everything succeeded normally without error

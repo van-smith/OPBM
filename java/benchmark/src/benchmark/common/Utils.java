@@ -15,7 +15,7 @@
  *
  */
 
-package benchmark;
+package benchmark.common;
 
 import java.util.UUID;
 

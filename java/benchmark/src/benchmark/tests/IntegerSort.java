@@ -25,6 +25,9 @@
 package benchmark.tests;
 
 import benchmark.Benchmark;
+import java.util.Random;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class IntegerSort
 {
@@ -32,28 +35,72 @@ public class IntegerSort
 	 * Constructor
 	 * @param handle assigned for the app
 	 */
-	public IntegerSort(int handle)
+	public IntegerSort(int		handle,
+					   int		passes,
+					   int		integers)
 	{
-		m_handle = handle;
+		m_handle			= handle;
+		m_max_pass_count	= passes;
+		m_max_integers		= integers;
 	}
 
 	/**
-	 * Runs the test
+	 * Runs the test multiple times through:
+	 *
+	 *		1)  Create 128K 64-bit pseudo-random integers
+	 *			Java "long" variables are 64-bit, 128K * 8 = 1MB
+	 *		2)  Sort the array in ascending order
+	 *		3)  Sort the array in descending order
 	 */
 	public void run()
 	{
-		int i;
+		int i, pass;
+		float completed, passIncrement, next;
+		Random r;
+		Long[] list1 = new Long[m_max_integers];
+		Long[] list2 = new Long[m_max_integers];
 
-		for (i = 0; i < 20; i++)
-		{
-			Benchmark.reportCompletionN(m_handle, (float)i / 20);
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException ex) {
+		// Create our pseudo-random starting point
+		r = new Random(12192011);		// Note: Always give it the same seed, so all machines will test using the same pseudo-random data set
+
+		// Initialize our total variables
+		completed		= 0.0f;
+		next			= 0.01f;
+		passIncrement	= 1.0f / (float)m_max_pass_count;
+		for (pass = 0; pass < m_max_pass_count; pass++)
+		{	// Step 1:  Generate the list
+			if (completed >= next)
+				Benchmark.reportCompletionN(m_handle, completed);
+
+			// Build the next part of the list
+			for (i = 0; i < m_max_integers; i++)
+			{	// Two lists are created, one for ascending sort, one for descending
+				list1[i] = r.nextLong();
+				list2[i] = list1[i];
 			}
+
+			// Step 2:  Sort the list in ascending
+			if (completed >= next)
+				Benchmark.reportCompletionN(m_handle, completed + (0.33f * passIncrement));
+			Arrays.sort(list1);
+
+			// Step 3:  Sort the list in descending
+			if (completed >= next)
+				Benchmark.reportCompletionN(m_handle, completed + (0.67f * passIncrement));
+			Arrays.sort(list2, Collections.reverseOrder());
+
+			// Move to the next display/report value if need be
+			if (completed >= next)
+				next += 0.01f;
+
+			// Indicate this pass is complete
+			completed += passIncrement;
 		}
+		// Finished
 	}
 
 	// Class variables
-	private int				m_handle;
+	private int					m_handle;
+	private int					m_max_pass_count;
+	private int					m_max_integers;
 }
