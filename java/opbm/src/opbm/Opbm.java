@@ -2872,6 +2872,10 @@ public final class Opbm extends	ModalApp
 			@Override
 			public void run()
 			{
+				// Display a dialog box so the user doesn't click the button twice
+				String uuid;
+				uuid = OpbmDialog.simpleDialog(m_opbm, "Creating Debug Info...please wait", "Gather Debug Info", 0);
+
 				Xml root			= new Xml("opbm");
 				root.appendChild(new Xml("version", m_version));
 				Xml debugInfo		= root.appendChild(new Xml("debugInfo"));
@@ -2916,6 +2920,9 @@ public final class Opbm extends	ModalApp
 					Runtime.getRuntime().exec("explorer.exe /n, /select, " + Opbm.getHarnessTempDirectory() + filename);
 				} catch (Throwable t) {
 				}
+
+				// Remove the dialog box
+				closeDialogWindow(uuid);
 			}
 		};
 		t.start();
