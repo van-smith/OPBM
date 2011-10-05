@@ -2039,45 +2039,48 @@ public final class BenchmarkManifest
 		// Compute the total runtime
 		began = m_statisticsRuntimeBegan.getText();
 		ended = m_statisticsRuntimeEnded.getText();
-		if (!began.isEmpty() && !ended.isEmpty())
-		{	// There is a time here, we can compute the difference
-			m_statisticsRuntimeHarness.setText(Utils.convertMillisecondDifferenceToHHMMSSff(began, ended));
-		}
-
-		// Successes or failures
-		if (m_bp.getLastWorkletResult().equalsIgnoreCase("success"))
-		{	// Increases successes
-			count = m_statisticsSuccesses.getText();
-			if (count.isEmpty())
-			{	// First entry
-				m_statisticsSuccesses.setText("1");
-			} else {
-				// Add to the existing count
-				m_statisticsSuccesses.setText(Integer.toString(Integer.valueOf(count) + 1));
+		if (began != null && ended != null)
+		{
+			if (!began.isEmpty() && !ended.isEmpty())
+			{	// There is a time here, we can compute the difference
+				m_statisticsRuntimeHarness.setText(Utils.convertMillisecondDifferenceToHHMMSSff(began, ended));
 			}
 
-		} else {
-			// Increase failures
-			count = m_statisticsFailures.getText();
-			if (count.isEmpty())
-			{	// First entry
-				m_statisticsFailures.setText("1");
-			} else {
-				// Add to the existing count
-				m_statisticsFailures.setText(Integer.toString(Integer.valueOf(count) + 1));
-			}
-		}
+			// Successes or failures
+			if (m_bp.getLastWorkletResult().equalsIgnoreCase("success"))
+			{	// Increases successes
+				count = m_statisticsSuccesses.getText();
+				if (count.isEmpty())
+				{	// First entry
+					m_statisticsSuccesses.setText("1");
+				} else {
+					// Add to the existing count
+					m_statisticsSuccesses.setText(Integer.toString(Integer.valueOf(count) + 1));
+				}
 
-		// Retries
-		if (m_bp.getLastWorkletRetries() != 0)
-		{	// Increase retries
-			count = m_statisticsRetries.getText();
-			if (count.isEmpty())
-			{	// First entry
-				m_statisticsRetries.setText(Integer.toString(m_bp.getLastWorkletRetries()));
 			} else {
-				// Add to the existing count
-				m_statisticsRetries.setText(Integer.toString(Integer.valueOf(count) + m_bp.getLastWorkletRetries()));
+				// Increase failures
+				count = m_statisticsFailures.getText();
+				if (count.isEmpty())
+				{	// First entry
+					m_statisticsFailures.setText("1");
+				} else {
+					// Add to the existing count
+					m_statisticsFailures.setText(Integer.toString(Integer.valueOf(count) + 1));
+				}
+			}
+
+			// Retries
+			if (m_bp.getLastWorkletRetries() != 0)
+			{	// Increase retries
+				count = m_statisticsRetries.getText();
+				if (count.isEmpty())
+				{	// First entry
+					m_statisticsRetries.setText(Integer.toString(m_bp.getLastWorkletRetries()));
+				} else {
+					// Add to the existing count
+					m_statisticsRetries.setText(Integer.toString(Integer.valueOf(count) + m_bp.getLastWorkletRetries()));
+				}
 			}
 		}
 
