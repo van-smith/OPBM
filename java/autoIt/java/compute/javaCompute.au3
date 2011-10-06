@@ -56,7 +56,6 @@ Func LaunchJBM()
 	
 	; Grab the number of cores on this system
 	$cores = GetCoreCount()
-	$cores = 8
 	If $cores < 1 or $cores > 32 Then
 		ErrorHandle( "The core count is not correct, reported " & $cores & " cores." )
 	EndIf

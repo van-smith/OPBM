@@ -65,8 +65,8 @@ public class StringTest
 		next			= 0.01f;
 		for (i = 0; i < AesData.m_aesOriginal.length; i++)
 		{	// Populate it with random characters from baseline
-			AesData.m_aesOriginal[i] = new byte[_AES_STRING_LENGTH];
-			for (j = 0; j < _AES_STRING_LENGTH; j++)
+			AesData.m_aesOriginal[i] = new byte[AesData._AES_STRING_LENGTH];
+			for (j = 0; j < AesData._AES_STRING_LENGTH; j++)
 			{	// Grab a character from our pseudo-randomly created list of characters above
 				AesData.m_aesOriginal[i][j] = baseline[(int)(rCharInBaseline.nextFloat() * (float)(_BASELINE_STRING_LENGTH - 1))];
 			}
@@ -118,5 +118,4 @@ public class StringTest
 	private int					m_handle;
 	private static final int	_STRING_LENGTH				= 32768 * 8;		// 256KB
 	private static final int	_BASELINE_STRING_LENGTH		= 256;				// One for every ANSI+128 character
-	private static final int	_AES_STRING_LENGTH			= 2048;				// 2KB
 }

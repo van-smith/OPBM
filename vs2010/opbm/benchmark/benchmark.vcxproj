@@ -80,7 +80,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;BENCHMARK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Stream\;c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -99,7 +99,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;BENCHMARK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Stream\;c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,7 +120,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;BENCHMARK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Stream\;c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,7 +143,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;BENCHMARK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Stream\;c:\cana\java\benchmark\jni\;C:\Program Files\Java\jdk1.7.0\include\win32;C:\Program Files\Java\jdk1.7.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -173,10 +173,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="stream\cStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\java\benchmark\jni\benchmark_jni.h" />
     <ClInclude Include="..\common\jbm_common.h" />
+    <ClInclude Include="stream\cStream.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

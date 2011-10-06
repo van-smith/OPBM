@@ -13,20 +13,18 @@ import javax.crypto.spec.SecretKeySpec;
 public class AesData
 {
 	/**
-	 * Constructor. Builds 10,000 element strings for encryption / decryption
+	 * Constructor. Builds N-element strings for encryption / decryption
 	 */
-	public AesData()
+	public static void initialize()
 	{
 		m_aesOriginal	= new byte[_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE][];
 		m_aesEncrypted	= new byte[_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE][];
 	}
 
 	/**
-	 * Initialization algorithm to setup the AES keys, specs and cipher engine
-	 * @param ad the AesData class to use
-	 * @return true or false if initialized okay
+	 * Initialization algorithm to setup the AES keys, specs and cipher engine.
 	 */
-	public static void initializeCipherEncryptEngine()
+	public static void initializeCipherEncryptionEngine()
 	{
         // generate a key
 		try {
@@ -101,5 +99,6 @@ public class AesData
 	public	static byte[][]				m_aesOriginal;
 	public	static byte[][]				m_aesEncrypted;
 
-	public static final int				_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE = 10000;
+	public	static final int			_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE = 10000;
+	public	static final int			_AES_STRING_LENGTH							= 2048;		// 2KB each
 }

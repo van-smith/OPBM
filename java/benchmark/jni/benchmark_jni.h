@@ -7,22 +7,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef benchmark_Benchmark__MAX_INTEGER_TESTS
+#define benchmark_Benchmark__MAX_INTEGER_TESTS 5L
+#undef benchmark_Benchmark__MAX_STRING_TESTS
+#define benchmark_Benchmark__MAX_STRING_TESTS 2L
+#undef benchmark_Benchmark__MAX_AES_ENCRYPT_TESTS
+#define benchmark_Benchmark__MAX_AES_ENCRYPT_TESTS 1L
+#undef benchmark_Benchmark__MAX_AES_DECRYPT_TESTS
+#define benchmark_Benchmark__MAX_AES_DECRYPT_TESTS 1L
+#undef benchmark_Benchmark__MAX_SHA_256_TESTS
+#define benchmark_Benchmark__MAX_SHA_256_TESTS 1L
+#undef benchmark_Benchmark__MAX_STREAM_TESTS
+#define benchmark_Benchmark__MAX_STREAM_TESTS 1L
 #undef benchmark_Benchmark__TIMEOUT_SECONDS
 #define benchmark_Benchmark__TIMEOUT_SECONDS 120L
-#undef benchmark_Benchmark__TEST_INTEGER_SORT
-#define benchmark_Benchmark__TEST_INTEGER_SORT 1L
-#undef benchmark_Benchmark__TEST_AES_ENCRYPT
-#define benchmark_Benchmark__TEST_AES_ENCRYPT 2L
-#undef benchmark_Benchmark__TEST_AES_DECRYPT
-#define benchmark_Benchmark__TEST_AES_DECRYPT 3L
-#undef benchmark_Benchmark__TEST_SHA_256
-#define benchmark_Benchmark__TEST_SHA_256 4L
-#undef benchmark_Benchmark__TEST_STRING
-#define benchmark_Benchmark__TEST_STRING 5L
-#undef benchmark_Benchmark__TEST_STREAM
-#define benchmark_Benchmark__TEST_STREAM 6L
 #undef benchmark_Benchmark__TEST_MAX_COUNT
-#define benchmark_Benchmark__TEST_MAX_COUNT 6L
+#define benchmark_Benchmark__TEST_MAX_COUNT 11L
 /*
  * Class:     benchmark_Benchmark
  * Method:    didBenchmarkDllLoadOkayN
@@ -74,10 +74,10 @@ JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportExitingN
 /*
  * Class:     benchmark_Benchmark
  * Method:    streamN
- * Signature: (II)V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_benchmark_Benchmark_streamN
-  (JNIEnv *, jclass, jint, jint);
+  (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }

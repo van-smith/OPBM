@@ -30,6 +30,7 @@
 	#include "benchmark_jni.h"			// JNI include file derived from netbeans benchmark.jar
 	#include "..\common\jbm_common.h"	// JBM common variables
 	#include <malloc.h>
+	#include "cStream.h"
 
 
 
@@ -61,6 +62,7 @@
 
 	// Forward declarations
 	void	writePipeDataToJBM			(SConnections* sc);
+	void	reportCompletionN			(int handle, float percent);	// callback from cStream
 
 
 
@@ -378,6 +380,13 @@
 //
 /////
 	// streamN()
-	JNIEXPORT void JNICALL Java_benchmark_Benchmark_streamN(JNIEnv* env, jclass cls, jint handle, jint testNumber)
+	JNIEXPORT void JNICALL Java_benchmark_Benchmark_streamN(JNIEnv* env, jclass cls, jint handle)
 	{
+		cStream* cs		= new cStream(handle);
+		cs->runBenchmarkNoOutput();
+	}
+
+	void reportCompletionN(int handle, float percent)
+	{
+		Java_benchmark_Benchmark_reportCompletionN(NULL, NULL, handle, percent);
 	}

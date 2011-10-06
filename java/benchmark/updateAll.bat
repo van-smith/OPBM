@@ -1,0 +1,2 @@
+call UpdateAutoItFiles
+call UpdateJBM

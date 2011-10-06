@@ -25,8 +25,6 @@
 package benchmark.tests;
 
 import benchmark.Benchmark;
-import benchmark.tests.AesData;
-import java.io.UnsupportedEncodingException;
 import javax.crypto.*;
 
 

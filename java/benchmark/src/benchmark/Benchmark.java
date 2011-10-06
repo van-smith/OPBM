@@ -5,10 +5,10 @@
  * a single-threaded class that executes a series of workloads:
  *
  *		o Integer sort
+ *		o String construction
  *		o AES encrypt / decrypt
  *		o SHA-256
- *		o 32KB String construction
- *		o STREAM test from minibench
+ *		o STREAM
  *		o Provide a real-time completion report to an external monitor app
  *
  * To run the benchmark:
@@ -78,7 +78,7 @@ public class Benchmark
 	public native static void		reportTestN(int handle, int test, String name);						// Called to indicate a new test has started
 	public native static void		reportCompletionN(int handle, float percent);						// Called to update the completion status of the current test
 	public native static void		reportExitingN(int handle);											// Tell JBM that we're exiting
-	public native static void		streamN(int handle, int test);										// Test from miniBench, written in C++
+	public native static void		streamN(int handle);												// Test from miniBench, written in C++
 
 	/**
 	 * Constructor
@@ -86,7 +86,7 @@ public class Benchmark
 	public Benchmark(int handle)
 	{
 		m_handle	= handle;
-		m_aesData	= new AesData();		// Strings for AES encrypt/decrypt, setup in the string benchmark
+		AesData.initialize();
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class Benchmark
 		reportTestN(m_handle, m_testNumber++, "AES Encrypt");
 
 		// Try to setup our cipher encryption engine
-		AesData.initializeCipherEncryptEngine();
+		AesData.initializeCipherEncryptionEngine();
 
 		// If it's valid, run the test
 		if (AesData.m_isValid)
@@ -214,7 +214,7 @@ public class Benchmark
 	public void stream()
 	{
 		reportTestN(m_handle, m_testNumber++, "STREAM");
-		streamN(m_handle, m_testNumber);
+		streamN(m_handle);
 	}
 
 	/**
@@ -294,8 +294,6 @@ public class Benchmark
 	private static String		m_uuid;											// UUID assigned at startup, used to identify this instance to the monitor app
 	private static int			m_handle;
 	public	static int			m_testNumber;
-
-	private static AesData		m_aesData;
 
 	// Class constants
 	private static final int	_TIMEOUT_SECONDS	= 120;

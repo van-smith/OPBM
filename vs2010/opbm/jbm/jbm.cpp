@@ -187,8 +187,13 @@
 			gnHeight	= 4;
 			gnWidth		= 5;
 
-		} else if (gnProcessCount >= 21 && gnProcessCount <= 25) {
-			// 21 to 25 processes, five lines of five entries
+		} else if (gnProcessCount >= 21 && gnProcessCount <= 24) {
+			// 21 to 24 processes, six lines of four entries
+			gnHeight	= 4;
+			gnWidth		= 6;
+
+		} else if (gnProcessCount == 25) {
+			// 25 processes, five lines of five entries
 			gnHeight	= 5;
 			gnWidth		= 5;
 
@@ -509,12 +514,12 @@
 		lbIsRunning = false;
 		switch (sp->status)
 		{
+			case _JBM_EXITED:
 			case _JBM_EMPTY_SLOT:
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionEmptySlot);
 				break;
 
 			case _JBM_UNUSED_SLOT:
-			case _JBM_EXITED:
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionRed);
 				break;
 
