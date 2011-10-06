@@ -13,6 +13,7 @@
 #include <WinBase.h>
 #include <tchar.h>
 #include "resource.h"
+#define _JBM 1
 #include "..\common\jbm_common.h"
 
 
@@ -47,6 +48,12 @@
 //////////
 // Global variables
 /////
+	struct SScoringDataLL
+	{	// A linked list of scoring data for the process
+		SScoringDataLL*		next;
+		SScoringData		score;
+	};
+
 	struct SProcesses
 	{
 		int					status;					// _JBM_EMPTY_SLOT, _JBM_SLOT_FILLED or _JBM_RUNNING
@@ -56,6 +63,7 @@
 		SPipeData			pipeData;				// Copy of the most recently read pipe data
 		SPipeDataNames		testHistory[4];			// Holds a history of prior tests that were run
 		SPipeDataNames		testHistoryTimes[4];	// Holds a history of the time between 
+		SScoringDataLL*		firstScore;				// Pointer to first score
 	};
 	SProcesses*	gsProcesses					= NULL;
 	int			gnProcessCount				= 0;
@@ -100,5 +108,6 @@
 	void				drawStatusBarSegment			(HDC hdc, HDC hdc2, RECT& rc, HBITMAP left, HBITMAP middle, HBITMAP right, int leftWidth, int middleWidth, int rightWidth, char* text);
 	void				connectToThisInstancePipeData	(int slot);
 	void				loadPipeData					(int slot, int newStatus);
+	void				loadScoringData					(int slot);
 	void				setSlotStatus					(int slot, int newStatus);
 	void				checkIfAllHaveExited			(void);

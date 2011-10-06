@@ -173,12 +173,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="stream\cStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\java\benchmark\jni\benchmark_jni.h" />
     <ClInclude Include="..\common\jbm_common.h" />
-    <ClInclude Include="stream\cStream.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

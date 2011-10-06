@@ -21,7 +21,7 @@
  *		(new SHA256()).run()
  *
  * -----
- * Last Updated:  Sep 30, 2011
+ * Last Updated:  Oct 6, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -29,13 +29,14 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.2.0
+ * @version 1.0
  *
  */
 
 package benchmark.tests;
 
-import benchmark.Benchmark;
+import benchmark.common.JbmGui;
+import benchmark.common.NanoTimer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -47,7 +48,11 @@ public class SHA256
 	 */
 	public SHA256(int handle)
 	{
-		m_handle = handle;
+		m_jbm				= new JbmGui(handle, _MAX_PASSES);
+		m_nano				= new NanoTimer();
+		// Initialize our timing array
+		m_times				= new long[_MAX_PASSES];
+		m_nano.initializeTimes(m_times);
 	}
 
 	/**
@@ -55,8 +60,7 @@ public class SHA256
 	 */
 	public void run()
 	{
-		int i;
-		float completed, increment, next;
+		int i, pass;
 		MessageDigest md;
 		byte[] hash;
 
@@ -65,46 +69,52 @@ public class SHA256
 			md = MessageDigest.getInstance("SHA-256");
 
 		} catch (NoSuchAlgorithmException ex) {
-			System.out.println("SHA-256 Failure:  Unable to get SHA-256 instance.");
+			System.out.println("SHA-256 Failure:  Unable to get SHA-256 Message Digest instance.");
 			return;
 		}
 		// If we get here, we're god
 
-		// Perform the test
-		completed	= 0.0f;
-		increment	= 1.0f / (float)AesData.m_aesOriginal.length / 2.0f;
-		next		= 0.01f;
-
-		// Compute on the original data
-		for (i = 0; i < AesData.m_aesOriginal.length; i++)
-		{	// Compute the has for this item
-			md.reset();
-			hash = md.digest(AesData.m_aesOriginal[i]);
-
-			completed += increment;
-			if (completed > next)
-			{	// Report our progress
-				Benchmark.reportCompletionN(m_handle, completed);
-				next += 0.01f;
+		// Repeat the test however many times
+		for (pass = 0; pass < _MAX_PASSES; pass++)
+		{
+			// Perform the test
+			m_nano.start();
+			// Compute on the original data
+			for (i = 0; i < AesData.m_aesOriginal.length; i++)
+			{	// Compute the has for this item
+				md.reset();
+				hash = md.digest(AesData.m_aesOriginal[i]);
 			}
-		}
 
-		// Compute on the encrypted data
-		for (i = 0; i < AesData.m_aesEncrypted.length; i++)
-		{	// Compute the has for this item
-			md.reset();
-			hash = md.digest(AesData.m_aesEncrypted[i]);
-
-			completed += increment;
-			if (completed > next)
-			{	// Report our progress
-				Benchmark.reportCompletionN(m_handle, completed);
-				next += 0.01f;
+			// Compute on the encrypted data
+			for (i = 0; i < AesData.m_aesEncrypted.length; i++)
+			{	// Compute the has for this item
+				md.reset();
+				hash = md.digest(AesData.m_aesEncrypted[i]);
 			}
+			// All done
+			m_times[pass] = m_nano.elapsed();
+
+			// Update the JBM if need be
+			m_jbm.increment();
 		}
-		// All done
+		// Finished
+		reportTiming();
+	}
+
+	/**
+	 * Reports the timing for this test
+	 */
+	public void reportTiming()
+	{
+		m_nano.processTimes(m_times, "SHA-256", m_jbm.getHandle());
 	}
 
 	// Class variables
-	private int				m_handle;
+	private JbmGui				m_jbm;
+	private NanoTimer			m_nano;
+	private	long[]				m_times;
+
+	// Constants
+	private static final int	_MAX_PASSES					= 10;				// Build it 10x over
 }

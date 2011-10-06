@@ -3,7 +3,8 @@
  *
  * This class is a helper providing utility functions throughout.
  *
- * Last Updated:  Oct 4, 2011
+ * -----
+ * Last Updated:  Oct 6, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -11,7 +12,7 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.2.0
+ * @version 1.0
  *
  */
 

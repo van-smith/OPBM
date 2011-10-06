@@ -10,7 +10,7 @@
  *		(new IntegerSort()).run()
  *
  * -----
- * Last Updated:  Sep 30, 2011
+ * Last Updated:  Oct 6, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -18,14 +18,15 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.2.0
+ * @version 1.0
  *
  */
 
 package benchmark.tests;
 
-import benchmark.Benchmark;
-import java.util.Random;
+import benchmark.common.JbmGui;
+import benchmark.common.NanoTimer;
+import benchmark.common.RandomData;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -39,9 +40,18 @@ public class IntegerSort
 					   int		passes,
 					   int		integers)
 	{
-		m_handle			= handle;
-		m_max_pass_count	= passes;
+		m_max_passes		= passes;
 		m_max_integers		= integers;
+
+		m_list1				= new Long[m_max_integers];		// For ascending sort
+		m_list2				= new Long[m_max_integers];		// For descending sort
+
+		m_jbm				= new JbmGui(handle, passes);
+		m_nano				= new NanoTimer();
+
+		// Initialize our timing array
+		m_times				= new long[passes];
+		m_nano.initializeTimes(m_times);
 	}
 
 	/**
@@ -55,52 +65,54 @@ public class IntegerSort
 	public void run()
 	{
 		int i, pass;
-		float completed, passIncrement, next;
-		Random r;
-		Long[] list1 = new Long[m_max_integers];
-		Long[] list2 = new Long[m_max_integers];
 
-		// Create our pseudo-random starting point
-		r = new Random(12192011);		// Note: Always give it the same seed, so all machines will test using the same pseudo-random data set
+		for (pass = 0; pass < m_max_passes; pass++)
+		{
+			m_nano.start();
 
-		// Initialize our total variables
-		completed		= 0.0f;
-		next			= 0.01f;
-		passIncrement	= 1.0f / (float)m_max_pass_count;
-		for (pass = 0; pass < m_max_pass_count; pass++)
-		{	// Step 1:  Generate the list
-			if (completed >= next)
-				Benchmark.reportCompletionN(m_handle, completed);
+			//////////
+			// Test code
+			//////
+				// Step 1:  Generate the list
+					for (i = 0; i < m_max_integers; i++)
+					{	// Two lists are created, one for ascending sort, one for descending
+						m_list1[i] = RandomData.m_rdIntegerSort.nextLong();
+						m_list2[i] = m_list1[i];
+					}
 
-			// Build the next part of the list
-			for (i = 0; i < m_max_integers; i++)
-			{	// Two lists are created, one for ascending sort, one for descending
-				list1[i] = r.nextLong();
-				list2[i] = list1[i];
-			}
+				// Step 2:  Sort the list in ascending
+					Arrays.sort(m_list1);
 
-			// Step 2:  Sort the list in ascending
-			if (completed >= next)
-				Benchmark.reportCompletionN(m_handle, completed + (0.33f * passIncrement));
-			Arrays.sort(list1);
+				// Step 3:  Sort the list in descending
+					Arrays.sort(m_list2, Collections.reverseOrder());
+			//////
+			// End
+			//////////
 
-			// Step 3:  Sort the list in descending
-			if (completed >= next)
-				Benchmark.reportCompletionN(m_handle, completed + (0.67f * passIncrement));
-			Arrays.sort(list2, Collections.reverseOrder());
+			m_times[pass] = m_nano.elapsed();
 
-			// Move to the next display/report value if need be
-			if (completed >= next)
-				next += 0.01f;
-
-			// Indicate this pass is complete
-			completed += passIncrement;
+			// Update the JBM after this pass
+			m_jbm.increment();
 		}
 		// Finished
+		reportTiming();
 	}
 
+	/**
+	 * Reports the timing for this test
+	 */
+	public void reportTiming()
+	{
+		m_nano.processTimes(m_times, "Integer Sort", m_jbm.getHandle());
+	}
+
+
 	// Class variables
-	private int					m_handle;
-	private int					m_max_pass_count;
+	private JbmGui				m_jbm;
+	private NanoTimer			m_nano;
+	private int					m_max_passes;
 	private int					m_max_integers;
+	private	long[]				m_times;
+	private Long[]				m_list1;
+	private Long[]				m_list2;
 }

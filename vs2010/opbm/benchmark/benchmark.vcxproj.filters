@@ -13,16 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Stream">
-      <UniqueIdentifier>{5879f635-388d-4427-8e44-f058ba3d37e9}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stream\cStream.cpp">
-      <Filter>Stream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -31,9 +25,6 @@
     </ClInclude>
     <ClInclude Include="..\common\jbm_common.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stream\cStream.h">
-      <Filter>Stream</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

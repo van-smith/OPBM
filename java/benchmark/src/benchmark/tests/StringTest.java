@@ -10,7 +10,7 @@
  *		(new StringTest()).run()
  *
  * -----
- * Last Updated:  Sep 30, 2011
+ * Last Updated:  Oct 6, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -18,14 +18,15 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.2.0
+ * @version 1.0
  *
  */
 
 package benchmark.tests;
 
-import benchmark.Benchmark;
-import java.util.Random;
+import benchmark.common.JbmGui;
+import benchmark.common.NanoTimer;
+import benchmark.common.RandomData;
 
 public class StringTest
 {
@@ -35,7 +36,29 @@ public class StringTest
 	 */
 	public StringTest(int handle)
 	{
-		m_handle = handle;
+		int i, j;
+
+		m_jbm				= new JbmGui(handle, _MAX_PASSES);
+		m_nano				= new NanoTimer();
+		// Initialize our timing array
+		m_times				= new long[_MAX_PASSES];
+		m_nano.initializeTimes(m_times);
+
+		// Generate a baseline random sequence of 256 alphanumeric characters
+		m_baseline = new byte[_BASELINE_STRING_LENGTH];
+		for (i = 0; i < _BASELINE_STRING_LENGTH; i++)
+			m_baseline[i] = (byte)(RandomData.m_rdStringBuildBaseline.nextFloat() * (float)(_BASELINE_STRING_LENGTH - 1));
+
+		// Populate the strings needed for AES encoding from the random baseline
+		for (i = 0; i < AesData.m_aesOriginal.length; i++)
+		{	// Populate it with random characters from baseline
+			AesData.m_aesOriginal[i] = new byte[AesData._AES_STRING_LENGTH];
+			for (j = 0; j < AesData._AES_STRING_LENGTH; j++)
+			{	// Grab a character from our pseudo-randomly created list of characters above
+				AesData.m_aesOriginal[i][j] = m_baseline[(int)(RandomData.m_rdStringCharInBaseline.nextFloat() * (float)(_BASELINE_STRING_LENGTH - 1))];
+			}
+		}
+		// When we get here, our list is populated with random-length text from _MIN_AES_STRING_LENGTH to _MAX_AES_STRING_LENGTH characters in length
 	}
 
 	/**
@@ -44,78 +67,57 @@ public class StringTest
 	public void run()
 	{
 		char c;
-		int i, j, length, insertAt;
-		float completed, increment, next;
-		byte[] baseline;
+		int i, pass, insertAt;
 		StringBuilder sb;
-		Random rBuildBaseline, rCharInBaseline, rCharToInsert, rInsertAt;
 
-		// Generate a baseline random sequence of 256 alphanumeric characters
-		baseline = new byte[_BASELINE_STRING_LENGTH];
-		rBuildBaseline = new Random(12192011);
-		for (i = 0; i < _BASELINE_STRING_LENGTH; i++)
-			baseline[i] = (byte)(rBuildBaseline.nextFloat() * (float)(_BASELINE_STRING_LENGTH - 1));
+		// Populate a 32KB String using the StringBuilder class
+		for (pass = 0; pass < _MAX_PASSES; pass++)
+		{	// Each pass, record timing information
+			m_nano.start();
 
-		// #1 - Populate the list with random length strings up to 8KB
-		Benchmark.reportTestN(m_handle, Benchmark.m_testNumber++, "Build " + Integer.toString(AesData.m_aesOriginal.length) + " Strings");
-		// Process through populating the list with
-		rCharInBaseline	= new Random(12192011);		// Used to pull in a randomly generated character from baseline
-		completed		= 0.0f;
-		increment		= 1.0f / (float)AesData.m_aesOriginal.length;
-		next			= 0.01f;
-		for (i = 0; i < AesData.m_aesOriginal.length; i++)
-		{	// Populate it with random characters from baseline
-			AesData.m_aesOriginal[i] = new byte[AesData._AES_STRING_LENGTH];
-			for (j = 0; j < AesData._AES_STRING_LENGTH; j++)
-			{	// Grab a character from our pseudo-randomly created list of characters above
-				AesData.m_aesOriginal[i][j] = baseline[(int)(rCharInBaseline.nextFloat() * (float)(_BASELINE_STRING_LENGTH - 1))];
+			// Process through populating the list with
+			sb = new StringBuilder(0);
+			for (i = 0; i < _STRING_LENGTH; i++)
+			{	// Grab our random character from baseline
+				c = (char)m_baseline[(int)(RandomData.m_rdStringCharToInsert.nextFloat() * (float)(_BASELINE_STRING_LENGTH - 1))];
+
+				// Find out where we should insert the character
+				if (i % 2 == 0 && i != 0)
+				{	// Every other character we insert a character
+					insertAt = (int)(RandomData.m_rdStringInsertAt.nextFloat() * (float)(sb.length() - 1));
+					sb.insert(insertAt, c);
+				} else {
+					// And every alternate character we append a character
+					sb.append(c);
+				}
 			}
+			// When we get here, the StringBuilder string is produced
+			m_times[pass] = m_nano.elapsed();
 
-			completed += increment;
-			if (completed > next)
-			{	// Report our progress
-				Benchmark.reportCompletionN(m_handle, completed);
-				next += 0.01f;
-			}
+			// Update the JBM if need be
+			m_jbm.increment();
 		}
-		// When we get here, our list is populated with random-length text from _MIN_AES_STRING_LENGTH to _MAX_AES_STRING_LENGTH characters in length
-
-
-		// #2 - Populate a 32KB String using the StringBuilder class
-		Benchmark.reportTestN(m_handle, Benchmark.m_testNumber++, "Build 256KB String");
-		// Process through populating the list with
-		sb				= new StringBuilder(0);
-		rCharToInsert	= new Random(12192011);		// Handles the character to insert
-		rInsertAt		= new Random(12192011);		// Handles the location within sb to insert it at
-		completed		= 0.0f;
-		increment		= 1.0f / (float)_STRING_LENGTH;
-		next			= 0.01f;
-		for (i = 0; i < _STRING_LENGTH; i++)
-		{	// Grab our random character from baseline
-			c = (char)baseline[(int)(rCharToInsert.nextFloat() * (float)(_BASELINE_STRING_LENGTH - 1))];
-
-			// Find out where we should insert the character
-			if (i % 2 == 0 && i != 0)
-			{	// Every other character we insert a character
-				insertAt = (int)(rInsertAt.nextFloat() * (float)(sb.length() - 1));
-				sb.insert(insertAt, c);
-			} else {
-				// And every alternate character we append a character
-				sb.append(c);
-			}
-
-			completed += increment;
-			if (completed > next)
-			{	// Report our progress
-				Benchmark.reportCompletionN(m_handle, completed);
-				next += 0.01f;
-			}
-		}
-		// When we get here, the StringBuilder string is produced
+		// Finished
+		reportTiming();
 	}
 
+	/**
+	 * Reports the timing for this test
+	 */
+	public void reportTiming()
+	{
+		m_nano.processTimes(m_times, "Build String", m_jbm.getHandle());
+	}
+
+
 	// Class variables
-	private int					m_handle;
-	private static final int	_STRING_LENGTH				= 32768 * 8;		// 256KB
+	private JbmGui				m_jbm;
+	private NanoTimer			m_nano;
+	private	long[]				m_times;
+	private	byte[]				m_baseline;
+
+	// Constants
+	private static final int	_MAX_PASSES					= 10;				// Build it 10x over
+	private static final int	_STRING_LENGTH				= 32768;			// 32KB
 	private static final int	_BASELINE_STRING_LENGTH		= 256;				// One for every ANSI+128 character
 }

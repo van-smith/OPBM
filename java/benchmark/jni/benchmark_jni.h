@@ -7,10 +7,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef benchmark_Benchmark__TIMEOUT_SECONDS
+#define benchmark_Benchmark__TIMEOUT_SECONDS 120L
+#undef benchmark_Benchmark__STARTUP_POLLS_PER_SECOND
+#define benchmark_Benchmark__STARTUP_POLLS_PER_SECOND 20L
 #undef benchmark_Benchmark__MAX_INTEGER_TESTS
-#define benchmark_Benchmark__MAX_INTEGER_TESTS 5L
+#define benchmark_Benchmark__MAX_INTEGER_TESTS 1L
 #undef benchmark_Benchmark__MAX_STRING_TESTS
-#define benchmark_Benchmark__MAX_STRING_TESTS 2L
+#define benchmark_Benchmark__MAX_STRING_TESTS 1L
 #undef benchmark_Benchmark__MAX_AES_ENCRYPT_TESTS
 #define benchmark_Benchmark__MAX_AES_ENCRYPT_TESTS 1L
 #undef benchmark_Benchmark__MAX_AES_DECRYPT_TESTS
@@ -19,10 +23,8 @@ extern "C" {
 #define benchmark_Benchmark__MAX_SHA_256_TESTS 1L
 #undef benchmark_Benchmark__MAX_STREAM_TESTS
 #define benchmark_Benchmark__MAX_STREAM_TESTS 1L
-#undef benchmark_Benchmark__TIMEOUT_SECONDS
-#define benchmark_Benchmark__TIMEOUT_SECONDS 120L
 #undef benchmark_Benchmark__TEST_MAX_COUNT
-#define benchmark_Benchmark__TEST_MAX_COUNT 11L
+#define benchmark_Benchmark__TEST_MAX_COUNT 6L
 /*
  * Class:     benchmark_Benchmark
  * Method:    didBenchmarkDllLoadOkayN
@@ -57,6 +59,14 @@ JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestN
 
 /*
  * Class:     benchmark_Benchmark
+ * Method:    reportTestTimeN
+ * Signature: (ILjava/lang/String;FFFFF)V
+ */
+JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestTimeN
+  (JNIEnv *, jclass, jint, jstring, jfloat, jfloat, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     benchmark_Benchmark
  * Method:    reportCompletionN
  * Signature: (IF)V
  */
@@ -69,14 +79,6 @@ JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportCompletionN
  * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportExitingN
-  (JNIEnv *, jclass, jint);
-
-/*
- * Class:     benchmark_Benchmark
- * Method:    streamN
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_benchmark_Benchmark_streamN
   (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus

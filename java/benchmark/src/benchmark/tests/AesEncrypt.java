@@ -10,7 +10,7 @@
  *		(new AesEncrypt()).run()
  *
  * -----
- * Last Updated:  Sep 30, 2011
+ * Last Updated:  Oct 6, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -18,13 +18,14 @@
  * (c) Copyright Cana Labs.
  * Free software licensed under the GNU GPL2.
  *
- * @version 1.2.0
+ * @version 1.0
  *
  */
 
 package benchmark.tests;
 
-import benchmark.Benchmark;
+import benchmark.common.JbmGui;
+import benchmark.common.NanoTimer;
 import javax.crypto.*;
 
 
@@ -36,7 +37,11 @@ public class AesEncrypt
 	 */
 	public AesEncrypt(int handle)
 	{
-		m_handle = handle;
+		m_jbm				= new JbmGui(handle, _MAX_PASSES);
+		m_nano				= new NanoTimer();
+		// Initialize our timing array
+		m_times				= new long[_MAX_PASSES];
+		m_nano.initializeTimes(m_times);
 	}
 
 	/**
@@ -44,43 +49,55 @@ public class AesEncrypt
 	 */
 	public void run()
 	{
-		int i;
-		float completed, increment, next;
-		String encrypted, original;
+		int i, pass;
 
 		// We're in encryption mode
 		AesData.setEncryptMode();
 
-		// Run the test
-		completed	= 0.0f;								// Start at the beginning
-		increment	= 1.0f / (float)AesData.m_aesOriginal.length;		// Increase by this much each encryption
-		next		= 0.01f;							// Begin reporting at 1%
-		for (i = 0; i < AesData.m_aesOriginal.length; i++)
+		// Repeat the test however many times
+		for (pass = 0; pass < _MAX_PASSES; pass++)
 		{
-			try {
-				// Convert it
-				AesData.m_aesEncrypted[i] = AesData.m_cipher.doFinal(AesData.m_aesOriginal[i]);
+			// Run the test
+			m_nano.start();
+			for (i = 0; i < AesData.m_aesOriginal.length; i++)
+			{
+				try {
+					// Convert it
+					AesData.m_aesEncrypted[i] = AesData.m_cipher.doFinal(AesData.m_aesOriginal[i]);
 
-			} catch (IllegalBlockSizeException ex) {
-				// A failure on conversion
-				System.out.println("AES Encryption Failure:  Cipher reported illegal block size on string [" + Integer.toString(i) + "]");
-				return;
-			} catch (BadPaddingException ex) {
-				// A failure on conversion
-				System.out.println("AES Encryption Failure:  Cipher reported bad padding on string [" + Integer.toString(i) + "]");
-				return;
+				} catch (IllegalBlockSizeException ex) {
+					// A failure on conversion
+					System.out.println("AES Encryption Failure:  Cipher reported illegal block size on string [" + Integer.toString(i) + "]");
+					return;
+				} catch (BadPaddingException ex) {
+					// A failure on conversion
+					System.out.println("AES Encryption Failure:  Cipher reported bad padding on string [" + Integer.toString(i) + "]");
+					return;
+				}
+				// When we get here, we're good
 			}
-			completed += increment;
-			if (completed > next)
-			{	// Report its progress to the JBM
-				Benchmark.reportCompletionN(m_handle, completed);
-				next += 0.01f;
-			}
+			m_times[pass] = m_nano.elapsed();
+
+			// Update the JBM if need be
+			m_jbm.increment();
 		}
-		// When we get here, we're good
+		// Finished
+		reportTiming();
 	}
 
+	/**
+	 * Reports the timing for this test
+	 */
+	public void reportTiming()
+	{
+		m_nano.processTimes(m_times, "AES Encrypt", m_jbm.getHandle());
+	}
 
 	// Class variables
-	private int				m_handle;
+	private JbmGui				m_jbm;
+	private NanoTimer			m_nano;
+	private	long[]				m_times;
+
+	// Constants
+	private static final int	_MAX_PASSES					= 10;				// Build it 10x over
 }

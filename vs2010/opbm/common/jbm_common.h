@@ -32,6 +32,7 @@ const wchar_t	_JBM_Pipe_wsprintf_string[]				= L"%s%04u\000";
 #define			_JBM_REQUEST_A_NEW_HANDLE				WM_USER + 5
 #define			_JBM_THIS_INSTANCE_IS_FINISHED			WM_USER + 6
 #define			_JBM_THIS_INSTANCE_HAS_EXITED			WM_USER + 7
+#define			_JBM_HAS_SCORING_DATA					WM_USER + 8
 
 
 // Data used in the named pipe to communicate with JBM
@@ -39,6 +40,16 @@ struct SPipeDataNames
 {
 	int			length;								// Length of the name stored in name
 	char		name[32];							// Text of the name
+};
+
+struct SScoringData
+{
+	SPipeDataNames	name;							// Name of the test with this scoring data
+	float			min;							// Minimum score observed
+	float			max;							// Maximum score observed
+	float			avg;							// Average
+	float			geo;							// Geometric mean
+	float			CV;								// Coefficient of variation
 };
 
 struct SPipeData
@@ -52,4 +63,5 @@ struct SPipeData
 
 	SPipeDataNames	instance;						// Name assigned to the instance (Typically "JVM x on Core y"
 	SPipeDataNames	test;							// Name of the current test being run
+	SScoringData	score;							// Holds data transferred for scores (see _JBM_HAS_SCORING_DATA message)
 };

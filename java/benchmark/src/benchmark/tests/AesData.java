@@ -1,4 +1,23 @@
-package benchmark.tests;
+/*
+ * OPBM's Java Benchmark -- AES data and encryption/decryption init functions
+ *
+ * This class holds the logic related to setting up everything needed by the
+ * AES encrypt/decrypt tests.
+ *
+ * -----
+ * Last Updated:  Oct 6, 2011
+ *
+ * by Van Smith
+ * Cossatot Analytics Laboratories, LLC. (Cana Labs)
+ *
+ * (c) Copyright Cana Labs.
+ * Free software licensed under the GNU GPL2.
+ *
+ * @version 1.0
+ *
+ */
+
+ package benchmark.tests;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -10,7 +29,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class AesData
+public final class AesData
 {
 	/**
 	 * Constructor. Builds N-element strings for encryption / decryption
@@ -88,17 +107,18 @@ public class AesData
 	}
 
 
-	public	static boolean				m_isValid;
-	public	static KeyGenerator			m_kgen;
-	public	static SecretKey			m_skey;
-	public	static byte[]				m_key;
-	public	static SecretKeySpec		m_skeySpec;
-	public	static Cipher				m_cipher;
-	public	static IvParameterSpec		m_ivspec;
+	public	static	boolean					m_isValid;
+	public	static	KeyGenerator			m_kgen;
+	public	static	SecretKey				m_skey;
+	public	static	byte[]					m_key;
+	public	static	SecretKeySpec			m_skeySpec;
+	public	static	Cipher					m_cipher;
+	public	static	IvParameterSpec			m_ivspec;
 
-	public	static byte[][]				m_aesOriginal;
-	public	static byte[][]				m_aesEncrypted;
+	public	static byte[][]					m_aesOriginal;
+	public	static byte[][]					m_aesEncrypted;
 
-	public	static final int			_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE = 10000;
-	public	static final int			_AES_STRING_LENGTH							= 2048;		// 2KB each
+	// Constants to determine how big m_aesOriginal and m_aesEncrypted should be, as in byte[10000][2048]
+	public	static final int				_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE = 10000;
+	public	static final int				_AES_STRING_LENGTH							= 2048;		// 2KB each
 }

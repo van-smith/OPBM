@@ -30,7 +30,6 @@
 	#include "benchmark_jni.h"			// JNI include file derived from netbeans benchmark.jar
 	#include "..\common\jbm_common.h"	// JBM common variables
 	#include <malloc.h>
-	#include "cStream.h"
 
 
 
@@ -323,6 +322,59 @@
 
 //////////
 //
+// reportTestTimeN(JInt handle, JString scoreName, JFloat min, JFloat max, JFloat avg, JFloat geo, JFloat cv)
+//
+// Called to report scoring data
+//
+/////
+	// reportTestTimeN()
+	JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestScoreN(JNIEnv* env, jclass cls, jint handle, jstring scoreName, jfloat min, jfloat max, jfloat avg, jfloat geo, jfloat cv)
+	{
+		SConnections*	sc;
+		int				nameLength;
+		const char*		cnameptr;
+		char*			newNamePtr;
+		jboolean		isCopy;
+
+		sc = &gsConnection;
+
+		// Grab the java variable
+		nameLength	= env->GetStringLength(scoreName);
+		cnameptr	= env->GetStringUTFChars(scoreName, &isCopy);
+
+		// Allocate room for the name
+		newNamePtr	= (char*)malloc(nameLength + 1);
+		if (newNamePtr)
+		{	// Update the score info
+			ZeroMemory(newNamePtr, nameLength + 1);
+			memcpy(newNamePtr, cnameptr, nameLength);
+
+			// Copy over our new pipeData info for the JBM
+			sc->pipeData.score.name.length			= min(nameLength, sizeof(sc->pipeData.score.name.name));
+			ZeroMemory(sc->pipeData.score.name.name, sizeof(sc->pipeData.score.name.name));
+			memcpy(sc->pipeData.score.name.name, newNamePtr, sc->pipeData.score.name.length);
+
+			sc->pipeData.score.min		= min;
+			sc->pipeData.score.max		= max;
+			sc->pipeData.score.avg		= avg;
+			sc->pipeData.score.geo		= geo;
+			sc->pipeData.score.CV		= cv;
+
+			// Write the data for the initial read
+			writePipeDataToJBM(sc);
+
+			// Tell the JBM process we have scoring data
+			SendMessage(ghWndJBM, _JBM_HAS_SCORING_DATA, handle, NULL);
+		}
+
+		// Free the java variable
+		env->ReleaseStringUTFChars(scoreName, cnameptr);
+	}
+
+
+
+//////////
+//
 // reportCompletionN(JInt handle, JFloat percent)
 //
 // Called to indicate how far completed the app is on the given test
@@ -367,26 +419,4 @@
 	JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportExitingN(JNIEnv* env, jclass cls, jint handle)
 	{
 		SendMessage(ghWndJBM, _JBM_THIS_INSTANCE_HAS_EXITED, handle, NULL);
-	}
-
-
-
-
-//////////
-//
-// streamN(JInt handle, JInt testNumber)
-//
-// Called to initiate the STREAM test from the minibench app
-//
-/////
-	// streamN()
-	JNIEXPORT void JNICALL Java_benchmark_Benchmark_streamN(JNIEnv* env, jclass cls, jint handle)
-	{
-		cStream* cs		= new cStream(handle);
-		cs->runBenchmarkNoOutput();
-	}
-
-	void reportCompletionN(int handle, float percent)
-	{
-		Java_benchmark_Benchmark_reportCompletionN(NULL, NULL, handle, percent);
 	}

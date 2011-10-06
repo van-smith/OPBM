@@ -228,6 +228,7 @@
 				{	// Initialize this entry
 					lsp->status				= (count <= gnProcessCount) ? _JBM_EMPTY_SLOT : _JBM_UNUSED_SLOT;
 					lsp->pipeHandle			= INVALID_HANDLE_VALUE;
+					lsp->firstScore			= NULL;
 					lsp->doubleBufferBitmap	= CreateCompatibleBitmap(GetDC(GetDesktopWindow()), _JBM_BACKGROUND_WIDTH, _JBM_BACKGROUND_HEIGHT);
 
 					SetRect(&lsp->rc, left, top, left + _JBM_BACKGROUND_WIDTH, top + _JBM_BACKGROUND_HEIGHT);
@@ -496,6 +497,10 @@
 				checkIfAllHaveExited();
 				break;
 
+			case _JBM_HAS_SCORING_DATA:
+				loadScoringData((int)w);
+				break;
+
 			default:
 				// Process the left-over messages
 				return DefWindowProc(hwnd, m, w, l);
@@ -711,6 +716,48 @@
 					sp->status = newStatus;
 					// Repaint this item
 					InvalidateRect(ghWnd, &sp->rc, FALSE);
+				}
+			}
+		}
+	}
+
+	void loadScoringData(int slot)
+	{
+		SProcesses* sp;
+		SPipeData pipeData;
+		SScoringDataLL* sd;
+		SScoringDataLL** addHere;
+		DWORD numread;
+
+		if (slot >= 0 && slot < _JBM_MAX_CONNECTIONS)
+		{	// We have a valid slot, see what we need to do
+			// Grab this instance
+			sp = gsProcesses + slot;
+
+			if (sp->pipeHandle != INVALID_HANDLE_VALUE)
+			{	// Load the pipe data
+				ReadFile(sp->pipeHandle, &pipeData, sizeof(pipeData), &numread, NULL);
+				if (numread == sizeof(pipeData))
+				{	// A valid message
+					// Append the scoring data from the pipeData
+					sd = sp->firstScore;
+					if (sd == NULL)
+					{	// This is the first score
+						addHere = &sp->firstScore;
+					} else {
+						// append to the end of the linked list
+						while (sd->next != NULL)
+							sd = sd->next;
+						// Add to the end
+						addHere = &sd->next;
+					}
+					*addHere = (SScoringDataLL*)malloc(sizeof(SScoringData));
+					if (*addHere != NULL)
+					{	// Copy the user data to our list
+						memcpy(&(*addHere)->score, &pipeData.score, sizeof(SScoringData));
+						(*addHere)->next = NULL;
+					}
+					//else an error allocating memory, which means the system's in an unstable state
 				}
 			}
 		}
