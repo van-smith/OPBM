@@ -31,7 +31,7 @@ if $CmdLine[0] > 0 then
 Else 
 	$LoopLimit = 1
 EndIf
-;For $CurrentLoop = 1 to $LoopLimit
+For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
 	outputDebug( "InitializeJavaScript()" )
@@ -39,13 +39,10 @@ EndIf
 
 	; Grab the number of cores on this system
 	$Cores = GetCoreCount()
+	$Cores = 24
 	If $Cores < 1 or $Cores > 32 Then
 		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
 	EndIf
-	
-$LoopLimit = 32
-For $CurrentLoop = 1 to $LoopLimit
-	outputDebug( "Loop #" & $CurrentLoop )
 	outputDebug( "Noted " & $Cores & " cores" )
 
 	outputDebug( "LaunchJBM()" )
@@ -60,10 +57,8 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "GatherAndReportJvmScoring()" )
 	GatherAndReportJvmScoring()
 
-	outputDebug( "TellJbmToShutdown()" )
-	TellJbmToShutdown()
-	
-	Sleep(1000)
+	outputDebug( "ShutdownJBM()" )
+	ShutdownJBM()
 Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 Exit
@@ -91,6 +86,8 @@ Func LaunchJBM()
 	
 	; Try to connect to it
 	If JbmOwnerReportingIn() <> 1 Then
+		ShutdownJBM()
+		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 		ErrorHandle( "The Java Benchmark Monitor was launched, but this script was unable to connect to it." )
 	EndIf
 	; When we get here, the JBM is launched, and we've made a connection to it
@@ -113,6 +110,8 @@ Func LaunchJvmInstances()
 	$runme_dot_bat		= GetScriptTempDirectory() & "runme.bat"
 	$file_handle = FileOpen( $run_silently_vbs, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
 	If $file_handle == -1 Then
+		ShutdownJBM()
+		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 		ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
 	EndIf
 	$line1	= "Set WshShell = CreateObject(" & chr(34) & "WScript.Shell" & chr(34) & ")"
@@ -143,6 +142,8 @@ Func LaunchJvmInstances()
 		; Create the runme.bat file
 		$file_handle = FileOpen( $runme_dot_bat, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
 		If $file_handle == -1 Then
+			ShutdownJBM()
+			opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 			ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
 		EndIf
 		FileWriteLine( $file_handle, $echo_off			& @CRLF )
@@ -153,6 +154,8 @@ Func LaunchJvmInstances()
 		outputMessage( "Launching [" & $executable & "]")
 		$lPID = ShellExecute( $run_silently_vbs, "C:\", @SW_SHOW )
 		If $lPID = 0 Then
+			ShutdownJBM()
+			opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 			ErrorHandle( "Unable to launch a Java Benchmark using [" & $run_silently_vbs & "]")
 		EndIf
 	Next
@@ -181,7 +184,8 @@ Func WaitForJvmsToFinish()
 	
 	If $seconds >= $timeout Then
 		; Failure, the test did not end within the timeout period
-		JbmOwnerRequestsTheJbmSelfTerminate()
+		ShutdownJBM()
+		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 		outputError( "Failure to complete the test within the timeout period of 8 minutes." )
 		Exit -1
 	EndIf
@@ -206,6 +210,6 @@ Func GatherAndReportJvmScoring()
 	Next
 EndFunc
 
-Func TellJbmToShutdown()
+Func ShutdownJBM()
 	JbmOwnerRequestsTheJbmSelfTerminate()
 EndFunc

@@ -32,7 +32,7 @@
 	#define		_JBM_EXITED							5					// Show red
 
 	#define		_JBM_BACKGROUND_WIDTH				146
-	#define		_JBM_BACKGROUND_HEIGHT				146
+	#define		_JBM_BACKGROUND_HEIGHT				75
 
 	#define		_HEADER_FOREGROUND					RGB(255,255,255)	// Header
 	#define		_HEADER_BACKGROUND					RGB(209,200,172)
