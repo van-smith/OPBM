@@ -556,6 +556,7 @@ Func ManipulateInAcrobatReader()
 	; Finished manipulating, exit Acrobat Reader
 	Send("!fx")
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+	
 	; Wait for the Word window to have focus again
 	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word: Unable to find Window." )
 	TimerEnd( $MANIPULATE_IN_ACROBAT_READER )

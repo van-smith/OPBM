@@ -99,11 +99,6 @@ Func LaunchWord()
 		ErrorHandle("Word 2010 not found in " & $FILENAME_WORD_X64 & " or " & $FILENAME_WORD_I386 & ", unable to launch.")
 	EndIf
 
-	; Opbm sets some registry keys at startup
-	outputDebug( $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS )
-	Office2010SaveRegistryKeys()
-	Office2010InstallRegistryKeys()
-
 	; Launch the process
 	outputDebug( "Attempting to launch " & $filename)
 	TimerBegin()
@@ -116,15 +111,19 @@ EndFunc
 
 Func CloseWord()
 	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
-
+	
 	; Exit word
 	TimerBegin()
+	
 	; File -> Exit
 	Send("!fx")
+	Sleep(250)
+	opbmWaitUntilSystemIdle( 10, 250, 1000 )
+	
 	; "Save Changes?" No
 	Send("!n")
+	Sleep(250)
+	opbmWaitUntilSystemIdle( 10, 250, 1000 )
+	
 	TimerEnd( $CLOSE_MICROSOFT_WORD )
-
-	; Restore registry keys
-	Office2010RestoreRegistryKeys()
 EndFunc
