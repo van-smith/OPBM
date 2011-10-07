@@ -117,7 +117,7 @@ public class StringTest
 	private	byte[]				m_baseline;
 
 	// Constants
-	private static final int	_MAX_PASSES					= 100;				// Build it 100x over
+	private static final int	_MAX_PASSES					= 750;				// Build it 750x over
 	private static final int	_STRING_LENGTH				= 32768;			// 32KB
 	private static final int	_BASELINE_STRING_LENGTH		= 256;				// One for every ANSI+128 character
 }

@@ -99,5 +99,5 @@ public class AesEncrypt
 	private	long[]				m_times;
 
 	// Constants
-	private static final int	_MAX_PASSES					= 10;				// Build it 10x over
+	private static final int	_MAX_PASSES					= 50;				// Build it 50x over
 }

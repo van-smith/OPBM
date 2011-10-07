@@ -167,7 +167,7 @@ public final class Stream
 	private	long[]						m_timesTriad;
 
 	// Constants
-	private static final int			_MAX_PASSES			= 10;
+	private static final int			_MAX_PASSES			= 300;				// Test it 300x over
 	private static final int			_ARRAY_ELEMENTS		= 4300000;			// 4.3 million * 8 bytes = ~103 MB
 	private static final int			_SCALAR				= 3;
 }

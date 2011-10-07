@@ -116,5 +116,5 @@ public class SHA256
 	private	long[]				m_times;
 
 	// Constants
-	private static final int	_MAX_PASSES					= 10;				// Build it 10x over
+	private static final int	_MAX_PASSES					= 40;				// Build it 40x over
 }

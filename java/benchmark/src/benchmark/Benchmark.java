@@ -129,7 +129,7 @@ public class Benchmark
 	public void integerSort()
 	{
 		reportTestN(m_handle, m_testNumber++, "Integer Sort");
-		m_is = new IntegerSort(m_handle, 1000, 16384);
+		m_is = new IntegerSort(m_handle, 2500, 16384);
 		m_is.run();
 	}
 
