@@ -14,6 +14,7 @@
 #include <tchar.h>
 #include "resource.h"
 #define _JBM 1
+#define _JBM_OWNER 1
 #include "..\common\jbm_common.h"
 
 
@@ -72,6 +73,7 @@
 	bool		gbAppIsRunning				= true;
 	HINSTANCE	ghInst						= GetModuleHandle(NULL);
 	HWND		ghWnd						= NULL;
+	HANDLE		ghOwnerPipeHandle			= INVALID_HANDLE_VALUE;
 
 
 //////////
@@ -81,6 +83,7 @@
 	HBITMAP		ghbmpConnectionEmptySlot	= NULL;
 	HBITMAP		ghbmpConnectionRed			= NULL;
 	HBITMAP		ghbmpConnectionYellow		= NULL;
+	HBITMAP		ghbmpConnectionGreen		= NULL;
 	HBITMAP		ghbmpStatusbarHighLeft		= NULL;
 	HBITMAP		ghbmpStatusbarHighMiddle	= NULL;
 	HBITMAP		ghbmpStatusbarHighRight		= NULL;
@@ -107,7 +110,9 @@
 	void				drawStatusBar					(HDC hdc, HDC hdc2, RECT& rc, float percent, char* text);
 	void				drawStatusBarSegment			(HDC hdc, HDC hdc2, RECT& rc, HBITMAP left, HBITMAP middle, HBITMAP right, int leftWidth, int middleWidth, int rightWidth, char* text);
 	void				connectToThisInstancePipeData	(int slot);
+	int					connectToOwnerPipeData			(void);
 	void				loadPipeData					(int slot, int newStatus);
 	void				loadScoringData					(int slot);
 	void				setSlotStatus					(int slot, int newStatus);
-	void				checkIfAllHaveExited			(void);
+	bool				allHaveExited					(void);
+	int					getScoringDataItem				(int slot, int scoreNumber);

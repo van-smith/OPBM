@@ -66,5 +66,14 @@
     <None Include="graphics\connection_unused_slot.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="graphics\connection_green.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="graphics\connection_red.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="graphics\connection_yellow.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

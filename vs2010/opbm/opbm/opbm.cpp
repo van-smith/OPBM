@@ -24,25 +24,8 @@
 #include "..\CPU\cpu.h"
 #include "au3\au3plugin.h"
 #include "..\common\opbm_common.h"
+#include "opbm.h"
 // Note: AU3_GetString() allocates some memory that must be manually freed later using AU3_FreeString()
-
-extern HMODULE ghModule;
-
-//////////
-//
-// Used for NoteAllOpenWindows() and CloseAllWindowsNotPreviouslyNoted()
-// Allocate enough space for 16K windows, which should be more than plenty.
-// Note:  Windows doesn't just have windows 
-//
-/////
-	// opbm_assist.cpp functions:
-	bool			iCopyFile						(wchar_t* prefixDir, wchar_t* srcFile, char* content, int length);
-	bool			iMakeDirectory					(wchar_t* prefixDir, wchar_t* postfixDir);
-	int				wcstrncpy						(wchar_t* dest, int max, wchar_t* src);
-	int				wcstrncmp						(wchar_t* left, wchar_t* right, int max);
-	int				wcstrnicmp						(wchar_t* left, wchar_t* right, int max);
-	char*			GetOffsetToResource				(int number, LPWSTR type, int* size);
-	BOOL			isRunningUnderWOW64				(void);
 
 
 
@@ -57,41 +40,45 @@ extern HMODULE ghModule;
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 29;
+	int numberOfCustomAU3Functions = 33;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
-			/* Function Name,					   Min,	   Max
-			   -----------------------			   ----	   ---- */
-/* 1 */		{ "WaitUntilIdle",						4,		4},			/* Waits until a specified process is idle */
-/* 2 */		{ "WaitUntilSystemIdle",				3,		3},			/* Waits until the entire system is idle */
-/* 3 */		{ "GetUsage",							2,		2},			/* Returns the CPU load observed over the specified timeframe for the process */
-/* 4 */		{ "GetSystemUsage",						1,		1},			/* Returns the CPU load observed over the specified timeframe */
-/* 5 */		{ "NoteAllOpenWindows",					0,		0},			/* Called to make a note of all open windows */
-/* 6 */		{ "CloseAllWindowsNotPreviouslyNoted",	0,		0},			/* Called to restore the window state to that which it was before */
-/* 7 */		{ "FirefoxInstallerAssist",				0,		0},			/* Called to help install Firefox */
-/* 8 */		{ "ChromeInstallerAssist",				0,		0},			/* Called to help install Chrome */
-/* 9 */		{ "OperaInstallerAssist",				0,		0},			/* Called to help install Opera */
-/* 10 */	{ "SafariInstallerAssist",				0,		0},			/* Called to help install Safari */
-/* 11 */	{ "InternetExplorerInstallerAssist",	0,		0},			/* Called to help install Internet Explorer */
-/* 12 */	{ "Office2010SaveKeys",					0,		0},			/* Called to save the values in Microsoft Office 2010's registry keys needed by OPBM */
-/* 13 */	{ "Office2010InstallKeys",				0,		0},			/* Called to install Microsoft Office 2010 registry keys needed by OPBM*/
-/* 14 */	{ "Office2010RestoreKeys",				0,		0},			/* Called to restore the values in Microsoft Office 2010's registry keys as previously saved */
-/* 15 */	{ "CheckIfRegistryKeyStartsWith",		2,		2},			/* Called to compare the registry key to a value */
-/* 16 */	{ "CheckIfRegistryKeyContains",			2,		2},			/* Called to compare the registry key to a value */
-/* 17 */	{ "CheckIfRegistryKeyIsExactly",		2,		2},			/* Called to compare the registry key to a value */
-/* 18 */	{ "SetRegistryKeyString",				2,		2},			/* Called to set the registry key to a string value */
-/* 19 */	{ "SetRegistryKeyDword",				2,		2},			/* Called to set the registry key to a dword value */
-/* 20 */	{ "GetRegistryKey",						1,		1},			/* Called to return the registry key's value */
-/* 21 */	{ "GetScriptCSVDirectory",				0,		0},			/* Called to return the output directory used for script-written *.csv files */
-/* 22 */	{ "GetScriptTempDirectory",				0,		0},			/* Called to return the output directory used for script-written temporary files */
-/* 23 */	{ "GetHarnessXmlDirectory",				0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
-/* 24 */	{ "GetHarnessCSVDirectory",				0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
-/* 25 */	{ "GetHarnessTempDirectory",			0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
-/* 26 */	{ "GetCSIDLDirectory",					1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
-/* 27 */	{ "Is32BitOS",							0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
-/* 28 */	{ "Is64BitOS",							0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
-/* 29 */	{ "GetCoreCount",						0,		0}			/* Returns the number of CPU cores on the system */
-			/* Don't forget to update numberOfCustomAU3Functions above */
+			/* Function Name,						 Min,	   Max
+			   -----------------------				 ----	   ---- */
+/* 1 */		{ "WaitUntilIdle",							4,		4},			/* Waits until a specified process is idle */
+/* 2 */		{ "WaitUntilSystemIdle",					3,		3},			/* Waits until the entire system is idle */
+/* 3 */		{ "GetUsage",								2,		2},			/* Returns the CPU load observed over the specified timeframe for the process */
+/* 4 */		{ "GetSystemUsage",							1,		1},			/* Returns the CPU load observed over the specified timeframe */
+/* 5 */		{ "NoteAllOpenWindows",						0,		0},			/* Called to make a note of all open windows */
+/* 6 */		{ "CloseAllWindowsNotPreviouslyNoted",		0,		0},			/* Called to restore the window state to that which it was before */
+/* 7 */		{ "FirefoxInstallerAssist",					0,		0},			/* Called to help install Firefox */
+/* 8 */		{ "ChromeInstallerAssist",					0,		0},			/* Called to help install Chrome */
+/* 9 */		{ "OperaInstallerAssist",					0,		0},			/* Called to help install Opera */
+/* 10 */	{ "SafariInstallerAssist",					0,		0},			/* Called to help install Safari */
+/* 11 */	{ "InternetExplorerInstallerAssist",		0,		0},			/* Called to help install Internet Explorer */
+/* 12 */	{ "Office2010SaveKeys",						0,		0},			/* Called to save the values in Microsoft Office 2010's registry keys needed by OPBM */
+/* 13 */	{ "Office2010InstallKeys",					0,		0},			/* Called to install Microsoft Office 2010 registry keys needed by OPBM*/
+/* 14 */	{ "Office2010RestoreKeys",					0,		0},			/* Called to restore the values in Microsoft Office 2010's registry keys as previously saved */
+/* 15 */	{ "CheckIfRegistryKeyStartsWith",			2,		2},			/* Called to compare the registry key to a value */
+/* 16 */	{ "CheckIfRegistryKeyContains",				2,		2},			/* Called to compare the registry key to a value */
+/* 17 */	{ "CheckIfRegistryKeyIsExactly",			2,		2},			/* Called to compare the registry key to a value */
+/* 18 */	{ "SetRegistryKeyString",					2,		2},			/* Called to set the registry key to a string value */
+/* 19 */	{ "SetRegistryKeyDword",					2,		2},			/* Called to set the registry key to a dword value */
+/* 20 */	{ "GetRegistryKey",							1,		1},			/* Called to return the registry key's value */
+/* 21 */	{ "GetScriptCSVDirectory",					0,		0},			/* Called to return the output directory used for script-written *.csv files */
+/* 22 */	{ "GetScriptTempDirectory",					0,		0},			/* Called to return the output directory used for script-written temporary files */
+/* 23 */	{ "GetHarnessXmlDirectory",					0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
+/* 24 */	{ "GetHarnessCSVDirectory",					0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
+/* 25 */	{ "GetHarnessTempDirectory",				0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
+/* 26 */	{ "GetCSIDLDirectory",						1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
+/* 27 */	{ "Is32BitOS",								0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
+/* 28 */	{ "Is64BitOS",								0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
+/* 29 */	{ "GetCoreCount",							0,		0},			/* Returns the number of CPU cores on the system */
+/* 30 */	{ "JbmOwnerReportingIn",					0,		0},			/* Called once, creates the named mail pipe as the JBM owner, and returns the handle to use in future references */
+/* 31 */	{ "JbmOwnerHaveAllInstancesExited",			0,		0},			/* Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited */
+/* 32 */	{ "JbmOwnerRequestsScoringData",			2,		2},			/* Called repeatedly, asks for scoring data for each JVM (first paramter) and score/sub-score (second parameter) */
+/* 33 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",	0,		0}			/* Called once, asks the JBM to terminate itself (to exit politely) */
+/* 33 = Don't forget to update numberOfCustomAU3Functions above */
 	};
 
 
@@ -1598,6 +1585,241 @@ extern HMODULE ghModule;
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
 		AU3_SetInt32(pMyResult, count);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerReportingIn()
+//
+// Checks in with a previously launched JBM, only called once, and if it finds
+// the JBM running, it creates an owner mail pipe for communication with the
+// JBM.
+//
+// Parameters:
+// 		None
+//
+// Returns:
+// 		0		- failure
+//		1		- success
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerReportingIn)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+
+		result = 0;
+		if (!hasJbmOwnerCheckedIn)
+		{	// Try to connect to the JBM
+			ghWndJBM = FindWindow( _JBM_Class_Name, _JBM_Window_Name);
+			if (ghWndJBM != NULL)
+			{	// We found it
+				// Create our named pipe
+				ghOwnerPipeHandle	= CreateNamedPipe(_JBM_Owner_Pipe_Name,
+													  PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
+													  PIPE_READMODE_BYTE | PIPE_NOWAIT,
+													  2,
+													  sizeof(SScoringData),
+													  sizeof(SScoringData),
+													  0,
+													  NULL);
+
+				if (ghOwnerPipeHandle != INVALID_HANDLE_VALUE)
+				{	// We're good
+					// Tell the JBM we are the owner
+					result = SendMessage(ghWndJBM, _JBM_OWNER_REPORTING_IN, 0, 0);
+					if (result != 0)
+					{	// If we get here, everything has worked
+						hasJbmOwnerCheckedIn	= true;
+						result					= 1;
+					}
+				}
+			}
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerHaveAllInstancesExited()
+//
+// Checks in periodically to see if all of the JVMs have exited yet.
+// If so, future calls to JbmOwnerRequestsScoringData() will be
+// processed, to return results from the various instances.
+//
+// Parameters:
+// 		None
+//
+// Returns:
+// 		0		- no
+//		1		- yes
+//		-1		- failure, JBM could not be contacted
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerHaveAllInstancesExited)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+
+		result = -1;
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Ask the JBM if all instances have exited yet
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_IF_ALL_HAVE_EXITED, 0, 0);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsScoringData()
+//
+// Asks the JBM to send back scoring data for the iterative JVMs
+// and their subtests within.
+//
+// Parameters:
+// 		0		- JVM#		- The # of the JVM requesting scores for
+//		1		- Subtest#	- The test number requesting scores for
+//
+// Returns:
+// 		If successful, a string of the output line, as in "Test description,timing,score"
+//		If failure, the string "failure"
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsScoringData)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					jvm, subtest;
+		char*				jvmString;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+		char				temp[1024];
+		char*				ptr;
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			jvmString		= AU3_GetString(&p_AU3_Params[0]);
+			subtestString	= AU3_GetString(&p_AU3_Params[1]);
+
+			jvm				= atoi(jvmString);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_SCORING_DATA, jvm, subtest);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(temp, sizeof(temp), "%s\000", gsScoreData.name.name);
+					ptr = &temp[0];
+					while (*ptr != 0)
+					{	// Convert all spaces to underscores
+						if (*ptr == ' ')
+							*ptr = '_';
+						++ptr;
+					}
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%s,%17.12lf,%17.12lf\000", temp, gsScoreData.avgTime, gsScoreData.avgScore);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(jvmString);
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsTheJbmSelfTerminate()
+//
+// Asks the JBM to exit, to self-terminate, politely.
+//
+// Parameters:
+// 		None
+//
+// Returns:
+//		1	- okay
+//		0	- failure, not all JVMs have terminated yet
+// 		-1	- failure, JBM could not be contacted
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsTheJbmSelfTerminate)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+
+		result = -1;
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Ask the JBM to self-terminate
+			CloseHandle(ghOwnerPipeHandle);
+			ghOwnerPipeHandle = NULL;
+			hasJbmOwnerCheckedIn = false;
+			result = SendMessage(ghWndJBM, _JBM_OWNER_IS_REQUESTING_THE_JBM_SELF_TERMINATE, 0, 0);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
 
 		*p_AU3_Result		= pMyResult;
 		*n_AU3_ErrorCode	= 0;

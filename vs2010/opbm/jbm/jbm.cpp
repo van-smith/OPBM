@@ -266,6 +266,7 @@
 		ghbmpConnectionEmptySlot	= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_EMPTY_SLOT));
 		ghbmpConnectionRed			= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_UNUSED_SLOT));
 		ghbmpConnectionYellow		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_SLOT_FILLED));
+		ghbmpConnectionGreen		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_CONNECTION_FINISHED));
 		ghbmpStatusbarHighLeft		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_STATUSBAR_HIGH_LEFT));
 		ghbmpStatusbarHighMiddle	= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_STATUSBAR_HIGH_MIDDLE));
 		ghbmpStatusbarHighRight		= LoadBitmap(ghInst, MAKEINTRESOURCE(IDB_STATUSBAR_HIGH_RIGHT));
@@ -494,11 +495,39 @@
 
 			case _JBM_THIS_INSTANCE_HAS_EXITED:
 				setSlotStatus((int)w, _JBM_EXITED);
-				checkIfAllHaveExited();
 				break;
 
 			case _JBM_HAS_SCORING_DATA:
 				loadScoringData((int)w);
+				break;
+
+			case _JBM_OWNER_REPORTING_IN:
+				// The owner has reported in, connect to its pipe
+				return(connectToOwnerPipeData());
+				break;
+
+			case _JBM_OWNER_REQUESTING_IF_ALL_HAVE_EXITED:
+				return((int)allHaveExited());
+				break;
+
+			case _JBM_OWNER_REQUESTING_SCORING_DATA:
+				if (allHaveExited())
+				{	// Return the requested scoring data
+					return(getScoringDataItem((int)w, (int)l));
+				} else {
+					// Indicate there is no more
+					return(0);
+				}
+				break;
+
+			case _JBM_OWNER_IS_REQUESTING_THE_JBM_SELF_TERMINATE:
+				if (allHaveExited())
+				{	// They want the JBM to exit now
+					PostQuitMessage(WM_QUIT);
+					return(1);
+				} else {
+					return(0);
+				}
 				break;
 
 			default:
@@ -519,23 +548,31 @@
 		lbIsRunning = false;
 		switch (sp->status)
 		{
-			case _JBM_EXITED:
 			case _JBM_EMPTY_SLOT:
+				// Not used slot, such as a 5x5 display having only 24 JVMs connected to it, one is empty
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionEmptySlot);
 				break;
 
 			case _JBM_UNUSED_SLOT:
+				// A slot that's been defined and is expected to be used, but isn't yet used
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionRed);
 				break;
 
-			case _JBM_FINISHED:
 			case _JBM_SLOT_FILLED:
+				// A slot that's been defined and has been filled by a JVM
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionYellow);
 				break;
 
 			case _JBM_RUNNING:
+				// A slot that's currently running a test
 				lbIsRunning = true;
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionRunning);
+				break;
+
+			case _JBM_EXITED:
+			case _JBM_FINISHED:
+				// A slot that has completed a run and either is completing its scoring, or has already done so and exited
+				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionGreen);
 				break;
 		}
 		BitBlt(hdc, rcSlot.left, rcSlot.top, rcSlot.left + _JBM_BACKGROUND_WIDTH, rcSlot.top + _JBM_BACKGROUND_HEIGHT, hdc2, 0, 0, SRCCOPY);
@@ -696,6 +733,13 @@
 		}
 	}
 
+	int connectToOwnerPipeData(void)
+	{
+		// Connect to the owner pipe
+		ghOwnerPipeHandle = CreateFile(_JBM_Owner_Pipe_Name, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		return(ghOwnerPipeHandle != INVALID_HANDLE_VALUE);
+	}
+
 	void loadPipeData(int slot, int newStatus)
 	{
 		SProcesses* sp;
@@ -725,8 +769,8 @@
 	{
 		SProcesses* sp;
 		SPipeData pipeData;
+		SScoringDataLL*	ssdllNew;
 		SScoringDataLL* sd;
-		SScoringDataLL** addHere;
 		DWORD numread;
 
 		if (slot >= 0 && slot < _JBM_MAX_CONNECTIONS)
@@ -739,25 +783,25 @@
 				ReadFile(sp->pipeHandle, &pipeData, sizeof(pipeData), &numread, NULL);
 				if (numread == sizeof(pipeData))
 				{	// A valid message
-					// Append the scoring data from the pipeData
-					sd = sp->firstScore;
-					if (sd == NULL)
-					{	// This is the first score
-						addHere = &sp->firstScore;
-					} else {
-						// append to the end of the linked list
-						while (sd->next != NULL)
-							sd = sd->next;
-						// Add to the end
-						addHere = &sd->next;
-					}
-					*addHere = (SScoringDataLL*)malloc(sizeof(SScoringData));
-					if (*addHere != NULL)
-					{	// Copy the user data to our list
-						memcpy(&(*addHere)->score, &pipeData.score, sizeof(SScoringData));
-						(*addHere)->next = NULL;
-					}
-					//else an error allocating memory, which means the system's in an unstable state
+					// Allocate memory for it
+					ssdllNew = (SScoringDataLL*)malloc(sizeof(SScoringDataLL));
+					if (ssdllNew != NULL)
+					{	// Copy over the data
+						memcpy(&ssdllNew->score, &pipeData.score, sizeof(SScoringData));
+						ssdllNew->next = NULL;
+						// Append the scoring data from the pipeData
+						sd = sp->firstScore;
+						if (sd == NULL)
+						{	// This is the first score
+							sp->firstScore = ssdllNew;
+						} else {
+							// append to the end of the linked list
+							while (sd->next != NULL)
+								sd = sd->next;
+							// Add to the end
+							sd->next = ssdllNew;
+						}
+					}//else an error allocating memory, which means the system's in an unstable state
 				}
 			}
 		}
@@ -778,7 +822,7 @@
 		}
 	}
 
-	void checkIfAllHaveExited(void)
+	bool allHaveExited(void)
 	{
 		SProcesses* lsp;
 		int i, count;
@@ -792,6 +836,41 @@
 		}
 		if (count == gnProcessCount)
 		{	// All are finished
-			exit(0);
+			return(true);
 		}
+		return(false);
+	}
+
+	int getScoringDataItem(int slot, int scoreNumber)
+	{
+		int count;
+		DWORD numwritten;
+		SProcesses*		sp;
+		SScoringDataLL*	sd;
+
+		// See if we have a valid ghOwnerPipeHandle
+		if (ghOwnerPipeHandle != INVALID_HANDLE_VALUE)
+		{	// We're good
+			// See if the slot they specified is valid
+			if (slot >= 0 && slot < _JBM_MAX_CONNECTIONS)
+			{	// We have a valid slot, see what we need to do
+				// Grab this instance
+				sp = gsProcesses + slot;
+				sd = sp->firstScore;
+				count = 1;
+				while (sd != NULL && count < scoreNumber)
+				{	// Find the score they're after through the linked list
+					++count;
+					sd = sd->next;
+				}
+				if (sd != NULL)
+				{	// We have a valid score
+					// Send it back to the owner
+					WriteFile(ghOwnerPipeHandle, &sd->score, sizeof(sd->score), &numwritten, NULL);
+					return(numwritten == sizeof(sd->score));
+				}
+			}
+		}
+		// If we get here, we're in error
+		return(0);
 	}

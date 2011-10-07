@@ -32,7 +32,8 @@ Func isJBMInstalled()
 	return False
 EndFunc
 
-Func InitializeJavaScript()
+; This is not "Javascript" but is Java's script
+Func InitializeJava_Script()
 	;Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
 	

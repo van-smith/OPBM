@@ -59,11 +59,11 @@ JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestN
 
 /*
  * Class:     benchmark_Benchmark
- * Method:    reportTestTimeN
- * Signature: (ILjava/lang/String;FFFFF)V
+ * Method:    reportTestScoreAndTimeN
+ * Signature: (ILjava/lang/String;DDDDDDDDDD)V
  */
-JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestTimeN
-  (JNIEnv *, jclass, jint, jstring, jfloat, jfloat, jfloat, jfloat, jfloat);
+JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestScoreAndTimeN
+  (JNIEnv *, jclass, jint, jstring, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble);
 
 /*
  * Class:     benchmark_Benchmark

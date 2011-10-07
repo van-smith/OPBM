@@ -89,8 +89,11 @@
   <ItemGroup>
     <None Include="graphics\connection.bmp" />
     <None Include="graphics\connection_empty_slot.bmp" />
+    <None Include="graphics\connection_green.bmp" />
+    <None Include="graphics\connection_red.bmp" />
     <None Include="graphics\connection_slot_filled.bmp" />
     <None Include="graphics\connection_unused_slot.bmp" />
+    <None Include="graphics\connection_yellow.bmp" />
     <None Include="graphics\statusbar_high_left.bmp" />
     <None Include="graphics\statusbar_high_middle.bmp" />
     <None Include="graphics\statusbar_high_right.bmp" />

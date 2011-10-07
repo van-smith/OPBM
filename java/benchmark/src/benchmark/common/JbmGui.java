@@ -51,7 +51,7 @@ public final class JbmGui
 		if (m_completed > m_next)
 		{	// Report its progress to the JBM
 			Benchmark.reportCompletionN(m_handle, m_completed);
-			m_next += m_completed + _MIN_THRESHOLD;
+			m_next = m_completed + _MIN_THRESHOLD;
 		}
 	}
 

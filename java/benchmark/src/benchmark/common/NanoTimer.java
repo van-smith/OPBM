@@ -73,9 +73,23 @@ public class NanoTimer
 		return((double)elapsedAndRestart() / _ONE_BILLION);
 	}
 
+	public static void sleep(int duration)
+	{
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException ex) {
+		}
+	}
+
 //////////
-// Methods in support of summary timing data
+// Methods below are in support of summary timing data in bulk, and not
+// in capturing individual nanotimes.
 /////
+	/**
+	 * Initialize every entry to -1, which sets it up to be ignored if it is
+	 * not recorded during the run.
+	 * @param times
+	 */
 	public void initializeTimes(long[] times)
 	{
 		for (int i = 0; i < times.length; i++)
@@ -89,12 +103,14 @@ public class NanoTimer
 							 String		description,
 							 int		handle)
 	{
-		long min, max, avg;
+		double min, max, avg, geo, cv;
 		int i, count;
 
-		min	= 0;
-		max	= 0;
-		avg	= 0;
+		min	= Double.MAX_VALUE;
+		max	= Double.MIN_VALUE;
+		avg	= 0.0;
+		geo = 0.0;
+		cv	= 0.0;
 		count	= 0;
 		for (i = 0; i < times.length; i++)
 		{	// We ignore -1 entries, as they were never populated with valid times
@@ -106,16 +122,27 @@ public class NanoTimer
 				if (times[i] > max)
 					max = times[i];
 
-				avg	+= times[i];
-				count	+= times[i];
+				avg		+= times[i];
+				++count;
 			}
 		}
 
 		if (count != 0)
+		{	// Compute avg, geo and cv
 			avg /= count;
+// REMEMBER
+		}
+
+		// Convert to seconds
+		min	/= _ONE_BILLION;
+		max	/= _ONE_BILLION;
+		avg /= _ONE_BILLION;
+		geo /= _ONE_BILLION;
+		cv	/= _ONE_BILLION;
 
 		// Report the times to JBM
-		Benchmark.reportTestTimeN(handle, description, min, max, avg, i, i);
+		Benchmark.reportTestScoreAndTimeN(handle, description, /*score*/ min, max, avg, geo, cv,
+															   /* time*/ min, max, avg, geo, cv);
 	}
 
 	private boolean		m_didStart;

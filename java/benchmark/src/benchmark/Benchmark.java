@@ -49,6 +49,7 @@
 
 package benchmark;
 
+import benchmark.common.NanoTimer;
 import benchmark.common.RandomData;
 import benchmark.common.Utils;
 import benchmark.tests.AesData;
@@ -87,7 +88,7 @@ public class Benchmark
 	public native static int		firstConnectN(String uuid, String instanceTitle, int testCount);	// Called to connect to the monitor app, identifying itself
 	public native static boolean	okayToBeginN();														// Called after firstConnectN() to see if all other JVMs have launched and reported in yet
 	public native static void		reportTestN(int handle, int test, String name);						// Called to indicate a new test has started
-	public native static void		reportTestTimeN(int handle, String name, float min, float max, float avg, float geo, float cv);	// Called to report a time for this test
+	public native static void		reportTestScoreAndTimeN(int handle, String scoreName, double minScore, double maxScore, double avgScore, double geoScore, double cvScore, double minTime, double maxTime, double avgTime, double geoTime, double cvTime);	// Called to report a time for this test
 	public native static void		reportCompletionN(int handle, float percent);						// Called to update the completion status of the current test
 	public native static void		reportExitingN(int handle);											// Tell JBM that we're exiting
 
@@ -212,7 +213,6 @@ public class Benchmark
 	public static void main(String[] args) throws InterruptedException
 	{
 		int waitCount;
-		boolean continueWaiting;
 
 		if (args[0] == null)
 		{	// No command line parameter for the name of this instance was provided
@@ -244,9 +244,8 @@ public class Benchmark
 //
 //////////
 		// Only wait for up to _TIMEOUT_SECONDS before terminating in error.
-		continueWaiting		= true;
-		waitCount			= 0;
-		while (continueWaiting && waitCount < _TIMEOUT_SECONDS * _STARTUP_POLLS_PER_SECOND)
+		waitCount = 0;
+		while (waitCount < _TIMEOUT_SECONDS * _STARTUP_POLLS_PER_SECOND)
 		{
 			if (okayToBeginN())
 			{	// We're good, let's go
@@ -271,9 +270,6 @@ public class Benchmark
 		bm.run();
 		System.out.println("Benchmark \"" + args[0] + "\" ends.");
 
-		// Tell the JBM our benchmark timing data
-
-
 		// All done
 		reportExitingN(m_handle);
 		System.exit(0);
@@ -294,7 +290,7 @@ public class Benchmark
 
 	// Class constants
 	private static final int	_TIMEOUT_SECONDS			= 120;
-	private static final int	_STARTUP_POLLS_PER_SECOND	= 20;
+	private static final int	_STARTUP_POLLS_PER_SECOND	= 10;
 	private static final int	_MAX_INTEGER_TESTS			= 1;
 	private static final int	_MAX_STRING_TESTS			= 1;
 	private static final int	_MAX_AES_ENCRYPT_TESTS		= 1;

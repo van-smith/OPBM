@@ -230,6 +230,7 @@
 
 		sc->pipeData.instance.length	= (int)strlen(sc->pipeData.instance.name);
 		sc->pipeData.test.length		= (int)strlen(sc->pipeData.test.name);
+		sc->pipeData.score.name.length	= (int)strlen(sc->pipeData.score.name.name);
 
 		WriteFile(sc->pipeHandle, &sc->pipeData, sizeof(sc->pipeData), &numwritten, NULL);
 		sc->wasLastPipeWriteSuccessful = (numwritten == sizeof(sc->pipeData));
@@ -328,7 +329,7 @@
 //
 /////
 	// reportTestTimeN()
-	JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestScoreN(JNIEnv* env, jclass cls, jint handle, jstring scoreName, jfloat min, jfloat max, jfloat avg, jfloat geo, jfloat cv)
+	JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestScoreAndTimeN(JNIEnv* env, jclass cls, jint handle, jstring scoreName, jdouble minScore, jdouble maxScore, jdouble avgScore, jdouble geoScore, jdouble cvScore, jdouble minTime, jdouble maxTime, jdouble avgTime, jdouble geoTime, jdouble cvTime)
 	{
 		SConnections*	sc;
 		int				nameLength;
@@ -349,16 +350,22 @@
 			ZeroMemory(newNamePtr, nameLength + 1);
 			memcpy(newNamePtr, cnameptr, nameLength);
 
-			// Copy over our new pipeData info for the JBM
+			// Copy over our pipeData score info for the JBM
 			sc->pipeData.score.name.length			= min(nameLength, sizeof(sc->pipeData.score.name.name));
 			ZeroMemory(sc->pipeData.score.name.name, sizeof(sc->pipeData.score.name.name));
 			memcpy(sc->pipeData.score.name.name, newNamePtr, sc->pipeData.score.name.length);
 
-			sc->pipeData.score.min		= min;
-			sc->pipeData.score.max		= max;
-			sc->pipeData.score.avg		= avg;
-			sc->pipeData.score.geo		= geo;
-			sc->pipeData.score.CV		= cv;
+			sc->pipeData.score.minScore		= minScore;
+			sc->pipeData.score.maxScore		= maxScore;
+			sc->pipeData.score.avgScore		= avgScore;
+			sc->pipeData.score.geoScore		= geoScore;
+			sc->pipeData.score.CVScore		= cvScore;
+
+			sc->pipeData.score.minTime		= minScore;
+			sc->pipeData.score.maxTime		= maxScore;
+			sc->pipeData.score.avgTime		= avgScore;
+			sc->pipeData.score.geoTime		= geoScore;
+			sc->pipeData.score.CVTime		= cvScore;
 
 			// Write the data for the initial read
 			writePipeDataToJBM(sc);

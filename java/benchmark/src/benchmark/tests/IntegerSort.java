@@ -68,18 +68,17 @@ public class IntegerSort
 
 		for (pass = 0; pass < m_max_passes; pass++)
 		{
-			m_nano.start();
+			// Step 1:  Generate the list
+				for (i = 0; i < m_max_integers; i++)
+				{	// Two lists are created, one for ascending sort, one for descending
+					m_list1[i] = RandomData.m_rdIntegerSort.nextLong();
+					m_list2[i] = m_list1[i];
+				}
 
+			m_nano.start();
 			//////////
 			// Test code
 			//////
-				// Step 1:  Generate the list
-					for (i = 0; i < m_max_integers; i++)
-					{	// Two lists are created, one for ascending sort, one for descending
-						m_list1[i] = RandomData.m_rdIntegerSort.nextLong();
-						m_list2[i] = m_list1[i];
-					}
-
 				// Step 2:  Sort the list in ascending
 					Arrays.sort(m_list1);
 
@@ -88,7 +87,6 @@ public class IntegerSort
 			//////
 			// End
 			//////////
-
 			m_times[pass] = m_nano.elapsed();
 
 			// Update the JBM after this pass

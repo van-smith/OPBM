@@ -168,6 +168,6 @@ public final class Stream
 
 	// Constants
 	private static final int			_MAX_PASSES			= 10;
-	private static final int			_ARRAY_ELEMENTS		= 12800000;			// 12.8 million * 8 bytes = 100 MB
+	private static final int			_ARRAY_ELEMENTS		= 4300000;			// 4.3 million * 8 bytes = ~103 MB
 	private static final int			_SCALAR				= 3;
 }

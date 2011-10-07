@@ -17,6 +17,7 @@
 
 Dim $CurrentLoop
 Dim $LoopLimit
+Dim $Cores
 
 ;$gBaselines[2][0] = $TYPE_SUNSPIDER_URL
 ;$gBaselines[2][1] = $CHROME_TYPE_SUNSPIDER_URL_SCORE
@@ -30,20 +31,73 @@ if $CmdLine[0] > 0 then
 Else 
 	$LoopLimit = 1
 EndIf
-For $CurrentLoop = 1 to $LoopLimit
+;For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
 	outputDebug( "InitializeJavaScript()" )
-	InitializeJavaScript()
+	InitializeJava_Script()
+
+	; Grab the number of cores on this system
+	$Cores = GetCoreCount()
+	If $Cores < 1 or $Cores > 32 Then
+		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
+	EndIf
 	
+$LoopLimit = 32
+For $CurrentLoop = 1 to $LoopLimit
+	outputDebug( "Loop #" & $CurrentLoop )
+	outputDebug( "Noted " & $Cores & " cores" )
+
 	outputDebug( "LaunchJBM()" )
 	LaunchJBM()
+
+	outputDebug( "LaunchJvmInstances()" )
+	LaunchJvmInstances()
+
+	outputDebug( "WaitForJvmsToFinish()" )
+	WaitForJvmsToFinish()
+
+	outputDebug( "GatherAndReportJvmScoring()" )
+	GatherAndReportJvmScoring()
+
+	outputDebug( "TellJbmToShutdown()" )
+	TellJbmToShutdown()
+	
+	Sleep(1000)
 Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 Exit
 
+; opbm.dll functions used by this process:
+;
+;		JbmOwnerReportingIn()							- At startup, makes the connection to the running JBM instance
+;		JbmOwnerHaveAllInstancesExited()				- Polled once per second, to find out when all of the JVMs are done
+;		JbmOwnerRequestsScoringData(jvm, subtest)		- Requests the scoring data from all JVMs that tested
+;		JbmOwnerRequestsTheJbmSelfTerminate()			- Tells the JBM that the owner is done with it, and to self-terminate (shut down/exit)
+;	
 Func LaunchJBM()
-	Local $i, $lPID, $cores, $java_path
+	Local $jbm_executable_to_launch
+	
+	; Launch the Java Benchmark Monitor
+	$jbm_executable_to_launch	= $JBM_EXECUTABLE & " "	& $cores
+	$gPID = Run( $jbm_executable_to_launch, "C:\", @SW_SHOW )
+	If $gPID = 0 Then
+		ErrorHandle( "Unable to launch the Java Benchmark Monitor using [" & $jbm_executable_to_launch & "]" )
+	EndIf
+	; The JBM is launched
+	
+	; Let it instantiate itself
+	opbmWaitUntilSystemIdle( 10, 1000, 3000)
+	
+	; Try to connect to it
+	If JbmOwnerReportingIn() <> 1 Then
+		ErrorHandle( "The Java Benchmark Monitor was launched, but this script was unable to connect to it." )
+	EndIf
+	; When we get here, the JBM is launched, and we've made a connection to it
+EndFunc
+
+Func LaunchJvmInstances()
+	Local $i, $lPID
 	Local $line1, $line2, $line3
 	Local $echo_off
 	Local $change_directory
@@ -53,22 +107,8 @@ Func LaunchJBM()
 	Local $jbm_executable_to_launch
 	Local $java_benchmark_instance_to_launch
 	Local $file_handle
-	
-	; Grab the number of cores on this system
-	$cores = GetCoreCount()
-	If $cores < 1 or $cores > 32 Then
-		ErrorHandle( "The core count is not correct, reported " & $cores & " cores." )
-	EndIf
-	
-	; Launch the Java Benchmark Monitor
-	$jbm_executable_to_launch	= $JBM_EXECUTABLE & " "	& $cores
-	$gPID = Run( $jbm_executable_to_launch, "C:\", @SW_SHOW )
-	If $gPID = 0 Then
-		ErrorHandle( "Unable to launch the Java Benchmark Monitor using [" & $jbm_executable_to_launch & "]")
-	EndIf
-	; The JBM is launched
-	; The pause below will allow it to instantiate itself
-	
+
+	; The following code launches each JVM, and assigns affinity to separate cores, beginning at 1 and continuing to the core count
 	$run_silently_vbs	= GetScriptTempDirectory() & "runSilently.vbs"
 	$runme_dot_bat		= GetScriptTempDirectory() & "runme.bat"
 	$file_handle = FileOpen( $run_silently_vbs, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
@@ -86,10 +126,10 @@ Func LaunchJBM()
 	; Create a JVM instance for every core
 	FileChangeDir( ".\exe" )
 	outputMessage( "In directory " & @WorkingDir )
-	;$java_path = "c:\program files\java\jre7\bin\java.exe"
-	For $i = 0 to ($cores - 1)
-		; Pause to let the idleness wear out
-		opbmWaitUntilSystemIdle( 10, 1000, 3000)
+	For $i = 0 to ($Cores - 1)
+		; Pause to let the system idle down
+		opbmWaitUntilSystemIdle( 10, 1000, 10000)
+		
 		; Create a file that has this information:
 		;	@echo off
 		;	cd c:\cana\java\autoit\java\compute\exe\
@@ -98,9 +138,8 @@ Func LaunchJBM()
 		;	start /AFFINITY N /B benchmark.jar "JVM X of Y"
 		$echo_off					= "@echo off"
 		$change_directory			= "cd " & @WorkingDir
-		;$executable				= "start /AFFINITY " & ($i + 1) & " /B " & chr(34) & $java_path & chr(34) & " -jar benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $cores & chr(34)
-		$executable					= "start /AFFINITY " & ($i + 1) & " /B benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $cores & chr(34)
-		
+		;$executable					= chr(34) & "c:\program files\java\jre7\bin\java.exe" & chr(34) & " -jar benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
+		$executable				= "start /AFFINITY " & ($i + 1) & " /B benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
 		; Create the runme.bat file
 		$file_handle = FileOpen( $runme_dot_bat, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
 		If $file_handle == -1 Then
@@ -117,5 +156,56 @@ Func LaunchJBM()
 			ErrorHandle( "Unable to launch a Java Benchmark using [" & $run_silently_vbs & "]")
 		EndIf
 	Next
-	ProcessWaitClose( $gPID )
+	; When we get here, every JVM has been launched
+EndFunc
+
+; This test should not take more than 4 minutes on the slowest machines
+; So we add a timeout after 8 minutes
+Func WaitForJvmsToFinish()
+	Local $seconds
+	Local $timeout
+	Local $finished
+	
+	$timeout = 8 * 60
+	outputDebug( "Will timeout in 8 minutes" )
+	
+	$finished = 0
+	While $finished = 0 and $seconds < $timeout
+		; Pause
+		Sleep( 5000 )
+		$seconds = $seconds + 5
+		
+		; See if they've all exited yet
+		$finished = JbmOwnerHaveAllInstancesExited()
+	WEnd
+	
+	If $seconds >= $timeout Then
+		; Failure, the test did not end within the timeout period
+		JbmOwnerRequestsTheJbmSelfTerminate()
+		outputError( "Failure to complete the test within the timeout period of 8 minutes." )
+		Exit -1
+	EndIf
+	; If we get here, then all JVMs have exited
+EndFunc
+
+Func GatherAndReportJvmScoring()
+	Local $jvm, $subtest, $timing
+	Local $maxtests
+	
+	; Gather all of the scores and report them
+	$maxtests = 200
+	For $jvm = 0 to ($Cores - 1)
+		For $subtest = 1 to $maxtests
+			$timing = JbmOwnerRequestsScoringData( $jvm, $subtest)
+			If $timing = "failure" Then
+				ExitLoop
+			EndIf
+			; This is a valid timing
+			outputTiming( StringReplace(StringReplace( $timing, " ", "" ), "_", " ") )
+		Next
+	Next
+EndFunc
+
+Func TellJbmToShutdown()
+	JbmOwnerRequestsTheJbmSelfTerminate()
 EndFunc
