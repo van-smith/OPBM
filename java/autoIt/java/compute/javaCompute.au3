@@ -19,10 +19,9 @@ Dim $CurrentLoop
 Dim $LoopLimit
 Dim $Cores
 
-;$gBaselines[2][0] = $TYPE_SUNSPIDER_URL
-;$gBaselines[2][1] = $CHROME_TYPE_SUNSPIDER_URL_SCORE
-;$gBaselines[3][0] = $RUN_SUNSPIDER
-;$gBaselines[3][1] = $CHROME_RUN_SUNSPIDER_SCORE
+; This script launches multiple instances of a Java jar file, and each
+; instance contains all logic for timing events, percents, etc.  The
+; gBaselines[] array is not used.
 
 outputDebug( "Starting up Java Compute Test" )
 
@@ -39,7 +38,6 @@ For $CurrentLoop = 1 to $LoopLimit
 
 	; Grab the number of cores on this system
 	$Cores = GetCoreCount()
-	$Cores = 24
 	If $Cores < 1 or $Cores > 32 Then
 		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
 	EndIf
@@ -67,7 +65,9 @@ Exit
 ;
 ;		JbmOwnerReportingIn()							- At startup, makes the connection to the running JBM instance
 ;		JbmOwnerHaveAllInstancesExited()				- Polled once per second, to find out when all of the JVMs are done
-;		JbmOwnerRequestsScoringData(jvm, subtest)		- Requests the scoring data from all JVMs that tested
+;		JbmOwnerRequestsSubtestName(subtest)			- Requests the name of the subtest
+;		JbmOwnerRequestsSubtestAvgTiming(subtest)		- Requests the average timing observed for the subtest
+;		JbmOwnerRequestsSubtestAvgScoring(subtest)		- Requests the average scoring observed for the subtest
 ;		JbmOwnerRequestsTheJbmSelfTerminate()			- Tells the JBM that the owner is done with it, and to self-terminate (shut down/exit)
 ;	
 Func LaunchJBM()
@@ -193,21 +193,23 @@ Func WaitForJvmsToFinish()
 EndFunc
 
 Func GatherAndReportJvmScoring()
-	Local $jvm, $subtest, $timing
+	Local $subtest
+	Local $name, $timing, $scoring
 	Local $maxtests
 	
 	; Gather all of the scores and report them
-	$maxtests = 200
-	For $jvm = 0 to ($Cores - 1)
-		For $subtest = 1 to $maxtests
-			$timing = JbmOwnerRequestsScoringData( $jvm, $subtest)
-			If $timing = "failure" Then
-				ExitLoop
-			EndIf
-			; This is a valid timing
-			outputTiming( StringReplace(StringReplace( $timing, " ", "" ), "_", " ") )
-		Next
-	Next
+	$subtest = 1
+	While $subtest > 0
+		$name = JbmOwnerRequestsSubtestName( $subtest )
+		If $name = "failure" Then
+			; Will be returned when we're reached the end of tests
+			ExitLoop
+		EndIf
+		$timing		= JbmOwnerRequestsSubtestAvgTiming($subtest)
+		$scoring	= JbmOwnerRequestsSubtestAvgScoring($subtest)
+		outputTiming( $name & "," & $timing & "," & $scoring )
+		$subtest = $subtest + 1
+	WEnd
 EndFunc
 
 Func ShutdownJBM()

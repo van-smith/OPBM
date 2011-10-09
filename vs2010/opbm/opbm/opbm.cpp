@@ -40,11 +40,11 @@
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 33;
+	int numberOfCustomAU3Functions = 45;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
-			/* Function Name,						 Min,	   Max
-			   -----------------------				 ----	   ---- */
+			/* Function Name,						   Min,	   Max
+			   -----------------------				   ----	   ---- */
 /* 1 */		{ "WaitUntilIdle",							4,		4},			/* Waits until a specified process is idle */
 /* 2 */		{ "WaitUntilSystemIdle",					3,		3},			/* Waits until the entire system is idle */
 /* 3 */		{ "GetUsage",								2,		2},			/* Returns the CPU load observed over the specified timeframe for the process */
@@ -77,8 +77,20 @@
 /* 30 */	{ "JbmOwnerReportingIn",					0,		0},			/* Called once, creates the named mail pipe as the JBM owner, and returns the handle to use in future references */
 /* 31 */	{ "JbmOwnerHaveAllInstancesExited",			0,		0},			/* Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited */
 /* 32 */	{ "JbmOwnerRequestsScoringData",			2,		2},			/* Called repeatedly, asks for scoring data for each JVM (first paramter) and score/sub-score (second parameter) */
-/* 33 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",	0,		0}			/* Called once, asks the JBM to terminate itself (to exit politely) */
-/* 33 = Don't forget to update numberOfCustomAU3Functions above */
+/* 33 */	{ "JbmOwnerRequestsSubtestMaxScoringData",	1,		1},			/* Called repeated, once for each subtest, to return the max scoring data */
+/* 34 */	{ "JbmOwnerRequestsSubtestName",			1,		1},			/* Requests the name of the subtest */
+/* 35 */	{ "JbmOwnerRequestsSubtestAvgTiming",		1,		1},			/* Requests the average timing observed for the subtest */
+/* 36 */	{ "JbmOwnerRequestsSubtestMinTiming",		1,		1},			/* Requests the minimum timing observed for the subtest */
+/* 37 */	{ "JbmOwnerRequestsSubtestMaxTiming",		1,		1},			/* Requests the minimum timing observed for the subtest */
+/* 38 */	{ "JbmOwnerRequestsSubtestGeoTiming",		1,		1},			/* Requests the geometric mean timing observed for the subtest */
+/* 39 */	{ "JbmOwnerRequestsSubtestCVTiming",		1,		1},			/* Requests the cv timing observed for the subtest */
+/* 40 */	{ "JbmOwnerRequestsSubtestAvgScoring",		1,		1},			/* Requests the average scoring observed for the subtest */
+/* 41 */	{ "JbmOwnerRequestsSubtestMinScoring",		1,		1},			/* Requests the maximum scoring observed for the subtest */
+/* 42 */	{ "JbmOwnerRequestsSubtestMaxScoring",		1,		1},			/* Requests the maximum scoring observed for the subtest */
+/* 43 */	{ "JbmOwnerRequestsSubtestGeoScoring",		1,		1},			/* Requests the geoemtric mean scoring observed for the subtest */
+/* 44 */	{ "JbmOwnerRequestsSubtestCVScoring",		1,		1},			/* Requests the cv scoring observed for the subtest */
+/* 45 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",	0,		0}			/* Called once, asks the JBM to terminate itself (to exit politely) */
+/* 45 = Don't forget to update numberOfCustomAU3Functions above */
 	};
 
 
@@ -1769,6 +1781,760 @@
 
 			// All done
 			AU3_FreeString(jvmString);
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestMaxScoringData()
+//
+// Asks for the highest scoring item for the specified subtest.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, score otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestMaxScoringData)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+		char				temp[1024];
+		char*				ptr;
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(temp, sizeof(temp), "%s\000", gsScoreData.name.name);
+					ptr = &temp[0];
+					while (*ptr != 0)
+					{	// Convert all spaces to underscores
+						if (*ptr == ' ')
+							*ptr = '_';
+						++ptr;
+					}
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%s,%17.12lf,%17.12lf\000", temp, gsScoreData.avgTime, gsScoreData.avgScore);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestName()
+//
+// Asks for the subtest name.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestName)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%s\000", gsScoreData.name.name);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestAvgTiming()
+//
+// Asks for the average timing for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestAvgTiming)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.avgTime);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestMinTiming()
+//
+// Asks for the minimum timing for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestMinTiming)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.minTime);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestMaxTiming()
+//
+// Asks for the maximum timing for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestMaxTiming)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.maxTime);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestGeoTiming()
+//
+// Asks for the geometric mean timing for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestGeoTiming)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.geoTime);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestCVTiming()
+//
+// Asks for the cv timing for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestCVTiming)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.CVTime);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestAvgScoring()
+//
+// Asks for the average scoring for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestAvgScoring)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.avgScore);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestMinScoring()
+//
+// Asks for the minimum scoring for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestMinScoring)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.minScore);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestMaxScoring()
+//
+// Asks for the maximum scoring for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestMaxScoring)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.maxScore);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestGeoScoring()
+//
+// Asks for the geometric mean scoring for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestGeoScoring)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.geoScore);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
+			AU3_FreeString(subtestString);
+		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetString(pMyResult, &scoreBuffer[0]);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// JbmOwnerRequestsSubtestCVScoring()
+//
+// Asks for the cv scoring for the best scoring run.
+//
+// Parameters:
+// 		subtest
+//
+// Returns:
+// 		string	- "failure" if subtest is not valid, name otherwise
+//
+/////
+	AU3_PLUGIN_DEFINE(JbmOwnerRequestsSubtestCVScoring)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		DWORD				numread;
+		int					subtest;
+		char*				subtestString;
+		char				scoreBuffer[1024];
+
+		// Check in with the JBM
+		sprintf_s(scoreBuffer, sizeof(scoreBuffer), "failure\000");
+		if (hasJbmOwnerCheckedIn && ghWndJBM != NULL)
+		{	// Get the parameters passed
+			subtestString	= AU3_GetString(&p_AU3_Params[0]);
+			subtest			= atoi(subtestString);
+
+			// Ask the JBM to send over score data for this JVM and this subtest
+			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
+			if (result == 1)
+			{	// There's data in our mail pipe
+				// Grab it
+				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
+				if (numread == sizeof(gsScoreData))
+				{	// We're good, we've read our scoring data, now assemble it into a message
+					sprintf_s(scoreBuffer, sizeof(scoreBuffer), "%17.12lf\000", gsScoreData.CVScore);
+				}
+
+			}//else failure, scoreBuffer remains set to "failure" from above
+
+			// All done
 			AU3_FreeString(subtestString);
 		}
 

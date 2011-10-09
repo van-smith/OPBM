@@ -520,6 +520,16 @@
 				}
 				break;
 
+			case _JBM_OWNER_REQUESTING_MAX_SCORING_DATA:
+				if (allHaveExited())
+				{	// Return the requested scoring data
+					return(getMaxScoringDataItem((int)w));
+				} else {
+					// Indicate there is no more
+					return(0);
+				}
+				break;
+
 			case _JBM_OWNER_IS_REQUESTING_THE_JBM_SELF_TERMINATE:
 				if (allHaveExited())
 				{	// They want the JBM to exit now
@@ -869,6 +879,52 @@
 					WriteFile(ghOwnerPipeHandle, &sd->score, sizeof(sd->score), &numwritten, NULL);
 					return(numwritten == sizeof(sd->score));
 				}
+			}
+		}
+		// If we get here, we're in error
+		return(0);
+	}
+
+	// The max scoring data item has the highest average of all of the tests.
+	// It is used to obtain information about the best performing entry.
+	int getMaxScoringDataItem(int scoreNumber)
+	{
+		int i, count;
+		DWORD numwritten;
+		SProcesses*		sp;
+		SScoringDataLL*	sd;
+		SScoringData	highscore;
+
+		// See if we have a valid ghOwnerPipeHandle
+		if (ghOwnerPipeHandle != INVALID_HANDLE_VALUE)
+		{	// We're good
+			ZeroMemory(&highscore, sizeof(highscore));
+			highscore.avgScore	= 0.0;
+			sd					= NULL;
+			// See which slot has the highest score for this subtest
+			for (i = 0; i < gnProcessCount; i++)
+			{	// Check this slot, if its score is higher than the one we've found so far
+				sp = gsProcesses + i;
+				sd = sp->firstScore;
+				count = 1;
+				while (sd != NULL && count < scoreNumber)
+				{	// Find the score they're after through the linked list
+					++count;
+					sd = sd->next;
+				}
+				if (sd != NULL)
+				{	// We have a valid score
+					// See if it's higher than the one we've gathered thus far
+					if (sd->score.avgScore > highscore.avgScore)
+					{	// This one is higher, copy it
+						memcpy(&highscore, &sd->score, sizeof(highscore));
+					}
+				}
+			}
+			if (sd != NULL)
+			{	// Send it back to the owner
+				WriteFile(ghOwnerPipeHandle, &highscore, sizeof(highscore), &numwritten, NULL);
+				return(numwritten == sizeof(highscore));
 			}
 		}
 		// If we get here, we're in error

@@ -116,3 +116,4 @@
 	void				setSlotStatus					(int slot, int newStatus);
 	bool				allHaveExited					(void);
 	int					getScoringDataItem				(int slot, int scoreNumber);
+	int					getMaxScoringDataItem			(int scoreNumber);
