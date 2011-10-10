@@ -15,6 +15,8 @@ call recompileFirefox.bat
 echo .
 call recompileIE.bat
 echo .
+call recompileJava.bat
+echo .
 call recompileOpera.bat
 echo .
 call recompileOpbm.bat
