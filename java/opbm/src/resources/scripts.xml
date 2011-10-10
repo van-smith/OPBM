@@ -787,7 +787,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox SunSpider" shortname="Firefox">
-				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute" atomuuid="a5d9d9a5-f9c3-42f0-92b6-5f07d69dea7a">
+				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -1161,7 +1161,7 @@
 				</abstract>
 			</atom>
 			<atom name="Java Compute" shortname="JCompute">
-				<abstract name="Java Compute" shortname="JCompute" sourcename="execute" atomuuid="68247348-ea19-4ce2-a53d-c21f79ae1905">
+				<abstract name="Java Compute" shortname="JCompute" sourcename="execute" atomuuid="ba23ff7c-2a88-4283-b9c4-ee736b15e820">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>

@@ -60,6 +60,11 @@
 				<tooltip>Load the Results Viewer on the last run benchmark.</tooltip>
 			</menu>
 			<menu>
+				<text>Results Viewer (Choose)</text>
+				<command>prompt_run_results_viewer</command>
+				<tooltip>Asks the user to select a Results Viewer file, and then loads the Results Viewer for that file.</tooltip>
+			</menu>
+			<menu>
 				<text>Gather Debug Info</text>
 				<command>gather_debug_info</command>
 				<tooltip>Load system data into a debugInfo.xml file for email or public posting to/for the developer</tooltip>
