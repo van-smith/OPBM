@@ -38,7 +38,7 @@ KillChromeIfRunning()
 outputDebug( "Install()" )
 Install()
 
-KillChromeIfRunning()	; Will force-close if it is "resistent" to normal close attempts
+KillChromeIfRunning()	; Will force-close if it "resiss" normal close attempts
 
 ; Close any instances of the browser which may have auto-launched
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
@@ -47,6 +47,13 @@ KillChromeIfRunning()
 
 outputDebug( "SetInitialSettings()" )
 SetInitialSettings()
+
+; Verify Chrome is actually installed
+If not isChromeAlreadyInstalled() Then
+	outputError( "Chrome did not install properly" )
+	opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+	Exit -1
+Endif
 
 outputDebug( "FinalizeScript()" )
 opbmFinalizeScript( "chromeInstallTimes.csv" )

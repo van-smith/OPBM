@@ -50,6 +50,13 @@ Install()
 outputDebug( "SetInitialSettings()" )
 SetInitialSettings()
 
+; Verify Chrome is actually installed
+If not isFirefoxAlreadyInstalled() Then
+	outputError( "Firefox 5.0.1 did not install properly" )
+	opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+	Exit -1
+Endif
+
 outputDebug( "FinalizeScript()" )
 opbmFinalizeScript( "firefoxInstallTimes.csv" )
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()

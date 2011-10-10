@@ -50,6 +50,12 @@ DismissCongratulations()
 outputDebug( "SetInitialSettings()" )
 SetInitialSettings()
 
+If not isSafariAlreadyInstalled() Then
+	outputError( "Safari 5.1.7534.50 did not install properly" )
+	opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+	Exit -1
+Endif
+
 ; Close any instances that may have launched
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 

@@ -339,10 +339,10 @@
 				</abstract>
 			</atom>
 			<atom name="Word Alice" shortname="Word">
-				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
+				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute" atomuuid="385746a2-2619-400a-b927-53b634b7b23c">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Word Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts>Word Conflict Check, Acrobat Reader Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -1125,6 +1125,22 @@
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
 						<executable>..\autoIT\checkConflicts\office2010\wordMustBeInstalled.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Acrobat Reader Conflict Check" shortname="AReaderCC">
+				<abstract name="Acrobat Reader Conflict Check" shortname="AReaderCC" sourcename="execute" atomuuid="dd0ff8e2-8c30-4458-b123-278472fad53b">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\checkConflicts\acrobatReader\acrobatReaderMustBeInstalled.exe</executable>
 					</options>
 				</abstract>
 			</atom>

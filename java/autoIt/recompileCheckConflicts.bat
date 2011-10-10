@@ -5,6 +5,11 @@ cd checkConflicts\chrome
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in chromeMustBeInstalled.au3 > ..\..\compile\chromeMustBeInstalled.txt
 cd ..\..
  
+echo    +-- Check Conflict Acrobat Reader
+cd checkConflicts\acrobatReader
+"C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in acrobatReaderMustBeInstalled.au3 > ..\..\compile\acrobatReaderMustBeInstalled.txt
+cd ..\..
+ 
 echo    +-- Check Conflict IE9
 cd checkConflicts\ie9
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in ie9MustBeInstalled.au3 > ..\..\compile\ie9MustBeInstalled.txt

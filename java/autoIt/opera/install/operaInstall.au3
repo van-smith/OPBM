@@ -50,6 +50,12 @@ opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 outputDebug( "SetInitialSettings()" )
 SetInitialSettings()
 
+If not isOperaAlreadyInstalled() Then
+	outputError( "Opera 11.50 did not install properly" )
+	opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+	Exit -1
+Endif
+
 outputDebug( "FinalizeScript()" )
 opbmFinalizeScript( "operaInstallTimes.csv" )
 
