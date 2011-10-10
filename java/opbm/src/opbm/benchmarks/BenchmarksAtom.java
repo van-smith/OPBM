@@ -19,6 +19,7 @@
 
 package opbm.benchmarks;
 
+import java.io.File;
 import opbm.benchmarks.hud.StreamGobbler;
 import opbm.benchmarks.environment.Variables;
 import opbm.benchmarks.environment.Stack;
@@ -1363,6 +1364,8 @@ public class BenchmarksAtom
 
 
 								builder = new ProcessBuilder(commandsAndParameters);
+								String processDirectory = Utils.getCurrentDirectory();
+								builder.directory(new File(processDirectory));
 								process = builder.start();
 
 								// Grab the output

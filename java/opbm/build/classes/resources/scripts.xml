@@ -787,7 +787,7 @@
 				</abstract>
 			</atom>
 			<atom name="Firefox SunSpider" shortname="Firefox">
-				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Firefox SunSpider" shortname="Spider" sourcename="execute" atomuuid="a5d9d9a5-f9c3-42f0-92b6-5f07d69dea7a">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -1160,6 +1160,22 @@
 					</options>
 				</abstract>
 			</atom>
+			<atom name="Java Compute" shortname="JCompute">
+				<abstract name="Java Compute" shortname="JCompute" sourcename="execute" atomuuid="68247348-ea19-4ce2-a53d-c21f79ae1905">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\java\compute\javaCompute.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 		</atoms>
 		<molecules>
 			<molecule name="Bootup Data" shortname="bootdata">
@@ -1207,6 +1223,9 @@
 				<atom name="Safari Kraken" shortname="SKraken" sourcename="Safari Kraken"></atom>
 				<atom name="Safari Google V8" shortname="SV8" sourcename="Safari Google V8"></atom>
 			</molecule>
+			<molecule name="Java" shortname="Java">
+				<atom name="Compute" shortname="JCompute" sourcename="Java Compute"></atom>
+			</molecule>
 			<molecule name="File Operations" shortname="File">
 				<atom name="File I/O" shortname="fileio" sourcename="File I/O Run Test"></atom>
 				<atom name="7zip Run Test" shortname="7zip" sourcename="7zip Run Test"></atom>
@@ -1233,6 +1252,7 @@
 				<molecule name="Publisher" shortname="Pub" sourcename="Publisher"></molecule>
 				<molecule name="Spreadsheet" shortname="Excel" sourcename="Spreadsheet"></molecule>
 				<molecule name="JavaScript" shortname="Browser" sourcename="JavaScript"></molecule>
+				<molecule name="Java" shortname="Java" sourcename="Java"></molecule>
 				<molecule name="File Operations" shortname="File" sourcename="File Operations"></molecule>
 				<molecule name="Word Processing" shortname="Word" sourcename="Word Processing"></molecule>
 				<molecule name="Uninstall Applications" shortname="Uninstall" sourcename="Uninstall Applications"></molecule>

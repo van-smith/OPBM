@@ -127,7 +127,7 @@ public class NanoTimer
 			if (times[i] != -1)
 			{	// Compute both time and score data
 				time		= times[i] / _ONE_BILLION;
-				score		= (time / baselineTime) * 100.0;
+				score		= (baselineTime / time) * 100.0;
 
 				avgTime		+= time;
 				avgScore	+= score;
@@ -153,7 +153,7 @@ public class NanoTimer
 		{	// Compute avg, geo and cv
 			avgTime		/= count;
 			avgScore	/= count;
-// REMEMBER
+// REMEMBER to add geo and cv here
 		}
 
 		// Report the times to JBM

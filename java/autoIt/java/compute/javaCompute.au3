@@ -121,6 +121,11 @@ Func LaunchJvmInstances()
 	FileWriteLine( $file_handle, $line2		& @CRLF )
 	FileWriteLine( $file_handle, $line3		& @CRLF )
 	FileClose( $file_handle )
+		
+	outputDebug( "Populated to runSilently.vbs:" )
+	outputDebug( $line1 )
+	outputDebug( $line2 )
+	outputDebug( $line3 )
 	
 	; Create a JVM instance for every core
 	FileChangeDir( ".\exe" )
@@ -136,7 +141,7 @@ Func LaunchJvmInstances()
 		;		OR:
 		;	start /AFFINITY N /B benchmark.jar "JVM X of Y"
 		$echo_off					= "@echo off"
-		$change_directory			= "cd " & @WorkingDir
+		$change_directory			= "cd " & chr(34) & @WorkingDir & chr(34)
 		;$executable					= chr(34) & "c:\program files\java\jre7\bin\java.exe" & chr(34) & " -jar benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
 		$executable				= "start /AFFINITY " & ($i + 1) & " /B benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
 		; Create the runme.bat file
@@ -150,6 +155,10 @@ Func LaunchJvmInstances()
 		FileWriteLine( $file_handle, $change_directory	& @CRLF )
 		FileWriteLine( $file_handle, $executable		& @CRLF )
 		FileClose( $file_handle )
+		
+		outputDebug( "Populated to runme.bat:" )
+		outputDebug( $change_directory )
+		outputDebug( $executable )
 		
 		outputMessage( "Launching [" & $executable & "]")
 		$lPID = ShellExecute( $run_silently_vbs, "C:\", @SW_SHOW )

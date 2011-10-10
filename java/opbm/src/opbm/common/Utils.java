@@ -567,6 +567,23 @@ public class Utils
 	}
 
 	/**
+	 * Verifies the path string ends in a backslash (c:\some\dir becomes c:\some\dir\)
+	 * @param path input path to test
+	 * @return path always ending in backslash
+	 */
+	public static String verifyStringEndsInBackslash(String path)
+	{
+		if (path.endsWith("\\"))
+		{	// We're good
+
+		} else {
+			// Needs a little help
+			path += "\\";
+		}
+		return(path);
+	}
+
+	/**
 	 * Makes sure there are no instances where a c:\some\dir\ was joined with
 	 * \bin\file.exe to create c:\some\dir\\bin\file.exe, and thereby causing
 	 * it to fail.
@@ -1035,11 +1052,19 @@ public class Utils
 	 */
 	public static String makeTheCurrentDirectoryThatOfThisFilename(String filename)
 	{
-		String curDir, newDir;
+		String curDir, newDir, newDir2;
 
 		curDir	= getCurrentDirectory();
 		newDir	= new File(filename).getParent();
-		setCurrentDirectory(newDir);
+		if (newDir.startsWith(".."))
+		{	// It's a relative path
+			newDir2 = verifyStringEndsInBackslash(curDir) + newDir;
+			setCurrentDirectory(newDir2);
+
+		} else {
+			// It's an explicit path
+			setCurrentDirectory(newDir);
+		}
 
 		return(curDir);
 	}
