@@ -394,14 +394,6 @@
 			<link text="Run Atom Sequence" fontsize="24" height="40">
 				<command p1="atom">run_atom_sequence</command>
 			</link>
-			<vspacer height="60"/>
-			<link text="Results Viewer (Sample)">
-				<command>run_results_viewer_sample</command>
-			</link>
-			<vspacer height="20"/>
-			<link text="Results Viewer (Choose File)">
-				<command>prompt_run_results_viewer</command>
-			</link>
 		</edit>
 
 		<edit name="execute molecules">
@@ -434,14 +426,6 @@
 			<vspacer height="200"/>
 			<link text="Run Molecule Sequence" fontsize="24" height="40">
 				<command p1="molecule">run_molecule_sequence</command>
-			</link>
-			<vspacer height="60"/>
-			<link text="Results Viewer (Sample)">
-				<command>run_results_viewer_sample</command>
-			</link>
-			<vspacer height="20"/>
-			<link text="Results Viewer (Choose File)">
-				<command>prompt_run_results_viewer</command>
 			</link>
 		</edit>
 
@@ -476,14 +460,6 @@
 			<link text="Run Scenario Sequence" fontsize="24" height="40">
 				<command p1="scenario">run_scenario_sequence</command>
 			</link>
-			<vspacer height="60"/>
-			<link text="Results Viewer (Sample)">
-				<command>run_results_viewer_sample</command>
-			</link>
-			<vspacer height="20"/>
-			<link text="Results Viewer (Choose File)">
-				<command>prompt_run_results_viewer</command>
-			</link>
 		</edit>
 
 		<edit name="execute suites">
@@ -516,14 +492,6 @@
 			<vspacer height="200"/>
 			<link text="Run Suite Sequence" fontsize="24" height="40">
 				<command p1="suite">run_suite_sequence</command>
-			</link>
-			<vspacer height="60"/>
-			<link text="Results Viewer (Sample)">
-				<command>run_results_viewer_sample</command>
-			</link>
-			<vspacer height="20"/>
-			<link text="Results Viewer (Choose File)">
-				<command>prompt_run_results_viewer</command>
 			</link>
 		</edit>
 

@@ -582,13 +582,13 @@ public final class Opbm extends	ModalApp
 									quit(-1);
 								}
 
-							} else if (line.toLowerCase().startsWith("-trial")) {
+							} else if (line.toLowerCase().equals("-trial")) {
 								// They want to run a trial benchmark ru
 								m_executingFromCommandLine = true;
 								++runCount;
 								trialRun(true);
 
-							} else if (line.toLowerCase().startsWith("-official")) {
+							} else if (line.toLowerCase().equals("-official")) {
 								// They want to run an official benchmark run
 								m_executingFromCommandLine = true;
 								++runCount;
