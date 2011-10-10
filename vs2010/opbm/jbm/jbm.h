@@ -35,6 +35,7 @@
 	#define		_JBM_BACKGROUND_HEIGHT				75
 
 	#define		_HEADER_FOREGROUND					RGB(255,255,255)	// Header
+	#define		_HEADER_FOREGROUND_DARK				RGB(0,0,0)
 	#define		_HEADER_BACKGROUND					RGB(209,200,172)
 	#define		_TEST_FOREGROUND					RGB(0,0,255)		// Currently running test
 	#define		_TEST_BACKGROUND					RGB(241,230,198)
@@ -97,7 +98,7 @@
 //////////
 // Forward declarations
 /////
-	void				verifyParameter					(int argc, char* argv[]);
+	void				verifyParameter					(LPSTR lpCmdLine);
 	void				loadBitmaps						(void);
 	void				createFonts						(void);
 	void				determineLayout					(void);

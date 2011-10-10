@@ -33,17 +33,18 @@ const wchar_t	_JBM_Owner_Pipe_Name[]							= L"\\\\.\\pipe\\JBM Owner Data Pipe"
 #define			_JBM_NEW_INSTANCE_FIRST_DATA					WM_USER + 2
 #define			_JBM_HAS_UPDATED_PIPE_DATA						WM_USER + 3
 #define			_JBM_ARE_ALL_INSTANCES_LOADED					WM_USER + 4
-#define			_JBM_REQUEST_A_NEW_HANDLE						WM_USER + 5
-#define			_JBM_THIS_INSTANCE_IS_FINISHED					WM_USER + 6
-#define			_JBM_THIS_INSTANCE_HAS_EXITED					WM_USER + 7
-#define			_JBM_HAS_SCORING_DATA							WM_USER + 8
+#define			_JBM_ARE_ALL_INSTANCES_FINISHED					WM_USER + 5
+#define			_JBM_REQUEST_A_NEW_HANDLE						WM_USER + 6
+#define			_JBM_THIS_INSTANCE_IS_FINISHED					WM_USER + 7
+#define			_JBM_THIS_INSTANCE_HAS_EXITED					WM_USER + 8
+#define			_JBM_HAS_SCORING_DATA							WM_USER + 9
 #ifdef _JBM_OWNER
 // The following are only used by the app which started JBM, to communicate with the JBM to find out its status
-#define			_JBM_OWNER_REPORTING_IN							WM_USER + 9
-#define			_JBM_OWNER_REQUESTING_IF_ALL_HAVE_EXITED		WM_USER + 10
-#define			_JBM_OWNER_REQUESTING_SCORING_DATA				WM_USER + 11
-#define			_JBM_OWNER_REQUESTING_MAX_SCORING_DATA			WM_USER + 12
-#define			_JBM_OWNER_IS_REQUESTING_THE_JBM_SELF_TERMINATE	WM_USER + 13
+#define			_JBM_OWNER_REPORTING_IN							WM_USER + 10
+#define			_JBM_OWNER_REQUESTING_IF_ALL_HAVE_EXITED		WM_USER + 11
+#define			_JBM_OWNER_REQUESTING_SCORING_DATA				WM_USER + 12
+#define			_JBM_OWNER_REQUESTING_MAX_SCORING_DATA			WM_USER + 13
+#define			_JBM_OWNER_IS_REQUESTING_THE_JBM_SELF_TERMINATE	WM_USER + 14
 #endif
 
 

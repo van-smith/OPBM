@@ -101,48 +101,64 @@ public class NanoTimer
 	 */
 	public void processTimes(long[]		times,
 							 String		description,
-							 int		handle)
+							 int		handle,
+							 double		baselineTime)
 	{
-		double min, max, avg, geo, cv;
+		double time, minTime, maxTime, avgTime, geoTime, cvTime;
+		double score, minScore, maxScore, avgScore, geoScore, cvScore;
 		int i, count;
 
-		min	= Double.MAX_VALUE;
-		max	= Double.MIN_VALUE;
-		avg	= 0.0;
-		geo = 0.0;
-		cv	= 0.0;
-		count	= 0;
+		// Total times,
+		minTime		= Double.MAX_VALUE;
+		maxTime		= Double.MIN_VALUE;
+		avgTime		= 0.0;
+		geoTime		= 0.0;
+		cvTime		= 0.0;
+		// and scores,
+		minScore	= Double.MAX_VALUE;
+		maxScore	= Double.MIN_VALUE;
+		avgScore	= 0.0;
+		geoScore	= 0.0;
+		cvScore		= 0.0;
+		// ror valid entries
+		count		= 0;
 		for (i = 0; i < times.length; i++)
 		{	// We ignore -1 entries, as they were never populated with valid times
 			if (times[i] != -1)
-			{
-				if (times[i] < min)
-					min = times[i];
+			{	// Compute both time and score data
+				time		= times[i] / _ONE_BILLION;
+				score		= (time / baselineTime) * 100.0;
 
-				if (times[i] > max)
-					max = times[i];
+				avgTime		+= time;
+				avgScore	+= score;
 
-				avg		+= times[i];
+				if (time < minTime)
+				{
+					minTime		= time;
+					minScore	= score;
+				}
+
+				if (time > maxTime)
+				{
+					maxTime		= time;
+					maxScore	= score;
+				}
+
+				// Increase the count for this entry
 				++count;
 			}
 		}
 
 		if (count != 0)
 		{	// Compute avg, geo and cv
-			avg /= count;
+			avgTime		/= count;
+			avgScore	/= count;
 // REMEMBER
 		}
 
-		// Convert to seconds
-		min	/= _ONE_BILLION;
-		max	/= _ONE_BILLION;
-		avg /= _ONE_BILLION;
-		geo /= _ONE_BILLION;
-		cv	/= _ONE_BILLION;
-
 		// Report the times to JBM
-		Benchmark.reportTestScoreAndTimeN(handle, description, /*score*/ min, max, avg, geo, cv,
-															   /* time*/ min, max, avg, geo, cv);
+		Benchmark.reportTestScoreAndTimeN(handle, description, /*score*/ minScore,	maxScore,	avgScore,	geoScore,	cvScore,
+															   /* time*/ minTime,	maxTime,	avgTime,	geoTime,	cvTime);
 	}
 
 	private boolean		m_didStart;

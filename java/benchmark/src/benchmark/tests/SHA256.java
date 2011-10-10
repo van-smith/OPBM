@@ -107,14 +107,15 @@ public class SHA256
 	 */
 	public void reportTiming()
 	{
-		m_nano.processTimes(m_times, "SHA-256", m_jbm.getHandle());
+		m_nano.processTimes(m_times, "SHA-256", m_jbm.getHandle(), _SHA256_BASELINE_TIME);
 	}
 
 	// Class variables
-	private JbmGui				m_jbm;
-	private NanoTimer			m_nano;
-	private	long[]				m_times;
+	private JbmGui					m_jbm;
+	private NanoTimer				m_nano;
+	private	long[]					m_times;
 
 	// Constants
-	private static final int	_MAX_PASSES					= 40;				// Build it 40x over
+	private static final int		_MAX_PASSES				= 40;				// Build it 40x over
+	private static final double		_SHA256_BASELINE_TIME	= 0.760708525;		// Taken from reference machine, time to produce a score of 100.0
 }

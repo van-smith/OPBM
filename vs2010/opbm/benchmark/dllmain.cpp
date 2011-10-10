@@ -241,7 +241,7 @@
 
 //////////
 //
-// okayToBegin(JInt handle)
+// okayToBegin()
 //
 // Called to see if all of the JVMs have reported in yet.  If so, true
 // is returned and testing can begin.  If no, the caller must pause for
@@ -256,6 +256,30 @@
 		if (ghWndJBM != NULL)
 		{	// Ask the JBM process if everything has been loaded yet
 			result = (jboolean)SendMessage(ghWndJBM, _JBM_ARE_ALL_INSTANCES_LOADED, NULL, NULL);
+		}
+		return(result);
+	}
+
+
+
+
+//////////
+//
+// okayToExit()
+//
+// Called to see if all of the JVMs have reported that they're finished processing
+// yet.  If so, true is returned and each JVM can exit.  If no, the caller must pause
+// for some time (a second) and then repeat the inquiry.
+//
+/////
+	// okayToExitN()
+	JNIEXPORT jboolean JNICALL Java_benchmark_Benchmark_okayToExitN(JNIEnv* env, jclass cls)
+	{
+		jboolean result = false;
+
+		if (ghWndJBM != NULL)
+		{	// Ask the JBM process if everything has been loaded yet
+			result = (jboolean)SendMessage(ghWndJBM, _JBM_ARE_ALL_INSTANCES_FINISHED, NULL, NULL);
 		}
 		return(result);
 	}
@@ -329,7 +353,10 @@
 //
 /////
 	// reportTestTimeN()
-	JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestScoreAndTimeN(JNIEnv* env, jclass cls, jint handle, jstring scoreName, jdouble minScore, jdouble maxScore, jdouble avgScore, jdouble geoScore, jdouble cvScore, jdouble minTime, jdouble maxTime, jdouble avgTime, jdouble geoTime, jdouble cvTime)
+	JNIEXPORT void JNICALL Java_benchmark_Benchmark_reportTestScoreAndTimeN(JNIEnv* env, jclass cls, jint handle,
+								jstring scoreName,
+								jdouble minScore, jdouble maxScore, jdouble avgScore, jdouble geoScore, jdouble cvScore,
+								jdouble minTime,  jdouble maxTime,  jdouble avgTime,  jdouble geoTime,  jdouble cvTime)
 	{
 		SConnections*	sc;
 		int				nameLength;
@@ -361,11 +388,11 @@
 			sc->pipeData.score.geoScore		= geoScore;
 			sc->pipeData.score.CVScore		= cvScore;
 
-			sc->pipeData.score.minTime		= minScore;
-			sc->pipeData.score.maxTime		= maxScore;
-			sc->pipeData.score.avgTime		= avgScore;
-			sc->pipeData.score.geoTime		= geoScore;
-			sc->pipeData.score.CVTime		= cvScore;
+			sc->pipeData.score.minTime		= minTime;
+			sc->pipeData.score.maxTime		= maxTime;
+			sc->pipeData.score.avgTime		= avgTime;
+			sc->pipeData.score.geoTime		= geoTime;
+			sc->pipeData.score.CVTime		= cvTime;
 
 			// Write the data for the initial read
 			writePipeDataToJBM(sc);

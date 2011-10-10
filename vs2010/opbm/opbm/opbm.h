@@ -28,6 +28,7 @@ extern HMODULE ghModule;
 	HANDLE			ghOwnerPipeHandle				= INVALID_HANDLE_VALUE;
 	HWND			ghWndJBM						= NULL;
 	SScoringData	gsScoreData;
+	SScoringData	gsLoadedScoreData;				// Last loaded item call from JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData()
 
 
 

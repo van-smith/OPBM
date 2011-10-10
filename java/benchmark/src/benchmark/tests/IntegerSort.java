@@ -101,16 +101,18 @@ public class IntegerSort
 	 */
 	public void reportTiming()
 	{
-		m_nano.processTimes(m_times, "Integer Sort", m_jbm.getHandle());
+		m_nano.processTimes(m_times, "Integer Sort", m_jbm.getHandle(), _INTEGERSORT_BASELINE_TIME);
 	}
 
 
 	// Class variables
-	private JbmGui				m_jbm;
-	private NanoTimer			m_nano;
-	private int					m_max_passes;
-	private int					m_max_integers;
-	private	long[]				m_times;
-	private Long[]				m_list1;
-	private Long[]				m_list2;
+	private	JbmGui					m_jbm;
+	private	NanoTimer				m_nano;
+	private	int						m_max_passes;
+	private	int						m_max_integers;
+	private	long[]					m_times;
+	private	Long[]					m_list1;
+	private	Long[]					m_list2;
+
+	private static final double		_INTEGERSORT_BASELINE_TIME	= 0.0095772565;		// Taken from reference machine, time to produce a score of 100.0
 }

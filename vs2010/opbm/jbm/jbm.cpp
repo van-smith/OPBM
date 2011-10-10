@@ -53,9 +53,12 @@
 // allowing any of them to begin their testing.
 //
 /////
-	int main(int argc, char* argv[])
+	int APIENTRY WinMain(HINSTANCE hInstance,
+						 HINSTANCE hPrevInstance,
+						 LPSTR    lpCmdLine,
+						 int       nCmdShow)
 	{
-		verifyParameter(argc, argv);
+		verifyParameter(lpCmdLine);
 		determineLayout();
 		loadBitmaps();
 		createFonts();
@@ -77,7 +80,7 @@
 // if there are errors.
 //
 /////
-	void verifyParameter(int argc, char* argv[])
+	void verifyParameter(LPSTR lpCmdLine)
 	{
 		bool bShowUsageError		= false;
 		bool bShowParameterError	= false;
@@ -87,18 +90,11 @@
 		printf("\n");
 
 		// They need only one parameter, no more, no less
-		if (argc != 2)
-		{	// Correct usage *IS* required
-			bShowUsageError = true;
-
-		} else {
-			// Check the paramter, which should be a process count
-			gnProcessCount = atoi(argv[1]);
-			if (gnProcessCount < 1 || gnProcessCount > _JBM_MAX_CONNECTIONS)
-			{
-				bShowUsageError		= true;		// Show the usage also
-				bShowParameterError = true;		// And the parameters must be correct
-			}
+		gnProcessCount = atoi(lpCmdLine);
+		if (gnProcessCount < 1 || gnProcessCount > _JBM_MAX_CONNECTIONS)
+		{
+			bShowUsageError		= true;		// Show the usage also
+			bShowParameterError = true;		// And the parameters must be correct
 		}
 
 		// Report any errors
@@ -477,6 +473,24 @@
 				//else return 0 below
 				break;
 
+			case _JBM_ARE_ALL_INSTANCES_FINISHED:
+				// They want to know if all slots have reported being finished yet
+				if (gsProcesses != NULL)
+				{
+					lsp		= gsProcesses;
+					count	= 0;
+					for (i = 0; i < gnProcessCount; i++)
+					{	// See how many have been filled
+						count += (lsp->status >= _JBM_FINISHED) ? 1 : 0;
+						++lsp;
+					}
+					if (count == gnProcessCount)
+						return(1);
+					//else return 0 below
+				}
+				//else return 0 below
+				break;
+
 			case _JBM_REQUEST_A_NEW_HANDLE:
 				// They want us to assign a handle to them
 				for (i = 0; i < gnProcessCount; i++)
@@ -554,6 +568,18 @@
 		RECT rc;
 		char text[256];
 
+//////////
+//
+// Sequences of operations, a color scheme of red, yellow, green and normal displays:
+//
+//		1 - Red, not yet connected to the JVM
+//		2 - Yellow, connected to JVM, but the JVM instance has not been instructed to begin processing yet
+//		3 - Normal, running the test(s)
+//		4 - Yellow, JVM has finished, but not all JVMs have finished yet
+//		5 - Green, JVM has exited (only done after all JVMs have exited)
+//
+/////
+
 		// Copy over the background
 		lbIsRunning = false;
 		switch (sp->status)
@@ -568,6 +594,10 @@
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionRed);
 				break;
 
+			case _JBM_FINISHED:
+				// When a slot is finished, it goes into a holding pattern until all other slots are finished,
+				// that way it doesn't affect their compute timing by issues of unloading, the OS freeing
+				// resources, etc.
 			case _JBM_SLOT_FILLED:
 				// A slot that's been defined and has been filled by a JVM
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionYellow);
@@ -580,7 +610,6 @@
 				break;
 
 			case _JBM_EXITED:
-			case _JBM_FINISHED:
 				// A slot that has completed a run and either is completing its scoring, or has already done so and exited
 				SelectObject(hdc2, (HGDIOBJ)ghbmpConnectionGreen);
 				break;
@@ -591,26 +620,50 @@
 		{
 			// Update the header
 			SelectObject(hdc, (HGDIOBJ)ghfHeader);
-			SetTextColor(hdc, _HEADER_FOREGROUND);
+			if (sp->status == _JBM_FINISHED || sp->status == _JBM_SLOT_FILLED)
+				SetTextColor(hdc, _HEADER_FOREGROUND_DARK);	// Background is yellow, use a dark foreground
+			else
+				SetTextColor(hdc, _HEADER_FOREGROUND);
 			SetBkColor(hdc, _HEADER_BACKGROUND);
 			SetBkMode(hdc, TRANSPARENT);
 			setRectRelativeTo(&rcSlot, &rc, 3,3,143,19);
 			if (sp->pipeData.instance.name[0] != 0)
 				DrawTextA(hdc, sp->pipeData.instance.name, sp->pipeData.instance.length, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 			else
-				DrawTextA(hdc, "Waiting...", 10, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+				DrawTextA(hdc, "Not Connected", 13, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+			// Update the test currently running, or the state if no test has started yet
+			SelectObject(hdc, (HGDIOBJ)ghfTests);
+			SetTextColor(hdc, _TEST_FOREGROUND);
+			SetBkColor(hdc, _TEST_BACKGROUND);
+			SetBkMode(hdc, OPAQUE);
+			setRectRelativeTo(&rcSlot, &rc, 3,25,143,42);
+			switch (sp->status)
+			{
+				case _JBM_EMPTY_SLOT:
+					DrawTextA(hdc, "Waiting...", 10, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					break;
+
+				case _JBM_SLOT_FILLED:
+					DrawTextA(hdc, "Syncing...", 10, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					break;
+
+				case _JBM_FINISHED:
+					DrawTextA(hdc, "Finished", 8, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					break;
+
+				case _JBM_EXITED:
+					DrawTextA(hdc, "Exited", 6, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					break;
+
+				default:
+					DrawTextA(hdc, sp->pipeData.test.name, sp->pipeData.test.length, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					break;
+			}
 
 			// When the process is running, update additional information
 			if (sp->status >= _JBM_RUNNING)
-			{	// Update the test currently running
-				SelectObject(hdc, (HGDIOBJ)ghfTests);
-				SetTextColor(hdc, _TEST_FOREGROUND);
-				SetBkColor(hdc, _TEST_BACKGROUND);
-				SetBkMode(hdc, OPAQUE);
-				setRectRelativeTo(&rcSlot, &rc, 3,25,143,42);
-				DrawTextA(hdc, sp->pipeData.test.name, sp->pipeData.test.length, &rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-
-				// Update the status messages
+			{	// Update the status messages
 				SetTextColor(hdc, _HISTORY_FOREGROUND);
 				SetBkColor(hdc, _HISTORY_BACKGROUND);
 				SetBkMode(hdc, OPAQUE);
@@ -635,15 +688,18 @@
 				setRectRelativeTo(&rcSlot, &rc, 100,75,143,91);
 				DrawTextA(hdc, sp->testHistoryTimes[3].name, sp->testHistoryTimes[3].length, &rc, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 
-				// Update the status bar for the current test
-				setRectRelativeTo(&rcSlot, &rc, 2,46,144,58);
-				sprintf_s(text, sizeof(text), "Test: %3.0f%%\000", verifyPercent(sp->pipeData.testPercentCompleted) * 100.0f);
-				drawStatusBar(hdc, hdc2, rc, verifyPercent(sp->pipeData.testPercentCompleted), text);
+				// update the status bar while it's running
+				if (sp->status == _JBM_RUNNING)
+				{	// Update the status bar for the current test
+					setRectRelativeTo(&rcSlot, &rc, 2,46,144,58);
+					sprintf_s(text, sizeof(text), "Test: %3.0f%%\000", verifyPercent(sp->pipeData.testPercentCompleted) * 100.0f);
+					drawStatusBar(hdc, hdc2, rc, verifyPercent(sp->pipeData.testPercentCompleted), text);
 
-				// Update the status bar for the overall completion
-				setRectRelativeTo(&rcSlot, &rc, 2,59,144,72);
-				sprintf_s(text, sizeof(text), "Overall: %3.0f%%\000", verifyPercent(sp->pipeData.overallPercentCompleted) * 100.0f);
-				drawStatusBar(hdc, hdc2, rc, verifyPercent(sp->pipeData.overallPercentCompleted), text);
+					// Update the status bar for the overall completion
+					setRectRelativeTo(&rcSlot, &rc, 2,59,144,72);
+					sprintf_s(text, sizeof(text), "Overall: %3.0f%%\000", verifyPercent(sp->pipeData.overallPercentCompleted) * 100.0f);
+					drawStatusBar(hdc, hdc2, rc, verifyPercent(sp->pipeData.overallPercentCompleted), text);
+				}
 			}
 		}
 	}

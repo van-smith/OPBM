@@ -106,18 +106,19 @@ public class StringTest
 	 */
 	public void reportTiming()
 	{
-		m_nano.processTimes(m_times, "Build String", m_jbm.getHandle());
+		m_nano.processTimes(m_times, "Build String", m_jbm.getHandle(), _STRINGTEST_BASELINE_TIME);
 	}
 
 
 	// Class variables
-	private JbmGui				m_jbm;
-	private NanoTimer			m_nano;
-	private	long[]				m_times;
-	private	byte[]				m_baseline;
+	private JbmGui					m_jbm;
+	private NanoTimer				m_nano;
+	private	long[]					m_times;
+	private	byte[]					m_baseline;
 
 	// Constants
-	private static final int	_MAX_PASSES					= 750;				// Build it 750x over
-	private static final int	_STRING_LENGTH				= 32768;			// 32KB
-	private static final int	_BASELINE_STRING_LENGTH		= 256;				// One for every ANSI+128 character
+	private static final int		_MAX_PASSES					= 750;				// Build it 750x over
+	private static final int		_STRING_LENGTH				= 32768;			// 32KB
+	private static final int		_BASELINE_STRING_LENGTH		= 256;				// One for every ANSI+128 character
+	private static final double		_STRINGTEST_BASELINE_TIME	= 0.0256620821;		// Taken from reference machine, time to produce a score of 100.0
 }

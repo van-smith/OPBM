@@ -49,7 +49,6 @@
 
 package benchmark;
 
-import benchmark.common.NanoTimer;
 import benchmark.common.RandomData;
 import benchmark.common.Utils;
 import benchmark.tests.AesData;
@@ -86,7 +85,8 @@ public class Benchmark
 ////
 	public native static boolean	didBenchmarkDllLoadOkayN();											// Called after the DLL is loaded in the static block above to see if it loaded okay, and found the JBM okay
 	public native static int		firstConnectN(String uuid, String instanceTitle, int testCount);	// Called to connect to the monitor app, identifying itself
-	public native static boolean	okayToBeginN();														// Called after firstConnectN() to see if all other JVMs have launched and reported in yet
+	public native static boolean	okayToBeginN();														// Called repeatedly after firstConnectN() to see if all other JVMs have launched and reported in yet
+	public native static boolean	okayToExitN();														// Called repeatedly after all processing is finished to see if all other JVMs are finished, before exiting
 	public native static void		reportTestN(int handle, int test, String name);						// Called to indicate a new test has started
 	public native static void		reportTestScoreAndTimeN(int handle, String scoreName, double minScore, double maxScore, double avgScore, double geoScore, double cvScore, double minTime, double maxTime, double avgTime, double geoTime, double cvTime);	// Called to report a time for this test
 	public native static void		reportCompletionN(int handle, float percent);						// Called to update the completion status of the current test
@@ -269,6 +269,38 @@ public class Benchmark
 		System.out.println("Benchmark \"" + args[0] + "\" begins.");
 		bm.run();
 		System.out.println("Benchmark \"" + args[0] + "\" ends.");
+
+
+//////////
+//
+// Now, wait until all launched JVM instances report in that they have
+// completed the compute portion of their benchmark, allowing the remaining
+// compute portions of other JVMs (if any) to be unaffected by overhead due
+// to JVM termination, including freeing resources, disk access, required
+// de-synchronization for multiple JVMs, etc.
+//
+//////////
+		// Only wait for up to _TIMEOUT_SECONDS before terminating after
+		// reporting the condition.
+		waitCount = 0;
+		while (waitCount < _TIMEOUT_SECONDS * _STARTUP_POLLS_PER_SECOND)
+		{
+			if (okayToExitN())
+			{	// We're good, let's go
+				break;
+			}
+			// Pause before asking again
+			try {
+				Thread.sleep(1000 / _STARTUP_POLLS_PER_SECOND);
+			} catch (InterruptedException ex) {
+			}
+
+			++waitCount;
+		}
+		if (waitCount >= _TIMEOUT_SECONDS * _STARTUP_POLLS_PER_SECOND)
+		{	// All of the JVMs did not launch within the timeout
+			System.out.println("Error waiting for all JVMs to finish. Timeout after " + Integer.toString(_TIMEOUT_SECONDS) + " seconds.");
+		}
 
 		// All done
 		reportExitingN(m_handle);

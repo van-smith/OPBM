@@ -10,7 +10,7 @@ extern "C" {
 #undef benchmark_Benchmark__TIMEOUT_SECONDS
 #define benchmark_Benchmark__TIMEOUT_SECONDS 120L
 #undef benchmark_Benchmark__STARTUP_POLLS_PER_SECOND
-#define benchmark_Benchmark__STARTUP_POLLS_PER_SECOND 20L
+#define benchmark_Benchmark__STARTUP_POLLS_PER_SECOND 10L
 #undef benchmark_Benchmark__MAX_INTEGER_TESTS
 #define benchmark_Benchmark__MAX_INTEGER_TESTS 1L
 #undef benchmark_Benchmark__MAX_STRING_TESTS
@@ -47,6 +47,14 @@ JNIEXPORT jint JNICALL Java_benchmark_Benchmark_firstConnectN
  * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL Java_benchmark_Benchmark_okayToBeginN
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     benchmark_Benchmark
+ * Method:    okayToExitN
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_benchmark_Benchmark_okayToExitN
   (JNIEnv *, jclass);
 
 /*

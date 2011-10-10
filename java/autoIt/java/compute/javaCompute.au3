@@ -194,19 +194,20 @@ EndFunc
 
 Func GatherAndReportJvmScoring()
 	Local $subtest
-	Local $name, $timing, $scoring
+	Local $status, $name, $timing, $scoring
 	Local $maxtests
 	
 	; Gather all of the scores and report them
 	$subtest = 1
 	While $subtest > 0
-		$name = JbmOwnerRequestsSubtestName( $subtest )
-		If $name = "failure" Then
+		$status	= JbmOwnerRequestsSubtestMaxScoringData( $subtest )
+		If $status = "failure" Then
 			; Will be returned when we're reached the end of tests
 			ExitLoop
 		EndIf
-		$timing		= JbmOwnerRequestsSubtestAvgTiming($subtest)
-		$scoring	= JbmOwnerRequestsSubtestAvgScoring($subtest)
+		$name		= JbmOwnerRequestsName()
+		$timing		= JbmOwnerRequestsAvgTiming()
+		$scoring	= JbmOwnerRequestsAvgScoring() * $Cores
 		outputTiming( $name & "," & $timing & "," & $scoring )
 		$subtest = $subtest + 1
 	WEnd

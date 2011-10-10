@@ -90,14 +90,15 @@ public class AesEncrypt
 	 */
 	public void reportTiming()
 	{
-		m_nano.processTimes(m_times, "AES Encrypt", m_jbm.getHandle());
+		m_nano.processTimes(m_times, "AES Encrypt", m_jbm.getHandle(), _AESENCRYPT_BASELINE_TIME);
 	}
 
 	// Class variables
-	private JbmGui				m_jbm;
-	private NanoTimer			m_nano;
-	private	long[]				m_times;
+	private JbmGui					m_jbm;
+	private NanoTimer				m_nano;
+	private	long[]					m_times;
 
 	// Constants
-	private static final int	_MAX_PASSES					= 50;				// Build it 50x over
+	private static final int		_MAX_PASSES						= 50;				// Build it 50x over
+	private static final double		_AESENCRYPT_BASELINE_TIME		= 0.5286754978;		// Taken from reference machine, time to produce a score of 100.0
 }

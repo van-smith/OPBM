@@ -86,8 +86,8 @@ Func InitializeGlobalVariables()
 	;		SetRegistryKeyString( $key, $stringValue )
 	;		SetRegistryKeyDword( $key, $dwordValue )
 	;		GetRegistryKey( $key )
-	;;;;;;;;FixupPathnames( $pathname )				; (future function) Converts "c:\some\dir\..\path\" to "c:\some\path" (removes "dir\..")
-	;;;;;;;;The following functions ALWAYS return/include the trailing backslash:
+	;;;;;;; FixupPathnames( $pathname )				; (future function) Converts "c:\some\dir\..\path\" to "c:\some\path" (removes "dir\..")
+	;;;;;;; The following functions ALWAYS return/include the trailing backslash:
 	;		GetScriptCSVDirectory()					; Returns c:\users\user\documents\opbm\scriptOutput\
 	;		GetScriptTempDirectory()				; Returns c:\users\user\documents\opbm\scriptOutput\temp\
 	;		GetHarnessXmlDirectory()				; Returns c:\users\user\documents\opbm\results\xml\
@@ -99,23 +99,26 @@ Func InitializeGlobalVariables()
 	;		is32BitOS()		; Is the OS installed a 32-bit OS?
 	;		is64BitOS()		; Is the OS installed a 64-bit OS?
 	;		GetCoreCount()	; Returns the number of cores on the system
-	;;;;;;;;Added in support of JBM and the Java Benchmark test, which runs instances for every core:
+	;;;;;;; Added in support of JBM and the Java Benchmark test, which runs instances for every core:
 	;		JbmOwnerReportingIn()							; At startup, makes the connection to the running JBM instance
 	;		JbmOwnerHaveAllInstancesExited()				; Polled once per second, to find out when all of the JVMs are done
-	;		JbmOwnerRequestsScoringData(jvm, subtest)		; Requests the scoring data from all JVMs that tested
-	;		JbmOwnerRequestsSubtestMaxScoringData(subtest)	; Request the highest score for the specified subtest
-	;		JbmOwnerRequestsSubtestName(subtest)			; Requests the name of the subtest
-	;		JbmOwnerRequestsSubtestAvgTiming(subtest)		; Requests the average timing observed for the subtest
-	;		JbmOwnerRequestsSubtestMinTiming(subtest)		; Requests the minimum timing observed for the subtest
-	;		JbmOwnerRequestsSubtestMaxTiming(subtest)		; Requests the minimum timing observed for the subtest
-	;		JbmOwnerRequestsSubtestGeoTiming(subtest)		; Requests the geometric mean timing observed for the subtest
-	;		JbmOwnerRequestsSubtestCVTiming(subtest)		; Requests the cv timing observed for the subtest
-	;		JbmOwnerRequestsSubtestAvgScoring(subtest)		; Requests the average scoring observed for the subtest
-	;		JbmOwnerRequestsSubtestMinScoring(subtest)		; Requests the maximum scoring observed for the subtest
-	;		JbmOwnerRequestsSubtestMaxScoring(subtest)		; Requests the maximum scoring observed for the subtest
-	;		JbmOwnerRequestsSubtestGeoScoring(subtest)		; Requests the geoemtric mean scoring observed for the subtest
-	;		JbmOwnerRequestsSubtestCVScoring(subtest)		; Requests the cv scoring observed for the subtest
+	;		JbmOwnerRequestsSubtestScoringData(jvm,subtest)	; Asks scoring data be loaded/returned for the specified JVM (first paramter) and the specified score/sub-score (second parameter)
+	;		JbmOwnerRequestsSubtestMaxScoringData(subtest)	; Asks scoring data be loaded/returned for the max scoring item found, based on avgScore
 	;		JbmOwnerRequestsTheJbmSelfTerminate()			; Tells the JBM that the owner is done with it, and to self-terminate (shut down/exit)
+	;;;;;;; The following are items to obtain specific information about each test
+	;;;;;;; These functions are only called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), which loads the specified data item for repeated inquiry:
+	;		JbmOwnerRequestsName()							; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the name of the previously loaded subtest
+	;		JbmOwnerRequestsAvgTiming()						; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average timing for the previously loaded subtest
+	;		JbmOwnerRequestsMinTiming()						; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest
+	;		JbmOwnerRequestsMaxTiming()						; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest
+	;		JbmOwnerRequestsGeoTiming()						; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geometric mean timing for the previously loaded subtest
+	;		JbmOwnerRequestsCVTiming()						; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv timing for the previously loaded subtest
+	;		JbmOwnerRequestsAvgScoring()					; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average scoring for the previously loaded subtest
+	;		JbmOwnerRequestsMinScoring()					; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest
+	;		JbmOwnerRequestsMaxScoring()					; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest
+	;		JbmOwnerRequestsGeoScoring()					; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest
+	;		JbmOwnerRequestsCVScoring()						; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest
+			
 	$gOpbmPluginHandle = PluginOpen( $OPBM_DLL )
 	If $gOpbmPluginHandle <> 0 Then 
 		errorHandle( $OPBM_DLL & " did not open" )

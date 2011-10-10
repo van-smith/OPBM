@@ -145,10 +145,10 @@ public final class Stream
 	 */
 	public void reportTimings()
 	{
-		m_nano.processTimes(m_timesCopy,	"STREAM Copy",		m_jbm.getHandle());
-		m_nano.processTimes(m_timesScale,	"STREAM Scale",		m_jbm.getHandle());
-		m_nano.processTimes(m_timesAdd,		"STREAM Add",		m_jbm.getHandle());
-		m_nano.processTimes(m_timesTriad,	"STREAM Triad",		m_jbm.getHandle());
+		m_nano.processTimes(m_timesCopy,	"STREAM Copy",		m_jbm.getHandle(), _STREAM_BASELINE_TIME_COPY);
+		m_nano.processTimes(m_timesScale,	"STREAM Scale",		m_jbm.getHandle(), _STREAM_BASELINE_TIME_SCALE);
+		m_nano.processTimes(m_timesAdd,		"STREAM Add",		m_jbm.getHandle(), _STREAM_BASELINE_TIME_ADD);
+		m_nano.processTimes(m_timesTriad,	"STREAM Triad",		m_jbm.getHandle(), _STREAM_BASELINE_TIME_TRIAD);
 	}
 
 	// Class variables
@@ -167,7 +167,11 @@ public final class Stream
 	private	long[]						m_timesTriad;
 
 	// Constants
-	private static final int			_MAX_PASSES			= 300;				// Test it 300x over
-	private static final int			_ARRAY_ELEMENTS		= 4300000;			// 4.3 million * 8 bytes = ~103 MB
-	private static final int			_SCALAR				= 3;
+	private static final int			_MAX_PASSES					= 300;				// Test it 300x over
+	private static final int			_ARRAY_ELEMENTS				= 4300000;			// 4.3 million * 8 bytes = ~34.4MB * 3 = ~103 MB
+	private static final int			_SCALAR						= 3;				// Constant taken from base stream benchmark examples
+	private static final double			_STREAM_BASELINE_TIME_COPY	= 0.0206187766;		// Taken from reference machine, time to produce a score of 100.0
+	private static final double			_STREAM_BASELINE_TIME_SCALE	= 0.0215358122;		// Taken from reference machine, time to produce a score of 100.0
+	private static final double			_STREAM_BASELINE_TIME_ADD	= 0.0292923166;		// Taken from reference machine, time to produce a score of 100.0
+	private static final double			_STREAM_BASELINE_TIME_TRIAD	= 0.0296047769;		// Taken from reference machine, time to produce a score of 100.0
 }
