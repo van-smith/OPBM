@@ -499,7 +499,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera SunSpider" shortname="Opera">
-				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute" atomuuid="ace598de-ecde-4732-b9b0-8f3f3b16a8ef">
+				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
@@ -1161,7 +1161,7 @@
 				</abstract>
 			</atom>
 			<atom name="Java Compute" shortname="JCompute">
-				<abstract name="Java Compute" shortname="JCompute" sourcename="execute">
+				<abstract name="Java Compute" shortname="JCompute" sourcename="execute" atomuuid="590ea61e-0e2e-4b6b-9433-899dbfd4dc46">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>

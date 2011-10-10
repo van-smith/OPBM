@@ -110,6 +110,7 @@ Func LaunchWord()
 EndFunc
 
 Func CloseWord()
+	Local $count
 	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
 	
 	; Exit word
@@ -120,10 +121,35 @@ Func CloseWord()
 	Sleep(250)
 	opbmWaitUntilSystemIdle( 10, 250, 1000 )
 	
-	; "Save Changes?" No
+	; "Save Changes?" No for "Do&n't Save" button
 	Send("!n")
 	Sleep(250)
 	opbmWaitUntilSystemIdle( 10, 250, 1000 )
+	
+	; Note:  This Word dialog window is not like other dialogs, it uses an
+	;        internal class which does not use control HWND components, And
+	;        is therefore not visible to AutoIt.  As such, no text or controls
+	;        within the window are visible to AutoIt either.
+	
+	; Verify the dialog was closed, only by its title bar
+	$count = 0
+	While $count < 5 and WinExists( $MICROSOFT_WORD_WINDOW )
+		outputDebug( "Microsoft Word: Save Changes dialog not closed on attempt " & ($count + 1) )
+		; It was not closed, give it focus, and try again
+		WinActivate( $MICROSOFT_WORD_WINDOW, "save changes" )
+		Sleep(250)
+		; "Save Changes?" No for "Do&n't Save" button
+		Send("!n")
+		Sleep(250)
+		opbmWaitUntilSystemIdle( 10, 250, 1000 )
+		$count = $count + 1
+	WEnd
+	If $count <> 0 Then
+		If $count >= 5 Then
+			ErrorHandle( "Unable to detect Microsoft Word's save changes dialog was closed." )
+		EndIf
+		outputDebug( "Microsoft Word: Save Changes dialog closed on attempt " & ($count + 1) )
+	EndIf
 	
 	TimerEnd( $CLOSE_MICROSOFT_WORD )
 EndFunc
