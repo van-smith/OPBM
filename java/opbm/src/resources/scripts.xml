@@ -499,7 +499,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera SunSpider" shortname="Opera">
-				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
+				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute" atomuuid="ace598de-ecde-4732-b9b0-8f3f3b16a8ef">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
