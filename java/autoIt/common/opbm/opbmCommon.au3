@@ -118,6 +118,7 @@ Func InitializeGlobalVariables()
 	;		JbmOwnerRequestsMaxScoring()					; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest
 	;		JbmOwnerRequestsGeoScoring()					; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest
 	;		JbmOwnerRequestsCVScoring()						; Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest
+	;		AppendToLog(filename, text)						; Appends the specified text, plus a CR/LF to the specified file
 			
 	$gOpbmPluginHandle = PluginOpen( $OPBM_DLL )
 	If $gOpbmPluginHandle <> 0 Then 

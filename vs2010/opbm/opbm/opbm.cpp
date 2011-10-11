@@ -40,7 +40,7 @@
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 45;
+	int numberOfCustomAU3Functions = 46;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
 			/* Function Name,						   Min,	   Max
@@ -89,8 +89,9 @@
 /* 42 */	{ "JbmOwnerRequestsMaxScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
 /* 43 */	{ "JbmOwnerRequestsGeoScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest */
 /* 44 */	{ "JbmOwnerRequestsCVScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest */
-/* 45 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",	0,		0}			/* Called once, asks the JBM to terminate itself (to exit politely) */
-/* 45 = Don't forget to update numberOfCustomAU3Functions above */
+/* 45 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",	0,		0},			/* Called once, asks the JBM to terminate itself (to exit politely) */
+/* 46 */	{ "AppendToLog",							2,		2}			/* User provides a filename, and a string to append to it */
+/* 46 = Don't forget to update numberOfCustomAU3Functions above */
 	};
 
 
@@ -2287,6 +2288,74 @@
 			hasJbmOwnerCheckedIn = false;
 			result = SendMessage(ghWndJBM, _JBM_OWNER_IS_REQUESTING_THE_JBM_SELF_TERMINATE, 0, 0);
 		}
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// AppendToLog()
+//
+// Appends the specified string to the specified log file.
+//
+// Parameters:
+// 		0		- Filename to append to
+//		1		- String to append to it
+//
+// Returns:
+// 		0		- Failure
+//		1		- Success
+//
+/////
+	AU3_PLUGIN_DEFINE(AppendToLog)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result, numwritten;
+		char*				logfile;
+		char*				string;
+		FILE*				lfh;
+		char				buffer[1024];
+		SYSTEMTIME			lpst;
+
+
+		// Get the parameters passed
+		logfile	= AU3_GetString(&p_AU3_Params[0]);
+		string	= AU3_GetString(&p_AU3_Params[1]);
+
+		// Try to open the file
+		result = 0;
+		fopen_s(&lfh, logfile, "rb+");
+		if (lfh == NULL)
+		{	// Log file doesn't exist, try to create it
+			fopen_s(&lfh, logfile, "wb+");
+		}
+		if (lfh != NULL)
+		{	// We're good, append a cr/lf to it, and append it to the file
+			GetSystemTime(&lpst);
+			sprintf_s(buffer, sizeof(buffer), "%04u-%02u-%02u %02u:%02u:%02u.%08u - %s\012\015\000", lpst.wYear, lpst.wMonth, lpst.wDay, lpst.wHour, lpst.wMinute, lpst.wSecond, lpst.wMilliseconds, string);
+			fseek(lfh, 0, SEEK_END);
+			numwritten = fwrite( buffer, strlen(buffer), 1, lfh);
+			if (numwritten == strlen(buffer))
+				result = 1;		// We're good
+			fclose(lfh);
+		}
+
+		// All done
+		AU3_FreeString(logfile);
+		AU3_FreeString(string);
 
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
