@@ -73,7 +73,7 @@
 /* 26 */	{ "GetCSIDLDirectory",						1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
 /* 27 */	{ "Is32BitOS",								0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
 /* 28 */	{ "Is64BitOS",								0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
-/* 29 */	{ "GetCoreCount",							0,		0},			/* Returns the number of CPU cores on the system */
+/* 29 */	{ "GetCoreCount",							1,		1},			/* Returns the number of CPU cores on the system */
 /* 30 */	{ "JbmOwnerReportingIn",					0,		0},			/* Called once, creates the named mail pipe as the JBM owner, and returns the handle to use in future references */
 /* 31 */	{ "JbmOwnerHaveAllInstancesExited",			0,		0},			/* Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited */
 /* 32 */	{ "JbmOwnerRequestsSubtestScoringData",		2,		2},			/* Called repeatedly, asks for scoring data for the specified JVM (first paramter) and the specified score/sub-score (second parameter) */
@@ -1579,21 +1579,154 @@
 // Returns the number of cores on the system.
 //
 // Parameters:  
+//		0		- Get physical cores
+//		1		- Include logical cores (hyperthreaded)
 //
-// 		GetCoreCount()
+// Returns:
+//		#		- CPU count
 //
 /////
+	//////////
+	// Helper function to count set bits in the processor mask.
+	//////
+		typedef BOOL (WINAPI *LPFN_GLPI)(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD);
+		DWORD CountSetBits(ULONG_PTR bitMask)
+		{
+			DWORD LSHIFT = sizeof(ULONG_PTR)*8 - 1;
+			DWORD bitSetCount = 0;
+			ULONG_PTR bitTest = (ULONG_PTR)1 << LSHIFT;    
+			DWORD i;
+    
+			for (i = 0; i <= LSHIFT; ++i)
+			{
+				bitSetCount += ((bitMask & bitTest)?1:0);
+				bitTest/=2;
+			}
+
+			return bitSetCount;
+		}
+	
 	AU3_PLUGIN_DEFINE(GetCoreCount)
 	// See notes about parameters and return codes above
 	{
 		USES_CONVERSION;
 		AU3_PLUGIN_VAR*		pMyResult;
 		int					count;
+		LPFN_GLPI			glpi;
+		BOOL				done = FALSE;
+		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL;
+		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = NULL;
+		DWORD				returnLength = 0;
+		DWORD				logicalProcessorCount = 0;
+		DWORD				numaNodeCount = 0;
+		DWORD				processorCoreCount = 0;
+		DWORD				processorL1CacheCount = 0;
+		DWORD				processorL2CacheCount = 0;
+		DWORD				processorL3CacheCount = 0;
+		DWORD				processorPackageCount = 0;
+		DWORD				byteOffset = 0;
+		PCACHE_DESCRIPTOR	Cache;
+		char*				requestString;
+		int					request;
+
+		// Get the parameter
+		requestString	= AU3_GetString(&p_AU3_Params[0]);
+		request			= atoi(requestString);
+		AU3_FreeString(requestString);	// Free the parameter
 
 		// Ask Windows how many cores are available?
+		// Note:  Returns the total number of physical and logical (hyperthreaded) cores
 		SYSTEM_INFO sysinfo;
 		GetSystemInfo( &sysinfo );
 		count = sysinfo.dwNumberOfProcessors;
+		if (request == 1)
+			return(count);	// They want the total number of cores including logical cores (hyperthreaded)
+
+		// Taken from: http://msdn.microsoft.com/en-us/library/ms683194
+		// Try to find out how many real cores there are (not hyperthreaded)
+		// If we fail, just return the number Windows told us
+		glpi = (LPFN_GLPI) GetProcAddress(GetModuleHandle(TEXT("kernel32")), "GetLogicalProcessorInformation");
+		if (NULL == glpi)
+			return (count);	// _tprintf(TEXT("\nGetLogicalProcessorInformation is not supported.\n"));
+
+		while (!done)
+		{
+			DWORD rc = glpi(buffer, &returnLength);
+
+			if (FALSE == rc) 
+			{
+				if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) 
+				{
+					if (buffer) 
+						free(buffer);
+
+					buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION)malloc(returnLength);
+					if (NULL == buffer) 
+						return (count);	// _tprintf(TEXT("\nError: Allocation failure\n"));
+
+				} else {
+					// _tprintf(TEXT("\nError %d\n"), GetLastError());
+					return (count);
+				}
+
+			} else {
+				done = TRUE;
+			}
+		}
+
+		ptr = buffer;
+		while (byteOffset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) <= returnLength) 
+		{
+			switch (ptr->Relationship) 
+			{
+				case RelationNumaNode:
+					// Non-NUMA systems report a single record of this type.
+					++numaNodeCount;
+					break;
+
+				case RelationProcessorCore:
+					++processorCoreCount;
+
+					// A hyperthreaded core supplies more than one logical processor.
+					logicalProcessorCount += CountSetBits(ptr->ProcessorMask);
+					break;
+
+				case RelationCache:
+					// Cache data is in ptr->Cache, one CACHE_DESCRIPTOR structure for each cache. 
+					Cache = &ptr->Cache;
+					if (Cache->Level == 1)
+						++processorL1CacheCount;
+					else if (Cache->Level == 2)
+						++processorL2CacheCount;
+					else if (Cache->Level == 3)
+						++processorL3CacheCount;
+
+					break;
+
+				case RelationProcessorPackage:
+					// Logical processors share a physical package.
+					++processorPackageCount;
+					break;
+
+				default:
+					//_tprintf(TEXT("\nError: Unsupported LOGICAL_PROCESSOR_RELATIONSHIP value.\n"));
+					return(count);
+					break;
+			}
+			byteOffset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+			ptr++;
+		}
+
+		//_tprintf(TEXT("\nGetLogicalProcessorInformation results:\n"));
+		//_tprintf(TEXT("Number of NUMA nodes: %d\n"), numaNodeCount);
+		//_tprintf(TEXT("Number of physical processor packages: %d\n"), processorPackageCount);
+		//_tprintf(TEXT("Number of processor cores: %d\n"), processorCoreCount);
+		//_tprintf(TEXT("Number of logical processors: %d\n"), logicalProcessorCount);
+		//_tprintf(TEXT("Number of processor L1/L2/L3 caches: %d/%d/%d\n"), processorL1CacheCount, processorL2CacheCount, processorL3CacheCount);
+		free(buffer);
+
+		// We succeeded, grab our value from the algorithm
+		count = processorCoreCount;
 
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();

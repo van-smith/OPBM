@@ -403,7 +403,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install 7zip" shortname="7zip">
-				<abstract name="Install 7zip" shortname="Install" sourcename="execute" atomuuid="aa083163-a5e1-4f6a-af02-0235848150ad">
+				<abstract name="Install 7zip" shortname="Install" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -451,7 +451,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall 7zip" shortname="7zip">
-				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute" atomuuid="7877c8a3-315a-4ef3-8562-ae0a4299f59c">
+				<abstract name="Uninstall 7zip" shortname="Uninstall" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -467,7 +467,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Opera" shortname="Opera">
-				<abstract name="Install Opera" shortname="Install" sourcename="execute" atomuuid="d0565173-1908-4d4c-9e36-116be3c16c06">
+				<abstract name="Install Opera" shortname="Install" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -483,7 +483,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Opera" shortname="Opera">
-				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute" atomuuid="ebe658e7-d75e-4a99-aafa-625157ca0dd8">
+				<abstract name="Uninstall Opera" shortname="Uninstall" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -547,7 +547,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Safari" shortname="Safari">
-				<abstract name="Install Safari" shortname="Install" sourcename="execute" atomuuid="ce8419c0-31de-4631-a2d5-888a7a7f3480">
+				<abstract name="Install Safari" shortname="Install" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -563,7 +563,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Safari" shortname="Safari">
-				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute" atomuuid="22a48776-ad83-4391-a46f-df33c6afdd2d">
+				<abstract name="Uninstall Safari" shortname="Uninstall" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -675,7 +675,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Chrome" shortname="Chrome">
-				<abstract name="Install Chrome" shortname="Install" sourcename="execute" atomuuid="68cb5b89-911e-4d4f-8637-ccb105378c07">
+				<abstract name="Install Chrome" shortname="Install" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -691,7 +691,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Chrome" shortname="Chrome">
-				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute" atomuuid="47cf46a0-fb33-4ddd-bdda-2f5efa27ed14">
+				<abstract name="Uninstall Chrome" shortname="Uninstall" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -755,7 +755,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Firefox" shortname="Firefox">
-				<abstract name="Install Firefox" shortname="Install" sourcename="execute" atomuuid="6836b837-c4a2-47bd-8c8f-d57738a3bc5f">
+				<abstract name="Install Firefox" shortname="Install" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -771,7 +771,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Firefox" shortname="Firefox">
-				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute" atomuuid="8fcde903-f62c-42e2-9d5d-302b32e6d339">
+				<abstract name="Uninstall Firefox" shortname="Uninstall" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -835,7 +835,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
-				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute" atomuuid="c120f9e9-e6c3-4530-aa5e-cd96516ca186">
+				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -851,7 +851,7 @@
 				</abstract>
 			</atom>
 			<atom name="Uninstall Acrobat Reader" shortname="Acrobat">
-				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute" atomuuid="4077b3f9-2dd1-408f-b625-36bfa0eff8c6">
+				<abstract name="Uninstall Acrobat Reader" shortname="Uninstall" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>

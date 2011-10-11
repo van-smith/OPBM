@@ -37,7 +37,7 @@ For $CurrentLoop = 1 to $LoopLimit
 	InitializeJava_Script()
 
 	; Grab the number of cores on this system
-	$Cores = GetCoreCount()
+	$Cores = GetCoreCount(0)	; 0-physical cores, 1-logical cores (including hyperthreaded)
 	If $Cores < 1 or $Cores > 32 Then
 		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
 	EndIf
@@ -178,8 +178,8 @@ Func WaitForJvmsToFinish()
 	Local $timeout
 	Local $finished
 	
-	$timeout = 8 * 60
-	outputDebug( "Will timeout in 8 minutes" )
+	$timeout = 12 * 60
+	outputDebug( "Will timeout in 12 minutes" )
 	
 	$finished = 0
 	While $finished = 0 and $seconds < $timeout
