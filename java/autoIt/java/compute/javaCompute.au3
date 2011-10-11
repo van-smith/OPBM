@@ -61,15 +61,6 @@ Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 Exit
 
-; opbm.dll functions used by this process:
-;
-;		JbmOwnerReportingIn()							- At startup, makes the connection to the running JBM instance
-;		JbmOwnerHaveAllInstancesExited()				- Polled once per second, to find out when all of the JVMs are done
-;		JbmOwnerRequestsSubtestName(subtest)			- Requests the name of the subtest
-;		JbmOwnerRequestsSubtestAvgTiming(subtest)		- Requests the average timing observed for the subtest
-;		JbmOwnerRequestsSubtestAvgScoring(subtest)		- Requests the average scoring observed for the subtest
-;		JbmOwnerRequestsTheJbmSelfTerminate()			- Tells the JBM that the owner is done with it, and to self-terminate (shut down/exit)
-;	
 Func LaunchJBM()
 	Local $jbm_executable_to_launch
 	
@@ -108,59 +99,74 @@ Func LaunchJvmInstances()
 	; The following code launches each JVM, and assigns affinity to separate cores, beginning at 1 and continuing to the core count
 	$run_silently_vbs	= GetScriptTempDirectory() & "runSilently.vbs"
 	$runme_dot_bat		= GetScriptTempDirectory() & "runme.bat"
-	$file_handle = FileOpen( $run_silently_vbs, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
-	If $file_handle == -1 Then
-		ShutdownJBM()
-		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
-		ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
-	EndIf
-	$line1	= "Set WshShell = CreateObject(" & chr(34) & "WScript.Shell" & chr(34) & ")"
-	$line2	= "WshShell.Run chr(34) & " & chr(34) & $runme_dot_bat & chr(34) & " & Chr(34), 0"
-	$line3	= "Set WshShell = Nothing"
-	FileWriteLine( $file_handle, $line1		& @CRLF )
-	FileWriteLine( $file_handle, $line2		& @CRLF )
-	FileWriteLine( $file_handle, $line3		& @CRLF )
-	FileClose( $file_handle )
-		
-	outputDebug( "Populated to runSilently.vbs:" )
-	outputDebug( $line1 )
-	outputDebug( $line2 )
-	outputDebug( $line3 )
 	
-	; Create a JVM instance for every core
-	FileChangeDir( ".\exe" )
-	outputMessage( "In directory " & @WorkingDir )
-	For $i = 0 to ($Cores - 1)
-		; Pause to let the system idle down
-		opbmWaitUntilSystemIdle( 10, 1000, 10000)
-		
-		; Create a file that has this information:
-		;	@echo off
-		;	cd c:\cana\java\autoit\java\compute\exe\
-		;	start /AFFINITY N /B "c:\program files\java\jre7\bin\java.exe" -jar benchmark.jar "JVM X of Y"
-		;		OR:
-		;	start /AFFINITY N /B benchmark.jar "JVM X of Y"
-		$echo_off					= "@echo off"
-		$change_directory			= "cd " & chr(34) & @WorkingDir & chr(34)
-		;$executable					= chr(34) & "c:\program files\java\jre7\bin\java.exe" & chr(34) & " -jar benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
-		$executable				= "start /AFFINITY " & ($i + 1) & " /B benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
-		; Create the runme.bat file
-		$file_handle = FileOpen( $runme_dot_bat, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
+	; Create a file that will launch the runme.bat file silently:
+	;		Set WshShell = CreateObject("WScript.Shell")
+	;		WshShell.Run chr(34) & "c:\users\user name\documents\opbm\scriptOutput\temp\runme.bat" & chr(34), 0
+	;		Set WshShell = Nothing
+	; Begin
+		$file_handle = FileOpen( $run_silently_vbs, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
 		If $file_handle == -1 Then
 			ShutdownJBM()
 			opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 			ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
 		EndIf
-		FileWriteLine( $file_handle, $echo_off			& @CRLF )
-		FileWriteLine( $file_handle, $change_directory	& @CRLF )
-		FileWriteLine( $file_handle, $executable		& @CRLF )
+		$line1	= "Set WshShell = CreateObject(" & chr(34) & "WScript.Shell" & chr(34) & ")"
+		$line2	= "WshShell.Run chr(34) & " & chr(34) & $runme_dot_bat & chr(34) & " & Chr(34), 0"
+		$line3	= "Set WshShell = Nothing"
+		FileWriteLine( $file_handle, $line1		& @CRLF )
+		FileWriteLine( $file_handle, $line2		& @CRLF )
+		FileWriteLine( $file_handle, $line3		& @CRLF )
 		FileClose( $file_handle )
+			
+		outputDebug( "Populated to runSilently.vbs:" )
+		outputDebug( $line1 )
+		outputDebug( $line2 )
+		outputDebug( $line3 )
+	; End
+	
+	; Create a JVM instance for every core
+;	Local $before = @WorkingDir
+	FileChangeDir( ".\exe" )
+;	If $before = @WorkingDir Then
+;		; The directory was not changed (does not exist), which means we probably didn't start up in the correct directory, or the OPBM installation is damaged
+;		; We should start up in autoIt\java\compute\, which should have an exe\ directory below it which contains benchmark.jar, benchmark32.dll and benchmark64.dll
+;		
+;		; Remember, we may need to put a message here for this error
+;		; The error condition will be captured below when the start command fails
+;		; so for now we just leave it alone
+;	EndIf
+	outputMessage( "In directory " & @WorkingDir )
+	For $i = 0 to ($Cores - 1)
+		; Pause to let the system idle down
+		opbmWaitUntilSystemIdle( 10, 1000, 10000)
 		
-		outputDebug( "Populated to runme.bat:" )
-		outputDebug( $change_directory )
-		outputDebug( $executable )
+		; Create the batch file which has this type of information (adjusted to dynamic conditions of system):
+		;		@echo off
+		;		cd c:\cana\java\autoit\java\compute\exe\
+		;		start /AFFINITY N /B benchmark.jar "JVM X of Y"
+		; Begin
+			$echo_off					= "@echo off"
+			$change_directory			= "cd " & chr(34) & @WorkingDir & chr(34)
+			$executable					= "start /AFFINITY " & StripLeadingZeros(Hex($i + 1)) & " /B benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
+			; Create the runme.bat file
+			$file_handle = FileOpen( $runme_dot_bat, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
+			If $file_handle == -1 Then
+				ShutdownJBM()
+				opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+				ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
+			EndIf
+			FileWriteLine( $file_handle, $echo_off			& @CRLF )
+			FileWriteLine( $file_handle, $change_directory	& @CRLF )
+			FileWriteLine( $file_handle, $executable		& @CRLF )
+			FileClose( $file_handle )
 		
-		outputMessage( "Launching [" & $executable & "]")
+			outputDebug( "Populated to runme.bat:" )
+			outputDebug( $change_directory )
+			outputDebug( $executable )
+		; End
+		
+		outputMessage( "Launching [" & $executable & "] via [" & $run_silently_vbs & "]")
 		$lPID = ShellExecute( $run_silently_vbs, "C:\", @SW_SHOW )
 		If $lPID = 0 Then
 			ShutdownJBM()
@@ -221,6 +227,47 @@ Func GatherAndReportJvmScoring()
 		$subtest = $subtest + 1
 	WEnd
 EndFunc
+
+;Func GatherAndReportIndividualJvmFullScoring()
+;	Local $jvm, $subtest
+;	Local $status, $name, $timing, $scoring
+;	Local $maxtests
+;	
+;	; Gather all of the scores for all JVMs and report everything about them
+;	For $jvm = 0 to ($Cores - 1)
+;		$subtest = 1
+;		While $subtest > 0
+;			$status	= JbmOwnerRequestsSubtestScoringData( $jvm, $subtest )
+;			If $status = "failure" Then
+;				; Will be returned when we're reached the end of tests
+;				ExitLoop
+;			EndIf
+;			; Report the line as "JVM_N_TestName,timing,score"
+;			$name		= "JVM_" & ($jvm + 1) & "_" & JbmOwnerRequestsName()
+;			$timing		= JbmOwnerRequestsAvgTiming()
+;			$scoring	= JbmOwnerRequestsAvgScoring() * $Cores
+;			outputTiming( $name & "," & $timing & "," & $scoring )
+;
+;			; Add debug information for timing min, max, avg, geo and cv
+;			outputDebug( "Full timing data for JVM " & ($jvm + 1) )
+;			outputDebug( "  Min: " & JbmOwnerRequestsMinTiming() )
+;			outputDebug( "  Max: " & JbmOwnerRequestsMaxTiming() )
+;			outputDebug( "  Avg: " & JbmOwnerRequestsAvgTiming() )
+;			outputDebug( "  Geo: " & JbmOwnerRequestsGeoTiming() )
+;			outputDebug( "   CV: " & JbmOwnerRequestsCVTiming() )
+;			
+;			; Add debug information for scoring min, max, avg, geo and cv
+;			outputDebug( "Full scoring data for JVM " & ($jvm + 1) )
+;			outputDebug( "  Min: " & JbmOwnerRequestsMinScoring() )
+;			outputDebug( "  Max: " & JbmOwnerRequestsMaxScoring() )
+;			outputDebug( "  Avg: " & JbmOwnerRequestsAvgScoring() )
+;			outputDebug( "  Geo: " & JbmOwnerRequestsGeoScoring() )
+;			outputDebug( "   CV: " & JbmOwnerRequestsCVScoring() )
+;			
+;			$subtest = $subtest + 1
+;		WEnd
+;	Next
+;EndFunc
 
 Func ShutdownJBM()
 	JbmOwnerRequestsTheJbmSelfTerminate()

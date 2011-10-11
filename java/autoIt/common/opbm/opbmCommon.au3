@@ -548,3 +548,16 @@ EndFunc
 Func Office2010RestoreRegistryKeys()
 ; no longer used, moved to OPBM Java app
 EndFunc
+
+; Strips the leading zeros from a string value
+Func StripLeadingZeros( $string )
+	Local $i
+	For $i = 1 to StringLen( $string )
+		If StringMid( $string, $i, 1 ) <> "0" Then
+			; We found the first non-zero, return the rest
+			return StringRight( $string, StringLen( $string ) - $i + 1 )
+		EndIf
+	Next
+	; If we get here, it's all zeros
+	return "0"
+EndFunc
