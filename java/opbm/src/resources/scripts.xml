@@ -342,7 +342,7 @@
 				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Word Conflict Check, Acrobat Reader Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts>Word Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
