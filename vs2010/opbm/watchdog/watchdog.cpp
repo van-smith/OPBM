@@ -460,6 +460,99 @@
 		return(false);
 	}
 
+	// Append it to the end of the subprocess chain for the specified process (by its handle)
+	bool appendNewSProcessToLinkedListSubprocess(SProcessLL* spll, SProcess* sp)
+	{
+		SProcessLL*		spllNew;
+
+		if (spll != NULL)
+		{	// Add it here
+			spllNew = (SProcessLL*)malloc(sizeof(SProcessLL));
+			if (spllNew)
+			{	// Initialize it
+				ZeroMemory(spllNew, sizeof(SProcessLL));
+				memcpy(&spllNew->process, sp, sizeof(SProcess));
+
+				if (spll->firstSubprocess == NULL)
+				{	// First one
+					spll->firstSubprocess = spllNew;
+
+				} else {
+					// Iterate through linked list to find the end, and add it there
+					spll = spll->firstSubprocess;
+					while (spll->next != NULL)
+						spll = spll->next;
+
+					spll->next = spllNew;
+				}
+				return(true);
+			}
+		}
+		// If we get here, the parent process wasn't valid, or we couldn't allocate memory
+		return(false);
+	}
+
+	// Delete the specified linked list entry
+	// We have to search from the beginning to find which previous entry points to it, since all linked list entries in this tree are one-way-pointers (only to the next entry, no prev entries are permanently stored)
+	void deleteLinkedListEntry(SProcessLL* spll)
+	{
+		SProcessLL** prev;
+
+		if (spll != NULL)
+		{	// Find out where it is
+			if (spll == gsFirstProcess)
+			{	// We are updating the first entry
+				gsFirstProcess = spll->next;
+
+			} else {
+				// It's a later entry
+				prev = findLinkedListEntryBeforeThisOne(gsFirstProcess, spll);
+				if (prev != NULL)
+				{	// There is a previous entry
+					// Update its pointers to skip over this one we're deleting
+					*prev = spll->next;
+				}
+			}
+
+			// Based on what entries are here, delete them
+			free(spll);
+		}
+	}
+
+	// Called recursively for each next and firstSubprocess branch
+	// It could be either part of the main linked list (next entries) or one of its subprocesses (firstSubprocess entries)
+	SProcessLL** findLinkedListEntryBeforeThisOne(SProcessLL* haystack, SProcessLL* needle)
+	{
+		SProcessLL** result;
+
+		if (haystack->firstSubprocess == needle)
+			return(&haystack->firstSubprocess);	// It's the first entry in the subprocess list, return this one's firstSubprocess pointer
+
+		if (haystack->next == needle)
+			return(&haystack->next);			// It's the next entry after this one, return this one's next pointer
+
+		// Try subprocesses
+		if (haystack->firstSubprocess != NULL)
+		{	// See if it's down this branch
+			result = findLinkedListEntryBeforeThisOne(haystack->firstSubprocess, needle);
+			if (result != NULL)
+				return(result);	// It was, return wherever it fell
+			// If we get here, it wasn't
+		}
+
+		// Try processes further down the chain
+		if (haystack->next != NULL)
+		{	// See if it's down this branch
+			result = findLinkedListEntryBeforeThisOne(haystack->next, needle);
+			if (result != NULL)
+				return(result);	// It was, return wherever it fell
+			// If we get here, it wasn't
+		}
+
+		// Not found
+		return(NULL);
+	}
+
 	// They're adding a process for timeout watch
 	void addProcess(SAddProcess* ap, SResponse* response)
 	{
@@ -488,15 +581,30 @@
 
 				// Append it to the linked list
 				if (appendNewSProcessToLinkedList(sp))
-				{
-					// Update our response
+				{	// Update our response
+					failure					= false;
 					response->status		= _SUCCESS;
 					response->handle		= sp->handle;
 					response->error			= 0;
 					response->processCount	= 0;
 					sprintf_s(notes, sizeof(notes), "Added Process #%u (%s)\000", sp->id, sp->alias);
+
+				} else {
+					// Report the memory error
+					error = -1;
+					sprintf_s(notes, sizeof(notes), "Unable to append new process to the process chain, out of memory\000");
 				}
+
+			} else {
+				// Report the memory error
+				error = -2;
+				sprintf_s(notes, sizeof(notes), "Unable to allocate memory for new process\000");
 			}
+
+		} else {
+			// Report the parameter error
+			error = -3;
+			sprintf_s(notes, sizeof(notes), "Timeout parameter (duration) must be between 1 and 5*86400\000");
 		}
 
 		// If there was a failure, we could not add it
@@ -515,14 +623,167 @@
 
 	void deleteProcess(SDeleteProcess* dp, SResponse* response)
 	{
+		boolean			failure				= true;
+		int				error				= 0;
+		char			notes[sizeof(response->notes)];
+		SProcessLL*		spll;
+
+		// Clear out our response notes area
+		ZeroMemory(notes, sizeof(notes));
+
+		// Verify the handle is valid
+		spll = isValidHandleAtProcessLevel(dp->handle);
+		if (spll != NULL)
+		{	// Update our response (we do this first while the relevant data is still in scope)
+			failure					= false;
+			response->status		= _SUCCESS;
+			response->handle		= 0;
+			response->error			= 0;
+			response->processCount	= 0;
+			sprintf_s(notes, sizeof(notes), "Deleted Process #%u (handle #%u, %s)\000", spll->process.id, spll->process.handle, spll->process.alias);
+
+			// Delete it
+			deleteLinkedListEntry(spll);
+
+		} else {
+			// Invalid handle
+			error = -1;
+			sprintf_s(notes, sizeof(notes), "Handle parameter is not valid (or no longer valid if process has fallen out of scope)\000");
+		}
+
+		// If there was a failure, we could not add it
+		if (failure)
+		{	// Populate the response with the failure
+			response->status		= _FAILURE;
+			response->handle		= 0;
+			response->error			= error;
+			response->processCount	= 0;
+		}
+
+		// Add in any note that needs added
+		ZeroMemory(&response->notes, sizeof(response->notes));
+		memcpy(&response->notes, notes, min(strlen(notes), sizeof(response->notes)));
 	}
 
 	void addSubprocess(SAddSubprocess* asp, SResponse* response)
 	{
+		boolean			failure				= true;
+		int				error				= 0;
+		char			notes[sizeof(response->notes)];
+		SProcess*		sp;
+		SProcessLL*		spll;
+
+		// Clear out our response notes area
+		ZeroMemory(notes, sizeof(notes));
+
+		// Verify the handle is valid
+		spll = isValidHandleAtProcessLevel(asp->handle);
+		if (spll != NULL)
+		{	// Make sure the timeout data is valid, from 1 second to 5 days
+			if (asp->timeout > 0 && asp->timeout < 5*86400)
+			{	// For now, we go ahead and add it even if the subprocess is invalid.
+				// Once it falls out of scope and is no longer valid, it will be removed from the queue and its watchdog will be terminated
+				sp = createNewSProcess();
+				if (sp != NULL)
+				{	// Populate it
+					sp->id					= asp->sid;
+					sp->timeout				= asp->timeout;
+					sp->countdown			= asp->timeout;
+
+					// Copy over optional name and alias
+					memcpy(&sp->name,	&asp->name,		min(sizeof(sp->name),	sizeof(asp->name)));
+					memcpy(&sp->alias,	&asp->alias,	min(sizeof(sp->alias),	sizeof(asp->alias)));
+
+					// Append it to the linked list
+					if (appendNewSProcessToLinkedListSubprocess(spll, sp))
+					{	// Update our response
+						failure					= false;
+						response->status		= _SUCCESS;
+						response->handle		= sp->handle;
+						response->error			= 0;
+						response->processCount	= 0;
+						sprintf_s(notes, sizeof(notes), "Added Subprocess #%u (%s)\000", sp->id, sp->alias);
+
+					} else {
+						// Report the memory error
+						error = -1;
+						sprintf_s(notes, sizeof(notes), "Unable to append new subprocess to the process chain, out of memory\000");
+					}
+
+				} else {
+					// Report the memory error
+					error = -2;
+					sprintf_s(notes, sizeof(notes), "Unable to allocate memory for new subprocess\000");
+				}
+
+			} else {
+				// Report the parameter error
+				error = -3;
+				sprintf_s(notes, sizeof(notes), "Timeout parameter (duration) must be between 1 and 5*86400\000");
+			}
+
+		} else {
+			// Invalid handle
+			error = -4;
+			sprintf_s(notes, sizeof(notes), "Parent handle parameter is not valid (or no longer valid if process has fallen out of scope)\000");
+		}
+
+		// If there was a failure, we could not add it
+		if (failure)
+		{	// Populate the response with the failure
+			response->status		= _FAILURE;
+			response->handle		= 0;
+			response->error			= error;
+			response->processCount	= 0;
+		}
+
+		// Add in any note that needs added
+		ZeroMemory(&response->notes, sizeof(response->notes));
+		memcpy(&response->notes, notes, min(strlen(notes), sizeof(response->notes)));
 	}
 
 	void deleteSubprocess(SDeleteSubprocess* dsp, SResponse* response)
 	{
+		boolean			failure				= true;
+		int				error				= 0;
+		char			notes[sizeof(response->notes)];
+		SProcessLL*		spll;
+
+		// Clear out our response notes area
+		ZeroMemory(notes, sizeof(notes));
+
+		// Verify the handle is valid
+		spll = isValidHandleAtSubprocessLevel(dsp->handle);
+		if (spll != NULL)
+		{	// Update our response (we do this first while the relevant data is still in scope)
+			failure					= false;
+			response->status		= _SUCCESS;
+			response->handle		= 0;
+			response->error			= 0;
+			response->processCount	= 0;
+			sprintf_s(notes, sizeof(notes), "Deleted Subprocess #%u (handle #%u, %s)\000", spll->process.id, spll->process.handle, spll->process.alias);
+
+			// Delete it
+			deleteLinkedListEntry(spll);
+
+		} else {
+			// Invalid handle
+			error = -1;
+			sprintf_s(notes, sizeof(notes), "Handle parameter is not valid (or no longer valid if process or subprocess has fallen out of scope)\000");
+		}
+
+		// If there was a failure, we could not add it
+		if (failure)
+		{	// Populate the response with the failure
+			response->status		= _FAILURE;
+			response->handle		= 0;
+			response->error			= error;
+			response->processCount	= 0;
+		}
+
+		// Add in any note that needs added
+		ZeroMemory(&response->notes, sizeof(response->notes));
+		memcpy(&response->notes, notes, min(strlen(notes), sizeof(response->notes)));
 	}
 
 	void addFileToDeletePostMortum(SFileToDeletePostMortum* fdpm, SResponse* response)
@@ -568,4 +829,54 @@
 		// If we get here, an error accessing that hProcess
 		CloseHandle(hProcess);
 		return true;
+	}
+
+	// Check process and subprocess levels
+	SProcessLL* isValidHandle(int handle)
+	{
+		SProcessLL* spll;
+
+		spll = isValidHandleAtProcessLevel(handle);
+		if (spll != NULL)
+			return(spll);
+
+		spll = isValidHandleAtSubprocessLevel(handle);
+		return(spll);
+	}
+
+	// Check process level
+	SProcessLL* isValidHandleAtProcessLevel(int handle)
+	{
+		SProcessLL* spll;
+
+		// Find the SProcess with the specified handle
+		spll = gsFirstProcess;
+		while (spll != NULL && spll->process.handle != handle)
+			spll = spll->next;
+
+		return(spll);	// If NULL invalid, otherwise valid
+	}
+
+	// Check subprocess level
+	SProcessLL* isValidHandleAtSubprocessLevel(int handle)
+	{
+		SProcessLL* spll;
+		SProcessLL*	spllsp;
+
+		// Find the SProcess with the specified handle
+		spll = gsFirstProcess;
+		while (spll != NULL)
+		{	// See if it's down this subprocess branch
+			spllsp = spll->firstSubprocess;
+			while (spllsp != NULL && spllsp->process.handle != handle)
+				spllsp = spllsp->next;
+
+			if (spllsp != NULL)
+				return(spllsp);		// We found it at this subprocess level
+			// If we get here, it wasn't found
+
+			// Move to next parent
+			spll = spll->next;
+		}
+		return(spll);	// If NULL invalid, otherwise valid
 	}

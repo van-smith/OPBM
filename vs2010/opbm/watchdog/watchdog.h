@@ -109,6 +109,9 @@
 
 	SProcess*			createNewSProcess							(void);
 	bool				appendNewSProcessToLinkedList				(SProcess* sp);
+	bool				appendNewSProcessToLinkedListSubprocess		(SProcessLL* spll, SProcess* sp);
+	void				deleteLinkedListEntry						(SProcessLL* spll);
+	SProcessLL**		findLinkedListEntryBeforeThisOne			(SProcessLL* haystack, SProcessLL* needle);
 
 	void				addProcess									(SAddProcess* ap, SResponse* response);
 	void				deleteProcess								(SDeleteProcess* dp, SResponse* response);
@@ -121,3 +124,6 @@
 	void				addProcessIdToKillPostMortum				(SProcessIdToKillPostMortum* pikpm, SResponse* response);
 
 	bool				isValidProcess								(DWORD pid);
+	SProcessLL*			isValidHandle								(int handle);
+	SProcessLL* 		isValidHandleAtProcessLevel					(int handle);
+	SProcessLL*			isValidHandleAtSubprocessLevel				(int handle);
