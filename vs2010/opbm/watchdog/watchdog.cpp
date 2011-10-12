@@ -1,6 +1,9 @@
 //////////
 //
 // watchdog.cpp
+//
+/////
+//
 // OPBM Watchdog -- Used to monitor errant apps, and terminate hung
 //                  processes after a harness-/script-specified
 //                  timeout intervals, including cleanup (file and/or
@@ -50,17 +53,17 @@
 
 //////////
 //
-// The only commmand line parameter is the path to access
-// EnumThreads.dll, which for OPBM, should be ..\dll\ relative
+// The only commmand line parameter is the path to access DLLs
+// (EnumThreads.dll), which for OPBM, should be ..\dll\ relative
 // to the location of this exe, as in:
 //		....autoIt\common\opbm\exe\watchdog.exe
 //		....autoIt\common\opbm\dll\EnumThreads.dll
 //
 /////
-	int APIENTRY WinMain(HINSTANCE hInstance,
-						 HINSTANCE hPrevInstance,
-						 LPSTR     lpCmdLine,
-						 int       nCmdShow)
+	int APIENTRY WinMain(HINSTANCE	hInstance,
+						 HINSTANCE	hPrevInstance,
+						 LPSTR		lpCmdLine,
+						 int		nCmdShow)
 	{
 		ghInst = hInstance;
 
@@ -92,7 +95,7 @@
 /////
 	void connectToExternalDlls(LPSTR lpCmdLine)
 	{
-		char	filename[_MAX_FNAME];
+		char filename[_MAX_FNAME];
 
 		if (lpCmdLine != NULL)
 		{	// We have a valid command line
@@ -182,11 +185,11 @@
 		RegisterClassEx(&wce);
 
 		// Create our window
-		ghWnd	=	CreateWindowEx(0,
-								   _WATCHDOG_Class_Name,
-								   _WATCHDOG_Window_Name,
-								   0, 0, 0, 0, 0,
-								   HWND_MESSAGE, NULL, ghInst, NULL);
+		ghWnd	=	CreateWindowEx(	0,
+									_WATCHDOG_Class_Name,
+									_WATCHDOG_Window_Name,
+									0, 0, 0, 0, 0,
+									HWND_MESSAGE, NULL, ghInst, NULL);
 
 		// If there is a failure creating the window, the harness will identify it
 		// when it tries to verify this process launched and installed correctly.
@@ -216,6 +219,22 @@
 	{
 		switch (m)
 		{
+			case WM_CREATE:
+				ghTimer = SetTimer(hwnd, 1, /* 5 seconds */ 5000, NULL);
+				break;
+
+			case WM_TIMER:
+				// We've had another 5 seconds go by
+				// Check the processes, see if any are due for termination
+// REMEMBER
+//				if (isValidProcess(pid))
+//				{	// It is valid
+//				} else {
+//					// Invalid
+//				}
+
+				break;
+
 			// If the user wants to close the application
 			case WM_DESTROY:
 			case _WATCHDOG_SHOULD_SELF_TERMINATE:
@@ -225,20 +244,23 @@
 
 			case _WATCHDOG_HARNESS_REPORTING_IN:
 				// The harness is reporting that it has made a connection
-				// We acknowledge the request with 0x12345678
+				// We acknowledge the request with our secret number _WATCHDOG_SUCCESS_RESPONSE
 				return(_WATCHDOG_SUCCESS_RESPONSE);
 				break;
 
 			case _WATCHDOG_SCRIPT_REPORTING_IN:
 				// A script is reporting that it has made a connection
+				// We acknowledge the request with our secret number _WATCHDOG_SUCCESS_RESPONSE
 				return(_WATCHDOG_SUCCESS_RESPONSE);
 				break;
 
 			case _WATCHDOG_HARNESS_HAS_PIPE_DATA:
+				// The harness is sending a packet
 				loadAndProcessHarnessPipeData();
 				break;
 
 			case _WATCHDOG_SCRIPT_HAS_PIPE_DATA:
+				// The script is sending a packet
 				loadAndProcessScriptPipeData();
 				break;
 
@@ -261,14 +283,14 @@
 			if (numread == sizeof(pipeData))
 			{	// A valid message
 				memcpy(&harnessPipeData, &pipeData, sizeof(pipeData));
-				processHarnessPipeMessage();
+				processHarnessPipeMessage(&harnessPipeData);
 			}
 		}
 	}
 
 	void loadAndProcessScriptPipeData(void)
 	{
-		SHarnessPipeData pipeData;
+		SScriptPipeData pipeData;
 		DWORD numread;
 
 		if (ghScriptPipeHandle != INVALID_HANDLE_VALUE)
@@ -276,16 +298,274 @@
 			ReadFile(ghScriptPipeHandle, &pipeData, sizeof(pipeData), &numread, NULL);
 			if (numread == sizeof(pipeData))
 			{	// A valid message
-				memcpy(&harnessPipeData, &pipeData, sizeof(pipeData));
-				processScriptPipeMessage();
+				memcpy(&scriptPipeData, &pipeData, sizeof(pipeData));
+				processScriptPipeMessage(&scriptPipeData);
 			}
 		}
 	}
 
-	void processHarnessPipeMessage(void)
+	// Write the response back for the harness
+	bool sendHarnessPipeMessage(SHarnessPipeData* pipeData)
+	{
+		DWORD numwritten;
+		WriteFile(ghHarnessPipeHandle, pipeData, sizeof(SHarnessPipeData), &numwritten, NULL);
+		return(numwritten == sizeof(SHarnessPipeData));
+	}
+
+	// Write the response back for the script
+	bool sendScriptPipeMessage(SScriptPipeData* pipeData)
+	{
+		DWORD numwritten;
+		WriteFile(ghScriptPipeHandle, pipeData, sizeof(SScriptPipeData), &numwritten, NULL);
+		return(numwritten == sizeof(SScriptPipeData));
+	}
+
+	// Process common and harness-specific messages
+	void processHarnessPipeMessage(SHarnessPipeData* hpd)
+	{
+		switch (hpd->packet.type)
+		{
+			case _WATCHDOG_TYPE_ADD_PROCESS:
+			case _WATCHDOG_TYPE_DELETE_PROCESS:
+			case _WATCHDOG_TYPE_ADD_SUBPROCESS:
+			case _WATCHDOG_TYPE_DELETE_SUBPROCESS:
+			case _WATCHDOG_TYPE_FILE_TO_DELETE_POST_MORTUM:
+			case _WATCHDOG_TYPE_DIRECTORY_TO_CLEAN_POST_MORTUM:
+			case _WATCHDOG_TYPE_DIRECTORY_TO_DELETE_POST_MORTUM:
+			case _WATCHDOG_TYPE_PROCESS_NAME_TO_KILL_POST_MORTUM:
+			case _WATCHDOG_TYPE_PROCESS_ID_TO_KILL_POST_MORTUM:
+				processCommonPipeMessages(&hpd->packet, &hpd->response);
+				// When control returns here, the packet has been process, and the response created
+				// Now send it back down the proper pipe
+				sendHarnessPipeMessage(hpd);
+				break;
+
+			default:
+				// Unrecognized response
+				break;
+		}
+	}
+
+	// Process common and script-specific messages
+	void processScriptPipeMessage(SScriptPipeData* spd)
+	{
+		switch (spd->packet.type)
+		{
+			case _WATCHDOG_TYPE_ADD_PROCESS:
+			case _WATCHDOG_TYPE_DELETE_PROCESS:
+			case _WATCHDOG_TYPE_ADD_SUBPROCESS:
+			case _WATCHDOG_TYPE_DELETE_SUBPROCESS:
+			case _WATCHDOG_TYPE_FILE_TO_DELETE_POST_MORTUM:
+			case _WATCHDOG_TYPE_DIRECTORY_TO_CLEAN_POST_MORTUM:
+			case _WATCHDOG_TYPE_DIRECTORY_TO_DELETE_POST_MORTUM:
+			case _WATCHDOG_TYPE_PROCESS_NAME_TO_KILL_POST_MORTUM:
+			case _WATCHDOG_TYPE_PROCESS_ID_TO_KILL_POST_MORTUM:
+				processCommonPipeMessages(&spd->packet, &spd->response);
+				// When control returns here, the packet has been process, and the response created
+				// Now send it back down the proper pipe
+				sendScriptPipeMessage(spd);
+				break;
+
+			default:
+				// Unrecognized response
+				break;
+		}
+	}
+
+	// Process the common pipe message as these portions are identical for the harness and scripts
+	void processCommonPipeMessages(SPacket* packet, SResponse* response)
+	{
+		switch (packet->type)
+		{
+			case _WATCHDOG_TYPE_ADD_PROCESS:
+				addProcess(&packet->ap, response);
+				break;
+
+			case _WATCHDOG_TYPE_DELETE_PROCESS:
+				deleteProcess(&packet->dp, response);
+				break;
+
+			case _WATCHDOG_TYPE_ADD_SUBPROCESS:
+				addSubprocess(&packet->asp, response);
+				break;
+
+			case _WATCHDOG_TYPE_DELETE_SUBPROCESS:
+				deleteSubprocess(&packet->dsp, response);
+				break;
+
+			case _WATCHDOG_TYPE_FILE_TO_DELETE_POST_MORTUM:
+				addFileToDeletePostMortum(&packet->fdpm, response);
+				break;
+
+			case _WATCHDOG_TYPE_DIRECTORY_TO_CLEAN_POST_MORTUM:
+				addDirectoryToCleanPostMortum(&packet->dcpm, response);
+				break;
+
+			case _WATCHDOG_TYPE_DIRECTORY_TO_DELETE_POST_MORTUM:
+				addDirectoryToDeletePostMortum(&packet->ddpm, response);
+				break;
+
+			case _WATCHDOG_TYPE_PROCESS_NAME_TO_KILL_POST_MORTUM:
+				addProcessNameToKillPostMortum(&packet->pnkpm, response);
+				break;
+
+			case _WATCHDOG_TYPE_PROCESS_ID_TO_KILL_POST_MORTUM:
+				addProcessIdToKillPostMortum(&packet->pikpm, response);
+				break;
+		}
+	}
+
+	// Creates a new process, and populates it with the next available handle
+	SProcess* createNewSProcess(void)
+	{
+		SProcess* sp;
+
+		sp = (SProcess*)malloc(sizeof(SProcess));
+		if (sp != NULL)
+		{	// Initialize it
+			ZeroMemory(sp, sizeof(SProcess));
+			sp->handle = gnNextHandle++;
+		}
+		return(sp);
+	}
+
+	// Appends it to the chain
+	bool appendNewSProcessToLinkedList(SProcess* sp)
+	{
+		SProcessLL*		spll;
+		SProcessLL*		spllNew;
+
+
+		spllNew = (SProcessLL*)malloc(sizeof(SProcessLL));
+		if (spllNew)
+		{	// Initialize it
+			ZeroMemory(spllNew, sizeof(SProcessLL));
+			memcpy(&spllNew->process, sp, sizeof(SProcess));
+
+			// Add it to the linked list
+			spll = gsFirstProcess;
+			if (spll == NULL)
+			{	// First one
+				gsFirstProcess = spllNew;
+
+			} else {
+				// Iterate through linked list to find the end, and add it there
+				while (spll->next != NULL)
+					spll = spll->next;
+
+				spll->next = spllNew;
+			}
+			return(true);
+		}
+		return(false);
+	}
+
+	// They're adding a process for timeout watch
+	void addProcess(SAddProcess* ap, SResponse* response)
+	{
+		boolean		failure				= true;
+		int			error				= 0;
+		char		notes[sizeof(response->notes)];
+		SProcess*	sp;
+
+		// Clear out our response notes area
+		ZeroMemory(notes, sizeof(notes));
+
+		// Make sure the timeout data is valid, from 1 second to 5 days
+		if (ap->timeout > 0 && ap->timeout < 5*86400)
+		{	// For now, we go ahead and add it even if the process is invalid.
+			// Once it falls out of scope and is no longer valid, it will be removed from the queue and its watchdog will be terminated
+			sp = createNewSProcess();
+			if (sp != NULL)
+			{	// Populate it
+				sp->id					= ap->id;
+				sp->timeout				= ap->timeout;
+				sp->countdown			= ap->timeout;
+
+				// Copy over optional name and alias
+				memcpy(&sp->name,	&ap->name,	min(sizeof(sp->name),	sizeof(ap->name)));
+				memcpy(&sp->alias,	&ap->alias,	min(sizeof(sp->alias),	sizeof(ap->alias)));
+
+				// Append it to the linked list
+				if (appendNewSProcessToLinkedList(sp))
+				{
+					// Update our response
+					response->status		= _SUCCESS;
+					response->handle		= sp->handle;
+					response->error			= 0;
+					response->processCount	= 0;
+					sprintf_s(notes, sizeof(notes), "Added Process #%u (%s)\000", sp->id, sp->alias);
+				}
+			}
+		}
+
+		// If there was a failure, we could not add it
+		if (failure)
+		{	// Populate the response with the failure
+			response->status		= _FAILURE;
+			response->handle		= 0;
+			response->error			= error;
+			response->processCount	= 0;
+		}
+
+		// Add in any note that needs added
+		ZeroMemory(&response->notes, sizeof(response->notes));
+		memcpy(&response->notes, notes, min(strlen(notes), sizeof(response->notes)));
+	}
+
+	void deleteProcess(SDeleteProcess* dp, SResponse* response)
 	{
 	}
 
-	void processScriptPipeMessage(void)
+	void addSubprocess(SAddSubprocess* asp, SResponse* response)
 	{
+	}
+
+	void deleteSubprocess(SDeleteSubprocess* dsp, SResponse* response)
+	{
+	}
+
+	void addFileToDeletePostMortum(SFileToDeletePostMortum* fdpm, SResponse* response)
+	{
+	}
+
+	void addDirectoryToCleanPostMortum(SDirectoryToCleanPostMortum* dcpm, SResponse* response)
+	{
+	}
+
+	void addDirectoryToDeletePostMortum(SDirectoryToDeletePostMortum* ddpm, SResponse* response)
+	{
+	}
+
+	void addProcessNameToKillPostMortum(SProcessNameToKillPostMortum* pnkpm, SResponse* response)
+	{
+	}
+
+	void addProcessIdToKillPostMortum(SProcessIdToKillPostMortum* pikpm, SResponse* response)
+	{
+	}
+
+	bool isValidProcess(DWORD pid)
+	{
+		HANDLE hProcess;
+		DWORD exitCode;
+
+		if (pid == 0)
+			return true;	// System idle process--always running
+		if (pid < 0)
+			return false;	// Invalid PID
+
+		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pid);
+
+		if (hProcess == NULL)
+			return false;	// Invalid PID of another sort
+
+		if (GetExitCodeProcess(hProcess, &exitCode))
+		{	// If we get here, we're good, and we have its exit code
+			CloseHandle(hProcess);
+			return (exitCode == STILL_ACTIVE);		// If it's still active, we indicate the same
+		}
+		// If we get here, an error accessing that hProcess
+		CloseHandle(hProcess);
+		return true;
 	}

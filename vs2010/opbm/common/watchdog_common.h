@@ -16,6 +16,8 @@ const wchar_t	_WATCHDOG_Pipe_Name_Script[]					= L"\\\\.\\pipe\\Watchdog Data Pi
 
 // Special number returned during the "reporting in" messages, to indicate success
 #define _WATCHDOG_SUCCESS_RESPONSE								0x12345588
+#define _FAILURE												0
+#define _SUCCESS												1
 
 // SPipeData type message values:
 #define _WATCHDOG_TYPE_ADD_PROCESS								1
@@ -47,16 +49,17 @@ const wchar_t	_WATCHDOG_Pipe_Name_Script[]					= L"\\\\.\\pipe\\Watchdog Data Pi
 		int					status;							// The status is always 0-failure, 1-success
 		int					handle;							// The handle returned for the new item (if something was added)
 		int					error;							// If status is 0, populated with an error code for the requested function
-		SPipeDataLongName	notes;							// A word response which explains what happened, such as "Subprocess ID #N does not exist", etc.
+		SPipeDataLongName	notes;							// A wordy response which, if present, explains something that happened, such as "Subprocess ID #N does not exist", "Process ID #N was added", etc.
 
-		// For SProcessNameToKillPostMortum when partial or repeated search is used
+		// For SProcessNameToKillPostMortum when a partial and/or repeated search is used
 		int					processCount;					// The number of processes found with that partial or repeated name
 	};
 
 	struct SAddProcess
 	{
-		int					id;								// Process ID to monitor
+		DWORD				id;								// Process ID to monitor
 		int					timeout;						// Timeout in seconds until this process is killed
+		SPipeDataLongName	name;							// (optional) The actual name of the process if known, can be left blank because Process ID is known
 		SPipeDataLongName	alias;							// A user-defined alias name to give this id, can be used in responses to identify (by name) the process, rather than just the id number
 	};
 
@@ -68,8 +71,9 @@ const wchar_t	_WATCHDOG_Pipe_Name_Script[]					= L"\\\\.\\pipe\\Watchdog Data Pi
 	struct SAddSubprocess
 	{
 		int					handle;							// Handle to parent Process ID, as returned from previous call to SAddProcess
-		int					sid;							// Subprocess ID to monitor
+		DWORD				sid;							// Subprocess ID to monitor
 		int					timeout;						// Timeout in seconds until this Subprocess, and its parent and other sibling Subprocesses, are killed
+		SPipeDataLongName	name;							// (optional) The actual name of the subprocess if known, can be left blank because Subprocess ID is known
 		SPipeDataLongName	alias;							// A user-defined alias name to give this id, can be used in responses to identify (by name) the process, rather than just the id number
 	};
 
@@ -108,18 +112,18 @@ const wchar_t	_WATCHDOG_Pipe_Name_Script[]					= L"\\\\.\\pipe\\Watchdog Data Pi
 	struct SProcessIdToKillPostMortum
 	{
 		int					handle;							// The previously returned handle to associate this process-to-kill
-		int					sid;							// Subprocess ID to kill when the process associated with the handle is killed
+		DWORD				sid;							// Subprocess ID to kill when the process associated with the handle is killed
 		SPipeDataLongName	alias;							// A user-defined alias name to give this id, can be used in responses to identify (by name) the process, rather than just the id number
 	};
 
 //////////
 // Pipe data contained by harness and script communications
 /////
-	struct SPipeData
+	struct SPacket
 	{
 		int			type;
 		// Based on the type, the following structures will be populated and are employed for the task:
-		union		data
+		union
 		{	// The following messages appear in the data union, as only one is ever used at a time
 			SAddProcess						ap;				// When type is _WATCHDOG_TYPE_ADD_PROCESS
 			SDeleteProcess					dp;				// When type is _WATCHDOG_TYPE_DELETE_PROCESS
@@ -139,7 +143,7 @@ const wchar_t	_WATCHDOG_Pipe_Name_Script[]					= L"\\\\.\\pipe\\Watchdog Data Pi
 	// to watchdog, and back from watchdog to harness, in the harness named pipe.
 	struct SHarnessPipeData
 	{
-		SPipeData		packet;								// Data packet populated by harness through opbm32.dll/opbm64.dll
+		SPacket			packet;								// Data packet populated by harness through opbm32.dll/opbm64.dll
 		SResponse		response;							// Assigned by watchdog after the type+data is processed above
 // REMEMBER - Additional items will appear here for communication to the harness of killed processes
 	};
@@ -150,7 +154,7 @@ const wchar_t	_WATCHDOG_Pipe_Name_Script[]					= L"\\\\.\\pipe\\Watchdog Data Pi
 	// to watchdog, and back from watchdog to script, in the script named pipe.
 	struct SScriptPipeData
 	{
-		SPipeData		packet;								// Data packet populated by script through opbm.dll
+		SPacket			packet;								// Data packet populated by script through opbm.dll
 		SResponse		response;							// Assigned by watchdog after the type+data is processed above
 	};
 #endif
