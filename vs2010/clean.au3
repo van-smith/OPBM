@@ -20,6 +20,7 @@ DirRemove( "opbm\cpu\x64\", 1)
 DirRemove( "opbm\enumthreads\Debug\", 1)
 DirRemove( "opbm\enumthreads\Release\", 1)
 DirRemove( "opbm\enumthreads\x64\", 1)
+DirRemove( "opbm\enumthreads\ipch\", 1)
 
 ; opbm\jbm
 DirRemove( "opbm\jbm\Debug\", 1)
