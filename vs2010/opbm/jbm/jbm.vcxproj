@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\jbm_common.h" />
+    <ClInclude Include="..\common\pipe_common.h" />
     <ClInclude Include="jbm.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

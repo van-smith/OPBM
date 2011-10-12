@@ -16,6 +16,11 @@ DirRemove( "opbm\cpu\Debug\", 1)
 DirRemove( "opbm\cpu\Release\", 1)
 DirRemove( "opbm\cpu\x64\", 1)
 
+; opbm\enumthreads
+DirRemove( "opbm\enumthreads\Debug\", 1)
+DirRemove( "opbm\enumthreads\Release\", 1)
+DirRemove( "opbm\enumthreads\x64\", 1)
+
 ; opbm\jbm
 DirRemove( "opbm\jbm\Debug\", 1)
 DirRemove( "opbm\jbm\Release\", 1)
@@ -42,3 +47,8 @@ DirRemove( "opbm\restarter\x64\", 1)
 DirRemove( "opbm\spinup\Debug\", 1)
 DirRemove( "opbm\spinup\Release\", 1)
 DirRemove( "opbm\spinup\x64\", 1)
+
+; opbm\watchdog
+DirRemove( "opbm\watchdog\Debug\", 1)
+DirRemove( "opbm\watchdog\Release\", 1)
+DirRemove( "opbm\watchdog\x64\", 1)

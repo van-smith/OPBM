@@ -13,6 +13,7 @@
 //
 //
 
+#include "..\common\pipe_common.h"
 
 
 // Constants used to identify and relate things
@@ -49,15 +50,11 @@ const wchar_t	_JBM_Owner_Pipe_Name[]							= L"\\\\.\\pipe\\JBM Owner Data Pipe"
 
 
 // Data used in the named pipe to communicate with JBM
-struct SPipeDataNames
-{
-	int			length;								// Length of the name stored in name
-	char		name[32];							// Text of the name
-};
+// from pipe_common.h, plus these:
 
 struct SScoringData
 {
-	SPipeDataNames	name;							// Name of the test with this scoring data
+	SPipeDataName	name;							// Name of the test with this scoring data
 
 	double			minScore;						// Minimum score observed
 	double			maxScore;						// Maximum score observed
@@ -81,7 +78,7 @@ struct SPipeData
 	float			overallPercentCompleted;		// How much of the overall test is completed?
 	float			lastTestTimeInSeconds;			// How long did that last test take?
 
-	SPipeDataNames	instance;						// Name assigned to the instance (Typically "JVM x on Core y"
-	SPipeDataNames	test;							// Name of the current test being run
+	SPipeDataName	instance;						// Name assigned to the instance (Typically "JVM x on Core y"
+	SPipeDataName	test;							// Name of the current test being run
 	SScoringData	score;							// Holds data transferred for scores (see _JBM_HAS_SCORING_DATA message)
 };

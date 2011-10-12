@@ -63,8 +63,6 @@
 		HBITMAP				doubleBufferBitmap;		// Bitmap used for a double-buffer
 		HANDLE				pipeHandle;				// Handle to the pipe used to read this item's pipe data
 		SPipeData			pipeData;				// Copy of the most recently read pipe data
-		SPipeDataNames		testHistory[4];			// Holds a history of prior tests that were run
-		SPipeDataNames		testHistoryTimes[4];	// Holds a history of the time between 
 		SScoringDataLL*		firstScore;				// Pointer to first score
 	};
 	SProcesses*	gsProcesses					= NULL;

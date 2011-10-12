@@ -230,8 +230,6 @@
 					SetRect(&lsp->rc, left, top, left + _JBM_BACKGROUND_WIDTH, top + _JBM_BACKGROUND_HEIGHT);
 
 					ZeroMemory(&lsp->pipeData,			sizeof(lsp->pipeData));
-					ZeroMemory(&lsp->testHistory,		sizeof(lsp->testHistory));
-					ZeroMemory(&lsp->testHistoryTimes,	sizeof(lsp->testHistoryTimes));
 
 					// Move right for the next location/position
 					left += _JBM_BACKGROUND_WIDTH;
@@ -321,7 +319,7 @@
 		wce.hInstance		= ghInst;
 		wce.hIconSm			= LoadIcon(NULL, IDI_APPLICATION);
 
-		// Register the application
+		// Register the application class
 		RegisterClassEx(&wce);
 
 		// Size our window
@@ -667,26 +665,6 @@
 				SetTextColor(hdc, _HISTORY_FOREGROUND);
 				SetBkColor(hdc, _HISTORY_BACKGROUND);
 				SetBkMode(hdc, OPAQUE);
-				// First
-				setRectRelativeTo(&rcSlot, &rc, 3,75,143,91);
-				DrawTextA(hdc, sp->testHistory[0].name, sp->testHistory[0].length, &rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-				SetRect(&rc, 100,75,143,91);
-				DrawTextA(hdc, sp->testHistoryTimes[0].name, sp->testHistoryTimes[0].length, &rc, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
-				// Second
-				setRectRelativeTo(&rcSlot, &rc, 3,75,143,91);
-				DrawTextA(hdc, sp->testHistory[1].name, sp->testHistory[1].length, &rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-				setRectRelativeTo(&rcSlot, &rc, 100,75,143,91);
-				DrawTextA(hdc, sp->testHistoryTimes[1].name, sp->testHistoryTimes[1].length, &rc, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
-				// Third
-				setRectRelativeTo(&rcSlot, &rc, 3,75,143,91);
-				DrawTextA(hdc, sp->testHistory[2].name, sp->testHistory[2].length, &rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-				setRectRelativeTo(&rcSlot, &rc, 100,75,143,91);
-				DrawTextA(hdc, sp->testHistoryTimes[2].name, sp->testHistoryTimes[2].length, &rc, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
-				// Fourth
-				setRectRelativeTo(&rcSlot, &rc, 3,75,143,91);
-				DrawTextA(hdc, sp->testHistory[3].name, sp->testHistory[3].length, &rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-				setRectRelativeTo(&rcSlot, &rc, 100,75,143,91);
-				DrawTextA(hdc, sp->testHistoryTimes[3].name, sp->testHistoryTimes[3].length, &rc, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 
 				// update the status bar while it's running
 				if (sp->status == _JBM_RUNNING)

@@ -33,8 +33,12 @@ EndIf
 For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	outputDebug( "InitializeJavaScript()" )
+	outputDebug( "InitializeJava_Script()" )
 	InitializeJava_Script()
+
+; Added to test some functionality
+Sleep(12000)	; Give time to connect to debugger
+TestStuff()
 
 	; Grab the number of cores on this system
 	$Cores = GetCoreCount(0)	; 0-physical cores, 1-logical cores (including hyperthreaded)
@@ -60,6 +64,10 @@ For $CurrentLoop = 1 to $LoopLimit
 Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 Exit
+
+Func TestStuff()
+	OpbmWatchdog_ProcessStart(0, 1)
+EndFunc
 
 Func LaunchJBM()
 	Local $jbm_executable_to_launch

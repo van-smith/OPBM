@@ -12,9 +12,8 @@
  *
  */
 
-#include "stdafx.h"
-#include "windows.h"
-#include "winbase.h"
+#include "opbminclude.h"
+#include "opbm.h"
 #include "shlobj.h"
 #include "resource2.h"
 #include "AtlBase.h"
@@ -24,7 +23,6 @@
 #include "..\CPU\cpu.h"
 #include "au3\au3plugin.h"
 #include "..\common\opbm_common.h"
-#include "opbm.h"
 // Note: AU3_GetString() allocates some memory that must be manually freed later using AU3_FreeString()
 
 
@@ -40,58 +38,79 @@
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 46;
+	int numberOfCustomAU3Functions = 57;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
-			/* Function Name,						   Min,	   Max
-			   -----------------------				   ----	   ---- */
-/* 1 */		{ "WaitUntilIdle",							4,		4},			/* Waits until a specified process is idle */
-/* 2 */		{ "WaitUntilSystemIdle",					3,		3},			/* Waits until the entire system is idle */
-/* 3 */		{ "GetUsage",								2,		2},			/* Returns the CPU load observed over the specified timeframe for the process */
-/* 4 */		{ "GetSystemUsage",							1,		1},			/* Returns the CPU load observed over the specified timeframe */
-/* 5 */		{ "NoteAllOpenWindows",						0,		0},			/* Called to make a note of all open windows */
-/* 6 */		{ "CloseAllWindowsNotPreviouslyNoted",		0,		0},			/* Called to restore the window state to that which it was before */
-/* 7 */		{ "FirefoxInstallerAssist",					0,		0},			/* Called to help install Firefox */
-/* 8 */		{ "ChromeInstallerAssist",					0,		0},			/* Called to help install Chrome */
-/* 9 */		{ "OperaInstallerAssist",					0,		0},			/* Called to help install Opera */
-/* 10 */	{ "SafariInstallerAssist",					0,		0},			/* Called to help install Safari */
-/* 11 */	{ "InternetExplorerInstallerAssist",		0,		0},			/* Called to help install Internet Explorer */
-/* 12 */	{ "Office2010SaveKeys",						0,		0},			/* Called to save the values in Microsoft Office 2010's registry keys needed by OPBM */
-/* 13 */	{ "Office2010InstallKeys",					0,		0},			/* Called to install Microsoft Office 2010 registry keys needed by OPBM*/
-/* 14 */	{ "Office2010RestoreKeys",					0,		0},			/* Called to restore the values in Microsoft Office 2010's registry keys as previously saved */
-/* 15 */	{ "CheckIfRegistryKeyStartsWith",			2,		2},			/* Called to compare the registry key to a value */
-/* 16 */	{ "CheckIfRegistryKeyContains",				2,		2},			/* Called to compare the registry key to a value */
-/* 17 */	{ "CheckIfRegistryKeyIsExactly",			2,		2},			/* Called to compare the registry key to a value */
-/* 18 */	{ "SetRegistryKeyString",					2,		2},			/* Called to set the registry key to a string value */
-/* 19 */	{ "SetRegistryKeyDword",					2,		2},			/* Called to set the registry key to a dword value */
-/* 20 */	{ "GetRegistryKey",							1,		1},			/* Called to return the registry key's value */
-/* 21 */	{ "GetScriptCSVDirectory",					0,		0},			/* Called to return the output directory used for script-written *.csv files */
-/* 22 */	{ "GetScriptTempDirectory",					0,		0},			/* Called to return the output directory used for script-written temporary files */
-/* 23 */	{ "GetHarnessXmlDirectory",					0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
-/* 24 */	{ "GetHarnessCSVDirectory",					0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
-/* 25 */	{ "GetHarnessTempDirectory",				0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
-/* 26 */	{ "GetCSIDLDirectory",						1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
-/* 27 */	{ "Is32BitOS",								0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
-/* 28 */	{ "Is64BitOS",								0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
-/* 29 */	{ "GetCoreCount",							1,		1},			/* Returns the number of CPU cores on the system */
-/* 30 */	{ "JbmOwnerReportingIn",					0,		0},			/* Called once, creates the named mail pipe as the JBM owner, and returns the handle to use in future references */
-/* 31 */	{ "JbmOwnerHaveAllInstancesExited",			0,		0},			/* Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited */
-/* 32 */	{ "JbmOwnerRequestsSubtestScoringData",		2,		2},			/* Called repeatedly, asks for scoring data for the specified JVM (first paramter) and the specified score/sub-score (second parameter) */
-/* 33 */	{ "JbmOwnerRequestsSubtestMaxScoringData",	1,		1},			/* Called repeatedly, asks for scoring data for the max scoring item */
-/* 34 */	{ "JbmOwnerRequestsName",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the name of the previously loaded subtest */
-/* 35 */	{ "JbmOwnerRequestsAvgTiming",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average timing for the previously loaded subtest */
-/* 36 */	{ "JbmOwnerRequestsMinTiming",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
-/* 37 */	{ "JbmOwnerRequestsMaxTiming",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
-/* 38 */	{ "JbmOwnerRequestsGeoTiming",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geometric mean timing for the previously loaded subtest */
-/* 39 */	{ "JbmOwnerRequestsCVTiming",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv timing for the previously loaded subtest */
-/* 40 */	{ "JbmOwnerRequestsAvgScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average scoring for the previously loaded subtest */
-/* 41 */	{ "JbmOwnerRequestsMinScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
-/* 42 */	{ "JbmOwnerRequestsMaxScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
-/* 43 */	{ "JbmOwnerRequestsGeoScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest */
-/* 44 */	{ "JbmOwnerRequestsCVScoring",				0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest */
-/* 45 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",	0,		0},			/* Called once, asks the JBM to terminate itself (to exit politely) */
-/* 46 */	{ "AppendToLog",							2,		2}			/* User provides a filename, and a string to append to it */
-/* 46 = Don't forget to update numberOfCustomAU3Functions above */
+			/* Function Name,							   Min,	   Max
+			   -----------------------					   ----	   ---- */
+/* 1 */		{ "WaitUntilIdle",								4,		4},			/* Waits until a specified process is idle */
+/* 2 */		{ "WaitUntilSystemIdle",						3,		3},			/* Waits until the entire system is idle */
+/* 3 */		{ "GetUsage",									2,		2},			/* Returns the CPU load observed over the specified timeframe for the process */
+/* 4 */		{ "GetSystemUsage",								1,		1},			/* Returns the CPU load observed over the specified timeframe */
+/* 5 */		{ "NoteAllOpenWindows",							0,		0},			/* Called to make a note of all open windows */
+/* 6 */		{ "CloseAllWindowsNotPreviouslyNoted",			0,		0},			/* Called to restore the window state to that which it was before */
+
+/* 7 */		{ "FirefoxInstallerAssist",						0,		0},			/* Called to help install Firefox */
+/* 8 */		{ "ChromeInstallerAssist",						0,		0},			/* Called to help install Chrome */
+/* 9 */		{ "OperaInstallerAssist",						0,		0},			/* Called to help install Opera */
+/* 10 */	{ "SafariInstallerAssist",						0,		0},			/* Called to help install Safari */
+/* 11 */	{ "InternetExplorerInstallerAssist",			0,		0},			/* Called to help install Internet Explorer */
+
+/* Functionality was moved to opbm32.dll and opbm64.dll to allow the harness to save/install/restore keys as needed */
+/* 12 */	{ "Office2010SaveKeys",			/* defunct */	0,		0},			/* Called to save the values in Microsoft Office 2010's registry keys needed by OPBM */
+/* 13 */	{ "Office2010InstallKeys",		/* defunct */	0,		0},			/* Called to install Microsoft Office 2010 registry keys needed by OPBM*/
+/* 14 */	{ "Office2010RestoreKeys",		/* defunct */	0,		0},			/* Called to restore the values in Microsoft Office 2010's registry keys as previously saved */
+
+/* 15 */	{ "CheckIfRegistryKeyStartsWith",				2,		2},			/* Called to compare the registry key to a value */
+/* 16 */	{ "CheckIfRegistryKeyContains",					2,		2},			/* Called to compare the registry key to a value */
+/* 17 */	{ "CheckIfRegistryKeyIsExactly",				2,		2},			/* Called to compare the registry key to a value */
+/* 18 */	{ "SetRegistryKeyString",						2,		2},			/* Called to set the registry key to a string value */
+/* 19 */	{ "SetRegistryKeyDword",						2,		2},			/* Called to set the registry key to a dword value */
+/* 20 */	{ "GetRegistryKey",								1,		1},			/* Called to return the registry key's value */
+
+/* 21 */	{ "GetScriptCSVDirectory",						0,		0},			/* Called to return the output directory used for script-written *.csv files */
+/* 22 */	{ "GetScriptTempDirectory",						0,		0},			/* Called to return the output directory used for script-written temporary files */
+/* 23 */	{ "GetHarnessXmlDirectory",						0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
+/* 24 */	{ "GetHarnessCSVDirectory",						0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
+/* 25 */	{ "GetHarnessTempDirectory",					0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
+/* 26 */	{ "GetCSIDLDirectory",							1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
+
+/* 27 */	{ "Is32BitOS",									0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
+/* 28 */	{ "Is64BitOS",									0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
+/* 29 */	{ "GetCoreCount",								1,		1},			/* Returns the number of CPU cores on the system, integer parameter is 0-physical cores, 1-logical cores (included hyperthreading) */
+
+/* 30 */	{ "JbmOwnerReportingIn",						0,		0},			/* Called once, creates the named pipe as the JBM owner, and returns the handle to use in future references */
+/* 31 */	{ "JbmOwnerHaveAllInstancesExited",				0,		0},			/* Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited */
+/* 32 */	{ "JbmOwnerRequestsSubtestScoringData",			2,		2},			/* Called repeatedly (up to once for each JVM+subtest), asks for scoring data for the specified JVM (first parameter) and the specified subtest (second parameter) */
+/* 33 */	{ "JbmOwnerRequestsSubtestMaxScoringData",		1,		1},			/* Called once, asks for scoring data for the max scoring item */
+/* 34 */	{ "JbmOwnerRequestsName",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the name of the previously loaded subtest */
+/* 35 */	{ "JbmOwnerRequestsAvgTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average timing for the previously loaded subtest */
+/* 36 */	{ "JbmOwnerRequestsMinTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
+/* 37 */	{ "JbmOwnerRequestsMaxTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
+/* 38 */	{ "JbmOwnerRequestsGeoTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geometric mean timing for the previously loaded subtest */
+/* 39 */	{ "JbmOwnerRequestsCVTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv timing for the previously loaded subtest */
+/* 40 */	{ "JbmOwnerRequestsAvgScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average scoring for the previously loaded subtest */
+/* 41 */	{ "JbmOwnerRequestsMinScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
+/* 42 */	{ "JbmOwnerRequestsMaxScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
+/* 43 */	{ "JbmOwnerRequestsGeoScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest */
+/* 44 */	{ "JbmOwnerRequestsCVScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest */
+/* 45 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",		0,		0},			/* Called once, asks the JBM to terminate itself (to exit politely) */
+
+/* 46 */	{ "AppendToLog",								2,		2},			/* User provides a filename, and a string to append to it */
+
+/* 47 */	{ "FindChildWindowForProcessName",				3,		3},			/* Finds a child window for the process name with the given title text, and optional (if not blank) sub-window text */
+/* 48 */	{ "FindChildWindowForProcessId",				3,		3},			/* Finds a child window for the process id with the given title text, and optional (if not blank) sub-window text */
+
+/* 49 */	{ "OpbmWatchdog_ProcessStart",					2,		2},			/* Called as each process begins, to give the process id and maximum watchdog timeout before auto-destroying it */
+/* 50 */	{ "OpbmWatchdog_ProcessStop",					1,		1},			/* Called as each process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer */
+/* 51 */	{ "OpbmWatchdog_ProcessSubprocessStart",		3,		3},			/* Called as each sub-process begins, to give the parent process id, the new sub-process id, and maximum timeout before auto-destroying it (the new sub-process id) as well as the parent */
+/* 52 */	{ "OpbmWatchdog_ProcessSubprocessStop",			1,		1},			/* Called as each sub-process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer */
+/* 53 */	{ "OpbmWatchdog_FileToDeletePostMortum",		2,		2},			/* Called to associate a previously assigned handle and a file to delete after the watchdog timeout if the watchdog kills it */
+/* 54 */	{ "OpbmWatchdog_DirectoryToCleanPostMortum",	2,		2},			/* Called to associate a previously assigned handle and a directory to clean (delete all files/subdirs within) after the watchdog timeout if the watchdog kills it */
+/* 55 */	{ "OpbmWatchdog_DirectoryToDeletePostMortum",	2,		2},			/* Called to associate a previously assigned handle and a directory to delete after the watchdog timeout if the watchdog kills it */
+/* 56 */	{ "OpbmWatchdog_ProcessNameToKillPostMortum",	2,		2},			/* Called to associate a previously assigned handle and a process name to kill after the watchdog timeout if the watchdog kills it */
+/* 57 */	{ "OpbmWatchdog_ProcessIdToKillPostMortum",		2,		2},			/* Called to associate a previously assigned handle and a process id to kill after the watchdog timeout if the watchdog kills it */
+/* 57 = Don't forget to update numberOfCustomAU3Functions above */
 	};
 
 
@@ -1592,39 +1611,37 @@
 		typedef BOOL (WINAPI *LPFN_GLPI)(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD);
 		DWORD CountSetBits(ULONG_PTR bitMask)
 		{
-			DWORD LSHIFT = sizeof(ULONG_PTR)*8 - 1;
-			DWORD bitSetCount = 0;
-			ULONG_PTR bitTest = (ULONG_PTR)1 << LSHIFT;    
-			DWORD i;
+			DWORD		LSHIFT			= sizeof(ULONG_PTR)*8 - 1;
+			DWORD		bitSetCount		= 0;
+			ULONG_PTR	bitTest			= (ULONG_PTR)1 << LSHIFT;    
+			DWORD		i;
     
 			for (i = 0; i <= LSHIFT; ++i)
 			{
-				bitSetCount += ((bitMask & bitTest)?1:0);
-				bitTest/=2;
+				bitSetCount += ((bitMask & bitTest) ? 1 : 0);
+				bitTest /= 2;
 			}
-
 			return bitSetCount;
 		}
 	
 	AU3_PLUGIN_DEFINE(GetCoreCount)
 	// See notes about parameters and return codes above
 	{
-		USES_CONVERSION;
 		AU3_PLUGIN_VAR*		pMyResult;
 		int					count;
 		LPFN_GLPI			glpi;
-		BOOL				done = FALSE;
-		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL;
-		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = NULL;
-		DWORD				returnLength = 0;
-		DWORD				logicalProcessorCount = 0;
-		DWORD				numaNodeCount = 0;
-		DWORD				processorCoreCount = 0;
-		DWORD				processorL1CacheCount = 0;
-		DWORD				processorL2CacheCount = 0;
-		DWORD				processorL3CacheCount = 0;
-		DWORD				processorPackageCount = 0;
-		DWORD				byteOffset = 0;
+		BOOL				done						= FALSE;
+		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer	= NULL;
+		PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr		= NULL;
+		DWORD				returnLength				= 0;
+		DWORD				logicalProcessorCount		= 0;
+		DWORD				numaNodeCount				= 0;
+		DWORD				processorCoreCount			= 0;
+		DWORD				processorL1CacheCount		= 0;
+		DWORD				processorL2CacheCount		= 0;
+		DWORD				processorL3CacheCount		= 0;
+		DWORD				processorPackageCount		= 0;
+		DWORD				byteOffset					= 0;
 		PCACHE_DESCRIPTOR	Cache;
 		char*				requestString;
 		int					request;
@@ -1747,8 +1764,7 @@
 // JbmOwnerReportingIn()
 //
 // Checks in with a previously launched JBM, only called once, and if it finds
-// the JBM running, it creates an owner mail pipe for communication with the
-// JBM.
+// the JBM running, it creates an owner pipe for communication with the JBM.
 //
 // Parameters:
 // 		None
@@ -1896,7 +1912,7 @@
 			// Ask the JBM to send over score data for this JVM and this subtest
 			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_SCORING_DATA, jvm, subtest);
 			if (result == 1)
-			{	// There's data in our mail pipe
+			{	// There's data in our named pipe
 				// Grab it
 				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
 				if (numread == sizeof(gsScoreData))
@@ -1972,7 +1988,7 @@
 			// Ask the JBM to send over score data for this JVM and this subtest
 			result = SendMessage(ghWndJBM, _JBM_OWNER_REQUESTING_MAX_SCORING_DATA, subtest, 0);
 			if (result == 1)
-			{	// There's data in our mail pipe
+			{	// There's data in our named pipe
 				// Grab it
 				ReadFile(ghOwnerPipeHandle, &gsScoreData, sizeof(gsScoreData), &numread, NULL);
 				if (numread == sizeof(gsScoreData))
@@ -2500,6 +2516,593 @@
 
 		return( AU3_PLUGIN_OK );
 	}
+
+
+
+
+//////////
+//
+// FindChildWindowForProcessName()
+//
+// Finds a child window for the process name with the given title text, and optional (if not blank) sub-window text
+//
+// Parameters:
+// 		0		- Process name to search for
+//		1		- Window title bar string to find (case insensitive substring search)
+//		2		- Optional window text within to find (case insensitive substring search)
+//
+// Returns:
+// 		0		- Failure
+//		!0		- HWND handle
+//
+/////
+	AU3_PLUGIN_DEFINE(FindChildWindowForProcessName)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+		char*				p3;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+		p3		= AU3_GetString(&p_AU3_Params[2]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+		AU3_FreeString(p3);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// FindChildWindowForProcessId()
+//
+// Finds a child window for the process id with the given title text, and optional (if not blank) sub-window text
+//
+// Parameters:
+// 		0		- Process id to search for (integer)
+//		1		- Window title bar string to find (case insensitive substring search)
+//		2		- Optional window text within to find (case insensitive substring search)
+//
+// Returns:
+// 		0		- Failure
+//		!0		- HWND handle
+//
+/////
+	AU3_PLUGIN_DEFINE(FindChildWindowForProcessId)
+	// See notes about parameters and return codes above
+	{
+		//GetWindowThreadProcessId();
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_ProcessStart()
+//
+// Called to tell the watchdog about a process id that should be watched
+//
+// Parameters:
+// 		0		- Process id
+//		1		- Timeout (in seconds) before watchdog should automatically kill the process
+//
+// Returns:
+// 		0		- Failure
+//		!0		- Handle for future references to this process-task
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_ProcessStart)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_ProcessStop()
+//
+// Called as each process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer
+//
+// Parameters:
+// 		0		- Previous handle
+//
+// Returns:
+// 		0		- Failure (handle does not exist)
+//		1		- Success (watchdog timeout is killed, the process will no longer be observed)
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_ProcessStop)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_ProcessSubprocessStart()
+//
+// Called as each sub-process begins, to give the parent process id, the new sub-process id, and maximum timeout before auto-destroying it (the new sub-process id) as well as the parent
+//
+// Parameters:
+// 		0		- Previous handle to parent process
+//		1		- Sub-process id
+//		2		- Timeout (in seconds) before watchdog should kill the sub-process, and parent process
+//
+// Returns:
+// 		0		- Failure (parent handle does not exist)
+//		!0		- Handle for future references to this sub-process-task
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_ProcessSubprocessStart)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+		char*				p3;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+		p3		= AU3_GetString(&p_AU3_Params[2]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+		AU3_FreeString(p3);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_ProcessSubprocessStop()
+//
+// Called as each sub-process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer
+//
+// Parameters:
+// 		0		- Previous handle to sub-process
+//
+// Returns:
+// 		0		- Failure (sub-process handle does not exist)
+//		1		- Success (watchdog timeout is killed, the sub-process will no longer be observed)
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_ProcessSubprocessStop)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_FileToDeletePostMortum()
+//
+// Called to associate a previously assigned handle and a file to delete after the watchdog timeout if the watchdog kills it
+//
+// Parameters:
+// 		0		- Previous handle to process or sub-process
+//		1		- Fully qualified pathname to reach the file
+//
+// Returns:
+// 		0		- Failure (sub-process handle does not exist)
+//		1		- Success (if process or sub-process is killed, this file will be deleted)
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_FileToDeletePostMortum)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_DirectoryToCleanPostMortum()
+//
+// Called to associate a previously assigned handle and a directory to clean (delete all files/subdirs within) after the watchdog timeout if the watchdog kills it
+//
+// Parameters:
+// 		0		- Previous handle to process or sub-process
+//		1		- Fully qualified pathname to reach the directory
+//
+// Returns:
+// 		0		- Failure (sub-process handle does not exist)
+//		1		- Success (if process or sub-process is killed, this directory will have all contents deleted from it)
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_DirectoryToCleanPostMortum)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_DirectoryToDeletePostMortum()
+//
+// Called to associate a previously assigned handle and a directory to delete after the watchdog timeout if the watchdog kills it
+//
+// Parameters:
+// 		0		- Previous handle to process or sub-process
+//		1		- Fully qualified pathname to reach the directory
+//
+// Returns:
+// 		0		- Failure (sub-process handle does not exist)
+//		1		- Success (if process or sub-process is killed, this directory will be deleted)
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_DirectoryToDeletePostMortum)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_ProcessNameToKillPostMortum()
+//
+// Called to associate a previously assigned handle and a process name to kill after the watchdog timeout if the watchdog kills it
+//
+// Parameters:
+// 		0		- Previous handle to process or sub-process
+//		1		- Name of process to kill
+//
+// Returns:
+// 		0		- Failure (sub-process handle does not exist)
+//		1		- Success (if process or sub-process is killed, this specified process will also be killed if it exists)
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_ProcessNameToKillPostMortum)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
+
+
+//////////
+//
+// OpbmWatchdog_ProcessIdToKillPostMortum()
+//
+// Called to associate a previously assigned handle and a process id to kill after the watchdog timeout if the watchdog kills it
+//
+// Parameters:
+// 		0		- Previous handle to process or sub-process
+//		1		- Process ID to kill
+//
+// Returns:
+// 		0		- Failure (sub-process handle does not exist)
+//		1		- Success (if process or sub-process is killed, this specified process will also be killed if it exists)
+//
+/////
+	AU3_PLUGIN_DEFINE(OpbmWatchdog_ProcessIdToKillPostMortum)
+	// See notes about parameters and return codes above
+	{
+		USES_CONVERSION;
+		AU3_PLUGIN_VAR*		pMyResult;
+		int					result;
+		char*				p1;
+		char*				p2;
+
+
+		// Get the parameters passed
+		p1		= AU3_GetString(&p_AU3_Params[0]);
+		p2		= AU3_GetString(&p_AU3_Params[1]);
+
+
+		// Do the workload here
+		result = 0;
+
+
+		// All done
+		AU3_FreeString(p1);
+		AU3_FreeString(p2);
+
+
+		// Allocate and build the return variable
+		pMyResult = AU3_AllocVar();
+		AU3_SetInt32(pMyResult, result);
+
+		*p_AU3_Result		= pMyResult;
+		*n_AU3_ErrorCode	= 0;
+		*n_AU3_ExtCode		= 0;
+
+		return( AU3_PLUGIN_OK );
+	}
+
+
 
 
 
