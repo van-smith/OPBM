@@ -36,12 +36,8 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeJava_Script()" )
 	InitializeJava_Script()
 
-; Added to test some functionality
-Sleep(12000)	; Give time to connect to debugger
-TestStuff()
-
 	; Grab the number of cores on this system
-	$Cores = GetCoreCount(0)	; 0-physical cores, 1-logical cores (including hyperthreaded)
+	$Cores = GetCoreCount(1)	; 0-physical cores, 1-logical cores (including hyperthreaded)
 	If $Cores < 1 or $Cores > 32 Then
 		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
 	EndIf
@@ -64,10 +60,6 @@ TestStuff()
 Next
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 Exit
-
-Func TestStuff()
-	OpbmWatchdog_ProcessStart(0, 1)
-EndFunc
 
 Func LaunchJBM()
 	Local $jbm_executable_to_launch
