@@ -1658,96 +1658,92 @@
 		count = sysinfo.dwNumberOfProcessors;
 		if (request == 1)
 		{	// Return the number Windows provides
-			count = sysinfo.dwNumberOfProcessors;
+			// count = sysinfo.dwNumberOfProcessors;
 
 		} else {
 			// Taken from: http://msdn.microsoft.com/en-us/library/ms683194
 			// Try to find out how many real cores there are (not hyperthreaded)
 			// If we fail, just return the number Windows told us
 			glpi = (LPFN_GLPI) GetProcAddress(GetModuleHandle(TEXT("kernel32")), "GetLogicalProcessorInformation");
-			if (NULL == glpi)
-				return (count);	// _tprintf(TEXT("\nGetLogicalProcessorInformation is not supported.\n"));
-
-			while (!done)
+			if (glpi != NULL)
 			{
-				DWORD rc = glpi(buffer, &returnLength);
-
-				if (FALSE == rc) 
+				while (!done)
 				{
-					if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) 
+					DWORD rc = glpi(buffer, &returnLength);
+					if (FALSE == rc) 
 					{
-						if (buffer) 
-							free(buffer);
+						if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) 
+						{
+							if (buffer)
+								free(buffer);
+							buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION)malloc(returnLength);
+							if (NULL == buffer) 
+								goto finished;
 
-						buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION)malloc(returnLength);
-						if (NULL == buffer) 
-							return (count);	// _tprintf(TEXT("\nError: Allocation failure\n"));
+						} else {
+							goto finished;
+						}
 
 					} else {
-						// _tprintf(TEXT("\nError %d\n"), GetLastError());
-						return (count);
+						done = TRUE;
 					}
-
-				} else {
-					done = TRUE;
 				}
-			}
 
-			ptr = buffer;
-			while (byteOffset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) <= returnLength) 
-			{
-				switch (ptr->Relationship) 
+				ptr = buffer;
+				while (byteOffset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) <= returnLength) 
 				{
-					case RelationNumaNode:
-						// Non-NUMA systems report a single record of this type.
-						++numaNodeCount;
-						break;
+					switch (ptr->Relationship) 
+					{
+						case RelationNumaNode:
+							// Non-NUMA systems report a single record of this type.
+							++numaNodeCount;
+							break;
 
-					case RelationProcessorCore:
-						++processorCoreCount;
+						case RelationProcessorCore:
+							++processorCoreCount;
 
-						// A hyperthreaded core supplies more than one logical processor.
-						logicalProcessorCount += CountSetBits(ptr->ProcessorMask);
-						break;
+							// A hyperthreaded core supplies more than one logical processor.
+							logicalProcessorCount += CountSetBits(ptr->ProcessorMask);
+							break;
 
-					case RelationCache:
-						// Cache data is in ptr->Cache, one CACHE_DESCRIPTOR structure for each cache. 
-						Cache = &ptr->Cache;
-						if (Cache->Level == 1)
-							++processorL1CacheCount;
-						else if (Cache->Level == 2)
-							++processorL2CacheCount;
-						else if (Cache->Level == 3)
-							++processorL3CacheCount;
+						case RelationCache:
+							// Cache data is in ptr->Cache, one CACHE_DESCRIPTOR structure for each cache. 
+							Cache = &ptr->Cache;
+							if (Cache->Level == 1)
+								++processorL1CacheCount;
+							else if (Cache->Level == 2)
+								++processorL2CacheCount;
+							else if (Cache->Level == 3)
+								++processorL3CacheCount;
 
-						break;
+							break;
 
-					case RelationProcessorPackage:
-						// Logical processors share a physical package.
-						++processorPackageCount;
-						break;
+						case RelationProcessorPackage:
+							// Logical processors share a physical package.
+							++processorPackageCount;
+							break;
 
-					default:
-						//_tprintf(TEXT("\nError: Unsupported LOGICAL_PROCESSOR_RELATIONSHIP value.\n"));
-						return(count);
-						break;
+						default:
+							//_tprintf(TEXT("\nError: Unsupported LOGICAL_PROCESSOR_RELATIONSHIP value.\n"));
+							goto finished;
+							break;
+					}
+					byteOffset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+					ptr++;
 				}
-				byteOffset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
-				ptr++;
+				//_tprintf(TEXT("\nGetLogicalProcessorInformation results:\n"));
+				//_tprintf(TEXT("Number of NUMA nodes: %d\n"), numaNodeCount);
+				//_tprintf(TEXT("Number of physical processor packages: %d\n"), processorPackageCount);
+				//_tprintf(TEXT("Number of processor cores: %d\n"), processorCoreCount);
+				//_tprintf(TEXT("Number of logical processors: %d\n"), logicalProcessorCount);
+				//_tprintf(TEXT("Number of processor L1/L2/L3 caches: %d/%d/%d\n"), processorL1CacheCount, processorL2CacheCount, processorL3CacheCount);
+				free(buffer);
 			}
-
-			//_tprintf(TEXT("\nGetLogicalProcessorInformation results:\n"));
-			//_tprintf(TEXT("Number of NUMA nodes: %d\n"), numaNodeCount);
-			//_tprintf(TEXT("Number of physical processor packages: %d\n"), processorPackageCount);
-			//_tprintf(TEXT("Number of processor cores: %d\n"), processorCoreCount);
-			//_tprintf(TEXT("Number of logical processors: %d\n"), logicalProcessorCount);
-			//_tprintf(TEXT("Number of processor L1/L2/L3 caches: %d/%d/%d\n"), processorL1CacheCount, processorL2CacheCount, processorL3CacheCount);
-			free(buffer);
-
 			// We succeeded, grab our value from the algorithm
 			count = processorCoreCount;
 		}
 
+finished:
 		// Allocate and build the return variable
 		pMyResult = AU3_AllocVar();
 		AU3_SetInt32(pMyResult, count);
