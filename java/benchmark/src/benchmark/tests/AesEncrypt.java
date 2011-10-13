@@ -116,9 +116,9 @@ public class AesEncrypt
 	private	long[]					m_times;
 
 	// Constants
-	private static final int		_PASS1_WARMUP					= 20;				// Build it 20x for warmup
-	private static final int		_PASS2_SCORING					= 10;				// Build it 10x for scoring
-	private static final int		_PASS3_COOLDOWN					= 20;				// Build it 20x for cooldown
+	private static final int		_PASS1_WARMUP					= 10;				// Build it 10x for warmup
+	private static final int		_PASS2_SCORING					= 30;				// Build it 30x for scoring
+	private static final int		_PASS3_COOLDOWN					= 10;				// Build it 10x for cooldown
 	private static final int		_MAX_PASSES						= _PASS1_WARMUP + _PASS2_SCORING + _PASS3_COOLDOWN;
 	private static final double		_AESENCRYPT_BASELINE_TIME		= 0.5286754978;		// Taken from reference machine, time to produce a score of 100.0
 }

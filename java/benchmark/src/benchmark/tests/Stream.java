@@ -191,9 +191,9 @@ public final class Stream
 	private	long[]						m_timesTriad;
 
 	// Constants
-	private static final int			_PASS1_WARMUP				= 130;				// Build it 130x for warmup
-	private static final int			_PASS2_SCORING				= 40;				// Build it 40x for scoring
-	private static final int			_PASS3_COOLDOWN				= 130;				// Build it 130x for cooldown
+	private static final int			_PASS1_WARMUP				= 50;				// Build it 50x for warmup
+	private static final int			_PASS2_SCORING				= 200;				// Build it 200x for scoring
+	private static final int			_PASS3_COOLDOWN				= 50;				// Build it 50x for cooldown
 	private static final int			_MAX_PASSES					= _PASS1_WARMUP + _PASS2_SCORING + _PASS3_COOLDOWN;
 	private static final int			_ARRAY_ELEMENTS				= 4300000;			// 4.3 million * 8 bytes = ~34.4MB * 3 = ~103 MB
 	private static final int			_SCALAR						= 3;				// Constant taken from base stream benchmark examples

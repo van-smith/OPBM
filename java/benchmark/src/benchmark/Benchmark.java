@@ -106,7 +106,7 @@ public class Benchmark
 		AesData.initialize();
 
 		// Create instances of each test so they pre-load required data
-		m_is = new IntegerSort(m_handle, /*warmup*/1000, /*scoring pass*/500, /*cooldown*/1000, 16384);
+		m_is = new IntegerSort(m_handle, /*2500x total*/ /*warmup*/500, /*scoring pass*/1500, /*cooldown*/500, 16384);
 		m_sg = new StringTest(m_handle);
 		m_ae = new AesEncrypt(m_handle);
 		m_ad = new AesDecrypt(m_handle);

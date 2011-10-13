@@ -133,9 +133,9 @@ public class StringTest
 	private	byte[]					m_baseline;
 
 	// Constants
-	private static final int		_PASS1_WARMUP				= 300;				// Build it 300x for warmup
-	private static final int		_PASS2_SCORING				= 150;				// Build it 150x for scoring
-	private static final int		_PASS3_COOLDOWN				= 300;				// Build it 300x for cooldown
+	private static final int		_PASS1_WARMUP				= 150;				// Build it 150x for warmup
+	private static final int		_PASS2_SCORING				= 450;				// Build it 450x for scoring
+	private static final int		_PASS3_COOLDOWN				= 150;				// Build it 150x for cooldown
 	private static final int		_MAX_PASSES					= _PASS1_WARMUP + _PASS2_SCORING + _PASS3_COOLDOWN;
 	private static final int		_STRING_LENGTH				= 32768;			// 32KB
 	private static final int		_BASELINE_STRING_LENGTH		= 256;				// One for every ANSI+128 character
