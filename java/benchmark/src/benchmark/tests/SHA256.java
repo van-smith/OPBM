@@ -51,7 +51,7 @@ public class SHA256
 		m_jbm				= new JbmGui(handle, _MAX_PASSES);
 		m_nano				= new NanoTimer();
 		// Initialize our timing array
-		m_times				= new long[_MAX_PASSES];
+		m_times				= new long[_PASS2_SCORING];
 		m_nano.initializeTimes(m_times);
 	}
 
@@ -60,9 +60,7 @@ public class SHA256
 	 */
 	public void run()
 	{
-		int i, pass;
 		MessageDigest md;
-		byte[] hash;
 
 		// Allocate our SHA-256 message digest
 		try {
@@ -72,10 +70,31 @@ public class SHA256
 			System.out.println("SHA-256 Failure:  Unable to get SHA-256 Message Digest instance.");
 			return;
 		}
-		// If we get here, we're god
+		// If we get here, we're good
+
+		runPass(md, _PASS1_WARMUP, false);											// Warmup
+		runPass(md, _PASS2_SCORING, true);											// Scoring
+		runPass(md, _PASS3_COOLDOWN, false);										// Cooldown
+
+		// Finished
+		reportTiming();
+	}
+
+	/**
+	 * Runs a pass, a portion of the test as each true test consists of three
+	 * phases:  warmup, scoring, and cooldown.
+	 * @param max
+	 * @param keepScore
+	 */
+	public void runPass(MessageDigest	md,
+						int				max,
+						boolean			keepScore)
+	{
+		int i, pass;
+		byte[] hash;
 
 		// Repeat the test however many times
-		for (pass = 0; pass < _MAX_PASSES; pass++)
+		for (pass = 0; pass < max; pass++)
 		{
 			// Perform the test
 			m_nano.start();
@@ -93,13 +112,12 @@ public class SHA256
 				hash = md.digest(AesData.m_aesEncrypted[i]);
 			}
 			// All done
-			m_times[pass] = m_nano.elapsed();
+			if (keepScore)
+				m_times[pass] = m_nano.elapsed();
 
 			// Update the JBM if need be
 			m_jbm.increment();
 		}
-		// Finished
-		reportTiming();
 	}
 
 	/**
@@ -116,6 +134,9 @@ public class SHA256
 	private	long[]					m_times;
 
 	// Constants
-	private static final int		_MAX_PASSES				= 40;				// Build it 40x over
+	private static final int		_PASS1_WARMUP			= 15;				// Build it 15x for warmup
+	private static final int		_PASS2_SCORING			= 10;				// Build it 10x for scoring
+	private static final int		_PASS3_COOLDOWN			= 15;				// Build it 15x for cooldown
+	private static final int		_MAX_PASSES				= _PASS1_WARMUP + _PASS2_SCORING + _PASS3_COOLDOWN;
 	private static final double		_SHA256_BASELINE_TIME	= 0.760708525;		// Taken from reference machine, time to produce a score of 100.0
 }

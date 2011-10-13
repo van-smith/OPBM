@@ -41,7 +41,7 @@ public class StringTest
 		m_jbm				= new JbmGui(handle, _MAX_PASSES);
 		m_nano				= new NanoTimer();
 		// Initialize our timing array
-		m_times				= new long[_MAX_PASSES];
+		m_times				= new long[_PASS2_SCORING];
 		m_nano.initializeTimes(m_times);
 
 		// Generate a baseline random sequence of 256 alphanumeric characters
@@ -66,12 +66,29 @@ public class StringTest
 	 */
 	public void run()
 	{
+		runPass(_PASS1_WARMUP, false);											// Warmup
+		runPass(_PASS2_SCORING, true);											// Scoring
+		runPass(_PASS3_COOLDOWN, false);										// Cooldown
+
+		// Finished
+		reportTiming();
+	}
+
+	/**
+	 * Runs a pass, a portion of the test as each true test consists of three
+	 * phases:  warmup, scoring, and cooldown.
+	 * @param max
+	 * @param keepScore
+	 */
+	public void runPass(int			max,
+						boolean		keepScore)
+	{
 		char c;
 		int i, pass, insertAt;
 		StringBuilder sb;
 
 		// Populate a 32KB String using the StringBuilder class
-		for (pass = 0; pass < _MAX_PASSES; pass++)
+		for (pass = 0; pass < max; pass++)
 		{	// Each pass, record timing information
 			m_nano.start();
 
@@ -92,13 +109,12 @@ public class StringTest
 				}
 			}
 			// When we get here, the StringBuilder string is produced
-			m_times[pass] = m_nano.elapsed();
+			if (keepScore)
+				m_times[pass] = m_nano.elapsed();
 
 			// Update the JBM if need be
 			m_jbm.increment();
 		}
-		// Finished
-		reportTiming();
 	}
 
 	/**
@@ -117,7 +133,10 @@ public class StringTest
 	private	byte[]					m_baseline;
 
 	// Constants
-	private static final int		_MAX_PASSES					= 750;				// Build it 750x over
+	private static final int		_PASS1_WARMUP				= 300;				// Build it 300x for warmup
+	private static final int		_PASS2_SCORING				= 150;				// Build it 150x for scoring
+	private static final int		_PASS3_COOLDOWN				= 300;				// Build it 300x for cooldown
+	private static final int		_MAX_PASSES					= _PASS1_WARMUP + _PASS2_SCORING + _PASS3_COOLDOWN;
 	private static final int		_STRING_LENGTH				= 32768;			// 32KB
 	private static final int		_BASELINE_STRING_LENGTH		= 256;				// One for every ANSI+128 character
 	private static final double		_STRINGTEST_BASELINE_TIME	= 0.0256620821;		// Taken from reference machine, time to produce a score of 100.0

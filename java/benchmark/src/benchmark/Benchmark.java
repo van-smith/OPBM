@@ -104,6 +104,14 @@ public class Benchmark
 	{
 		RandomData.initialize();
 		AesData.initialize();
+
+		// Create instances of each test so they pre-load required data
+		m_is = new IntegerSort(m_handle, /*warmup*/1000, /*scoring pass*/500, /*cooldown*/1000, 16384);
+		m_sg = new StringTest(m_handle);
+		m_ae = new AesEncrypt(m_handle);
+		m_ad = new AesDecrypt(m_handle);
+		m_sh = new SHA256(m_handle);
+		m_sm = new Stream(m_handle);
 	}
 
 	/**
@@ -129,7 +137,6 @@ public class Benchmark
 	public void integerSort()
 	{
 		reportTestN(m_handle, m_testNumber++, "Integer Sort");
-		m_is = new IntegerSort(m_handle, 2500, 16384);
 		m_is.run();
 	}
 
@@ -141,7 +148,6 @@ public class Benchmark
 	public void string()
 	{
 		Benchmark.reportTestN(m_handle, Benchmark.m_testNumber++, "Build String");
-		m_sg = new StringTest(m_handle);
 		m_sg.run();
 	}
 
@@ -158,7 +164,6 @@ public class Benchmark
 		{	// We're good
 			// Report the test we're on
 			reportTestN(m_handle, m_testNumber++, "AES Encrypt");
-			m_ae = new AesEncrypt(m_handle);
 			m_ae.run();
 		}
 	}
@@ -175,7 +180,6 @@ public class Benchmark
 		{	// We're good
 			// Report the test we're on
 			reportTestN(m_handle, m_testNumber++, "AES Decrypt");
-			m_ad = new AesDecrypt(m_handle);
 			m_ad.run();
 		}
 	}
@@ -187,7 +191,6 @@ public class Benchmark
 	public void sha256()
 	{
 		reportTestN(m_handle, m_testNumber++, "SHA-256");
-		m_sh = new SHA256(m_handle);
 		m_sh.run();
 	}
 
@@ -199,7 +202,6 @@ public class Benchmark
 	public void stream()
 	{
 		reportTestN(m_handle, m_testNumber++, "STREAM");
-		m_sm = new Stream(m_handle);
 		m_sm.run();
 	}
 

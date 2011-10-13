@@ -41,7 +41,7 @@ public class AesDecrypt
 		m_jbm				= new JbmGui(handle, _MAX_PASSES);
 		m_nano				= new NanoTimer();
 		// Initialize our timing array
-		m_times				= new long[_MAX_PASSES];
+		m_times				= new long[_PASS2_SCORING];
 		m_nano.initializeTimes(m_times);
 	}
 
@@ -50,14 +50,32 @@ public class AesDecrypt
 	 */
 	public void run()
 	{
-		int i, pass;
-		byte[] decrypted;
-
 		// We're in encryption mode
 		AesData.setDecryptMode();
 
+		// Run the test
+		runPass(_PASS1_WARMUP, false);											// Warmup
+		runPass(_PASS2_SCORING, true);											// Scoring
+		runPass(_PASS3_COOLDOWN, false);										// Cooldown
+
+		// Finished
+		reportTiming();
+	}
+
+	/**
+	 * Runs a pass, a portion of the test as each true test consists of three
+	 * phases:  warmup, scoring, and cooldown.
+	 * @param max
+	 * @param keepScore
+	 */
+	public void runPass(int			max,
+						boolean		keepScore)
+	{
+		int i, pass;
+		byte[] decrypted;
+
 		// Repeat the test however many times
-		for (pass = 0; pass < _MAX_PASSES; pass++)
+		for (pass = 0; pass < max; pass++)
 		{
 			// Run the test
 			m_nano.start();
@@ -85,13 +103,12 @@ public class AesDecrypt
 				}
 				// When we get here, we're good
 			}
-			m_times[pass] = m_nano.elapsed();
+			if (keepScore)
+				m_times[pass] = m_nano.elapsed();
 
 			// Update the JBM if need be
 			m_jbm.increment();
 		}
-		// Finished
-		reportTiming();
 	}
 
 	/**
@@ -108,6 +125,9 @@ public class AesDecrypt
 	private	long[]					m_times;
 
 	// Constants
-	private static final int		_MAX_PASSES						= 50;				// Build it 50x over
+	private static final int		_PASS1_WARMUP					= 20;				// Build it 20x for warmup
+	private static final int		_PASS2_SCORING					= 10;				// Build it 10x for scoring
+	private static final int		_PASS3_COOLDOWN					= 20;				// Build it 20x for cooldown
+	private static final int		_MAX_PASSES						= _PASS1_WARMUP + _PASS2_SCORING + _PASS3_COOLDOWN;
 	private static final double		_AESDECRYPT_BASELINE_TIME		= 0.5761001149;		// Taken from reference machine, time to produce a score of 100.0
 }

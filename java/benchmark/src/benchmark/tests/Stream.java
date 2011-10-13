@@ -49,10 +49,10 @@ public final class Stream
 		}
 
 		// Initialize our timing array
-		m_timesCopy		= new long[_MAX_PASSES];
-		m_timesScale	= new long[_MAX_PASSES];
-		m_timesAdd		= new long[_MAX_PASSES];
-		m_timesTriad	= new long[_MAX_PASSES];
+		m_timesCopy		= new long[_PASS2_SCORING];
+		m_timesScale	= new long[_PASS2_SCORING];
+		m_timesAdd		= new long[_PASS2_SCORING];
+		m_timesTriad	= new long[_PASS2_SCORING];
 
 		m_nano.initializeTimes(m_timesCopy);
 		m_nano.initializeTimes(m_timesScale);
@@ -66,8 +66,29 @@ public final class Stream
 	 */
 	public void run()
 	{
-		for (m_pass = 0; m_pass < _MAX_PASSES; m_pass++)
-		{	// Run the four tests, each handles its own timing
+		runPass(_PASS1_WARMUP, false);											// Warmup
+		runPass(_PASS2_SCORING, true);											// Scoring
+		runPass(_PASS3_COOLDOWN, false);										// Cooldown
+
+		// Finished
+		reportTimings();
+	}
+
+	/**
+	 * Runs a pass, a portion of the test as each true test consists of three
+	 * phases:  warmup, scoring, and cooldown.
+	 * @param max
+	 * @param keepScore
+	 */
+	public void runPass(int			max,
+						boolean		keepScore)
+	{
+		// Assign a class variable as it's used in four methods
+		m_keepScore = keepScore;
+
+		// Run the four tests, each handles its own timing
+		for (m_pass = 0; m_pass < max; m_pass++)
+		{
 			copy();
 			scale();
 			add();
@@ -76,8 +97,6 @@ public final class Stream
 			// Update the JBM after this pass
 			m_jbm.increment();
 		}
-		// Finished
-		reportTimings();
 	}
 
 
@@ -95,7 +114,8 @@ public final class Stream
 		for (int i = 0; i < _ARRAY_ELEMENTS; i++)
 			m_a[i] = m_b[i];
 
-		m_timesCopy[m_pass] = m_nano.elapsed();
+		if (m_keepScore)
+			m_timesCopy[m_pass] = m_nano.elapsed();
 	}
 
 	/**
@@ -109,7 +129,8 @@ public final class Stream
 		for (int i = 0; i < _ARRAY_ELEMENTS; i++)
 			m_a[i] = _SCALAR * m_b[i];
 
-		m_timesScale[m_pass] = m_nano.elapsed();
+		if (m_keepScore)
+			m_timesScale[m_pass] = m_nano.elapsed();
 	}
 
 	/**
@@ -123,7 +144,8 @@ public final class Stream
 		for (int i = 0; i < _ARRAY_ELEMENTS; i++)
 			m_a[i] = m_b[i] + m_c[i];
 
-		m_timesAdd[m_pass] = m_nano.elapsed();
+		if (m_keepScore)
+			m_timesAdd[m_pass] = m_nano.elapsed();
 	}
 
 	/**
@@ -137,7 +159,8 @@ public final class Stream
 		for (int i = 0; i < _ARRAY_ELEMENTS; i++)
 			m_a[i] = m_b[i] + _SCALAR * m_c[i];
 
-		m_timesTriad[m_pass] = m_nano.elapsed();
+		if (m_keepScore)
+			m_timesTriad[m_pass] = m_nano.elapsed();
 	}
 
 	/**
@@ -161,13 +184,17 @@ public final class Stream
 	private double[]					m_b;
 	private double[]					m_c;
 
+	private boolean						m_keepScore;
 	private	long[]						m_timesCopy;
 	private	long[]						m_timesScale;
 	private	long[]						m_timesAdd;
 	private	long[]						m_timesTriad;
 
 	// Constants
-	private static final int			_MAX_PASSES					= 300;				// Test it 300x over
+	private static final int			_PASS1_WARMUP				= 130;				// Build it 130x for warmup
+	private static final int			_PASS2_SCORING				= 40;				// Build it 40x for scoring
+	private static final int			_PASS3_COOLDOWN				= 130;				// Build it 130x for cooldown
+	private static final int			_MAX_PASSES					= _PASS1_WARMUP + _PASS2_SCORING + _PASS3_COOLDOWN;
 	private static final int			_ARRAY_ELEMENTS				= 4300000;			// 4.3 million * 8 bytes = ~34.4MB * 3 = ~103 MB
 	private static final int			_SCALAR						= 3;				// Constant taken from base stream benchmark examples
 	private static final double			_STREAM_BASELINE_TIME_COPY	= 0.0206187766;		// Taken from reference machine, time to produce a score of 100.0

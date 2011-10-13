@@ -37,20 +37,25 @@ public class IntegerSort
 	 * @param handle assigned for the app
 	 */
 	public IntegerSort(int		handle,
-					   int		passes,
+					   int		pass1_warmup,
+					   int		pass2_scoring,
+					   int		pass3_cooldown,
 					   int		integers)
 	{
-		m_max_passes		= passes;
+		m_max_passes		= pass1_warmup + pass2_scoring + pass3_cooldown;
+		m_pass1_warmup		= pass1_warmup;
+		m_pass2_scoring		= pass2_scoring;
+		m_pass3_cooldown	= pass3_cooldown;
 		m_max_integers		= integers;
 
 		m_list1				= new Long[m_max_integers];		// For ascending sort
 		m_list2				= new Long[m_max_integers];		// For descending sort
 
-		m_jbm				= new JbmGui(handle, passes);
+		m_jbm				= new JbmGui(handle, m_max_passes);
 		m_nano				= new NanoTimer();
 
 		// Initialize our timing array
-		m_times				= new long[passes];
+		m_times				= new long[pass2_scoring];
 		m_nano.initializeTimes(m_times);
 	}
 
@@ -64,9 +69,26 @@ public class IntegerSort
 	 */
 	public void run()
 	{
+		runPass(m_pass1_warmup, false);											// Warmup
+		runPass(m_pass2_scoring, true);											// Scoring
+		runPass(m_pass3_cooldown, false);										// Cooldown
+
+		// Finished
+		reportTiming();
+	}
+
+	/**
+	 * Runs a pass, a portion of the test as each true test consists of three
+	 * phases:  warmup, scoring, and cooldown.
+	 * @param max
+	 * @param keepScore
+	 */
+	public void runPass(int			max,
+						boolean		keepScore)
+	{
 		int i, pass;
 
-		for (pass = 0; pass < m_max_passes; pass++)
+		for (pass = 0; pass < max; pass++)
 		{
 			// Step 1:  Generate the list
 				for (i = 0; i < m_max_integers; i++)
@@ -81,19 +103,18 @@ public class IntegerSort
 			//////
 				// Step 2:  Sort the list in ascending
 					Arrays.sort(m_list1);
-
 				// Step 3:  Sort the list in descending
 					Arrays.sort(m_list2, Collections.reverseOrder());
 			//////
 			// End
 			//////////
-			m_times[pass] = m_nano.elapsed();
+
+			if (keepScore)
+				m_times[pass] = m_nano.elapsed();	// Score it
 
 			// Update the JBM after this pass
 			m_jbm.increment();
 		}
-		// Finished
-		reportTiming();
 	}
 
 	/**
@@ -109,6 +130,9 @@ public class IntegerSort
 	private	JbmGui					m_jbm;
 	private	NanoTimer				m_nano;
 	private	int						m_max_passes;
+	private	int						m_pass1_warmup;
+	private	int						m_pass2_scoring;
+	private	int						m_pass3_cooldown;
 	private	int						m_max_integers;
 	private	long[]					m_times;
 	private	Long[]					m_list1;
