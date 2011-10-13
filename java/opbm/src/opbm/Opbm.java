@@ -231,6 +231,7 @@ public final class Opbm extends	ModalApp
 						}
 
 						// Look for necessary-to-know-in-advance flags
+						runCount = 0;
 						for (i = 0; i < args.size(); i++)
 						{
 							line = args.get(i);
@@ -261,8 +262,8 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-restart")) {
 								// They want to restart the prior benchmark, already in progress
 								m_executingFromCommandLine = true;
+								++runCount;
 								m_benchmarkMaster.benchmarkManifestRestart();
-								m_executingFromCommandLine = false;
 
 							} else {
 								// We don't do anything with other options, they'll be handled below
@@ -270,7 +271,6 @@ public final class Opbm extends	ModalApp
 						}
 
 						// If they specified any command line options, grab them
-						runCount = 0;
 						for (i = 0; i < args.size(); i++)
 						{
 							line = args.get(i);
