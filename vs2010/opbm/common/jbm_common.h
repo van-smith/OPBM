@@ -17,7 +17,7 @@
 
 
 // Constants used to identify and relate things
-#define			_JBM_MAX_CONNECTIONS							32		// 32-cores should be sufficient (for 2011/2012)
+#define			_JBM_MAX_CONNECTIONS							64		// 64-cores should be sufficient (for 2011/2012)
 																		// Note:  If this value changes, update the determineLayout() function
 
 const wchar_t	_JBM_Class_Name[]								= L"JavaBenchmarkMonitorForOPBM";

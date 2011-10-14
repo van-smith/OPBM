@@ -25,6 +25,7 @@
 /////
 	#include <SDKDDKVer.h>
 	#define WIN32_LEAN_AND_MEAN
+	#include "stdlib.h"
 	#include "windows.h"
 	#include "winbase.h"
 	#include "benchmark_jni.h"			// JNI include file derived from netbeans benchmark.jar

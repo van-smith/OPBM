@@ -119,7 +119,6 @@
 				<clone>lookupbox_clone</clone>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
-				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<source relativeto="atom">[flow,abstract]</source>
 				<foreach>[flow,abstract]</foreach>
 				<relativeedits p1="flow=flows" p2="abstract=abstracts"/>
@@ -127,18 +126,9 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control(colon)"/>
-			<lookupbox name="flows" autoupdate="no">
-				<add p1="atom" p2="elements" p3="flows">lookupbox_add</add>
-				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.flows.flow</source>
-				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
 			<label text="Command Abstracts(colon)"/>
-			<lookupbox name="abstracts" autoupdate="no">
+			<lookupbox name="abstracts" autoupdate="no" height="max">
 				<add p1="atom" p2="elements" p3="abstracts">lookupbox_add</add>
-				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.abstracts.abstract</source>
 				<foreach>abstract</foreach>
 				<listby p1="#name"/>
@@ -182,18 +172,9 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control(colon)"/>
-			<lookupbox name="flows" autoupdate="no">
-				<add p1="molecule" p2="elements" p3="flows">lookupbox_add</add>
-				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.flows.flow</source>
-				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
 			<label text="Command Abstracts(colon)"/>
-			<lookupbox name="abstracts" autoupdate="no">
+			<lookupbox name="abstracts" autoupdate="no" height="max">
 				<add p1="molecule" p2="elements" p3="abstracts">lookupbox_add</add>
-				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.abstracts.abstract</source>
 				<foreach>abstract</foreach>
 				<listby p1="#name"/>
@@ -202,7 +183,6 @@
 			<label text="Atoms(colon)"/>
 			<lookupbox name="atoms" autoupdate="no">
 				<add p1="molecule" p2="elements" p3="atoms">lookupbox_add</add>
-				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.atoms.atom</source>
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
@@ -246,18 +226,9 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control(colon)"/>
-			<lookupbox name="flows" autoupdate="no">
-				<add p1="scenario" p2="elements" p3="flows">lookupbox_add</add>
-				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.flows.flow</source>
-				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
 			<label text="Command Abstracts(colon)"/>
-			<lookupbox name="abstracts" autoupdate="no">
+			<lookupbox name="abstracts" autoupdate="no" height="max">
 				<add p1="scenario" p2="elements" p3="abstracts">lookupbox_add</add>
-				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.abstracts.abstract</source>
 				<foreach>abstract</foreach>
 				<listby p1="#name"/>
@@ -266,7 +237,6 @@
 			<label text="Atoms(colon)"/>
 			<lookupbox name="atoms" autoupdate="no">
 				<add p1="scenario" p2="elements" p3="atoms">lookupbox_add</add>
-				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.atoms.atom</source>
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
@@ -274,7 +244,6 @@
 			<label text="Molecules(colon)"/>
 			<lookupbox name="molecules" autoupdate="no">
 				<add p1="scenario" p2="elements" p3="molecules">lookupbox_add</add>
-				<zoom p1="molecules" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.molecules.molecule</source>
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
@@ -318,18 +287,9 @@
 				<listby p1="#name"/>
 			</lookupbox>
 			<newcolumn/>
-			<label text="Flow Control(colon)"/>
-			<lookupbox name="flows" autoupdate="no">
-				<add p1="suite" p2="elements" p3="flows">lookupbox_add</add>
-				<zoom p1="flows" autopreview="yes">lookupbox_zoom</zoom>
-				<source>opbm.scriptdata.flows.flow</source>
-				<foreach>flow</foreach>
-				<listby p1="#name"/>
-			</lookupbox>
 			<label text="Command Abstracts(colon)"/>
-			<lookupbox name="abstracts" autoupdate="no">
+			<lookupbox name="abstracts" autoupdate="no" height="max">
 				<add p1="suite" p2="elements" p3="abstracts">lookupbox_add</add>
-				<zoom p1="abstracts" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.abstracts.abstract</source>
 				<foreach>abstract</foreach>
 				<listby p1="#name"/>
@@ -338,7 +298,6 @@
 			<label text="Atoms(colon)"/>
 			<lookupbox name="atoms" autoupdate="no">
 				<add p1="suite" p2="elements" p3="atoms">lookupbox_add</add>
-				<zoom p1="atoms" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.atoms.atom</source>
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
@@ -346,7 +305,6 @@
 			<label text="Molecules(colon)"/>
 			<lookupbox name="molecules" autoupdate="no">
 				<add p1="suite" p2="elements" p3="molecules">lookupbox_add</add>
-				<zoom p1="molecules" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.molecules.molecule</source>
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
@@ -354,7 +312,6 @@
 			<label text="Scenarios(colon)"/>
 			<lookupbox name="scenarios" autoupdate="no">
 				<add p1="suite" p2="elements" p3="scenarios">lookupbox_add</add>
-				<zoom p1="scenarios" autopreview="yes">lookupbox_zoom</zoom>
 				<source>opbm.scriptdata.scenarios.scenario</source>
 				<foreach>scenario</foreach>
 				<listby p1="#name"/>
@@ -380,7 +337,6 @@
 			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
-				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
 				<source relativeto="atom">[flow,abstract]</source>
@@ -413,7 +369,6 @@
 			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
-				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
 				<source relativeto="molecule">[flow,abstract,atom]</source>
@@ -446,7 +401,6 @@
 			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
-				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
 				<source relativeto="scenario">[flow,abstract,atom,molecule]</source>
@@ -479,7 +433,6 @@
 			<textbox readonly="yes" width="250" field="elements.#name"/>
 			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
-				<zoom p1="relativeto" autopreview="yes">lookupbox_zoom</zoom>
 				<up>lookupbox_move_up</up>
 				<down>lookupbox_move_down</down>
 				<source relativeto="suite">[flow,abstract,atom,molecule,scenario]</source>

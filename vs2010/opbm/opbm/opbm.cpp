@@ -1658,7 +1658,7 @@
 		count = sysinfo.dwNumberOfProcessors;
 		if (request == 1)
 		{	// Return the number Windows provides
-			// count = sysinfo.dwNumberOfProcessors;
+			//count = sysinfo.dwNumberOfProcessors; is assigned above, so that it will be the fall-back value should additional errors below be encountered
 
 		} else {
 			// Taken from: http://msdn.microsoft.com/en-us/library/ms683194
@@ -2595,7 +2595,6 @@ finished:
 	AU3_PLUGIN_DEFINE(FindChildWindowForProcessId)
 	// See notes about parameters and return codes above
 	{
-		//GetWindowThreadProcessId();
 		USES_CONVERSION;
 		AU3_PLUGIN_VAR*		pMyResult;
 		int					result;
@@ -2609,6 +2608,7 @@ finished:
 
 
 		// Do the workload here
+		//GetWindowThreadProcessId();
 		result = 0;
 
 
@@ -2635,7 +2635,7 @@ finished:
 //
 // OpbmWatchdog_ProcessStart()
 //
-// Called to tell the watchdog about a process id that should be watched
+// Called to tell the watchdog about a process id that should start being watched
 //
 // Parameters:
 // 		0		- Process id
@@ -2688,7 +2688,10 @@ finished:
 //
 // OpbmWatchdog_ProcessStop()
 //
-// Called as each process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer
+// Called as each process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer.
+//
+// Note:  Implicit stops are also discovered when a process falls out of scope (by normal exit).  OPBM Watchdog contains logic
+//        to handle that condition internally, so an explicit call to OpbmWatchdog_ProcessStop() is not necessary, but is polite.
 //
 // Parameters:
 // 		0		- Previous handle
@@ -2696,6 +2699,7 @@ finished:
 // Returns:
 // 		0		- Failure (handle does not exist)
 //		1		- Success (watchdog timeout is killed, the process will no longer be observed)
+//                Note:  Any sub-processes, and related other-processes to watch, are also ceased when this call is made.
 //
 /////
 	AU3_PLUGIN_DEFINE(OpbmWatchdog_ProcessStop)

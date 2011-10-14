@@ -339,10 +339,10 @@
 				</abstract>
 			</atom>
 			<atom name="Word Alice" shortname="Word">
-				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute" atomuuid="385746a2-2619-400a-b927-53b634b7b23c">
+				<abstract name="Alice in Wonderland" shortname="Alice" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Word Conflict Check, Acrobat Reader Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts>Word Conflict Check</atomCheckConflicts>
 						<atomOnSpinup>Launch and Close Word</atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -1129,7 +1129,7 @@
 				</abstract>
 			</atom>
 			<atom name="Acrobat Reader Conflict Check" shortname="AReaderCC">
-				<abstract name="Acrobat Reader Conflict Check" shortname="AReaderCC" sourcename="execute" atomuuid="dd0ff8e2-8c30-4458-b123-278472fad53b">
+				<abstract name="Acrobat Reader Conflict Check" shortname="AReaderCC" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>

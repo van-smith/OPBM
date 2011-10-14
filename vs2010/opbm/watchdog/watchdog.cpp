@@ -519,7 +519,7 @@
 		}
 	}
 
-	// Called recursively for each next and firstSubprocess branch
+	// Called recursively for each next and firstSubprocess branch, trying to find the needle in the haystack
 	// It could be either part of the main linked list (next entries) or one of its subprocesses (firstSubprocess entries)
 	SProcessLL** findLinkedListEntryBeforeThisOne(SProcessLL* haystack, SProcessLL* needle)
 	{

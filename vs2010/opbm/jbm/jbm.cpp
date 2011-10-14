@@ -198,15 +198,30 @@
 			gnHeight	= 5;
 			gnWidth		= 6;
 
-		} else if (gnProcessCount >= 31 && gnProcessCount <= 32 /* We only have _JBM_MAX_CONNECTIONS defined as 32 though, so the 33 to 36 are no valid right now */) {
+		} else if (gnProcessCount >= 31 && gnProcessCount <= 36) {
 			// 31 to 36 processes, six lines of six entries
 			gnHeight	= 6;
 			gnWidth		= 6;
 
-		} else {
-			// An invalid value, so set it to the maximum, and it will automatically ignore all others
-			gnHeight	= 6;
+		} else if (gnProcessCount >= 37 && gnProcessCount <= 42) {
+			// 37 to 42 processes, six lines of seven entries
+			gnHeight	= 7;
 			gnWidth		= 6;
+
+		} else if (gnProcessCount >= 43 && gnProcessCount <= 48) {
+			// 43 to 48 processes, six lines of eight entries
+			gnHeight	= 6;
+			gnWidth		= 8;
+
+		} else if (gnProcessCount >= 49 && gnProcessCount <= 56) {
+			// 49 to 56 processes, seven lines of eight entries
+			gnHeight	= 7;
+			gnWidth		= 8;
+
+		} else {
+			// Set it to the maximum, and it will automatically ignore all other calls
+			gnHeight	= 8;
+			gnWidth		= 8;
 
 		}
 
