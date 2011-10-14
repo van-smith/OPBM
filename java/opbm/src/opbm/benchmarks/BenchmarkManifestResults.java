@@ -1467,7 +1467,12 @@ public class BenchmarkManifestResults
 									newWorklet.appendAttribute(new Xml("cvScore",		worklet.getAttribute("cvScore")));
 									newWorklet.appendAttribute(new Xml("tags",			""));
 									newWorklet.appendAttribute(new Xml("tested",		"yes"));
-									newWorklet.appendAttribute(new Xml("status",		instanceResult.getAttribute("status")));
+
+// Note:  The cause of needing to check instanceResult for null
+//        may be the sign of another issue.  Researching 10/14/2011 10:00am.
+
+									if (instanceResult != null)
+										newWorklet.appendAttribute(new Xml("status",		instanceResult.getAttribute("status")));
 
 									// Append the runN data to the worklet (run1, run2, run3...)
 									runN = worklet.getFirstChild();
