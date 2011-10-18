@@ -38,6 +38,7 @@ For $CurrentLoop = 1 to $LoopLimit
 
 	; Grab the number of cores on this system
 	$Cores = GetCoreCount(1)	; 0-physical cores, 1-logical cores (including hyperthreaded)
+	$Cores = 64
 	If $Cores < 1 or $Cores > 64 Then
 		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
 	EndIf
@@ -162,15 +163,15 @@ Func LaunchJvmInstances()
 	; When we get here, every JVM has been launched
 EndFunc
 
-; This test should not take more than 5 minutes on the slowest
-; machines, 10 minutes using hyperthreading, so we add a timeout
-; after 12 minutes
+; This test should not take more than a 6-7 minutes on the slowest
+; machines, maybe 14 minutes using hyperthreading, so we add a timeout
+; after 18 minutes
 Func WaitForJvmsToFinish()
 	Local $seconds
 	Local $timeout
 	Local $finished
 	
-	$timeout = 12
+	$timeout = 18
 	outputDebug( "Will timeout in " & $timeout & " minutes" )
 	
 	$finished = 0
