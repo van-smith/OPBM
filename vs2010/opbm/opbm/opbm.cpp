@@ -1652,13 +1652,13 @@
 		AU3_FreeString(requestString);	// Free the parameter
 
 		// Ask Windows how many cores are available?
-		// Note:  Returns the total number of physical and logical (hyperthreaded) cores
+		// Note:  Returns the total number of physical + logical (hyperthreaded) cores
 		SYSTEM_INFO sysinfo;
 		GetSystemInfo( &sysinfo );
 		count = sysinfo.dwNumberOfProcessors;
 		if (request == 1)
 		{	// Return the number Windows provides
-			//count = sysinfo.dwNumberOfProcessors; is assigned above, so that it will be the fall-back value should additional errors below be encountered
+			//count = sysinfo.dwNumberOfProcessors;		// assigned above, so that it will be the fall-back value should additional errors below be encountered
 
 		} else {
 			// Taken from: http://msdn.microsoft.com/en-us/library/ms683194
@@ -1681,6 +1681,8 @@
 								goto finished;
 
 						} else {
+							if (buffer)
+								free(buffer);
 							goto finished;
 						}
 

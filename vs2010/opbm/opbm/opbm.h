@@ -7,8 +7,13 @@
 
 
 
+
+
+
+
 #define _JBM_OWNER 1
-#include "jbm_common.h"
+#include "pipe_common.h"	// JBM common variables related to pipe names and structures
+#include "jbm_common.h"		// JBM common variables
 
 extern HMODULE ghModule;
 

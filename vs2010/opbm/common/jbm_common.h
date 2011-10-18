@@ -13,12 +13,11 @@
 //
 //
 
-#include "..\common\pipe_common.h"
 
 
 // Constants used to identify and relate things
 #define			_JBM_MAX_CONNECTIONS							64		// 64-cores should be sufficient (for 2011/2012)
-																		// Note:  If this value changes, update the determineLayout() function
+																		// Note:  If this value changes, update the determineLayout() function in jbm.cpp
 
 const wchar_t	_JBM_Class_Name[]								= L"JavaBenchmarkMonitorForOPBM";
 const wchar_t	_JBM_Window_Name[]								= L"Java Benchmark Monitor";
@@ -50,8 +49,7 @@ const wchar_t	_JBM_Owner_Pipe_Name[]							= L"\\\\.\\pipe\\JBM Owner Data Pipe"
 
 
 // Data used in the named pipe to communicate with JBM
-// from pipe_common.h, plus these:
-
+// Uses the structures in pipe_common.h, and these:
 struct SScoringData
 {
 	SPipeDataName	name;							// Name of the test with this scoring data

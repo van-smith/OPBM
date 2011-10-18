@@ -15,7 +15,8 @@
 #include "resource.h"
 #define _JBM 1
 #define _JBM_OWNER 1
-#include "..\common\jbm_common.h"
+#include "..\common\pipe_common.h"	// JBM common variables related to pipe names and structures
+#include "..\common\jbm_common.h"	// JBM common variables
 
 
 

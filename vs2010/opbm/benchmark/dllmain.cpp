@@ -25,10 +25,11 @@
 /////
 	#include <SDKDDKVer.h>
 	#define WIN32_LEAN_AND_MEAN
-	#include "stdlib.h"
-	#include "windows.h"
-	#include "winbase.h"
+	#include <windows.h>
+	#include <winbase.h>
+	#include <stdlib.h>
 	#include "benchmark_jni.h"			// JNI include file derived from netbeans benchmark.jar
+	#include "..\common\pipe_common.h"	// JBM common variables related to pipe names and structures
 	#include "..\common\jbm_common.h"	// JBM common variables
 	#include <malloc.h>
 

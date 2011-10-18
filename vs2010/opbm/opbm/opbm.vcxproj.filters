@@ -13,77 +13,34 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\common">
-      <UniqueIdentifier>{7c4fa5a0-1725-40a7-9c31-a3d280ff7e8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\common">
-      <UniqueIdentifier>{398eaf2f-8827-4a63-b589-207cafa9b3bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\CPU">
-      <UniqueIdentifier>{6d04a6d8-cca9-48f7-8f23-e7851f92ea2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\CPU">
-      <UniqueIdentifier>{1c637a9a-d737-4593-baca-305d2c35b0af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\resources">
-      <UniqueIdentifier>{406d7ac5-1e5b-45f6-8a7e-df6c0b9e1c55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\BrowserData">
-      <UniqueIdentifier>{ae9c2a58-213e-4daf-be03-e26836dbb973}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BrowserData\Chrome\ChromotingConfig.json">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Opera\speeddial.ini">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Safari\Apple Computer\Preferences\com.apple.Safari.plist">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Chrome\Application\First Run">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Chrome\Local State">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Opera\operaprefs.ini">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Chrome\User Data\Preferences">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Firefox\Profiles\opbm.default\prefs.js">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Firefox\profiles.ini">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="ReadMe.txt">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
-    <None Include="BrowserData\Chrome\Service State">
-      <Filter>Source Files\BrowserData</Filter>
-    </None>
+    <None Include="ReadMe.txt" />
+    <None Include="BrowserData\Firefox\profiles.ini" />
+    <None Include="BrowserData\Firefox\Profiles\opbm.default\prefs.js" />
+    <None Include="BrowserData\Chrome\Local State" />
+    <None Include="BrowserData\Chrome\Service State" />
+    <None Include="BrowserData\Chrome\User Data\Preferences" />
+    <None Include="BrowserData\Opera\operaprefs.ini" />
+    <None Include="BrowserData\Opera\speeddial.ini" />
+    <None Include="BrowserData\Chrome\ChromotingConfig.json" />
+    <None Include="BrowserData\Safari\Apple Computer\Preferences\com.apple.Safari.plist" />
+    <None Include="BrowserData\Chrome\Application\First Run" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="opbm.h">
+    <ClInclude Include="..\CPU\CPU.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\opbm_common.h">
-      <Filter>Header Files\common</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CPU\CPU.h">
-      <Filter>Header Files\CPU</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>Header Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="resource2.h">
-      <Filter>Header Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="opbminclude.h">
+    <ClInclude Include="opbm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -94,6 +51,9 @@
     <ClCompile Include="au3\au3plugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\CPU\CPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="opbm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -101,10 +61,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\opbm_common.cpp">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\CPU\CPU.cpp">
-      <Filter>Source Files\CPU</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

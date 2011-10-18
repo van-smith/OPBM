@@ -226,7 +226,7 @@
 		}
 
 		// Create the appropriate number of slots in our inter-process buffer
-		gsProcesses = (SProcesses*)malloc(gnWidth * gnHeight * sizeof(SProcesses));
+		gsProcesses = (SProcesses*)malloc(_JBM_MAX_CONNECTIONS * sizeof(SProcesses));
 		if (gsProcesses != NULL)
 		{	// Initially populate them with their stride info
 			top					= 0;
@@ -334,7 +334,7 @@
 		wce.hInstance		= ghInst;
 		wce.hIconSm			= LoadIcon(NULL, IDI_APPLICATION);
 
-		// Register the application class
+		// Register the application
 		RegisterClassEx(&wce);
 
 		// Size our window

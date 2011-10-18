@@ -49,7 +49,6 @@ CloseCallbackWindow()
 
 outputDebug( "FinalizeScript()" )
 opbmFinalizeScript( "chromeUninstallTimes.csv" )
-
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 Exit
 

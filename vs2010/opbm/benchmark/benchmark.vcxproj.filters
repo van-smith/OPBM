@@ -26,5 +26,8 @@
     <ClInclude Include="..\common\jbm_common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\pipe_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -36,13 +36,9 @@ For $CurrentLoop = 1 to $LoopLimit
 	outputDebug( "InitializeJava_Script()" )
 	InitializeJava_Script()
 
-; Added to test some functionality
-;Sleep(12000)	; Give time to connect to debugger
-;OpbmWatchdog_ProcessStart(0, 1)
-;Exit
 	; Grab the number of cores on this system
-	$Cores = GetCoreCount(0)	; 0-physical cores, 1-logical cores (including hyperthreaded)
-	If $Cores < 1 or $Cores > 32 Then
+	$Cores = GetCoreCount(1)	; 0-physical cores, 1-logical cores (including hyperthreaded)
+	If $Cores < 1 or $Cores > 64 Then
 		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
 	EndIf
 	outputDebug( "Noted " & $Cores & " cores" )
@@ -103,74 +99,59 @@ Func LaunchJvmInstances()
 	; The following code launches each JVM, and assigns affinity to separate cores, beginning at 1 and continuing to the core count
 	$run_silently_vbs	= GetScriptTempDirectory() & "runSilently.vbs"
 	$runme_dot_bat		= GetScriptTempDirectory() & "runme.bat"
-	
-	; Create a file that will launch the runme.bat file silently:
-	;		Set WshShell = CreateObject("WScript.Shell")
-	;		WshShell.Run chr(34) & "c:\users\user name\documents\opbm\scriptOutput\temp\runme.bat" & chr(34), 0
-	;		Set WshShell = Nothing
-	; Begin
-		$file_handle = FileOpen( $run_silently_vbs, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
-		If $file_handle == -1 Then
-			ShutdownJBM()
-			opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
-			ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
-		EndIf
-		$line1	= "Set WshShell = CreateObject(" & chr(34) & "WScript.Shell" & chr(34) & ")"
-		$line2	= "WshShell.Run chr(34) & " & chr(34) & $runme_dot_bat & chr(34) & " & Chr(34), 0"
-		$line3	= "Set WshShell = Nothing"
-		FileWriteLine( $file_handle, $line1		& @CRLF )
-		FileWriteLine( $file_handle, $line2		& @CRLF )
-		FileWriteLine( $file_handle, $line3		& @CRLF )
-		FileClose( $file_handle )
-			
-		outputDebug( "Populated to runSilently.vbs:" )
-		outputDebug( $line1 )
-		outputDebug( $line2 )
-		outputDebug( $line3 )
-	; End
+	$file_handle = FileOpen( $run_silently_vbs, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
+	If $file_handle == -1 Then
+		ShutdownJBM()
+		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+		ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
+	EndIf
+	$line1	= "Set WshShell = CreateObject(" & chr(34) & "WScript.Shell" & chr(34) & ")"
+	$line2	= "WshShell.Run chr(34) & " & chr(34) & $runme_dot_bat & chr(34) & " & Chr(34), 0"
+	$line3	= "Set WshShell = Nothing"
+	FileWriteLine( $file_handle, $line1		& @CRLF )
+	FileWriteLine( $file_handle, $line2		& @CRLF )
+	FileWriteLine( $file_handle, $line3		& @CRLF )
+	FileClose( $file_handle )
+		
+	outputDebug( "Populated to runSilently.vbs:" )
+	outputDebug( $line1 )
+	outputDebug( $line2 )
+	outputDebug( $line3 )
 	
 	; Create a JVM instance for every core
-;	Local $before = @WorkingDir
 	FileChangeDir( ".\exe" )
-;	If $before = @WorkingDir Then
-;		; The directory was not changed (does not exist), which means we probably didn't start up in the correct directory, or the OPBM installation is damaged
-;		; We should start up in autoIt\java\compute\, which should have an exe\ directory below it which contains benchmark.jar, benchmark32.dll and benchmark64.dll
-;		
-;		; Remember, we may need to put a message here for this error
-;		; The error condition will be captured below when the start command fails
-;		; so for now we just leave it alone
-;	EndIf
 	outputMessage( "In directory " & @WorkingDir )
 	For $i = 0 to ($Cores - 1)
 		; Pause to let the system idle down
 		opbmWaitUntilSystemIdle( 10, 1000, 10000)
 		
-		; Create the batch file which has this type of information (adjusted to dynamic conditions of system):
-		;		@echo off
-		;		cd c:\cana\java\autoit\java\compute\exe\
-		;		start /AFFINITY N /B benchmark.jar "JVM X of Y"
-		; Begin
-			$echo_off					= "@echo off"
-			$change_directory			= "cd " & chr(34) & @WorkingDir & chr(34)
-			$executable					= "start /AFFINITY " & StripLeadingZeros(Hex($i + 1)) & " /B benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
-			; Create the runme.bat file
-			$file_handle = FileOpen( $runme_dot_bat, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
-			If $file_handle == -1 Then
-				ShutdownJBM()
-				opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
-				ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
-			EndIf
-			FileWriteLine( $file_handle, $echo_off			& @CRLF )
-			FileWriteLine( $file_handle, $change_directory	& @CRLF )
-			FileWriteLine( $file_handle, $executable		& @CRLF )
-			FileClose( $file_handle )
+		; Create a file that has this information:
+		;	@echo off
+		;	cd c:\cana\java\autoit\java\compute\exe\
+		;	start /AFFINITY N /B "c:\program files\java\jre7\bin\java.exe" -jar benchmark.jar "JVM X of Y"
+		;		OR:
+		;	start /AFFINITY N /B benchmark.jar "JVM X of Y"
+		$echo_off					= "@echo off"
+		$change_directory			= "cd " & chr(34) & @WorkingDir & chr(34)
+		;$executable					= chr(34) & "c:\program files\java\jre7\bin\java.exe" & chr(34) & " -jar benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
+		$executable				= "start /AFFINITY " & ($i + 1) & " /B benchmark.jar " & chr(34) & "JVM " & ($i + 1) & " of " & $Cores & chr(34)
+		; Create the runme.bat file
+		$file_handle = FileOpen( $runme_dot_bat, 2 + 16 )	; Open in write mode, erase previous contents, force binary mode
+		If $file_handle == -1 Then
+			ShutdownJBM()
+			opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
+			ErrorHandle( "Unable to create a temporary file to launch a Java Benchmark" )
+		EndIf
+		FileWriteLine( $file_handle, $echo_off			& @CRLF )
+		FileWriteLine( $file_handle, $change_directory	& @CRLF )
+		FileWriteLine( $file_handle, $executable		& @CRLF )
+		FileClose( $file_handle )
 		
-			outputDebug( "Populated to runme.bat:" )
-			outputDebug( $change_directory )
-			outputDebug( $executable )
-		; End
+		outputDebug( "Populated to runme.bat:" )
+		outputDebug( $change_directory )
+		outputDebug( $executable )
 		
-		outputMessage( "Launching [" & $executable & "] via [" & $run_silently_vbs & "]")
+		outputMessage( "Launching [" & $executable & "]")
 		$lPID = ShellExecute( $run_silently_vbs, "C:\", @SW_SHOW )
 		If $lPID = 0 Then
 			ShutdownJBM()
@@ -181,18 +162,19 @@ Func LaunchJvmInstances()
 	; When we get here, every JVM has been launched
 EndFunc
 
-; This test should not take more than 4 minutes on the slowest machines
-; So we add a timeout after 8 minutes
+; This test should not take more than 5 minutes on the slowest
+; machines, 10 minutes using hyperthreading, so we add a timeout
+; after 12 minutes
 Func WaitForJvmsToFinish()
 	Local $seconds
 	Local $timeout
 	Local $finished
 	
-	$timeout = 12 * 60
-	outputDebug( "Will timeout in 12 minutes" )
+	$timeout = 12
+	outputDebug( "Will timeout in " & $timeout & " minutes" )
 	
 	$finished = 0
-	While $finished = 0 and $seconds < $timeout
+	While $finished = 0 and $seconds < ($timeout * 60)
 		; Pause
 		Sleep( 5000 )
 		$seconds = $seconds + 5
@@ -201,11 +183,11 @@ Func WaitForJvmsToFinish()
 		$finished = JbmOwnerHaveAllInstancesExited()
 	WEnd
 	
-	If $seconds >= $timeout Then
+	If $seconds >= ($timeout * 60) Then
 		; Failure, the test did not end within the timeout period
 		ShutdownJBM()
 		opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
-		outputError( "Failure to complete the test within the timeout period of 8 minutes." )
+		outputError( "Failure to complete the test within the timeout period of " & $timeout & " minutes." )
 		Exit -1
 	EndIf
 	; If we get here, then all JVMs have exited
