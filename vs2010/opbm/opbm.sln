@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spinup", "spinup\spinup.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "benchmark\benchmark.vcxproj", "{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumThreads", "enumthreads\EnumThreads.vcxproj", "{E0068B87-7742-4631-A165-D29F396695F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -62,6 +64,12 @@ Global
 		{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}.Release|Win32.ActiveCfg = Release|Win32
 		{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}.Release|Win32.Build.0 = Release|Win32
 		{4F689E0C-BD7A-43F9-AB1B-8481A3C845DB}.Release|x64.ActiveCfg = Release|x64
+		{E0068B87-7742-4631-A165-D29F396695F8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E0068B87-7742-4631-A165-D29F396695F8}.Debug|Win32.Build.0 = Debug|Win32
+		{E0068B87-7742-4631-A165-D29F396695F8}.Debug|x64.ActiveCfg = Debug|Win32
+		{E0068B87-7742-4631-A165-D29F396695F8}.Release|Win32.ActiveCfg = Release|Win32
+		{E0068B87-7742-4631-A165-D29F396695F8}.Release|Win32.Build.0 = Release|Win32
+		{E0068B87-7742-4631-A165-D29F396695F8}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

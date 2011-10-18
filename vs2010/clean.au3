@@ -21,6 +21,7 @@ DirRemove( "opbm\enumthreads\Debug\", 1)
 DirRemove( "opbm\enumthreads\Release\", 1)
 DirRemove( "opbm\enumthreads\x64\", 1)
 DirRemove( "opbm\enumthreads\ipch\", 1)
+FileDelete( "opbm\enumthreads\enumthreads.sdf" )
 
 ; opbm\jbm
 DirRemove( "opbm\jbm\Debug\", 1)
@@ -53,3 +54,4 @@ DirRemove( "opbm\spinup\x64\", 1)
 DirRemove( "opbm\watchdog\Debug\", 1)
 DirRemove( "opbm\watchdog\Release\", 1)
 DirRemove( "opbm\watchdog\x64\", 1)
+FileDelete( "opbm\watchdog\watchdog.sdf" )

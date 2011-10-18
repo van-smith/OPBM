@@ -2,6 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jbm", "jbm\jbm.vcxproj", "{2D06772B-C018-4953-9573-51E2F402061A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "watchdog", "watchdog\watchdog.vcxproj", "{6CBD0DB7-3649-450A-B1C5-61853F5BACAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -16,6 +18,12 @@ Global
 		{2D06772B-C018-4953-9573-51E2F402061A}.Release|Win32.ActiveCfg = Release|Win32
 		{2D06772B-C018-4953-9573-51E2F402061A}.Release|Win32.Build.0 = Release|Win32
 		{2D06772B-C018-4953-9573-51E2F402061A}.Release|x64.ActiveCfg = Release|Win32
+		{6CBD0DB7-3649-450A-B1C5-61853F5BACAF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6CBD0DB7-3649-450A-B1C5-61853F5BACAF}.Debug|Win32.Build.0 = Debug|Win32
+		{6CBD0DB7-3649-450A-B1C5-61853F5BACAF}.Debug|x64.ActiveCfg = Debug|Win32
+		{6CBD0DB7-3649-450A-B1C5-61853F5BACAF}.Release|Win32.ActiveCfg = Release|Win32
+		{6CBD0DB7-3649-450A-B1C5-61853F5BACAF}.Release|Win32.Build.0 = Release|Win32
+		{6CBD0DB7-3649-450A-B1C5-61853F5BACAF}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
