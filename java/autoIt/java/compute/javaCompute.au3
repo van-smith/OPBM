@@ -38,7 +38,6 @@ For $CurrentLoop = 1 to $LoopLimit
 
 	; Grab the number of cores on this system
 	$Cores = GetCoreCount(1)	; 0-physical cores, 1-logical cores (including hyperthreaded)
-	$Cores = 64
 	If $Cores < 1 or $Cores > 64 Then
 		ErrorHandle( "The core count is not correct, reported " & $Cores & " cores." )
 	EndIf
