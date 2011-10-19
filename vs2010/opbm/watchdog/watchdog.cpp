@@ -10,7 +10,7 @@
 //                  directory deletion).
 //
 // -----
-// Last Updated:  October 12, 2011
+// Last Updated:  October 19, 2011
 //
 // by Van Smith
 // Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -73,7 +73,8 @@
 		createMessageWindow();
 
 		// Run
-		if (ghWnd != NULL && ghHarnessPipeHandle != INVALID_HANDLE_VALUE && ghScriptPipeHandle != INVALID_HANDLE_VALUE)
+		if (ghWnd != NULL && ghHarnessToWatchdogPipeHandle != INVALID_HANDLE_VALUE && ghScriptToWatchdogPipeHandle != INVALID_HANDLE_VALUE
+						  && ghWatchdogToHarnessPipeHandle != INVALID_HANDLE_VALUE && ghWatchdogToScriptPipeHandle != INVALID_HANDLE_VALUE)
 			readEvents();	// Read Windows event messages until we're finished
 		else
 			exit(-1);		// If we fail, the harness will identify the failure and notify the user (because watchdog is not found, or non-response to requests, or the return value of -1 is identified)
@@ -128,28 +129,56 @@
 	void createNamedPipes(void)
 	{
 		// Use this code to connect to the harness and the script pipes in opbm32.dll/opbm64.dll and opbm.dll, or other custom apps
-		//ghHarnessPipeHandle	= CreateFile(_WATCHDOG_Pipe_Name_Harness,	GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		//ghScriptPipeHandle	= CreateFile(_WATCHDOG_Pipe_Name_Script,	GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		//ghHarnessToWatchdogPipeHandle	= CreateFile(_WATCHDOG_Pipe_Name_Harness_To_Watchdog,	GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		//ghScriptToWatchdogPipeHandle	= CreateFile(_WATCHDOG_Pipe_Name_Script_To_Watchdog,	GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		//ghWatchdogToHarnessPipeHandle	= CreateFile(_WATCHDOG_Pipe_Name_Watchdog_To_Harness,	GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		//ghWatchdogToScriptPipeHandle	= CreateFile(_WATCHDOG_Pipe_Name_Watchdog_To_Script,	GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
-		// Create to the harness pipe
-		ghHarnessPipeHandle	= CreateNamedPipe(  _WATCHDOG_Pipe_Name_Harness,
-												PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
-												PIPE_READMODE_BYTE | PIPE_NOWAIT,
-												2,
-												sizeof(SHarnessPipeData),
-												sizeof(SHarnessPipeData),
-												0,
-												NULL);
+	//////////
+	// For communication from the Harness/Script to Watchdog:
+	//////
+		// Create to the harness-to-watchdog pipe
+		ghHarnessToWatchdogPipeHandle	= CreateNamedPipe(  _WATCHDOG_Pipe_Name_Harness_To_Watchdog,
+															PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
+															PIPE_READMODE_BYTE | PIPE_NOWAIT,
+															2,
+															sizeof(SHarnessPipeData),
+															sizeof(SHarnessPipeData),
+															0,
+															NULL);
 
-		// Create to the script pipe
-		ghScriptPipeHandle	= CreateNamedPipe(  _WATCHDOG_Pipe_Name_Script,
-												PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
-												PIPE_READMODE_BYTE | PIPE_NOWAIT,
-												2,
-												sizeof(SScriptPipeData),
-												sizeof(SScriptPipeData),
-												0,
-												NULL);
+		// Create to the script-to-watchdog pipe
+		ghScriptToWatchdogPipeHandle	= CreateNamedPipe(  _WATCHDOG_Pipe_Name_Script_To_Watchdog,
+															PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
+															PIPE_READMODE_BYTE | PIPE_NOWAIT,
+															2,
+															sizeof(SScriptPipeData),
+															sizeof(SScriptPipeData),
+															0,
+															NULL);
+
+	//////////
+	// For communication from Watchdog to the Harness/Script:
+	//////
+		// Create to the watchdog-to-harness pipe
+		ghWatchdogToHarnessPipeHandle	= CreateNamedPipe(  _WATCHDOG_Pipe_Name_Watchdog_To_Harness,
+															PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
+															PIPE_READMODE_BYTE | PIPE_NOWAIT,
+															2,
+															sizeof(SHarnessPipeData),
+															sizeof(SHarnessPipeData),
+															0,
+															NULL);
+
+		// Create to the watchdog-to-script pipe
+		ghWatchdogToScriptPipeHandle	= CreateNamedPipe(  _WATCHDOG_Pipe_Name_Watchdog_To_Script,
+															PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE,
+															PIPE_READMODE_BYTE | PIPE_NOWAIT,
+															2,
+															sizeof(SScriptPipeData),
+															sizeof(SScriptPipeData),
+															0,
+															NULL);
 
 		// If there is a failure creating the named pipes, the harness will identify it
 		// when it tries to verify this process launched and installed correctly.
@@ -220,7 +249,7 @@
 		switch (m)
 		{
 			case WM_CREATE:
-				ghTimer = SetTimer(hwnd, 1, /* 5 seconds */ 5000, NULL);
+				ghTimer = SetTimer(hwnd, 1, /*5 seconds*/5000, NULL);
 				break;
 
 			case WM_TIMER:
@@ -228,9 +257,11 @@
 				// Check the processes, see if any are due for termination
 // REMEMBER
 //				if (isValidProcess(pid))
-//				{	// It is valid
+//				{	// It is valid, still running
+//					// Check the timeout
 //				} else {
-//					// Invalid
+//					// No longer valid, it's closed down
+//					// Remove it from being watched
 //				}
 
 				break;
@@ -256,12 +287,12 @@
 
 			case _WATCHDOG_HARNESS_HAS_PIPE_DATA:
 				// The harness is sending a packet
-				loadAndProcessHarnessPipeData();
+				loadAndProcessHarnessPipeDataMessage();
 				break;
 
 			case _WATCHDOG_SCRIPT_HAS_PIPE_DATA:
 				// The script is sending a packet
-				loadAndProcessScriptPipeData();
+				loadAndProcessScriptPipeDataMessage();
 				break;
 
 			default:
@@ -272,14 +303,14 @@
 		return 0;
 	}
 
-	void loadAndProcessHarnessPipeData(void)
+	void loadAndProcessHarnessPipeDataMessage(void)
 	{
 		SHarnessPipeData pipeData;
 		DWORD numread;
 
-		if (ghHarnessPipeHandle != INVALID_HANDLE_VALUE)
+		if (ghHarnessToWatchdogPipeHandle != INVALID_HANDLE_VALUE)
 		{	// Load the pipe data
-			ReadFile(ghHarnessPipeHandle, &pipeData, sizeof(pipeData), &numread, NULL);
+			ReadFile(ghHarnessToWatchdogPipeHandle, &pipeData, sizeof(pipeData), &numread, NULL);
 			if (numread == sizeof(pipeData))
 			{	// A valid message
 				memcpy(&harnessPipeData, &pipeData, sizeof(pipeData));
@@ -288,14 +319,14 @@
 		}
 	}
 
-	void loadAndProcessScriptPipeData(void)
+	void loadAndProcessScriptPipeDataMessage(void)
 	{
 		SScriptPipeData pipeData;
 		DWORD numread;
 
-		if (ghScriptPipeHandle != INVALID_HANDLE_VALUE)
+		if (ghScriptToWatchdogPipeHandle != INVALID_HANDLE_VALUE)
 		{	// Load the pipe data
-			ReadFile(ghScriptPipeHandle, &pipeData, sizeof(pipeData), &numread, NULL);
+			ReadFile(ghScriptToWatchdogPipeHandle, &pipeData, sizeof(pipeData), &numread, NULL);
 			if (numread == sizeof(pipeData))
 			{	// A valid message
 				memcpy(&scriptPipeData, &pipeData, sizeof(pipeData));
@@ -305,18 +336,18 @@
 	}
 
 	// Write the response back for the harness
-	bool sendHarnessPipeMessage(SHarnessPipeData* pipeData)
+	bool sendHarnessPipeMessageResponse(SHarnessPipeData* pipeData)
 	{
 		DWORD numwritten;
-		WriteFile(ghHarnessPipeHandle, pipeData, sizeof(SHarnessPipeData), &numwritten, NULL);
+		WriteFile(ghWatchdogToHarnessPipeHandle, pipeData, sizeof(SHarnessPipeData), &numwritten, NULL);
 		return(numwritten == sizeof(SHarnessPipeData));
 	}
 
 	// Write the response back for the script
-	bool sendScriptPipeMessage(SScriptPipeData* pipeData)
+	bool sendScriptPipeMessageResponse(SScriptPipeData* pipeData)
 	{
 		DWORD numwritten;
-		WriteFile(ghScriptPipeHandle, pipeData, sizeof(SScriptPipeData), &numwritten, NULL);
+		WriteFile(ghWatchdogToScriptPipeHandle, pipeData, sizeof(SScriptPipeData), &numwritten, NULL);
 		return(numwritten == sizeof(SScriptPipeData));
 	}
 
@@ -337,7 +368,7 @@
 				processCommonPipeMessages(&hpd->packet, &hpd->response);
 				// When control returns here, the packet has been process, and the response created
 				// Now send it back down the proper pipe
-				sendHarnessPipeMessage(hpd);
+				sendHarnessPipeMessageResponse(hpd);
 				break;
 
 			default:
@@ -363,7 +394,7 @@
 				processCommonPipeMessages(&spd->packet, &spd->response);
 				// When control returns here, the packet has been process, and the response created
 				// Now send it back down the proper pipe
-				sendScriptPipeMessage(spd);
+				sendScriptPipeMessageResponse(spd);
 				break;
 
 			default:
@@ -803,6 +834,18 @@
 	}
 
 	void addProcessIdToKillPostMortum(SProcessIdToKillPostMortum* pikpm, SResponse* response)
+	{
+	}
+
+	void addSetRegistryKeyPostMortum(SSetRegistryKeyPostMortum* srkpm, SResponse* response)
+	{
+	}
+
+	void addNoteAndResetRegistryKeyPostMortum(SNoteAndResetRegistryKeyPostMortum* nrrkpm, SResponse* response)
+	{
+	}
+
+	void addDeleteRegistryKeyPostMortum(SDeleteRegistryKeyPostMortum* drkpm, SResponse* response)
 	{
 	}
 

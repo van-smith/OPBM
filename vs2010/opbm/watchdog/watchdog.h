@@ -76,13 +76,15 @@
 		SDirectoryToDeleteLL*	firstDirToDelete;						// Pointer to the first directory to delete
 	};
 
-	HWND				ghWnd						= NULL;			// Message window
-	SProcessLL*			gsFirstProcess				= NULL;			// Root process, if watchdog is not active, then this parameter is NULL
-	HINSTANCE			ghInst						= NULL;			// Windows-assigned instance
-	HANDLE				ghHarnessPipeHandle			= NULL;			// Handle to the harness named pipe
-	HANDLE				ghScriptPipeHandle			= NULL;			// Handle to the script named pipe
-	UINT_PTR			ghTimer						= NULL;			// Handle to the timer we create on WM_CREATE
-	int					gnNextHandle				= 1;			// Handles assigned to callers, increments after each assignment
+	HWND				ghWnd							= NULL;			// Message window
+	SProcessLL*			gsFirstProcess					= NULL;			// Root process, if watchdog is not active, then this parameter is NULL
+	HINSTANCE			ghInst							= NULL;			// Windows-assigned instance
+	HANDLE				ghHarnessToWatchdogPipeHandle	= NULL;			// Handle to the harness-to-watchdog named pipe
+	HANDLE				ghScriptToWatchdogPipeHandle	= NULL;			// Handle to the script-to-watchdog named pipe
+	HANDLE				ghWatchdogToHarnessPipeHandle	= NULL;			// Handle to the watchdog-to-harness named pipe
+	HANDLE				ghWatchdogToScriptPipeHandle	= NULL;			// Handle to the watchdog-to-script named pipe
+	UINT_PTR			ghTimer							= NULL;			// Handle to the timer we create on WM_CREATE
+	int					gnNextHandle					= 1;			// Handles assigned to callers, increments after each assignment
 
 	SHarnessPipeData	harnessPipeData;
 	SScriptPipeData		scriptPipeData;
@@ -97,11 +99,11 @@
 	void				readEvents									(void);
 	LRESULT CALLBACK	WndProc										(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 
-	void				loadAndProcessHarnessPipeData				(void);
-	void				loadAndProcessScriptPipeData				(void);
+	void				loadAndProcessHarnessPipeDataMessage		(void);
+	void				loadAndProcessScriptPipeDataMessage			(void);
 
-	bool				sendHarnessPipeMessage						(SHarnessPipeData* pipeData);
-	bool				sendScriptPipeMessage						(SScriptPipeData* pipeData);
+	bool				sendHarnessPipeMessageResponse				(SHarnessPipeData* pipeData);
+	bool				sendScriptPipeMessageResponse				(SScriptPipeData* pipeData);
 
 	void				processHarnessPipeMessage					(SHarnessPipeData* hpd);
 	void				processScriptPipeMessage					(SScriptPipeData* spd);
@@ -122,6 +124,9 @@
 	void				addDirectoryToDeletePostMortum				(SDirectoryToDeletePostMortum* ddpm, SResponse* response);
 	void				addProcessNameToKillPostMortum				(SProcessNameToKillPostMortum* pnkpm, SResponse* response);
 	void				addProcessIdToKillPostMortum				(SProcessIdToKillPostMortum* pikpm, SResponse* response);
+	void				addSetRegistryKeyPostMortum					(SSetRegistryKeyPostMortum* srkpm, SResponse* response);
+	void				addNoteAndResetRegistryKeyPostMortum		(SNoteAndResetRegistryKeyPostMortum* nrrkpm, SResponse* response);
+	void				addDeleteRegistryKeyPostMortum				(SDeleteRegistryKeyPostMortum* drkpm, SResponse* response);
 
 	bool				isValidProcess								(DWORD pid);
 	SProcessLL*			isValidHandle								(int handle);

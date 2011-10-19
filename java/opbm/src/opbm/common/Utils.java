@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -1900,6 +1901,53 @@ public class Utils
 		return("\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
 	}
 
+	public static void copyManifestDotXmlToManifestDateTimeDotXml()
+	{
+		String newName;
+
+		newName = Opbm.getRunningDirectory() + "manifest_" + convertFilenameToLettersAndNumbersOnly(getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
+		copyFile(Opbm.getRunningDirectory() + "manifest.xml", newName);
+	}
+
+	public static void copyFile(String		sourceFilename,
+								String		destFilename)
+	{
+		File srcFile, dstFile;
+		FileChannel srcChannel, dstChannel;
+
+		try {
+			srcFile	= new File(sourceFilename);
+			dstFile	= new File(destFilename);
+			if (!dstFile.exists())
+			{	// Overwrite existing file if need be
+				dstFile.createNewFile();
+			}
+
+			srcChannel	= null;
+			dstChannel	= null;
+			try
+			{	// Grab our streams, and transfer
+				srcChannel			= new FileInputStream(srcFile).getChannel();
+				dstChannel			= new FileOutputStream(dstFile).getChannel();
+				dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+			}
+			finally
+			{	// Clean house
+				if (srcChannel != null)
+					srcChannel.close();
+				if (dstChannel	 != null)
+					dstChannel	.close();
+			}
+
+		} catch (IOException ex) {
+			System.out.println("Unable to copy file " + sourceFilename + " to " + destFilename);
+		}
+	}
+
+
+//////////
+// Class constants
+/////
 	private static final String		errMsg = "Error attempting to launch web browser";
 
 	private static final String[]	browsers = { "google-chrome",

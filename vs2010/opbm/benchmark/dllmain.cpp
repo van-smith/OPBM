@@ -1,6 +1,6 @@
 //////////
 //
-// DllMain.cpp
+// benchmark/DllMain.cpp
 // JNI DLL 32-/64-bit Support for Java Benchmark
 //
 // -----

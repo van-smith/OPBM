@@ -1,16 +1,80 @@
-/*
- * Au3_WaitUntilIdle.cpp
- *
- * AutoIt Plugin SDK -	WaitUntilIdle()
- *						WaitUntilSystemIdle()
- *
- * Copyright(c)2011 Cossatot Analytics Laboratories, LLC.
- * Free Software. Released under GPLv2.
- *
- * See:
- *	Free Software Foundation at www.fsf.org, and www.gnu.org.
- *
- */
+//////////
+//
+// Au3_WaitUntilIdle.cpp
+//
+/////
+//
+// AutoIt Plugin SDK adds the following functions to AutoIt scripts using opbm.dll:
+//
+//		WaitUntilIdle									- Waits until a specified process is idle
+//		WaitUntilSystemIdle								- Waits until the entire system is idle
+//		GetUsage										- Returns the CPU load observed over the specified timeframe for the process
+//		GetSystemUsage									- Returns the CPU load observed over the specified timeframe
+//		NoteAllOpenWindows								- Called to make a note of all open windows
+//		CloseAllWindowsNotPreviouslyNoted				- Called to restore the window state to that which it was before
+//		FirefoxInstallerAssist							- Called to help install Firefox
+//		ChromeInstallerAssist							- Called to help install Chrome
+//		OperaInstallerAssist							- Called to help install Opera
+//		SafariInstallerAssist							- Called to help install Safari
+//		InternetExplorerInstallerAssist					- Called to help install Internet Explorer
+//		Office2010SaveKeys		(defunct)				- Called to save the values in Microsoft Office 2010's registry keys needed by OPBM
+//		Office2010InstallKeys	(defunct)				- Called to install Microsoft Office 2010 registry keys needed by OPBM
+//		Office2010RestoreKeys	(defunct)				- Called to restore the values in Microsoft Office 2010's registry keys as previously saved
+//		CheckIfRegistryKeyStartsWith					- Called to compare the registry key to a value
+//		CheckIfRegistryKeyContains						- Called to compare the registry key to a value
+//		CheckIfRegistryKeyIsExactly						- Called to compare the registry key to a value
+//		SetRegistryKeyString							- Called to set the registry key to a string value
+//		SetRegistryKeyDword								- Called to set the registry key to a dword value
+//		GetRegistryKey									- Called to return the registry key's value
+//		GetScriptCSVDirectory							- Called to return the output directory used for script-written *.csv files
+//		GetScriptTempDirectory							- Called to return the output directory used for script-written temporary files
+//		GetHarnessXmlDirectory							- Called to return the output directory used for results*.xml, and the *.csv files
+//		GetHarnessCSVDirectory							- Called to return the output directory used for *.csv files written from/in the harness
+//		GetHarnessTempDirectory							- Called to return the output directory used for temporary files written from/in the harness
+//		GetCSIDLDirectory								- Called to return the CSIDL directory for the name specified, as in "APPDATA"
+//		Is32BitOS										- Returns whether or not the installed OS is a 32-bit version or not
+//		Is64BitOS										- Returns whether or not the installed OS is a 64-bit version or not
+//		GetCoreCount									- Returns the number of CPU cores on the system, integer parameter is 0-physical cores, 1-logical cores (included hyperthreading)
+//		JbmOwnerReportingIn								- Called once, creates the named pipe as the JBM owner, and returns the handle to use in future references
+//		JbmOwnerHaveAllInstancesExited					- Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited
+//		JbmOwnerRequestsSubtestScoringData				- Called repeatedly (up to once for each JVM+subtest), asks for scoring data for the specified JVM (first parameter) and the specified subtest (second parameter) */
+//		JbmOwnerRequestsSubtestMaxScoringData			- Called once, asks for scoring data for the max scoring item */
+//		JbmOwnerRequestsName							- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the name of the previously loaded subtest
+//		JbmOwnerRequestsAvgTiming						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average timing for the previously loaded subtest
+//		JbmOwnerRequestsMinTiming						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest
+//		JbmOwnerRequestsMaxTiming						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest
+//		JbmOwnerRequestsGeoTiming						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geometric mean timing for the previously loaded subtest
+//		JbmOwnerRequestsCVTiming						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv timing for the previously loaded subtest
+//		JbmOwnerRequestsAvgScoring						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average scoring for the previously loaded subtest
+//		JbmOwnerRequestsMinScoring						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest
+//		JbmOwnerRequestsMaxScoring						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest
+//		JbmOwnerRequestsGeoScoring						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest
+//		JbmOwnerRequestsCVScoring						- Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest
+//		JbmOwnerRequestsTheJbmSelfTerminate				- Called once, asks the JBM to terminate itself (to exit politely)
+//		AppendToLog										- User provides a filename, and a string to append to it
+//		FindChildWindowForProcessName					- Finds a child window for the process name with the given title text, and optional (if not blank) sub-window text
+//		FindChildWindowForProcessId						- Finds a child window for the process id with the given title text, and optional (if not blank) sub-window text
+//		OpbmWatchdog_ProcessStart						- Called as each process begins, to give the process id and maximum watchdog timeout before auto-destroying it
+//		OpbmWatchdog_ProcessStop						- Called as each process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer
+//		OpbmWatchdog_ProcessSubprocessStart				- Called as each sub-process begins, to give the parent process id, the new sub-process id, and maximum timeout before auto-destroying it (the new sub-process id) as well as the parent
+//		OpbmWatchdog_ProcessSubprocessStop				- Called as each sub-process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer
+//		OpbmWatchdog_FileToDeletePostMortum				- Called to associate a previously assigned handle and a file to delete after the watchdog timeout if the watchdog kills it
+//		OpbmWatchdog_DirectoryToCleanPostMortum			- Called to associate a previously assigned handle and a directory to clean (delete all files/subdirs within) after the watchdog timeout if the watchdog kills it
+//		OpbmWatchdog_DirectoryToDeletePostMortum		- Called to associate a previously assigned handle and a directory to delete after the watchdog timeout if the watchdog kills it
+//		OpbmWatchdog_ProcessNameToKillPostMortum		- Called to associate a previously assigned handle and a process name to kill after the watchdog timeout if the watchdog kills it
+//		OpbmWatchdog_ProcessIdToKillPostMortum			- Called to associate a previously assigned handle and a process id to kill after the watchdog timeout if the watchdog kills it
+//		OpbmWatchdog_SetRegistryKeyPostMortum			- Called to associate a previously assigned handle and a registry key to set to a specified value after the watchdog timeout if the watchdog kills it
+//		OpbmWatchdog_NoteAndResetRegistryKeyPostMortum	- Called to associate a previously assigned handle and a registry key to note now, and reset to this value after the watchdog timeout if the watchdog kills it
+//		OpbmWatchdog_DeleteRegistryKeyPostMortum		- Called to associate a previously assigned handle and a registry key to delete after the watchdog timeout if the watchdog kills it
+//
+// -----
+// Copyright(c)2011 Cossatot Analytics Laboratories, LLC.
+// Free Software. Released under GPLv2.
+//
+// See:
+//	Free Software Foundation at www.fsf.org, and www.gnu.org.
+//
+/////
 
 #include "opbminclude.h"
 #include "opbm.h"
@@ -38,80 +102,84 @@
 //		3)  max				- the maximum number of parameters
 //
 /////
-	int numberOfCustomAU3Functions = 57;
 	AU3_PLUGIN_FUNC g_AU3_Funcs[] = 
 	{
-			/* Function Name,							   Min,	   Max
-			   -----------------------					   ----	   ---- */
-/* 1 */		{ "WaitUntilIdle",								4,		4},			/* Waits until a specified process is idle */
-/* 2 */		{ "WaitUntilSystemIdle",						3,		3},			/* Waits until the entire system is idle */
-/* 3 */		{ "GetUsage",									2,		2},			/* Returns the CPU load observed over the specified timeframe for the process */
-/* 4 */		{ "GetSystemUsage",								1,		1},			/* Returns the CPU load observed over the specified timeframe */
-/* 5 */		{ "NoteAllOpenWindows",							0,		0},			/* Called to make a note of all open windows */
-/* 6 */		{ "CloseAllWindowsNotPreviouslyNoted",			0,		0},			/* Called to restore the window state to that which it was before */
+			/* Note:  Don't forget to update numberOfCustomAU3Functions variable immediately below this definition */
+			/* Function Name,								   Min,	   Max
+			   -----------------------						   ----	   ---- */
+/* 1 */		{ "WaitUntilIdle",									4,		4},			/* Waits until a specified process is idle */
+/* 2 */		{ "WaitUntilSystemIdle",							3,		3},			/* Waits until the entire system is idle */
+/* 3 */		{ "GetUsage",										2,		2},			/* Returns the CPU load observed over the specified timeframe for the process */
+/* 4 */		{ "GetSystemUsage",									1,		1},			/* Returns the CPU load observed over the specified timeframe */
+/* 5 */		{ "NoteAllOpenWindows",								0,		0},			/* Called to make a note of all open windows */
+/* 6 */		{ "CloseAllWindowsNotPreviouslyNoted",				0,		0},			/* Called to restore the window state to that which it was before */
 
-/* 7 */		{ "FirefoxInstallerAssist",						0,		0},			/* Called to help install Firefox */
-/* 8 */		{ "ChromeInstallerAssist",						0,		0},			/* Called to help install Chrome */
-/* 9 */		{ "OperaInstallerAssist",						0,		0},			/* Called to help install Opera */
-/* 10 */	{ "SafariInstallerAssist",						0,		0},			/* Called to help install Safari */
-/* 11 */	{ "InternetExplorerInstallerAssist",			0,		0},			/* Called to help install Internet Explorer */
+/* 7 */		{ "FirefoxInstallerAssist",							0,		0},			/* Called to help install Firefox */
+/* 8 */		{ "ChromeInstallerAssist",							0,		0},			/* Called to help install Chrome */
+/* 9 */		{ "OperaInstallerAssist",							0,		0},			/* Called to help install Opera */
+/* 10 */	{ "SafariInstallerAssist",							0,		0},			/* Called to help install Safari */
+/* 11 */	{ "InternetExplorerInstallerAssist",				0,		0},			/* Called to help install Internet Explorer */
 
 /* Functionality was moved to opbm32.dll and opbm64.dll to allow the harness to save/install/restore keys as needed */
-/* 12 */	{ "Office2010SaveKeys",			/* defunct */	0,		0},			/* Called to save the values in Microsoft Office 2010's registry keys needed by OPBM */
-/* 13 */	{ "Office2010InstallKeys",		/* defunct */	0,		0},			/* Called to install Microsoft Office 2010 registry keys needed by OPBM*/
-/* 14 */	{ "Office2010RestoreKeys",		/* defunct */	0,		0},			/* Called to restore the values in Microsoft Office 2010's registry keys as previously saved */
+/* 12 */	{ "Office2010SaveKeys",			/* defunct */		0,		0},			/* Called to save the values in Microsoft Office 2010's registry keys needed by OPBM */
+/* 13 */	{ "Office2010InstallKeys",		/* defunct */		0,		0},			/* Called to install Microsoft Office 2010 registry keys needed by OPBM*/
+/* 14 */	{ "Office2010RestoreKeys",		/* defunct */		0,		0},			/* Called to restore the values in Microsoft Office 2010's registry keys as previously saved */
 
-/* 15 */	{ "CheckIfRegistryKeyStartsWith",				2,		2},			/* Called to compare the registry key to a value */
-/* 16 */	{ "CheckIfRegistryKeyContains",					2,		2},			/* Called to compare the registry key to a value */
-/* 17 */	{ "CheckIfRegistryKeyIsExactly",				2,		2},			/* Called to compare the registry key to a value */
-/* 18 */	{ "SetRegistryKeyString",						2,		2},			/* Called to set the registry key to a string value */
-/* 19 */	{ "SetRegistryKeyDword",						2,		2},			/* Called to set the registry key to a dword value */
-/* 20 */	{ "GetRegistryKey",								1,		1},			/* Called to return the registry key's value */
+/* 15 */	{ "CheckIfRegistryKeyStartsWith",					2,		2},			/* Called to compare the registry key to a value */
+/* 16 */	{ "CheckIfRegistryKeyContains",						2,		2},			/* Called to compare the registry key to a value */
+/* 17 */	{ "CheckIfRegistryKeyIsExactly",					2,		2},			/* Called to compare the registry key to a value */
+/* 18 */	{ "SetRegistryKeyString",							2,		2},			/* Called to set the registry key to a string value */
+/* 19 */	{ "SetRegistryKeyDword",							2,		2},			/* Called to set the registry key to a dword value */
+/* 20 */	{ "GetRegistryKey",									1,		1},			/* Called to return the registry key's value */
 
-/* 21 */	{ "GetScriptCSVDirectory",						0,		0},			/* Called to return the output directory used for script-written *.csv files */
-/* 22 */	{ "GetScriptTempDirectory",						0,		0},			/* Called to return the output directory used for script-written temporary files */
-/* 23 */	{ "GetHarnessXmlDirectory",						0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
-/* 24 */	{ "GetHarnessCSVDirectory",						0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
-/* 25 */	{ "GetHarnessTempDirectory",					0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
-/* 26 */	{ "GetCSIDLDirectory",							1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
+/* 21 */	{ "GetScriptCSVDirectory",							0,		0},			/* Called to return the output directory used for script-written *.csv files */
+/* 22 */	{ "GetScriptTempDirectory",							0,		0},			/* Called to return the output directory used for script-written temporary files */
+/* 23 */	{ "GetHarnessXmlDirectory",							0,		0},			/* Called to return the output directory used for results*.xml, and the *.csv files */
+/* 24 */	{ "GetHarnessCSVDirectory",							0,		0},			/* Called to return the output directory used for *.csv files written from/in the harness */
+/* 25 */	{ "GetHarnessTempDirectory",						0,		0},			/* Called to return the output directory used for temporary files written from/in the harness */
+/* 26 */	{ "GetCSIDLDirectory",								1,		1},			/* Called to return the CSIDL directory for the name specified, as in "APPDATA" */
 
-/* 27 */	{ "Is32BitOS",									0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
-/* 28 */	{ "Is64BitOS",									0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
-/* 29 */	{ "GetCoreCount",								1,		1},			/* Returns the number of CPU cores on the system, integer parameter is 0-physical cores, 1-logical cores (included hyperthreading) */
+/* 27 */	{ "Is32BitOS",										0,		0},			/* Returns whether or not the installed OS is a 32-bit version or not */
+/* 28 */	{ "Is64BitOS",										0,		0},			/* Returns whether or not the installed OS is a 64-bit version or not */
+/* 29 */	{ "GetCoreCount",									1,		1},			/* Returns the number of CPU cores on the system, integer parameter is 0-physical cores, 1-logical cores (included hyperthreading) */
 
-/* 30 */	{ "JbmOwnerReportingIn",						0,		0},			/* Called once, creates the named pipe as the JBM owner, and returns the handle to use in future references */
-/* 31 */	{ "JbmOwnerHaveAllInstancesExited",				0,		0},			/* Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited */
-/* 32 */	{ "JbmOwnerRequestsSubtestScoringData",			2,		2},			/* Called repeatedly (up to once for each JVM+subtest), asks for scoring data for the specified JVM (first parameter) and the specified subtest (second parameter) */
-/* 33 */	{ "JbmOwnerRequestsSubtestMaxScoringData",		1,		1},			/* Called once, asks for scoring data for the max scoring item */
-/* 34 */	{ "JbmOwnerRequestsName",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the name of the previously loaded subtest */
-/* 35 */	{ "JbmOwnerRequestsAvgTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average timing for the previously loaded subtest */
-/* 36 */	{ "JbmOwnerRequestsMinTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
-/* 37 */	{ "JbmOwnerRequestsMaxTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
-/* 38 */	{ "JbmOwnerRequestsGeoTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geometric mean timing for the previously loaded subtest */
-/* 39 */	{ "JbmOwnerRequestsCVTiming",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv timing for the previously loaded subtest */
-/* 40 */	{ "JbmOwnerRequestsAvgScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average scoring for the previously loaded subtest */
-/* 41 */	{ "JbmOwnerRequestsMinScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
-/* 42 */	{ "JbmOwnerRequestsMaxScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
-/* 43 */	{ "JbmOwnerRequestsGeoScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest */
-/* 44 */	{ "JbmOwnerRequestsCVScoring",					0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest */
-/* 45 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",		0,		0},			/* Called once, asks the JBM to terminate itself (to exit politely) */
+/* 30 */	{ "JbmOwnerReportingIn",							0,		0},			/* Called once, creates the named pipe as the JBM owner, and returns the handle to use in future references */
+/* 31 */	{ "JbmOwnerHaveAllInstancesExited",					0,		0},			/* Called repeatedly, indicates whether or not the JVMs the JBM is in communication with have all reported they've exited */
+/* 32 */	{ "JbmOwnerRequestsSubtestScoringData",				2,		2},			/* Called repeatedly (up to once for each JVM+subtest), asks for scoring data for the specified JVM (first parameter) and the specified subtest (second parameter) */
+/* 33 */	{ "JbmOwnerRequestsSubtestMaxScoringData",			1,		1},			/* Called once, asks for scoring data for the max scoring item */
+/* 34 */	{ "JbmOwnerRequestsName",							0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the name of the previously loaded subtest */
+/* 35 */	{ "JbmOwnerRequestsAvgTiming",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average timing for the previously loaded subtest */
+/* 36 */	{ "JbmOwnerRequestsMinTiming",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
+/* 37 */	{ "JbmOwnerRequestsMaxTiming",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the minimum timing for the previously loaded subtest */
+/* 38 */	{ "JbmOwnerRequestsGeoTiming",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geometric mean timing for the previously loaded subtest */
+/* 39 */	{ "JbmOwnerRequestsCVTiming",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv timing for the previously loaded subtest */
+/* 40 */	{ "JbmOwnerRequestsAvgScoring",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the average scoring for the previously loaded subtest */
+/* 41 */	{ "JbmOwnerRequestsMinScoring",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
+/* 42 */	{ "JbmOwnerRequestsMaxScoring",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the maximum scoring for the previously loaded subtest */
+/* 43 */	{ "JbmOwnerRequestsGeoScoring",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the geoemtric mean scoring for the previously loaded subtest */
+/* 44 */	{ "JbmOwnerRequestsCVScoring",						0,		0},			/* Called after JbmOwnerRequestsSubtestScoringData() or JbmOwnerRequestsSubtestMaxScoringData(), requests the cv scoring for the previously loaded subtest */
+/* 45 */	{ "JbmOwnerRequestsTheJbmSelfTerminate",			0,		0},			/* Called once, asks the JBM to terminate itself (to exit politely) */
 
-/* 46 */	{ "AppendToLog",								2,		2},			/* User provides a filename, and a string to append to it */
+/* 46 */	{ "AppendToLog",									2,		2},			/* User provides a filename, and a string to append to it */
 
-/* 47 */	{ "FindChildWindowForProcessName",				3,		3},			/* Finds a child window for the process name with the given title text, and optional (if not blank) sub-window text */
-/* 48 */	{ "FindChildWindowForProcessId",				3,		3},			/* Finds a child window for the process id with the given title text, and optional (if not blank) sub-window text */
+/* 47 */	{ "FindChildWindowForProcessName",					3,		3},			/* Finds a child window for the process name with the given title text, and optional (if not blank) sub-window text */
+/* 48 */	{ "FindChildWindowForProcessId",					3,		3},			/* Finds a child window for the process id with the given title text, and optional (if not blank) sub-window text */
 
-/* 49 */	{ "OpbmWatchdog_ProcessStart",					2,		2},			/* Called as each process begins, to give the process id and maximum watchdog timeout before auto-destroying it */
-/* 50 */	{ "OpbmWatchdog_ProcessStop",					1,		1},			/* Called as each process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer */
-/* 51 */	{ "OpbmWatchdog_ProcessSubprocessStart",		3,		3},			/* Called as each sub-process begins, to give the parent process id, the new sub-process id, and maximum timeout before auto-destroying it (the new sub-process id) as well as the parent */
-/* 52 */	{ "OpbmWatchdog_ProcessSubprocessStop",			1,		1},			/* Called as each sub-process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer */
-/* 53 */	{ "OpbmWatchdog_FileToDeletePostMortum",		2,		2},			/* Called to associate a previously assigned handle and a file to delete after the watchdog timeout if the watchdog kills it */
-/* 54 */	{ "OpbmWatchdog_DirectoryToCleanPostMortum",	2,		2},			/* Called to associate a previously assigned handle and a directory to clean (delete all files/subdirs within) after the watchdog timeout if the watchdog kills it */
-/* 55 */	{ "OpbmWatchdog_DirectoryToDeletePostMortum",	2,		2},			/* Called to associate a previously assigned handle and a directory to delete after the watchdog timeout if the watchdog kills it */
-/* 56 */	{ "OpbmWatchdog_ProcessNameToKillPostMortum",	2,		2},			/* Called to associate a previously assigned handle and a process name to kill after the watchdog timeout if the watchdog kills it */
-/* 57 */	{ "OpbmWatchdog_ProcessIdToKillPostMortum",		2,		2},			/* Called to associate a previously assigned handle and a process id to kill after the watchdog timeout if the watchdog kills it */
-/* 57 = Don't forget to update numberOfCustomAU3Functions above */
+/* 49 */	{ "OpbmWatchdog_ProcessStart",						2,		2},			/* Called as each process begins, to give the process id and maximum watchdog timeout before auto-destroying it */
+/* 50 */	{ "OpbmWatchdog_ProcessStop",						1,		1},			/* Called as each process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer */
+/* 51 */	{ "OpbmWatchdog_ProcessSubprocessStart",			3,		3},			/* Called as each sub-process begins, to give the parent process id, the new sub-process id, and maximum timeout before auto-destroying it (the new sub-process id) as well as the parent */
+/* 52 */	{ "OpbmWatchdog_ProcessSubprocessStop",				1,		1},			/* Called as each sub-process exits, to free the previously assigned handle so it will no longer be observed by the watchdog timer */
+/* 53 */	{ "OpbmWatchdog_FileToDeletePostMortum",			2,		2},			/* Called to associate a previously assigned handle and a file to delete after the watchdog timeout if the watchdog kills it */
+/* 54 */	{ "OpbmWatchdog_DirectoryToCleanPostMortum",		2,		2},			/* Called to associate a previously assigned handle and a directory to clean (delete all files/subdirs within) after the watchdog timeout if the watchdog kills it */
+/* 55 */	{ "OpbmWatchdog_DirectoryToDeletePostMortum",		2,		2},			/* Called to associate a previously assigned handle and a directory to delete after the watchdog timeout if the watchdog kills it */
+/* 56 */	{ "OpbmWatchdog_ProcessNameToKillPostMortum",		2,		2},			/* Called to associate a previously assigned handle and a process name to kill after the watchdog timeout if the watchdog kills it */
+/* 57 */	{ "OpbmWatchdog_ProcessIdToKillPostMortum",			2,		2},			/* Called to associate a previously assigned handle and a process id to kill after the watchdog timeout if the watchdog kills it */
+/* 58 */	{ "OpbmWatchdog_SetRegistryKeyPostMortum",			3,		3},			/* Called to associate a previously assigned handle and a registry key to set to a specified value after the watchdog timeout if the watchdog kills it */
+/* 59 */	{ "OpbmWatchdog_NoteAndResetRegistryKeyPostMortum",	2,		2},			/* Called to associate a previously assigned handle and a registry key to note now, and reset to this value after the watchdog timeout if the watchdog kills it */
+/* 60 */	{ "OpbmWatchdog_DeleteRegistryKeyPostMortum",		2,		2}			/* Called to associate a previously assigned handle and a registry key to delete after the watchdog timeout if the watchdog kills it */
+			/* Note:  Don't forget to update numberOfCustomAU3Functions variable immediately below this definition */
 	};
+	int numberOfCustomAU3Functions = 60;
 
 
 //////////

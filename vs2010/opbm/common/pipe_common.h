@@ -47,3 +47,18 @@
 		int			length;								// Length of the text stored in name
 		char		directory[_MAX_PATH];				// Text of the directory
 	};
+
+//////////
+// Registry Keys
+/////
+	struct SPipeDataRegistryKeyName
+	{
+		int			length;								// Length of the key name
+		char		key[1024];							// Text of the key
+	};
+
+	struct SPipeDataRegistryKeyValue
+	{
+		int			length;								// Length of the key value
+		char		value[1024];						// Text of the key value
+	};
