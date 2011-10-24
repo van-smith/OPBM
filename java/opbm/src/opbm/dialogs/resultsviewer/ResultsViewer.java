@@ -84,6 +84,8 @@ public final class ResultsViewer
 	 */
 	public boolean load(String filename)
 	{
+		m_filename = filename;
+
 		// Build the physical viewer
 		createResultsViewer(m_visible);
 
@@ -600,7 +602,7 @@ public final class ResultsViewer
 
 		m_frame = new DroppableFrame(m_opbm, false, true);
 		m_opbm.addResultsViewerToQueue(m_frame);
-		m_frame.setTitle("OPBM - Results Viewer");
+		m_frame.setTitle("OPBM - Results Viewer - " + m_filename);
 
 		// Compute the actual size we need for our window, so it's properly centered
 		m_frame.pack();
@@ -1262,6 +1264,7 @@ public final class ResultsViewer
 	private List<ResultsViewerLine>		m_rvlList;				// The master list of all ResultsViewerLine entries
 	private ResultsViewerLine			m_rootRVL;				// The root results viewer line, the primary entry which holds all children
 	private String						m_runName;				// The name of the run, from results.xml
+	private String						m_filename;				// Filename loaded, as in "results_yyyy_mm_dd_at_hh_mm_ss.xml"
 	private JScrollBar					m_scrollbarBottom;		// Scrollbar for the bottom portion
 
 	private int							m_failureCount;			// Determined at load time, the number of failures within
