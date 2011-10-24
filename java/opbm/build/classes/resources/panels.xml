@@ -497,7 +497,7 @@
 			</navigation>
 			<navigation>
 				<text>Home</text>
-				<command>home</command>
+				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
 			<spacer/>
@@ -517,7 +517,7 @@
 			</navigation>
 			<navigation>
 				<text>Home</text>
-				<command>home</command>
+				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
 			<spacer/>
@@ -537,7 +537,7 @@
 			</navigation>
 			<navigation>
 				<text>Home</text>
-				<command>home</command>
+				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
 			<spacer/>
@@ -557,7 +557,7 @@
 			</navigation>
 			<navigation>
 				<text>Home</text>
-				<command>home</command>
+				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
 			<spacer/>
@@ -577,7 +577,7 @@
 			</navigation>
 			<navigation>
 				<text>Home</text>
-				<command>home</command>
+				<command>edit_home</command>
 				<tooltip>Return to $home_panel$</tooltip>
 			</navigation>
 			<spacer/>
