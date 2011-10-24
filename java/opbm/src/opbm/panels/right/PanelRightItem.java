@@ -617,7 +617,7 @@ public class PanelRightItem
 						value = Macros.encodeCommonMacros(m_editbox.getText());
 					break;
 			}
-			xmlNew = new Xml(m_field, value);
+			xmlNew = new Xml(m_field.startsWith("#") ? m_field.substring(1) : m_field, value);
 		}
 		return(xmlNew);
 	}
@@ -2497,7 +2497,7 @@ public class PanelRightItem
 	private JButton				m_button;				// Button
 	private JCheckBox			m_checkbox;				// Checkbox
 	private JTextField			m_textbox;				// Textbox
-	private JScrollPane			m_editboxScroller;			// For editbox, provides scrolling
+	private JScrollPane			m_editboxScroller;		// For editbox, provides scrolling
 	private JTextArea			m_editbox;				// Editbox
 	private PanelRightListbox	m_listbox;				// Listbox
 	private PanelRightLookupbox	m_lookupbox;			// Lookupbox

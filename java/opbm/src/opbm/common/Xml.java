@@ -1137,7 +1137,7 @@ public class Xml
 			// It wasn't found, add it explicitly
 			if (tag.startsWith("#")) {
 				// We're adding an attribute
-				root.addAttribute(tag, text);
+				root.addAttribute(tag.substring(1), text);
 
 			} else {
 				// We're adding a child

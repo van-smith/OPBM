@@ -265,7 +265,7 @@ public final class Opbm extends	ModalApp
 								++runCount;
 								m_benchmarkMaster.benchmarkManifestRestart();
 // Added 10/14/2011 11:58am - to continue running forever during testing:
-//								Utils.copyManifestDotXmlToManifestDateTimeDotXml()
+//								Utils.copyManifestDotXmlToManifestDateTimeDotXml();
 //								officialRun(true);
 
 							} else {
@@ -3062,6 +3062,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.18 06:02pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.24 04:10am";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

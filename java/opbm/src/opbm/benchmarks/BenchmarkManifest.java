@@ -170,7 +170,8 @@ public final class BenchmarkManifest
 
 		// Remove any previous uuids that may have been leftover from a
 		// previously failed build process
-		m_opbm.getScriptsXml().stripUUIDsFromAllNodes(true);
+		if (m_opbm.getScriptsXml() != null)
+			m_opbm.getScriptsXml().stripUUIDsFromAllNodes(true);
 
 		// Create the blank manifest template
 		if (manifestPathName.isEmpty())
