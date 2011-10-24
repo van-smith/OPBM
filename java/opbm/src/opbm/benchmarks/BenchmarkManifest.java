@@ -2008,9 +2008,12 @@ public final class BenchmarkManifest
 			// Update our statistics
 			runExecuteUpdateStatistics();
 
-		} else {
-			// It's a flow-control directive, it will update where we move from here
+		} else if (m_worklet.getName().equalsIgnoreCase("flow"))
+		{	// It's a flow-control directive, it will update where we move from here
 			setError("Error: Flow control directives not yet been supported in manifest benchmarks");
+
+		} else {
+			setError("Error: Unrecognized directive \"" + m_worklet.getName() + "\" in manifest");
 		}
 	}
 
