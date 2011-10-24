@@ -29,6 +29,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,6 +40,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import opbm.Opbm;
+import opbm.common.Tuple;
 import opbm.common.Utils;
 import opbm.graphics.AlphaImage;
 
@@ -142,7 +145,7 @@ public final class OpbmInput
 		{
 			@Override
 			public void run()
-			{	// In the thread we render the bottom section
+			{	// In the thread we do the work
 				Opbm	opbm			= m_si_opbm;
 				String	label			= m_si_label;
 				String	caption			= m_si_caption;
@@ -350,6 +353,37 @@ public final class OpbmInput
 	}
 
 	/**
+	 * Reads the user input, waiting until the user has clicked a button before
+	 * returning.
+	 */
+	public Tuple readInput()
+	{
+		Tuple tup;
+
+		// Create a return tuple
+		tup = new Tuple();
+
+		// Loop until an action is encountered (user clicks a button, auto-closed, user-closed, etc.)
+		m_actionEvents = 0;
+		while (m_actionEvents == 0)
+		{
+			try
+			{	// Wait for 1/10th second between checks
+				Thread.sleep(100);
+
+			} catch (InterruptedException ex) {
+			}
+		}
+
+		// When we get here, an action has occurred, and we have our results
+		tup.add("action",	m_dialogResponse);
+		tup.add("value",	m_dialogValue);
+
+		// Return the action and value
+		return(tup);
+	}
+
+	/**
 	 * Timer() callback
 	 */
 	@Override
@@ -359,6 +393,8 @@ public final class OpbmInput
 		if (m_count >= m_countMax)
 		{
 			m_timer.cancel();
+			m_dialogResponse	= "autoclosed";
+			m_dialogValue		= null;
 			m_opbm.setDialogResponse(m_id, "autoclosed", null, this);
 			dispose();
 
@@ -380,6 +416,7 @@ public final class OpbmInput
 
 	public void dispose()
 	{
+		++m_actionEvents;
 		if (m_frame != null)
 			m_frame.dispose();
 	}
@@ -393,22 +430,34 @@ public final class OpbmInput
 	{
 		if (e.getComponent() == m_btnNext)
 		{	// Next button was clicked
-			m_opbm.setDialogResponse(m_id, m_nextButtonText + "_button1", m_txtInput.getText(), null, this);
+			m_dialogResponse	= m_nextButtonText + "_button1";
+			m_dialogValue		= m_txtInput.getText();
+			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
+			++m_actionEvents;
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnCancel) {
 			// Cancel button was clicked
-			m_opbm.setDialogResponse(m_id, m_cancelButtonText + "_button2", m_txtInput.getText(), null, this);
+			m_dialogResponse	= m_cancelButtonText + "_button2";
+			m_dialogValue		= m_txtInput.getText();
+			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
+			++m_actionEvents;
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnAccept) {
 			// Accept button was clicked
-			m_opbm.setDialogResponse(m_id, m_acceptButtonText + "_button3", m_txtInput.getText(), null, this);
+			m_dialogResponse	= m_acceptButtonText + "_button3";
+			m_dialogValue		= m_txtInput.getText();
+			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
+			++m_actionEvents;
 			m_frame.dispose();
 
 		} else if (e.getComponent() == m_btnOkay) {
 			// Okay button was clicked
-			m_opbm.setDialogResponse(m_id, m_okayButtonText + "_button4", m_txtInput.getText(), null, this);
+			m_dialogResponse	= m_okayButtonText + "_button4";
+			m_dialogValue		= m_txtInput.getText();
+			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
+			++m_actionEvents;
 			m_frame.dispose();
 
 		}
@@ -433,6 +482,7 @@ public final class OpbmInput
 	@Override
 	public void windowClosing(WindowEvent e)
 	{	// User cancelled
+		++m_actionEvents;
 		m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_txtInput.getText(), null, this);
 	}
 
@@ -482,6 +532,10 @@ public final class OpbmInput
 	private int					m_height;
 	private JLayeredPane		m_pan;
 	public DroppableFrame		m_frame;
+
+	private	int					m_actionEvents;					// Holds a counter for action events used in readInput()
+	private String				m_dialogResponse;				// Holds the most recent dialog response, the button that was clicked, or event which closed the input
+	private	String				m_dialogValue;					// The value of the input when the last action occurred
 
 	public JLabel				m_lblBackground;
 	public JLabel				m_lblLabel;

@@ -327,8 +327,8 @@
 			<label width="250" text="Atom Listing(colon)"/>
 			<listbox name="atom">
 				<onselect p1="elements">lookupbox_update</onselect>
-				<dblclick p1="atom">run_atom_sequence</dblclick>
-				<enter p1="atom">run_atom_sequence</enter>
+				<dblclick p1="atom">run_atom_sequence_1</dblclick>
+				<enter p1="atom">run_atom_sequence_1</enter>
 				<source>opbm.scriptdata.atoms.atom</source>
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
@@ -348,6 +348,10 @@
 			<newcolumn/>
 			<vspacer height="200"/>
 			<link text="Run Atom Sequence" fontsize="24" height="40">
+				<command p1="atom">run_atom_sequence_1</command>
+			</link>
+			<vspacer height="60"/>
+			<link text="Run Atom Sequence in Iteration" fontsize="24" height="40">
 				<command p1="atom">run_atom_sequence</command>
 			</link>
 		</edit>
@@ -359,8 +363,8 @@
 			<label width="250" text="Molecule Listing(colon)"/>
 			<listbox name="molecule">
 				<onselect p1="elements">lookupbox_update</onselect>
-				<dblclick p1="molecule">run_molecule_sequence</dblclick>
-				<enter p1="molecule">run_molecule_sequence</enter>
+				<dblclick p1="molecule">run_molecule_sequence_1</dblclick>
+				<enter p1="molecule">run_molecule_sequence_1</enter>
 				<source>opbm.scriptdata.molecules.molecule</source>
 				<foreach>molecule</foreach>
 				<listby p1="#name"/>
@@ -380,6 +384,10 @@
 			<newcolumn/>
 			<vspacer height="200"/>
 			<link text="Run Molecule Sequence" fontsize="24" height="40">
+				<command p1="molecule">run_molecule_sequence_1</command>
+			</link>
+			<vspacer height="60"/>
+			<link text="Run Molecule Sequence in Iteration" fontsize="24" height="40">
 				<command p1="molecule">run_molecule_sequence</command>
 			</link>
 		</edit>
@@ -391,8 +399,8 @@
 			<label width="250" text="Scenario Listing(colon)"/>
 			<listbox name="scenario">
 				<onselect p1="elements">lookupbox_update</onselect>
-				<dblclick p1="scenario">run_scenario_sequence</dblclick>
-				<enter p1="scenario">run_scenario_sequence</enter>
+				<dblclick p1="scenario">run_scenario_sequence_1</dblclick>
+				<enter p1="scenario">run_scenario_sequence_1</enter>
 				<source>opbm.scriptdata.scenarios.scenario</source>
 				<foreach>scenario</foreach>
 				<listby p1="#name"/>
@@ -412,6 +420,10 @@
 			<newcolumn/>
 			<vspacer height="200"/>
 			<link text="Run Scenario Sequence" fontsize="24" height="40">
+				<command p1="scenario">run_scenario_sequence_1</command>
+			</link>
+			<vspacer height="60"/>
+			<link text="Run Scenario Sequence in Iteration" fontsize="24" height="40">
 				<command p1="scenario">run_scenario_sequence</command>
 			</link>
 		</edit>
@@ -423,8 +435,8 @@
 			<label width="250" text="Suite Listing(colon)"/>
 			<listbox name="suite">
 				<onselect p1="elements">lookupbox_update</onselect>
-				<dblclick p1="suite">run_suite_sequence</dblclick>
-				<enter p1="suite">run_suite_sequence</enter>
+				<dblclick p1="suite">run_suite_sequence_1</dblclick>
+				<enter p1="suite">run_suite_sequence_1</enter>
 				<source>opbm.scriptdata.suites.suite</source>
 				<foreach>suite</foreach>
 				<listby p1="#name"/>
@@ -444,6 +456,10 @@
 			<newcolumn/>
 			<vspacer height="200"/>
 			<link text="Run Suite Sequence" fontsize="24" height="40">
+				<command p1="suite">run_suite_sequence_1</command>
+			</link>
+			<vspacer height="60"/>
+			<link text="Run Suite Sequence in Iteration" fontsize="24" height="40">
 				<command p1="suite">run_suite_sequence</command>
 			</link>
 		</edit>

@@ -2204,6 +2204,9 @@ public final class Opbm extends	ModalApp
 		m_benchmarkMaster.benchmarkLaunchOfficialRun(automated);
 	}
 
+
+	private Tuple				m_benchmarkRun_tup;
+
 	public void benchmarkRunSuite(Xml				suite,
 								  int				iterations,
 								  boolean			openInNewThread,
@@ -2222,41 +2225,79 @@ public final class Opbm extends	ModalApp
 								  String			p9,
 								  String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
-		m_bm_suite			= suite;
-		m_bm_iterations		= iterations;
-		m_bm_pri			= pri;
-		m_bm_opbm			= opbm;
-		m_bm_macroMaster	= macroMaster;
-		m_bm_settingsMaster	= settingsMaster;
-		m_bm_p1				= p1;
-		m_bm_p2				= p2;
-		m_bm_p3				= p3;
-		m_bm_p4				= p4;
-		m_bm_p5				= p5;
-		m_bm_p6				= p6;
-		m_bm_p7				= p7;
-		m_bm_p8				= p8;
-		m_bm_p9				= p9;
-		m_bm_p10			= p10;
+		Tuple tup = new Tuple();
+		tup.add("type",					"suite");
+		tup.add("m_bm",					new BenchmarkManifest(opbm, "compilation", "", false, false));
+		tup.add("suite",				suite);
+		tup.add("scenario",				null);
+		tup.add("molecule",				null);
+		tup.add("atom",					null);
+		tup.add("iterations",			iterations);
+		tup.add("openInNewThread",		openInNewThread);
+		tup.add("pri",					pri);
+		tup.add("opbm",					opbm);
+		tup.add("macroMaster",			macroMaster);
+		tup.add("settingsMaster",		settingsMaster);
+		tup.add("p1",					p1);
+		tup.add("p2",					p2);
+		tup.add("p3",					p3);
+		tup.add("p4",					p4);
+		tup.add("p5",					p5);
+		tup.add("p6",					p6);
+		tup.add("p7",					p7);
+		tup.add("p8",					p8);
+		tup.add("p9",					p9);
+		tup.add("p10",					p10);
+		m_benchmarkRun_tup = tup;
 
-		if (openInNewThread)
+		Thread t = new Thread("BenchmarkRunSuite_Setup")
 		{
-			// Since the benchmark uses an overlay heads-up-display,
-			// it needs to be off the EDT thread, so we give it its own thread.
-			Thread t = new Thread("OPBM_Benchmark_Thread")
-			{
-				@Override
-				public void run()
-				{
-					runSuite();
-				}
-			};
-			t.start();
+			@Override
+			public void run()
+			{	// In the thread
+				int iterations;
+				Tuple tup = m_benchmarkRun_tup;
 
-		} else {
-			runSuite();
-		}
+				iterations = (Integer)tup.getSecond("iterations");
+				if (iterations == 0)
+				{	// Ask the user how many iterations they want
+					OpbmInput oi = new OpbmInput(m_opbm, "Suite Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					Tuple input = oi.readInput();
+					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
+					{	// They did not click the accept button, so they are canceling
+						return;
+					}
+					// If we get here, we have a value
+					iterations	= Utils.getValueOf((String)input.getSecond("value"), 0, 0, Integer.MAX_VALUE);
+					if (iterations == 0)
+					{	// They did not specify a valid value
+						return;
+					}
+					tup.setSecond("iterations", iterations);
+				}
+				//else
+				// Just run with the specified number of iterations
+
+				if ((Boolean)tup.getSecond("openInNewThread"))
+				{	// Since the benchmark uses an overlay heads-up-display,
+					// it needs to be off the EDT thread, so we give it its own thread.
+					m_benchmarkRun_tup = tup;
+					Thread t = new Thread("OPBM_Benchmark_Thread")
+					{
+						@Override
+						public void run()
+						{
+							runAtomMoleculeScenarioSuite(m_benchmarkRun_tup);
+						}
+					};
+					t.start();
+
+				} else {
+					runAtomMoleculeScenarioSuite(tup);
+				}
+			}
+		};
+		t.start();
 	}
 
 	public void benchmarkRunScenario(Xml			scenario,
@@ -2277,41 +2318,79 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
-		m_bm_scenario		= scenario;
-		m_bm_iterations		= iterations;
-		m_bm_pri			= pri;
-		m_bm_opbm			= opbm;
-		m_bm_macroMaster	= macroMaster;
-		m_bm_settingsMaster	= settingsMaster;
-		m_bm_p1				= p1;
-		m_bm_p2				= p2;
-		m_bm_p3				= p3;
-		m_bm_p4				= p4;
-		m_bm_p5				= p5;
-		m_bm_p6				= p6;
-		m_bm_p7				= p7;
-		m_bm_p8				= p8;
-		m_bm_p9				= p9;
-		m_bm_p10			= p10;
+		Tuple tup = new Tuple();
+		tup.add("type",					"scenario");
+		tup.add("m_bm",					new BenchmarkManifest(opbm, "compilation", "", false, false));
+		tup.add("suite",				null);
+		tup.add("scenario",				scenario);
+		tup.add("molecule",				null);
+		tup.add("atom",					null);
+		tup.add("iterations",			iterations);
+		tup.add("openInNewThread",		openInNewThread);
+		tup.add("pri",					pri);
+		tup.add("opbm",					opbm);
+		tup.add("macroMaster",			macroMaster);
+		tup.add("settingsMaster",		settingsMaster);
+		tup.add("p1",					p1);
+		tup.add("p2",					p2);
+		tup.add("p3",					p3);
+		tup.add("p4",					p4);
+		tup.add("p5",					p5);
+		tup.add("p6",					p6);
+		tup.add("p7",					p7);
+		tup.add("p8",					p8);
+		tup.add("p9",					p9);
+		tup.add("p10",					p10);
+		m_benchmarkRun_tup = tup;
 
-		if (openInNewThread)
+		Thread t = new Thread("BenchmarkRunScenario_Setup")
 		{
-			// Since the benchmark uses an overlay heads-up-display,
-			// it needs to be off the EDT thread, so we give it its own thread.
-			Thread t = new Thread("OPBM_Benchmark_Thread")
-			{
-				@Override
-				public void run()
-				{
-					runScenario();
-				}
-			};
-			t.start();
+			@Override
+			public void run()
+			{	// In the thread
+				int iterations;
+				Tuple tup = m_benchmarkRun_tup;
 
-		} else {
-			runScenario();
-		}
+				iterations = (Integer)tup.getSecond("iterations");
+				if (iterations == 0)
+				{	// Ask the user how many iterations they want
+					OpbmInput oi = new OpbmInput(m_opbm, "Scenario Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					Tuple input = oi.readInput();
+					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
+					{	// They did not click the accept button, so they are canceling
+						return;
+					}
+					// If we get here, we have a value
+					iterations	= Utils.getValueOf((String)input.getSecond("value"), 0, 0, Integer.MAX_VALUE);
+					if (iterations == 0)
+					{	// They did not specify a valid value
+						return;
+					}
+					tup.setSecond("iterations", iterations);
+				}
+				//else
+				// Just run with the specified number of iterations
+
+				if ((Boolean)tup.getSecond("openInNewThread"))
+				{	// Since the benchmark uses an overlay heads-up-display,
+					// it needs to be off the EDT thread, so we give it its own thread.
+					m_benchmarkRun_tup = tup;
+					Thread t = new Thread("OPBM_Benchmark_Thread")
+					{
+						@Override
+						public void run()
+						{
+							runAtomMoleculeScenarioSuite(m_benchmarkRun_tup);
+						}
+					};
+					t.start();
+
+				} else {
+					runAtomMoleculeScenarioSuite(tup);
+				}
+			}
+		};
+		t.start();
 	}
 
 	public void benchmarkRunMolecule(Xml			molecule,
@@ -2332,41 +2411,79 @@ public final class Opbm extends	ModalApp
 									 String			p9,
 									 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
-		m_bm_molecule		= molecule;
-		m_bm_iterations		= iterations;
-		m_bm_pri			= pri;
-		m_bm_opbm			= opbm;
-		m_bm_macroMaster	= macroMaster;
-		m_bm_settingsMaster	= settingsMaster;
-		m_bm_p1				= p1;
-		m_bm_p2				= p2;
-		m_bm_p3				= p3;
-		m_bm_p4				= p4;
-		m_bm_p5				= p5;
-		m_bm_p6				= p6;
-		m_bm_p7				= p7;
-		m_bm_p8				= p8;
-		m_bm_p9				= p9;
-		m_bm_p10			= p10;
+		Tuple tup = new Tuple();
+		tup.add("type",					"molecule");
+		tup.add("m_bm",					new BenchmarkManifest(opbm, "compilation", "", false, false));
+		tup.add("suite",				null);
+		tup.add("scenario",				null);
+		tup.add("molecule",				molecule);
+		tup.add("atom",					null);
+		tup.add("iterations",			iterations);
+		tup.add("openInNewThread",		openInNewThread);
+		tup.add("pri",					pri);
+		tup.add("opbm",					opbm);
+		tup.add("macroMaster",			macroMaster);
+		tup.add("settingsMaster",		settingsMaster);
+		tup.add("p1",					p1);
+		tup.add("p2",					p2);
+		tup.add("p3",					p3);
+		tup.add("p4",					p4);
+		tup.add("p5",					p5);
+		tup.add("p6",					p6);
+		tup.add("p7",					p7);
+		tup.add("p8",					p8);
+		tup.add("p9",					p9);
+		tup.add("p10",					p10);
+		m_benchmarkRun_tup = tup;
 
-		if (openInNewThread)
+		Thread t = new Thread("BenchmarkRunMolecule_Setup")
 		{
-			// Since the benchmark uses an overlay heads-up-display,
-			// it needs to be off the EDT thread, so we give it its own thread.
-			Thread t = new Thread("OPBM_Benchmark_Thread")
-			{
-				@Override
-				public void run()
-				{
-					runMolecule();
-				}
-			};
-			t.start();
+			@Override
+			public void run()
+			{	// In the thread
+				int iterations;
+				Tuple tup = m_benchmarkRun_tup;
 
-		} else {
-			runMolecule();
-		}
+				iterations = (Integer)tup.getSecond("iterations");
+				if (iterations == 0)
+				{	// Ask the user how many iterations they want
+					OpbmInput oi = new OpbmInput(m_opbm, "Molecule Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					Tuple input = oi.readInput();
+					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
+					{	// They did not click the accept button, so they are canceling
+						return;
+					}
+					// If we get here, we have a value
+					iterations	= Utils.getValueOf((String)input.getSecond("value"), 0, 0, Integer.MAX_VALUE);
+					if (iterations == 0)
+					{	// They did not specify a valid value
+						return;
+					}
+					tup.setSecond("iterations", iterations);
+				}
+				//else
+				// Just run with the specified number of iterations
+
+				if ((Boolean)tup.getSecond("openInNewThread"))
+				{	// Since the benchmark uses an overlay heads-up-display,
+					// it needs to be off the EDT thread, so we give it its own thread.
+					m_benchmarkRun_tup = tup;
+					Thread t = new Thread("OPBM_Benchmark_Thread")
+					{
+						@Override
+						public void run()
+						{
+							runAtomMoleculeScenarioSuite(m_benchmarkRun_tup);
+						}
+					};
+					t.start();
+
+				} else {
+					runAtomMoleculeScenarioSuite(tup);
+				}
+			}
+		};
+		t.start();
 	}
 
 	public void benchmarkRunAtom(Xml			atom,
@@ -2387,94 +2504,140 @@ public final class Opbm extends	ModalApp
 								 String			p9,
 								 String			p10)
 	{
-		m_bm				= new BenchmarkManifest(opbm, "compilation", "", false, false);
-		m_bm_atom			= atom;
-		m_bm_iterations		= iterations;
-		m_bm_pri			= pri;
-		m_bm_opbm			= opbm;
-		m_bm_macroMaster	= macroMaster;
-		m_bm_settingsMaster	= settingsMaster;
-		m_bm_p1				= p1;
-		m_bm_p2				= p2;
-		m_bm_p3				= p3;
-		m_bm_p4				= p4;
-		m_bm_p5				= p5;
-		m_bm_p6				= p6;
-		m_bm_p7				= p7;
-		m_bm_p8				= p8;
-		m_bm_p9				= p9;
-		m_bm_p10			= p10;
+		Tuple tup = new Tuple();
+		tup.add("type",					"atom");
+		tup.add("m_bm",					new BenchmarkManifest(opbm, "compilation", "", false, false));
+		tup.add("suite",				null);
+		tup.add("scenario",				null);
+		tup.add("molecule",				null);
+		tup.add("atom",					atom);
+		tup.add("iterations",			iterations);
+		tup.add("openInNewThread",		openInNewThread);
+		tup.add("pri",					pri);
+		tup.add("opbm",					opbm);
+		tup.add("macroMaster",			macroMaster);
+		tup.add("settingsMaster",		settingsMaster);
+		tup.add("p1",					p1);
+		tup.add("p2",					p2);
+		tup.add("p3",					p3);
+		tup.add("p4",					p4);
+		tup.add("p5",					p5);
+		tup.add("p6",					p6);
+		tup.add("p7",					p7);
+		tup.add("p8",					p8);
+		tup.add("p9",					p9);
+		tup.add("p10",					p10);
+		m_benchmarkRun_tup = tup;
 
-		if (openInNewThread)
+		Thread t = new Thread("BenchmarkRunAtom_Setup")
 		{
-			// Since the benchmark uses an overlay heads-up-display,
-			// it needs to be off the EDT thread, so we give it its own thread.
-			Thread t = new Thread("OPBM_Benchmark_Thread")
-			{
-				@Override
-				public void run()
-				{
-					runAtom();
+			@Override
+			public void run()
+			{	// In the thread
+				int iterations;
+				Tuple tup = m_benchmarkRun_tup;
+
+				iterations = (Integer)tup.getSecond("iterations");
+				if (iterations == 0)
+				{	// Ask the user how many iterations they want
+					OpbmInput oi = new OpbmInput(m_opbm, "Atom Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					Tuple input = oi.readInput();
+					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
+					{	// They did not click the accept button, so they are canceling
+						return;
+					}
+					// If we get here, we have a value
+					iterations	= Utils.getValueOf((String)input.getSecond("value"), 0, 0, Integer.MAX_VALUE);
+					if (iterations == 0)
+					{	// They did not specify a valid value
+						return;
+					}
+					tup.setSecond("iterations", iterations);
 				}
-			};
-			t.start();
+				//else
+				// Just run with the specified number of iterations
+				tup.add("iterations", iterations);
+
+				if ((Boolean)tup.getSecond("openInNewThread"))
+				{	// Since the benchmark uses an overlay heads-up-display,
+					// it needs to be off the EDT thread, so we give it its own thread.
+					m_benchmarkRun_tup = tup;
+					Thread t = new Thread("OPBM_Benchmark_Thread")
+					{
+						@Override
+						public void run()
+						{
+							runAtomMoleculeScenarioSuite(m_benchmarkRun_tup);
+						}
+					};
+					t.start();
+
+				} else {
+					runAtomMoleculeScenarioSuite(tup);
+				}
+			}
+		};
+		t.start();
+	}
+
+
+	private BenchmarkManifest	m_benchmarkRun_bm		= null;
+
+	public void runAtomMoleculeScenarioSuite(Tuple tup)
+	{
+		BenchmarkManifest	bm						= (BenchmarkManifest)	tup.getSecond("m_bm");
+		Xml					atom					= (Xml)					tup.getSecond("atom");
+		Xml					molecule				= (Xml)					tup.getSecond("molecule");
+		Xml					scenario				= (Xml)					tup.getSecond("scenario");
+		Xml					suite					= (Xml)					tup.getSecond("suite");
+		int					iterations				= (Integer)				tup.getSecond("iterations");
+		boolean				openInNewThread			= (Boolean)				tup.getSecond("openInNewThread");
+		PanelRightItem		pri						= (PanelRightItem)		tup.getSecond("pri");
+		Opbm				opbm					= (Opbm)				tup.getSecond("opbm");
+		Macros				macroMaster				= (Macros)				tup.getSecond("macroMaster");
+		Settings			settingsMaster			= (Settings)			tup.getSecond("settings");
+		String				p1						= (String)				tup.getSecond("p1");
+		String				p2						= (String)				tup.getSecond("p2");
+		String				p3						= (String)				tup.getSecond("p3");
+		String				p4						= (String)				tup.getSecond("p4");
+		String				p5						= (String)				tup.getSecond("p5");
+		String				p6						= (String)				tup.getSecond("p6");
+		String				p7						= (String)				tup.getSecond("p7");
+		String				p8						= (String)				tup.getSecond("p8");
+		String				p9						= (String)				tup.getSecond("p9");
+		String				p10						= (String)				tup.getSecond("p10");
+
+		// m_benchmarkRun_bm is used once the benchmark is finished to find out which one is running
+		m_benchmarkRun_bm = bm;
+		if (((String)tup.getSecond("type")).equalsIgnoreCase("atom"))
+		{	// They are running an atom
+			atom = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+			bm.addToCompiledList("atom", atom.getAttribute("name"), iterations);
+
+		} else if (((String)tup.getSecond("type")).equalsIgnoreCase("molecule"))
+		{	// Running a molecule
+			molecule = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+			bm.addToCompiledList("molecule", molecule.getAttribute("name"), iterations);
+
+		} else if (((String)tup.getSecond("type")).equalsIgnoreCase("scenario"))
+		{	// Running a scenario
+			scenario = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+			bm.addToCompiledList("scenario", scenario.getAttribute("name"), iterations);
+
+		} else if (((String)tup.getSecond("type")).equalsIgnoreCase("suite"))
+		{	// Running a suite
+			suite = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+			bm.addToCompiledList("suite", suite.getAttribute("name"), iterations);
 
 		} else {
-			runAtom();
+			// Unknown type
+			System.out.println("Unrecognized benchmark run type encountered (\"" + (String)tup.getSecond("type") + "\"), should be atom, molecule, scenario or suite.");
+			return;
 		}
-	}
 
-	BenchmarkManifest	m_bm = null;
-	Xml					m_bm_atom;
-	Xml					m_bm_molecule;
-	Xml					m_bm_scenario;
-	Xml					m_bm_suite;
-	int					m_bm_iterations;
-	PanelRightItem		m_bm_pri;
-	Opbm				m_bm_opbm;
-	Macros				m_bm_macroMaster;
-	Settings			m_bm_settingsMaster;
-	String				m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5;
-	String				m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10;
-
-	public void runAtom()
-	{
-		m_bm_atom = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
-																  m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
-																  m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
-		m_bm.addToCompiledList("atom", m_bm_atom.getAttribute("name"), m_bm_iterations);
-		if (m_bm.buildCompilation())
-			m_bm.run();
-	}
-
-	public void runMolecule()
-	{
-		m_bm_molecule = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
-																	  m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
-																	  m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
-		m_bm.addToCompiledList("molecule", m_bm_molecule.getAttribute("name"), m_bm_iterations);
-		if (m_bm.buildCompilation())
-			m_bm.run();
-	}
-
-	public void runScenario()
-	{
-		m_bm_scenario = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
-																	  m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
-																	  m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
-		m_bm.addToCompiledList("scenario", m_bm_scenario.getAttribute("name"), m_bm_iterations);
-		if (m_bm.buildCompilation())
-			m_bm.run();
-	}
-
-	public void runSuite()
-	{
-		m_bm_suite = m_benchmarkMaster.loadEntryFromPanelRightItem(m_bm_pri,
-																   m_bm_p1, m_bm_p2, m_bm_p3, m_bm_p4, m_bm_p5,
-																   m_bm_p6, m_bm_p7, m_bm_p8, m_bm_p9, m_bm_p10);
-		m_bm.addToCompiledList("suite", m_bm_suite.getAttribute("name"), m_bm_iterations);
-		if (m_bm.buildCompilation())
-			m_bm.run();
+		// Build the single-entry compilation, and run it
+		if (bm != null && bm.buildCompilation())
+			bm.run();
 	}
 
 	/** Calls <code>Macros.parseMacros()</code>
@@ -2875,8 +3038,7 @@ public final class Opbm extends	ModalApp
 		{
 			@Override
 			public void run()
-			{
-				// Display a dialog box so the user doesn't click the button twice
+			{	// Display a dialog box so the user doesn't click the button twice
 				String uuid;
 				uuid = OpbmDialog.simpleDialog(m_opbm, "Creating Debug Info...please wait", "Gather Debug Info", 0);
 
@@ -2950,7 +3112,7 @@ public final class Opbm extends	ModalApp
 	 */
 	public boolean willTerminateAfterRun()
 	{
-		if (m_bm != null && m_bm.didOriginallyLaunchFromCommandLine())
+		if (m_benchmarkRun_bm != null && m_benchmarkRun_bm.didOriginallyLaunchFromCommandLine())
 		{
 			return(true);
 		} else {
@@ -3063,6 +3225,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.24 05:00am";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.24 11:35am";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
