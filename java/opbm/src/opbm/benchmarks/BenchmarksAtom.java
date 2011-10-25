@@ -1572,50 +1572,29 @@ public class BenchmarksAtom
 
 			} else if (sourcename.equalsIgnoreCase("rebootAndTerminate")) {
 				// Rebooting, and terminating the benchmark test (will restart the system and leave it in its natural state)
-				if (m_bp.m_hud != null)
-					m_bp.m_hud.updateStatus("Terminating benchmark...");
-				reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), false);
-
-			} else if (sourcename.equalsIgnoreCase("rebootAndContinue")) {
-				// Rebooting, and continuing back from the next atom after the one we're on now
-				// Rebooting, and restarting the benchmark from the beginning
-				if (m_bp.m_hud != null)
-					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
-				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
-				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", Utils.getRestarterString());
-				if (m_bp.m_hud != null)
-					m_bp.m_hud.updateDebug(result);
+				result = setRunOnceRegistryKeys(Utils.getRestarterStringNoRestart());
 				if (result.equalsIgnoreCase("success"))
-				{
-					if (m_bp.m_hud != null)
-						m_bp.m_hud.updateStatus("Continue benchmark after system restart...");
+				{	// We're good
 					reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), true);
 
 				} else {
 					// Failure creating the registry key, it won't work
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY;
-					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_restart", "");
+					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_continue", "");
 					return(null);
 				}
 
-			} else if (sourcename.equalsIgnoreCase("rebootAndRestart")) {
-				// Rebooting, and restarting the benchmark from the beginning
-				if (m_bp.m_hud != null)
-					m_bp.m_hud.updateDebug("Setting registry key for current user startup");
-				// c:\cana\java\opbm\ "c:\program files\java\jdk1.7.0\jre\bin\java.exe" opbm.jar
-				result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", Utils.getRestarterString());
-				if (m_bp.m_hud != null)
-					m_bp.m_hud.updateDebug(result);
+			} else if (sourcename.equalsIgnoreCase("rebootAndContinue")) {
+				// Rebooting, and continuing back from the next atom after the one we're on now
+				result = setRunOnceRegistryKeys(Utils.getRestarterString());
 				if (result.equalsIgnoreCase("success"))
-				{
-					if (m_bp.m_hud != null)
-						m_bp.m_hud.updateStatus("Restarting benchmark from beginning...");
+				{	// We're good
 					reboot(m_bp.m_macroMaster.parseMacros(thisCommand.getAttribute("name")), true);
 
 				} else {
 					// Failure creating the registry key, it won't work
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY;
-					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_restart", "");
+					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_continue", "");
 					return(null);
 				}
 
@@ -1626,6 +1605,30 @@ public class BenchmarksAtom
 		System.err.println("Error: An unrecognized command was found, ignored: " + thisCommand.getName());
 // REMEMBER  need to process this error in the future
 		return(thisCommand.getNext());
+	}
+
+	/**
+	 * Sets the registry keys for the reboot, so when Windows starts back up it
+	 * will continue as it should.
+	 * @param restartString
+	 * @param postbootString
+	 * @return
+	 */
+	public String setRunOnceRegistryKeys(String restartString)
+	{
+		String result;
+
+		if (m_bp.m_hud != null)
+			m_bp.m_hud.updateDebug("Setting registry key for current user startup");
+		result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", restartString);
+		if (m_bp.m_hud != null)
+			m_bp.m_hud.updateDebug(result);
+
+		if (result.equalsIgnoreCase("success"))
+		{	// Write the postboot RunOnce key
+			result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbmpostboot", Utils.getPostbootString());
+		}
+		return(result);
 	}
 
 // REMEMBER this needs to be moved to the BenchmarkShutdown() logic, so it can

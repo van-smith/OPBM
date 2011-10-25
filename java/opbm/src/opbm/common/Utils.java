@@ -1901,6 +1901,27 @@ public class Utils
 		return("\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar");
 	}
 
+	/**
+	 * Returns the string that would be used in the HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce\opbm
+	 * registry key for restarting the application on an official run after
+	 * rebooting, but without an automatic restart of the benchmark in progress.
+	 * @return the full path required to execute the resetarter in RunOnce\opbm
+	 */
+	public static String getRestarterStringNoRestart()
+	{
+		return("\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar -noRestart");
+	}
+
+	/**
+	 * Returns the string that would be used in the HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce\opbmpostboot
+	 * registry key for noting the reboot time after rebooting.
+	 * @return the full path required to execute the postboot.exe in RunOnce\opbmpostboot
+	 */
+	public static String getPostbootString()
+	{
+		return("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\"");
+	}
+
 	public static void copyManifestDotXmlToManifestDateTimeDotXml()
 	{
 		String newName;

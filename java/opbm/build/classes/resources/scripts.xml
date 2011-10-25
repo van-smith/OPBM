@@ -168,14 +168,6 @@
 				<logical>reboot_and_continue</logical>
 				<real></real>
 			</abstract>
-			<abstract name="rebootAndRestart">
-				<logical>reboot_and_restart</logical>
-				<real></real>
-			</abstract>
-			<abstract name="spinUp">
-				<logical>spinup</logical>
-				<real></real>
-			</abstract>
 		</abstracts>
 		<atoms>
 			<atom name="PowerPoint Open" shortname="PPoint">
@@ -866,9 +858,6 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Reboot And Restart OPBM" shortname="OPBM">
-				<abstract name="Reboot And Restart OPBM" shortname="Restart" sourcename="rebootAndRestart"></abstract>
-			</atom>
 			<atom name="Reboot And Exit OPBM" shortname="OPBM">
 				<abstract name="Reboot And Terminate" shortname="Exit" sourcename="rebootAndTerminate"></abstract>
 			</atom>
@@ -1161,7 +1150,7 @@
 				</abstract>
 			</atom>
 			<atom name="Standalone Startup Settle Down" shortname="ssettle">
-				<abstract shortname="sreboot" sourcename="rebootAndRestart" name="System Reboot">
+				<abstract shortname="sreboot" sourcename="rebootAndContinue" name="System Reboot">
 					<options></options>
 				</abstract>
 				<abstract name="Standalone Startup Settle Down" shortname="ssettle" sourcename="execute">
@@ -1196,7 +1185,7 @@
 				</abstract>
 			</atom>
 			<atom name="Standalone Reboot Time" shortname="stime">
-				<abstract shortname="sreboot" sourcename="rebootAndRestart" name="System Reboot">
+				<abstract shortname="sreboot" sourcename="rebootAndContinue" name="System Reboot">
 					<options></options>
 				</abstract>
 				<abstract name="Standalone Reboot Time" shortname="stime" sourcename="execute">

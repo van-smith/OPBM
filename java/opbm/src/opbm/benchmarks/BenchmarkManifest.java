@@ -1071,7 +1071,7 @@ public final class BenchmarkManifest
 			// Build the master reboot abstract so it can be cloned for each pass
 			m_rebootRequired = true;
 			rebootTemplate = new Xml("abstract");
-			rebootTemplate.appendAttribute(new Xml("name", "Reboot the machine (Auto-inserted at start of each pass)"));
+			rebootTemplate.appendAttribute(new Xml("name", "Reboot (auto-inserted at start of each pass)"));
 			rebootTemplate.appendAttribute(new Xml("sourcename", "rebootAndContinue"));
 			for (i = 0; i < m_runPasses.size(); i++)
 			{	// Update the run-level xml for each entry

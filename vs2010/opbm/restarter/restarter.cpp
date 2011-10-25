@@ -7,16 +7,17 @@
 // OPBM - Restarter application, allows continuation to restart the JVM
 //        after a reboot.
 //
-// Accepts three command line parameters:
+// Accepts three command line parameters, and an optional 4th:
 //
 //		1) path to start in (c:\cana\java\obpm\)
 //		2) pathname of JVM (c:\program files\java\jdk1.7.0\jre\bin\java.exe)
 //		3) jar (opbm.jar)
+//		4) (optional) -noRestart
 //
 // This application assembles those pieces into an executable command
 // line like this, after first changing to the specified directory:
 //
-//		c:\program files\java\jdk1.7.0\jre\bin\java.exe -jar opbm.jar
+//		c:\program files\java\jdk1.7.0\jre\bin\java.exe -jar opbm.jar [-noRestart]
 //
 //
 
@@ -30,6 +31,8 @@
 #include <WinBase.h>
 #include <atlconv.h>
 
+#define MAX_SECONDS 120
+
 char jarPrefix[] = " -jar ";
 char restart[] = " -restart ";
 void usage(int returnCode);
@@ -38,22 +41,33 @@ void usage(int returnCode);
 int _tmain(int argc, _TCHAR* argv[])
 {
 	USES_CONVERSION;
-	char command[ MAX_PATH ];
-	char params[ MAX_PATH ];
-	TCHAR tcommand[ MAX_PATH * 2 ];
-	TCHAR tparams[ MAX_PATH * 2 ];
-	TCHAR tdir[ MAX_PATH * 2 ];
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	BOOL result;
+	char					command		[MAX_PATH];
+	char					params		[MAX_PATH];
+	TCHAR					tcommand	[MAX_PATH * 2];
+	TCHAR					tparams		[MAX_PATH * 2];
+	TCHAR					tdir		[MAX_PATH * 2];
+	STARTUPINFO				si;
+	PROCESS_INFORMATION		pi;
+	BOOL					result;
+	BOOL					noRestart;
 
+	noRestart = false;
 	if (argc != 4)
-	{	// Invalid number of parameters
+	{	// Potentially invalid number of parameters
+		if (argc == 5)
+		{	// If they specified the -noRestart option, they're okay
+			if (_tcsicmp(argv[4], _T("-noRestart")) == 0)
+			{	// They specified the -noRestart option, so note it and continue
+				noRestart = true;
+				goto continueOnward;
+			}
+		}
 		printf("OPBM is unable to restart due to incorrect command line syntax.\n");
 		printf("\n");
 		usage(-1);
 	}
 
+continueOnward:
 	// Identify ourselves to the world
 	printf("OPBM Restarter\n");
 	printf("Preparing to restart...\n");
@@ -72,7 +86,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Assemble the params
 	memcpy(params, jarPrefix, strlen(jarPrefix));								// append -jar
 	memcpy(params + strlen(params), T2A(argv[3]), strlen(T2A(argv[3])));		// append opbm.jar
-	memcpy(params + strlen(params), restart, strlen(restart));					// append -restart
+	if (!noRestart)
+		memcpy(params + strlen(params), restart, strlen(restart));				// append -restart (unless they specified the -noRestart command line option as the 4th parameter)
 	// Right now, the parameters looks like " -jar opbm.jar  -restart "
 
 	// Change to the specified directory
@@ -90,8 +105,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf("Directory: %s\n", T2A(tdir));
 	
 	// Create buffers for the command and parameters
-	_tcscpy_s(tcommand, MAX_PATH * 2, A2T(command));
-	_tcscpy_s(tparams, MAX_PATH * 2, A2T(params));
+	_tcscpy_s(tcommand,	MAX_PATH * 2, A2T(command));
+	_tcscpy_s(tparams,	MAX_PATH * 2, A2T(params));
 
 	// Tell the world what we're doing
 	printf("Executing: %s %s\n", T2A(tcommand), T2A(tparams));
@@ -138,8 +153,8 @@ void usage(int returnCode)
 	printf("\n");
 	printf("\n");
 	printf("-----\n");
-	printf("Please copy-and-paste or hit PrtScrn key (captures screen image to clipboard)\n\n");
-#define MAX_SECONDS 60
+	printf("Please copy-and-paste or hit PrtScrn key (captures screen image to clipboard for paste into graphics program or word processor)\n\n");
+
 	for (i = 0; i < MAX_SECONDS; i++)
 	{	// Keep the message up for 30 seconds
 		printf("\r%u seconds before exit", MAX_SECONDS - i - 1);
