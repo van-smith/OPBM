@@ -1144,8 +1144,8 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Startup Settle Down" shortname="settle">
-				<abstract name="Startup Settle Down" shortname="settle" sourcename="execute">
+			<atom name="Official Run Startup Settle Down" shortname="orsettle">
+				<abstract name="Official Run Startup Settle Down" shortname="orsettle" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun>Yes</runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -1160,10 +1160,48 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Reboot Time" shortname="time">
-				<abstract name="Reboot Time" shortname="time" sourcename="execute">
+			<atom name="Standalone Startup Settle Down" shortname="ssettle">
+				<abstract shortname="sreboot" sourcename="rebootAndRestart" name="System Reboot">
+					<options></options>
+				</abstract>
+				<abstract name="Standalone Startup Settle Down" shortname="ssettle" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\opbm\internal\startupSettleDown.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Official Run Reboot Time" shortname="ortime">
+				<abstract name="Official Run Reboot Time" shortname="ortime" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun>Yes</runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\opbm\internal\rebootTime.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Standalone Reboot Time" shortname="stime">
+				<abstract shortname="sreboot" sourcename="rebootAndRestart" name="System Reboot">
+					<options></options>
+				</abstract>
+				<abstract name="Standalone Reboot Time" shortname="stime" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
@@ -1195,8 +1233,8 @@
 		</atoms>
 		<molecules>
 			<molecule name="Bootup Data" shortname="bootdata">
-				<atom name="Startup Settle Down" shortname="settle" sourcename="Startup Settle Down"></atom>
-				<atom name="Reboot Time" shortname="time" sourcename="Reboot Time"></atom>
+				<atom name="Official Run Startup Settle Down" shortname="settle" sourcename="Startup Settle Down"></atom>
+				<atom name="Official Run Reboot Time" shortname="time" sourcename="Reboot Time"></atom>
 			</molecule>
 			<molecule name="Install Applications" shortname="Install">
 				<atom name="Install 7zip" shortname="7zip" sourcename="Install 7zip"></atom>
