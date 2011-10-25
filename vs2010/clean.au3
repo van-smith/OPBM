@@ -40,6 +40,16 @@ DirRemove( "opbm\opbm64\Debug\", 1)
 DirRemove( "opbm\opbm64\Release\", 1)
 DirRemove( "opbm\opbm64\x64\", 1)
 
+; opbm\postboot
+DirRemove( "opbm\postboot\Debug\", 1)
+DirRemove( "opbm\postboot\Release\", 1)
+;DirRemove( "opbm\postboot\x64\", 1)
+
+; opbm\preboot
+DirRemove( "opbm\preboot\Debug\", 1)
+DirRemove( "opbm\preboot\Release\", 1)
+;DirRemove( "opbm\preboot\x64\", 1)
+
 ; opbm\restarter
 DirRemove( "opbm\restarter\Debug\", 1)
 DirRemove( "opbm\restarter\Release\", 1)

@@ -14,6 +14,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "benchmark\benc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumThreads", "enumthreads\EnumThreads.vcxproj", "{E0068B87-7742-4631-A165-D29F396695F8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "preboot", "preboot\preboot.vcxproj", "{2A4227D0-94F6-44C9-98EE-1D7FD7A8D019}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "postboot", "postboot\postboot.vcxproj", "{E388C8F0-8DB6-44C6-8286-8423706F25BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -70,6 +74,18 @@ Global
 		{E0068B87-7742-4631-A165-D29F396695F8}.Release|Win32.ActiveCfg = Release|x64
 		{E0068B87-7742-4631-A165-D29F396695F8}.Release|Win32.Build.0 = Release|x64
 		{E0068B87-7742-4631-A165-D29F396695F8}.Release|x64.ActiveCfg = Release|x64
+		{2A4227D0-94F6-44C9-98EE-1D7FD7A8D019}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2A4227D0-94F6-44C9-98EE-1D7FD7A8D019}.Debug|Win32.Build.0 = Debug|Win32
+		{2A4227D0-94F6-44C9-98EE-1D7FD7A8D019}.Debug|x64.ActiveCfg = Debug|Win32
+		{2A4227D0-94F6-44C9-98EE-1D7FD7A8D019}.Release|Win32.ActiveCfg = Release|Win32
+		{2A4227D0-94F6-44C9-98EE-1D7FD7A8D019}.Release|Win32.Build.0 = Release|Win32
+		{2A4227D0-94F6-44C9-98EE-1D7FD7A8D019}.Release|x64.ActiveCfg = Release|Win32
+		{E388C8F0-8DB6-44C6-8286-8423706F25BB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E388C8F0-8DB6-44C6-8286-8423706F25BB}.Debug|Win32.Build.0 = Debug|Win32
+		{E388C8F0-8DB6-44C6-8286-8423706F25BB}.Debug|x64.ActiveCfg = Debug|Win32
+		{E388C8F0-8DB6-44C6-8286-8423706F25BB}.Release|Win32.ActiveCfg = Release|Win32
+		{E388C8F0-8DB6-44C6-8286-8423706F25BB}.Release|Win32.Build.0 = Release|Win32
+		{E388C8F0-8DB6-44C6-8286-8423706F25BB}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
