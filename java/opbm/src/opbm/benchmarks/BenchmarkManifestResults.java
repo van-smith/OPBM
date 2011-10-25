@@ -207,6 +207,10 @@ public class BenchmarkManifestResults
 
 			// Add the attribute and data to this entry
 			annotation.appendAttribute(new Xml(attribute, data));
+
+			// Add the related worklet uuid (if not empty)
+			if (!manifestWorkletUuid.isEmpty())
+				annotation.appendAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
 		}
 	}
 

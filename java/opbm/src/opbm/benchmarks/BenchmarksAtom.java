@@ -1618,6 +1618,7 @@ public class BenchmarksAtom
 	{
 		String result;
 
+		m_bp.m_bm.getBMR().appendResultsAnnotation("runOnceOpbm", restartString, "");
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug("Setting registry key for current user startup");
 		result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", restartString);
@@ -1626,6 +1627,7 @@ public class BenchmarksAtom
 
 		if (result.equalsIgnoreCase("success"))
 		{	// Write the postboot RunOnce key
+			m_bp.m_bm.getBMR().appendResultsAnnotation("runOnceOpbmPostboot", Utils.getPostbootString(), "");
 			result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbmpostboot", Utils.getPostbootString());
 		}
 		return(result);

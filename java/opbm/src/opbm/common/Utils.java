@@ -1919,7 +1919,13 @@ public class Utils
 	 */
 	public static String getPostbootString()
 	{
-		return("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\"");
+		String fileName;
+
+		fileName = Opbm.getRunningDirectory() + "postboot.xml";
+		if (fileName.contains(" "))
+			fileName = "\"" + fileName + "\"";
+
+		return("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\" " + fileName);
 	}
 
 	public static void copyManifestDotXmlToManifestDateTimeDotXml()

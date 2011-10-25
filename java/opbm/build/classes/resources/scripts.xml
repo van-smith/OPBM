@@ -858,8 +858,13 @@
 					</options>
 				</abstract>
 			</atom>
-			<atom name="Reboot And Exit OPBM" shortname="OPBM">
-				<abstract name="Reboot And Terminate" shortname="Exit" sourcename="rebootAndTerminate"></abstract>
+			<atom name="Reboot And Only Launch OPBM" shortname="rebootl">
+				<abstract name="Reboot And Only Launch OPBM" shortname="reboot" sourcename="rebootAndTerminate"></abstract>
+			</atom>
+			<atom name="Reboot, Launch OPBM and Restart Benchmark" shortname="rcontinue">
+				<abstract shortname="rcontinue" sourcename="rebootAndContinue" name="Reboot, Launch OPBM and Restart Benchmark">
+					<options></options>
+				</abstract>
 			</atom>
 			<atom name="Simulate Failure" shortname="Sim">
 				<abstract name="Simulate Failure" shortname="Fail" sourcename="execute">
@@ -1150,7 +1155,7 @@
 				</abstract>
 			</atom>
 			<atom name="Standalone Startup Settle Down" shortname="ssettle">
-				<abstract shortname="sreboot" sourcename="rebootAndContinue" name="System Reboot">
+				<abstract name="System Reboot" shortname="sreboot" sourcename="rebootAndContinue">
 					<options></options>
 				</abstract>
 				<abstract name="Standalone Startup Settle Down" shortname="ssettle" sourcename="execute">
@@ -1185,7 +1190,7 @@
 				</abstract>
 			</atom>
 			<atom name="Standalone Reboot Time" shortname="stime">
-				<abstract shortname="sreboot" sourcename="rebootAndContinue" name="System Reboot">
+				<abstract name="System Reboot" shortname="sreboot" sourcename="rebootAndContinue">
 					<options></options>
 				</abstract>
 				<abstract name="Standalone Reboot Time" shortname="stime" sourcename="execute">
