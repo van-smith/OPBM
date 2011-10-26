@@ -1,6 +1,6 @@
 //////////
 //
-// DllMain.cpp
+// opbm64/DllMain.cpp
 //
 /////
 //
@@ -288,7 +288,6 @@
 
 
 
-
 //////////
 //
 // dir = getCSIDLDirectory()
@@ -336,6 +335,59 @@
 		// Create the return variable
 		directory = env->NewStringUTF( dirname );
 		return(directory);
+	}
+
+
+
+
+//////////
+//
+// fullpath = getCompressedPathname()
+//
+// Called to return a compressed version of the specified pathname, which
+// compresses the c:\\some\\..\\dir\\file.ext to c:\\dir\\file.ext.
+//
+/////
+	// getCompressedPathname()
+	JNIEXPORT jstring JNICALL Java_opbm_Opbm_getCompressedPathname(JNIEnv* env, jclass cls, jstring str)
+	{
+		char		pathname[ MAX_PATH ];
+		const char* ccptr;
+		char*		cptr;
+		jboolean	isCopy;
+		jstring		compressedPathname;
+		int			length;
+
+		// Initialize the variable
+		memset(pathname, 0, sizeof(pathname));
+
+		// Allocate the variable
+		length	= env->GetStringLength(str);
+		if (length != 0)
+		{
+			ccptr = env->GetStringUTFChars(str, &isCopy);		// returns const char*
+			if (ccptr != NULL)
+			{
+				cptr = (char*)malloc(length + 1);				// returns char*
+				if (cptr != NULL)
+				{
+					memset(cptr, 0, length + 1);
+					memcpy(cptr, ccptr, length);
+
+					// Get the compressed/truncated path
+					GetCompressedPathname(pathname, sizeof(pathname), cptr, length);
+
+					// Release the non-const memory
+					free(cptr);
+				}
+				// free(ccptr) is what the next line does:
+				env->ReleaseStringUTFChars(str, ccptr);
+			}
+		}
+
+		// Create the return variable
+		compressedPathname = env->NewStringUTF( pathname );
+		return(compressedPathname);
 	}
 
 

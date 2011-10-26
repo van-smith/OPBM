@@ -56,6 +56,7 @@
 	void			GetSettingsDirectory			(char* dirname, int dirnameLength);
 	void			GetRunningDirectory				(char* dirname, int dirnameLength);
 	void			GetCSIDLDirectory				(char* dirname, int dirnameLength, char* csidl_name);
+	void			GetCompressedPathname			(char* compressedPathname, int compressedPathnameSize, char* uncompressedPathname, int uncompressedPathnameLength);
 	char*			GetRegistryKeyValue				(char* key);
 	char*			GetRegistryKeyValueWOW64		(char* key);
 	char*			GetRegistryKeyValueWOW32		(char* key);

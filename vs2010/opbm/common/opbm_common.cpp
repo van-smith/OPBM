@@ -454,6 +454,48 @@ void GetCSIDLDirectory(char* dirname, int dirnameLength, char* csidl_name)
 }
 
 
+// Compresses a pathname, as in c:\\some\\..\\dir\\file.ext to c:\\dir\\file.ext
+void GetCompressedPathname(char* compressedPathname, int compressedPathnameSize, char* uncompressedPathname, int uncompressedPathnameLength)
+{
+	char*	iptr;		// Incoming pathname pointer
+	int		ioffset;	// How far we are into iptr
+	char*	optr;		// Outgoing pathname pointer
+	int		ooffset;	// How far we are into optr
+
+	iptr	= uncompressedPathname;
+	ioffset	= 0;
+	optr	= compressedPathname;
+	ooffset	= 0;
+
+	// Copy from uncompressed Pathname
+	while (ioffset < uncompressedPathnameLength)
+	{	// We continue searching for "\.." portions until we can no longer accommodate them (as we are too close to the end of the pathname)
+		if ((uncompressedPathnameLength - ioffset) >= 3 && _strnicmp(iptr + ioffset, "\\..", 3) == 0)
+		{	// We found an instance where the parent directory is referenced
+			// Go backwards until we meet its location, or the beginning
+			while (ooffset > 0 && *(optr + ooffset) != '\\')
+			{	// We're looking for the preceding \ character
+				--ooffset;
+			}
+			// When we get here, we're sitting at the preceding \ character, or at the beginning of the pathname
+			ioffset += 3;
+
+		} else {
+			// Copy this character
+			if (ooffset < compressedPathnameSize)
+			{	// There's room to copy this character
+				*(optr + ooffset) = *(iptr + ioffset);
+				++ooffset;
+			}
+			++ioffset;
+		}
+	}
+	// When we get here, everything is copied (at least everything that would fit in the allocated output pathname space)
+	if (ooffset < compressedPathnameSize)
+		*(optr + ooffset) = 0;	// NULL terminate
+}
+
+
 
 
 //////////

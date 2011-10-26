@@ -1935,7 +1935,7 @@ public class Utils
 		if (fileName.contains(" "))
 			fileName = "\"" + fileName + "\"";
 
-		return("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\" " + fileName);
+		return(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\" " + fileName));
 	}
 
 	public static void copyManifestDotXmlToManifestDateTimeDotXml()

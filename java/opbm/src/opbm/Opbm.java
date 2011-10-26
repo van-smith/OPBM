@@ -90,6 +90,7 @@ public final class Opbm extends	ModalApp
 	public native static String		getSettingsDirectory();						// Returns c:\\users\\user\\documents\\opbm\\settings\\
 	public native static String		getRunningDirectory();						// Returns c:\\users\\user\\documents\\opbm\\running\\
 	public native static String		getCSIDLDirectory(String name);				// Returns directory specified by the CSIDL option
+	public native static String		getCompressedPathname(String name);			// Returns the compressed pathname form, as in c:\\some\\..\\dir\\file.ext actually being c:\\dir\\file.ext
 	// End Note
 	public native static int		getComponentHWND(Component c);				// Returns the HWND for the specified component, or -1 if does not exist
 	public native static int		setMinMaxResizeBoundaries(int hwnd, int minWidth, int minHeight, int maxWidth, int maxHeight, int desktopWidth, int desktopHeight);	// Sets a window to never be resized above or below these minimum widths/heights
@@ -3244,6 +3245,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.26 05:06am";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.26 02:48pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

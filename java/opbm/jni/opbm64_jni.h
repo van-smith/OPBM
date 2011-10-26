@@ -81,6 +81,14 @@ JNIEXPORT jstring JNICALL Java_opbm_Opbm_getCSIDLDirectory
 
 /*
  * Class:     opbm_Opbm
+ * Method:    getCompressedPathname
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_opbm_Opbm_getCompressedPathname
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     opbm_Opbm
  * Method:    getComponentHWND
  * Signature: (Ljava/awt/Component;)I
  */
