@@ -696,6 +696,19 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
+	public void setResultsViewerFilename(String resultsXmlFilename)
+	{
+		m_rvFilename = resultsXmlFilename;
+	}
+
+	public String getResultsViewerFilename()
+	{
+		if (m_rvFilename == null)
+			return("");
+		else
+			return(m_rvFilename);
+	}
+
 	/**
 	 * Creates the Results Viewer
 	 */
@@ -2191,7 +2204,7 @@ public final class Opbm extends	ModalApp
 		if (bm.isManifestInError())
 			od = new OpbmDialog(m_opbm, "There was an error while processing manifest.xml", "Error", OpbmDialog._CANCEL_BUTTON, "", "");
 		else
-			createAndShowResultsViewer(Opbm.getHarnessXMLDirectory() + "results.xml");
+			createAndShowResultsViewer(Opbm.getHarnessXMLDirectory() + getResultsViewerFilename());
 	}
 
 	public void benchmarkLaunchTrialRun(boolean automated)
@@ -2613,21 +2626,25 @@ public final class Opbm extends	ModalApp
 		{	// They are running an atom
 			atom = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 			bm.addToCompiledList("atom", atom.getAttribute("name"), iterations);
+			m_executingBenchmarkRunName = "Atom " + atom.getAttribute("name");
 
 		} else if (((String)tup.getSecond("type")).equalsIgnoreCase("molecule"))
 		{	// Running a molecule
 			molecule = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 			bm.addToCompiledList("molecule", molecule.getAttribute("name"), iterations);
+			m_executingBenchmarkRunName = "Molecule " + molecule.getAttribute("name");
 
 		} else if (((String)tup.getSecond("type")).equalsIgnoreCase("scenario"))
 		{	// Running a scenario
 			scenario = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 			bm.addToCompiledList("scenario", scenario.getAttribute("name"), iterations);
+			m_executingBenchmarkRunName = "Scenario " + scenario.getAttribute("name");
 
 		} else if (((String)tup.getSecond("type")).equalsIgnoreCase("suite"))
 		{	// Running a suite
 			suite = m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 			bm.addToCompiledList("suite", suite.getAttribute("name"), iterations);
+			m_executingBenchmarkRunName = "Suite " + suite.getAttribute("name");
 
 		} else {
 			// Unknown type
@@ -3042,18 +3059,19 @@ public final class Opbm extends	ModalApp
 				String uuid;
 				uuid = OpbmDialog.simpleDialog(m_opbm, "Creating Debug Info...please wait", "Gather Debug Info", 0);
 
-				Xml root			= new Xml("opbm");
+				Xml root				= new Xml("opbm");
 				root.appendChild(new Xml("version", m_version));
-				Xml debugInfo		= root.appendChild(new Xml("debugInfo"));
-				Xml machineInfo		= root.appendChild(new Xml("machineInfo"));
-				Xml settings		= debugInfo.appendChild(new Xml("settingsDotXml"));
-				Xml manifest		= debugInfo.appendChild(new Xml("manifestDotXml"));
-				Xml manifestFile	= Opbm.loadXml(Opbm.getRunningDirectory() + "manifest.xml", m_opbm);
-				Xml results			= debugInfo.appendChild(new Xml("resultsDotXml"));
-				Xml resultsFile		= Opbm.loadXml(Opbm.getHarnessXMLDirectory() + "results.xml", m_opbm);
-				Xml scripts			= debugInfo.appendChild(new Xml("scriptsDotXml"));
-				Xml edits			= debugInfo.appendChild(new Xml("editsDotXml"));
-				Xml panels			= debugInfo.appendChild(new Xml("panelsDotXml"));
+				Xml debugInfo			= root.appendChild(new Xml("debugInfo"));
+				Xml machineInfo			= root.appendChild(new Xml("machineInfo"));
+				Xml settings			= debugInfo.appendChild(new Xml("settingsDotXml"));
+				Xml manifest			= debugInfo.appendChild(new Xml("manifestDotXml"));
+				Xml manifestFile		= Opbm.loadXml(Opbm.getRunningDirectory() + "manifest.xml", m_opbm);
+				Xml results				= debugInfo.appendChild(new Xml("resultsDotXml"));
+				String resultsXmlFile	= Opbm.getHarnessXMLDirectory() + Utils.getMostRecentResultsXmlFile(m_opbm);
+				Xml resultsFile			= Opbm.loadXml(resultsXmlFile, m_opbm);
+				Xml scripts				= debugInfo.appendChild(new Xml("scriptsDotXml"));
+				Xml edits				= debugInfo.appendChild(new Xml("editsDotXml"));
+				Xml panels				= debugInfo.appendChild(new Xml("panelsDotXml"));
 
 				Utils.appendJavaInfo(machineInfo);
 
@@ -3073,11 +3091,12 @@ public final class Opbm extends	ModalApp
 
 				if (resultsFile != null)
 				{	// Results.xml file was loaded
+					results.appendAttribute("filename", resultsXmlFile);
 					results.appendChild(resultsFile.cloneNode(true));
 				} else {
 					// Results.xml file was not found
 					Xml error = manifest.appendChild(new Xml("error"));
-					error.addAttribute("fileNotFound", "results.xml");
+					error.addAttribute("fileNotFound", "[A valid results*.xml file]");
 				}
 
 				String filename	 = Utils.convertFilenameToLettersAndNumbersOnly("debugInfo_" + Utils.getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()) + ".xml";
@@ -3217,7 +3236,7 @@ public final class Opbm extends	ModalApp
 	public static boolean			m_breakpointsEnabled;						// Used for debugging (An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not)
 	public static boolean			m_debugSimulateRunAtomMode;					// Used for debugging (An internal debugger flag, to bypass normal operations and simulate successes during testing)
 	public static double			m_debugSimulateRunAtomModeFailurePercent;	// Used for debugging (An internal debugger value, to determine how many tests (on average) should fail)
-	public static String			m_lastLoadXmlError;							//
+	public static String			m_lastLoadXmlError;							// Used during load, to help determine the cause of the requisite xml file which failed to load
 	public static String			m_jvmHome					= Utils.getPathToJavaDotExe();
 
 	// Synchronization items used for various wait-until-all-parts-are-completed operations
@@ -3225,6 +3244,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.25 03:34pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.26 05:06am";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

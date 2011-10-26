@@ -56,13 +56,13 @@
 			</heading>
 			<menu>
 				<text>Results Viewer</text>
-				<command>run_results_viewer</command>
-				<tooltip>Load the Results Viewer on the last run benchmark.</tooltip>
+				<command>prompt_run_results_viewer</command>
+				<tooltip>Loads the most recent results file into the Results Viewer.</tooltip>
 			</menu>
 			<menu>
 				<text>Results Viewer (Choose)</text>
 				<command>prompt_run_results_viewer</command>
-				<tooltip>Asks the user to select a Results Viewer file, and then loads the Results Viewer for that file.</tooltip>
+				<tooltip>Prompts the user for a results file to load into the Results Viewer.</tooltip>
 			</menu>
 			<menu>
 				<text>Gather Debug Info</text>

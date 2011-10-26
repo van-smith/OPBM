@@ -210,7 +210,16 @@ public final class ResultsViewer
 		m_lblScoreboardRunResultsFailures.setText(failures);
 		m_lblScoreboardRunResultsFailures.setToolTipText("There " + Utils.singularOrPlural(m_rootRVL.getComputedFailures(), "was", "were") + " " + failures + " " + Utils.singularOrPlural(m_rootRVL.getComputedFailures(), "failure", "failures"));
 
+		// Show the run's name
 		m_lblRunName.setText(m_runName);
+		if (m_runName.length() > "This is a long name".length())
+		{	// The name is long, so make it left-justified so it will be appended with "..."
+			m_lblRunName.setHorizontalAlignment(JLabel.LEFT);
+		} else {
+			// The name is short, so make it centered
+			m_lblRunName.setHorizontalAlignment(JLabel.CENTER);
+		}
+		m_lblRunName.setToolTipText(m_runName);
 	}
 
 	public void renderBottom()
@@ -708,13 +717,15 @@ public final class ResultsViewer
 		m_imgScoreboardInternal2Mask = new AlphaImage(Opbm.locateFile("scoreboard_internal2.png"));
 		m_imgBackground.darkenByAlphaMask(m_imgScoreboardInternal1Mask, 26, 74, 26+126, 74+159);
 
-		// Create the name space text, which isn't really on the scoreboard, but is updated in the same method
+		// Create the name space text (upper-right area, which holds the run name),
+		// which isn't really part of the physical scoreboard, but is related and
+		// is, therefore, updated in the same method.
 		m_lblRunName = new JLabel();
 		m_lblRunName.setBounds(790, 0, 210, 48);
 		m_lblRunName.setHorizontalAlignment(JLabel.CENTER);
 		m_lblRunName.setVerticalAlignment(JLabel.CENTER);
 		m_lblRunName.setForeground(Color.white);
-		m_lblRunName.setFont(new Font("Calibri", Font.BOLD, 24));
+		m_lblRunName.setFont(new Font("Calibri", Font.BOLD, 22));
 		m_lblRunName.setOpaque(false);
 		m_lblRunName.setVisible(true);
 		m_pan.add(m_lblRunName);

@@ -411,7 +411,7 @@ public class Benchmarks
 
 		// Introduced for the new BenchmarkManifest method of running benchmarks, output always goes to results.xml
 		// The filename for the generated out
-		fileName = Opbm.getHarnessXMLDirectory() + "results.xml";
+		fileName = m_opbm.getResultsViewerFilename();
 
 		// Close the benchmark run
 		m_bp.m_opbm.setRunFinished();
@@ -525,7 +525,7 @@ public class Benchmarks
 	public void addStandardResultAttributes(Xml result)
 	{
 		result.appendAttribute("datetime",	Utils.getDateTimeAs_Mmm_DD__YYYY_at_HH_MMampm());	// Jul 04, 2011 at 11:56am
-		result.appendAttribute("name",		"OPBM Benchmark");
+		result.appendAttribute("name",		m_opbm.getRunName());
 		result.appendAttribute("shortname",	"unnamed");
 		result.appendAttribute("tags",		"");
 		result.appendAttribute("tested",	"yes");

@@ -1285,7 +1285,7 @@ public class BenchmarkManifestResults
 	 */
 	public void computeResultsViewerTotalsAndGenerateCSVFile()
 	{
-		String point, sourcename, manifestworkletuuid, atomuuid, datetime;
+		String point, sourcename, manifestworkletuuid, atomuuid, datetime, rootFile, xmlFile, csvFile;
 		Xml run, child, rootXml, resultsDataXml, resultXml, runN, newRunN;
 		Xml lastSuiteXml, lastScenarioXml, lastMoleculeXml, lastAtomXml;
 		Xml worklet, result, timing, newWorklet, instanceResult;
@@ -1542,8 +1542,14 @@ public class BenchmarkManifestResults
 		}
 
 		// Save results.xml
-		rootXml.saveNode(Opbm.getHarnessXMLDirectory() + "results.xml");
-		Utils.writeTerminatedLinesToFile(Opbm.getHarnessCSVDirectory() + "results.csv", csvLines);
+		rootFile	= "results_" + Utils.convertFilenameToLettersAndNumbersOnly(Utils.getDateTimeAs_YYYY_MM_DD_at_HH_MM_SS() + "_" + m_opbm.getRunName());
+		xmlFile		= Opbm.getHarnessXMLDirectory() + rootFile + ".xml";
+		csvFile		= Opbm.getHarnessCSVDirectory() + rootFile + ".csv";
+
+		// Save the XML and CSV files
+		m_opbm.setResultsViewerFilename(xmlFile);
+		rootXml.saveNode(xmlFile);
+		Utils.writeTerminatedLinesToFile(csvFile, csvLines);
 	}
 
 	/**

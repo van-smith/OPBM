@@ -862,7 +862,7 @@
 				<abstract name="Reboot And Only Launch OPBM" shortname="reboot" sourcename="rebootAndTerminate"></abstract>
 			</atom>
 			<atom name="Reboot, Launch OPBM and Restart Benchmark" shortname="rcontinue">
-				<abstract shortname="rcontinue" sourcename="rebootAndContinue" name="Reboot, Launch OPBM and Restart Benchmark">
+				<abstract name="Reboot, Launch OPBM and Restart Benchmark" shortname="rcontinue" sourcename="rebootAndContinue">
 					<options></options>
 				</abstract>
 			</atom>
@@ -1227,8 +1227,8 @@
 		</atoms>
 		<molecules>
 			<molecule name="Bootup Data" shortname="bootdata">
-				<atom name="Official Run Startup Settle Down" shortname="settle" sourcename="Startup Settle Down"></atom>
-				<atom name="Official Run Reboot Time" shortname="time" sourcename="Reboot Time"></atom>
+				<atom name="Official Run Startup Settle Down" shortname="settle" sourcename="Official Run Startup Settle Down"></atom>
+				<atom name="Official Run Reboot Time" shortname="time" sourcename="Official Run Reboot Time"></atom>
 			</molecule>
 			<molecule name="Install Applications" shortname="Install">
 				<atom name="Install 7zip" shortname="7zip" sourcename="Install 7zip"></atom>

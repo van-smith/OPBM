@@ -208,9 +208,9 @@ public class Macros
 				} else if (macro.equalsIgnoreCase("manifest.xml")) {
 					macroSubstitution = Opbm.getRunningDirectory() + "manifest.xml";
 				} else if (macro.equalsIgnoreCase("results.xml")) {
-					macroSubstitution = Opbm.getHarnessXMLDirectory() + "results.xml";
+					macroSubstitution = Opbm.getHarnessXMLDirectory() + Utils.getMostRecentResultsXmlFile(m_opbm);
 				} else if (macro.equalsIgnoreCase("results.csv")) {
-					macroSubstitution = Opbm.getHarnessCSVDirectory() + "results.csv";
+					macroSubstitution = Opbm.getHarnessCSVDirectory() + Utils.getMostRecentResultsCsvFile(m_opbm);
 
 	//////////
 	// Unrecognized, remove its invalid contents

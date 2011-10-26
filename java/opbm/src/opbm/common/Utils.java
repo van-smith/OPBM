@@ -997,6 +997,16 @@ public class Utils
 	}
 
 	/**
+	 * Sortable time 20110704_2356
+	 * @return
+	 */
+	public static String getDateTimeAs_YYYY_MM_DD_at_HH_MM_SS()
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd 'at' kk mm ss");
+		return(sdf.format(new Date()));
+	}
+
+	/**
 	 * Extract all of the capital letters and first characters after spaces
 	 * @param longName source name, as in "This is an Example"
 	 * @param maxLength maximum length to construct for the short name
@@ -1969,6 +1979,86 @@ public class Utils
 		} catch (IOException ex) {
 			System.out.println("Unable to copy file " + sourceFilename + " to " + destFilename);
 		}
+	}
+
+	/**
+	 * Iterates through the harness xml directory (opbm\results\xml\) to find
+	 * the newest results*.xml file, and returns its filename
+	 * @param opbm
+	 * @return
+	 */
+	public static String getMostRecentResultsXmlFile(Opbm opbm)
+	{
+		return(getMostRecentFile(opbm, opbm.getResultsViewerFilename(), Opbm.getHarnessXMLDirectory(), "results", ".xml"));
+	}
+
+	/**
+	 * Iterates through the harness csv directory (opbm\results\csv\) to find
+	 * the newest results*.csv file, and returns its filename
+	 * @param opbm
+	 * @return
+	 */
+	public static String getMostRecentResultsCsvFile(Opbm opbm)
+	{
+		return(getMostRecentFile(opbm, opbm.getResultsViewerFilename(), Opbm.getHarnessCSVDirectory(), "results", ".csv"));
+	}
+
+	/**
+	 * Iterates through the specified directory to find the newest file matching
+	 * the specified filename pattern, for the start of the file, and the end
+	 * of the file, as in "results" and ".xml" to include everything beginning
+	 * with "results" and ending with ".xml", with anything valid between.
+	 *
+	 * Note:  Does not return the path, only the filename in the specified path.
+	 *
+	 * @param opbm
+	 * @param defaultFilename
+	 * @param pathToFiles
+	 * @param filenameStart
+	 * @param filenameEnd
+	 * @return
+	 */
+	public static String getMostRecentFile(Opbm			opbm,
+										   String		defaultFilename,
+										   String		pathToFiles,
+										   String		filenameStart,
+										   String		filenameEnd)
+	{
+		int i;
+		long lastModified;
+		String fileName;
+		File directory, thisFile;
+		String[] files;
+
+		// Grab the contents of the directory
+		directory	= new File(pathToFiles);
+		files		= directory.list();
+
+		// Default to the specified file (just in case)
+		fileName	= defaultFilename;
+
+		// See if anything was found
+		if (files != null)
+		{	// Iterate through the files there for the most recent results.xml file
+			lastModified = Long.MIN_VALUE;
+			for (i = 0; i < files.length; i++)
+			{	// Get filename of file or directory
+				if (files[i].toLowerCase().startsWith(filenameStart) && files[i].toLowerCase().endsWith(filenameEnd))
+				{	// Grab this results*.xml file, and see its date
+					thisFile = new File(files[i]);
+					if (thisFile != null)
+					{	// Find out the date of this file
+						if (thisFile.lastModified() > lastModified)
+						{	// We found a newer one
+							lastModified	= thisFile.lastModified();
+							fileName		= files[i];
+						}
+					}
+				}
+			}
+			// When we get here, we have our filename
+		}
+		return(fileName);
 	}
 
 

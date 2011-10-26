@@ -338,7 +338,7 @@ public class Commands
 			m_opbm.createAndShowResultsViewer("resultsample.xml");
 
 		} else if (command.equals("run_results_viewer")) {
-			m_opbm.createAndShowResultsViewer(Opbm.getHarnessXMLDirectory() + "results.xml");
+			m_opbm.createAndShowResultsViewer(Opbm.getHarnessXMLDirectory() + Utils.getMostRecentResultsXmlFile(m_opbm));
 
 		} else if (command.equals("prompt_run_results_viewer")) {
 			fileName = Utils.promptForFilename(".xml", "Results XML Files", "Please Select A Results File", m_opbm, Opbm.getHarnessXMLDirectory());
