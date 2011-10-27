@@ -1654,7 +1654,8 @@ public class BenchmarksAtom
 					   boolean		saveStateBeforeReboot)
 	{
 		int i, max;
-		Process process;
+		String fileName;
+		Process preboot, process;
 
 		// Restore the user's registry key settings
 		Opbm.Office2010RestoreKeys();
@@ -1698,6 +1699,15 @@ public class BenchmarksAtom
 // End
 //////////
 
+			// Launch the preboot.exe process, which will run continuously until the reboot occurs
+			if (m_bp != null && m_bp.m_hud != null)
+				m_bp.m_hud.updateStatus("Launching prebooter...");
+			fileName = Opbm.getRunningDirectory() + "preboot.xml";
+			if (fileName.contains(" "))
+				fileName = "\"" + fileName + "\"";
+			preboot = Runtime.getRuntime().exec(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\preboot.exe\" " + fileName));
+
+			// Launch the Windows shutdown process
 			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /r");
 
 			// Grab the output
