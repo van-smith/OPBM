@@ -62,6 +62,8 @@
 package opbm.benchmarks;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import opbm.Opbm;
 import opbm.common.Tuple;
@@ -1758,6 +1760,61 @@ public class BenchmarkManifestResults
 			// The result
 			result = "0.00000000000";
 		}
+		return(result);
+	}
+
+	public String getLastPrebootPostbootRebootTime()
+	{
+		String prebootXmlFilename, postbootXmlFilename, result;
+		Xml preboot, postboot;
+		String preYear, preMonth, preDay, preHour, preMinute, preSecond;
+		String postYear, postMonth, postDay, postHour, postMinute, postSecond;
+		Date preDate, postDate;
+
+		prebootXmlFilename	= Utils.getPrebootXmlFilename();
+		postbootXmlFilename	= Utils.getPostbootXmlFilename();
+
+		preboot		= Opbm.loadXml(prebootXmlFilename,	m_opbm);
+		postboot	= Opbm.loadXml(postbootXmlFilename,	m_opbm);
+
+		result = "0.00000000000";
+		if (preboot != null && postboot != null)
+		{
+			preYear		= preboot.getChild("opbm.time.year");
+			preMonth	= preboot.getChild("opbm.time.month");
+			preDay		= preboot.getChild("opbm.time.day");
+			preHour		= preboot.getChild("opbm.time.hh");
+			preMinute	= preboot.getChild("opbm.time.mm");
+			preSecond	= preboot.getChild("opbm.time.ss");
+
+			postYear	= postboot.getChild("opbm.time.year");
+			postMonth	= postboot.getChild("opbm.time.month");
+			postDay		= postboot.getChild("opbm.time.day");
+			postHour	= postboot.getChild("opbm.time.hh");
+			postMinute	= postboot.getChild("opbm.time.mm");
+			postSecond	= postboot.getChild("opbm.time.ss");
+
+			if (preYear  != null && preMonth  != null && preDay  != null && preHour  != null && preMinute  != null && preSecond  != null &&
+				postYear != null && postMonth != null && postDay != null && postHour != null && postMinute != null && postSecond != null)
+			{	// We're good
+				preDate		= Utils.createDate(Utils.getValueOf(preYear, 0),
+											   Utils.getValueOf(preMonth, 0),
+											   Utils.getValueOf(preDay, 0),
+											   Utils.getValueOf(preHour, 0),
+											   Utils.getValueOf(preMinute, 0),
+											   Utils.getValueOf(preSecond, 0));
+
+				postDate	= Utils.createDate(Utils.getValueOf(postYear, 0),
+											   Utils.getValueOf(postMonth, 0),
+											   Utils.getValueOf(postDay, 0),
+											   Utils.getValueOf(postHour, 0),
+											   Utils.getValueOf(postMinute, 0),
+											   Utils.getValueOf(postSecond, 0));
+
+				result = Long.toString((postDate.getTime() - preDate.getTime()) / 1000);
+			}
+		}
+
 		return(result);
 	}
 

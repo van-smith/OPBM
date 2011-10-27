@@ -352,8 +352,24 @@ public class BenchmarkParams
 
 		if (command.equalsIgnoreCase("record_reboot_time"))
 		{	// They want the time between the last reboot and restart recorded
-			result	= m_bm.getBMR().getLastRebootTime();
-			line	= "timing,Reboot Time," + result + "," + getRebootTimeScore(result);
+// We can use the time recorded in the manifest.xml annotations, using this algorithm:
+//			result	= m_bm.getBMR().getLastRebootTime();
+//			if (Double.valueOf(result) == 0.0)
+//				line = "timing,OPBM Shutdown to Restart Time," + result + ",0.0";
+//			else
+//				line = "timing,OPBM Shutdown to Restart Time," + result + "," + Double.toString(150.0 * 100.0 / Double.valueOf(result));
+//			m_outputArray.add(Utils.getTimestamp() + ": " + line);
+//			m_hud.updateTiming(line.substring(7), line);		// Update the status display with this information
+
+			// Compute from the preboot.xml and postboot.xml times
+			result	= m_bm.getBMR().getLastPrebootPostbootRebootTime();
+			if (result.equalsIgnoreCase("failure"))
+			{	// Failure
+				line = "timing,Reboot Time,0.000000000,0.0";
+			} else {
+				// Success
+				line = "timing,Reboot Time," + result + "," + Double.toString(150.0 * 100.0 / Double.valueOf(result));
+			}
 			m_outputArray.add(Utils.getTimestamp() + ": " + line);
 			m_hud.updateTiming(line.substring(7), line);		// Update the status display with this information
 
@@ -361,15 +377,6 @@ public class BenchmarkParams
 			// Unknown command
 			System.out.println("Ignoring unknown internal command: " + command);
 		}
-	}
-
-	//
-	public String getRebootTimeScore(String seconds)
-	{
-		Double value = Double.valueOf(seconds);
-
-		// Baseline score for reboot time is 150.0 seconds
-		return(Double.toString(150.0 * 100.0 / value));
 	}
 
 	public Opbm					m_opbm;

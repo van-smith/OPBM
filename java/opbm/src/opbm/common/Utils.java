@@ -1931,11 +1931,39 @@ public class Utils
 	{
 		String fileName;
 
-		fileName = Opbm.getRunningDirectory() + "postboot.xml";
+		fileName = getPostbootXmlFilename();
 		if (fileName.contains(" "))
 			fileName = "\"" + fileName + "\"";
 
 		return(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\" " + fileName));
+	}
+
+	public static String getPostbootXmlFilename()
+	{
+		String fileName;
+
+		fileName = Opbm.getRunningDirectory() + "postboot.xml";
+		if (fileName.contains(" "))
+			fileName = "\"" + fileName + "\"";
+		return(fileName);
+	}
+
+	public static String getPrebootString()
+	{
+		String fileName;
+
+		fileName = getPrebootXmlFilename();
+		return(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\preboot.exe\" " + fileName));
+	}
+
+	public static String getPrebootXmlFilename()
+	{
+		String fileName;
+
+		fileName = Opbm.getRunningDirectory() + "preboot.xml";
+		if (fileName.contains(" "))
+			fileName = "\"" + fileName + "\"";
+		return(fileName);
 	}
 
 	public static void copyManifestDotXmlToManifestDateTimeDotXml()
@@ -2059,6 +2087,26 @@ public class Utils
 			// When we get here, we have our filename
 		}
 		return(fileName);
+	}
+
+	/**
+	 * Creates a Date class instance for the specified integer inputs
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @param hour
+	 * @param minute
+	 * @param second
+	 * @return
+	 */
+	public static Date createDate(int	year,
+								  int	month,
+								  int	day,
+								  int	hour,
+								  int	minute,
+								  int	second)
+	{
+		return(new Date(year - 1900, month - 1, day - 1, hour, minute, second));
 	}
 
 
