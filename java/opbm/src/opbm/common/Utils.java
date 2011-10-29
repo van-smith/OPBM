@@ -1932,9 +1932,6 @@ public class Utils
 		String fileName;
 
 		fileName = getPostbootXmlFilename();
-		if (fileName.contains(" "))
-			fileName = "\"" + fileName + "\"";
-
 		return(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\" " + fileName));
 	}
 
