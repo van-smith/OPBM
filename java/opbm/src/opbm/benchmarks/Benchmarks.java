@@ -56,8 +56,7 @@ public class Benchmarks
 		m_opbm.setTrialRun();
 		if (!automated)
 		{	// User is manually keying the benchmark, so give them the dialog option
-			OpbmInput oi = new OpbmInput(m_opbm, "Trial Run", "Assign a name to this Trial Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "trial", "", "", "Go", "", "launch_trial_run");
-			oi.setSingleLineInput(true);
+			OpbmInput oi = new OpbmInput(m_opbm, "Trial Run", "Assign a name to this Trial Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "trial", "", "", "Go", "", "launch_trial_run", true);
 
 		} else {
 			// For automated processes, we go right to it
@@ -137,8 +136,7 @@ public class Benchmarks
 		m_opbm.setOfficialRun();
 		if (!automated)
 		{	// User is manually keying the benchmark, so give them the dialog option
-			OpbmInput oi = new OpbmInput(m_opbm, "Official Run", "Assign a name to this Official Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "official", "", "", "Go", "", "launch_official_run");
-			oi.setSingleLineInput(true);
+			OpbmInput oi = new OpbmInput(m_opbm, "Official Run", "Assign a name to this Official Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "official", "", "", "Go", "", "launch_official_run", true);
 
 		} else {
 			// For automated processes, we go right to it

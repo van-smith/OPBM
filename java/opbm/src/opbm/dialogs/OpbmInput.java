@@ -39,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import opbm.Opbm;
 import opbm.common.Tuple;
 import opbm.common.Utils;
@@ -56,7 +57,8 @@ public final class OpbmInput
 					 String		initValue,
 					 int		buttons,
 					 String		id,
-					 String		triggerCommand)
+					 String		triggerCommand,
+					 boolean	singleLine)
 	{
 		m_opbm				= opbm;
 		m_caption			= caption;
@@ -77,8 +79,8 @@ public final class OpbmInput
 		{	// They didn't specify an ID, so use the generic one
 			id = "input";
 		}
-		m_id			= id;
-		m_singleLineInput	= false;
+		m_id				= id;
+		m_singleLineInput	= singleLine;
 		m_opbm.initializeDialogResponse(id, triggerCommand, null, this);
 		createInputWindow();
 	}
@@ -93,18 +95,19 @@ public final class OpbmInput
 					 String		cancelButtonText,
 					 String		acceptButtonText,
 					 String		okayButtonText,
-					 String		triggerCommand)
+					 String		triggerCommand,
+					 boolean	singleLine)
 	{
-		m_opbm			= opbm;
-		m_caption		= caption;
-		m_label			= label;
+		m_opbm				= opbm;
+		m_caption			= caption;
+		m_label				= label;
 
 		if (initValue == null)
-			m_initValue = "";
+			m_initValue	 = "";
 		else
-			m_initValue	= initValue;
+			m_initValue		= initValue;
 
-		m_buttons		= buttons;
+		m_buttons			= buttons;
 		m_nextButtonText	= nextButtonText.isEmpty()		? "Next"	: nextButtonText;
 		m_cancelButtonText	= cancelButtonText.isEmpty()	? "Cancel"	: cancelButtonText;
 		m_acceptButtonText	= acceptButtonText.isEmpty()	? "Accept"	: acceptButtonText;
@@ -114,7 +117,8 @@ public final class OpbmInput
 		{	// They didn't specify an ID, so use the generic one
 			id = "input";
 		}
-		m_id			= id;
+		m_id				= id;
+		m_singleLineInput	= singleLine;
 		m_opbm.initializeDialogResponse(id, triggerCommand, null, this);
 		createInputWindow();
 	}
@@ -125,6 +129,7 @@ public final class OpbmInput
 	public static String	m_si_initValue;
 	public static String	m_si_id;
 	public static String	m_si_triggerCommand;
+	public static Boolean	m_si_singleLine;
 	/**
 	 * Creates a simple input for inputting some value, with a post-user-action
 	 * trigger command
@@ -134,7 +139,8 @@ public final class OpbmInput
 								   String		label,
 								   String		initValue,
 								   String		id,
-								   String		triggerCommand)
+								   String		triggerCommand,
+								   boolean		singleLine)
 	{
 		m_si_opbm				= opbm;
 		m_si_label				= label;
@@ -142,6 +148,7 @@ public final class OpbmInput
 		m_si_initValue			= initValue;
 		m_si_id					= id;
 		m_si_triggerCommand		= triggerCommand;
+		m_si_singleLine			= singleLine;
 
 		Thread t = new Thread("simpleInput_" + m_si_id)
 		{
@@ -154,8 +161,9 @@ public final class OpbmInput
 				String	initValue		= m_si_initValue;
 				String	id				= m_si_id;
 				String	triggerCommand	= m_si_triggerCommand;
+				Boolean	singleLine		= m_si_singleLine;
 
-				OpbmInput oi = new OpbmInput(opbm, caption, label, initValue, OpbmInput._BUTTONS23, id, triggerCommand);
+				OpbmInput oi = new OpbmInput(opbm, caption, label, initValue, OpbmInput._BUTTONS23, id, triggerCommand, singleLine);
 			}
 		};
 		t.start();
@@ -169,7 +177,7 @@ public final class OpbmInput
 		int buttonCenters, buttonBackoff, buttonWidth, buttonCount, thisButton, buttonTop;
 
 		m_width		= 450;
-		m_height	= 250;
+		m_height	= m_singleLineInput ? /*single line*/180 : /*multi-line*/250;
 		m_frame		= new DroppableFrame(m_opbm, false, false);
 		m_frame.setTitle(m_caption.isEmpty() ? "OPBM Input" : m_caption);
 
@@ -204,7 +212,7 @@ public final class OpbmInput
 		m_pan.setVisible(true);
 		m_pan.setBorder(BorderFactory.createEmptyBorder());
 		c.add(m_pan);
-		AlphaImage img = new AlphaImage(Opbm.locateFile("input_background.png"));
+		AlphaImage img = new AlphaImage(Opbm.locateFile(m_singleLineInput ? "input_background_single_line.png" : "input_background.png"));
 
 		// Set the background image
 		m_lblBackground = new JLabel();
@@ -234,20 +242,34 @@ public final class OpbmInput
 		m_pan.moveToFront(m_lblLabel);
 
 		// Create the input box
-		m_txtInput			= new JTextArea();
-		m_txtInputScroll	= new JScrollPane(m_txtInput);
-		m_txtInputScroll.setBounds(15, 83, 421, 100);
-		m_txtInputScroll.setAutoscrolls(true);
-		m_txtInputScroll.setVisible(true);
-		m_txtInput.setFont(fontInput);
-		m_txtInput.setLineWrap(true);
-		m_txtInput.setWrapStyleWord(true);
-		m_txtInput.setTabSize(2);
-		m_txtInput.setText(m_initValue);
- 		m_txtInput.setVisible(true);
-		m_txtInput.addKeyListener(this);
-		m_pan.add(m_txtInputScroll);
-		m_pan.moveToFront(m_txtInputScroll);
+		if (m_singleLineInput)
+		{	// It's a single-line input box
+
+			m_txtInputSingleLine = new JTextField();
+			m_txtInputSingleLine.setBounds(15, 85, 421, 25);
+			m_txtInputSingleLine.setFont(fontInput);
+			m_txtInputSingleLine.setText(m_initValue);
+			m_txtInputSingleLine.setVisible(true);
+			m_txtInputSingleLine.addKeyListener(this);
+			m_pan.add(m_txtInputSingleLine);
+			m_pan.moveToFront(m_txtInputSingleLine);
+
+		} else {
+			m_txtInput			= new JTextArea();
+			m_txtInputScroll	= new JScrollPane(m_txtInput);
+			m_txtInputScroll.setBounds(15, 83, 421, 100);
+			m_txtInputScroll.setAutoscrolls(true);
+			m_txtInputScroll.setVisible(true);
+			m_txtInput.setFont(fontInput);
+			m_txtInput.setLineWrap(true);
+			m_txtInput.setWrapStyleWord(true);
+			m_txtInput.setTabSize(2);
+			m_txtInput.setText(m_initValue);
+			m_txtInput.setVisible(true);
+			m_txtInput.addKeyListener(this);
+			m_pan.add(m_txtInputScroll);
+			m_pan.moveToFront(m_txtInputScroll);
+		}
 
 		// Determine which buttons are specified
 		buttonCount = 0;
@@ -311,7 +333,7 @@ public final class OpbmInput
 
 		// Position the buttons
 		thisButton	= 1;
-		buttonTop	= 200;
+		buttonTop	= m_singleLineInput ? 130 : 200;
 		if (m_btnNext != null)
 		{	// Position and make visible this button
 			m_btnNext.setBounds( + (thisButton * buttonCenters) - buttonBackoff, buttonTop, buttonWidth, 40);
@@ -339,8 +361,15 @@ public final class OpbmInput
 
 		m_frame.setVisible(true);
 		m_frame.forceWindowToHaveFocus();
-		m_txtInput.requestFocusInWindow();
-		m_txtInput.selectAll();
+		if (m_singleLineInput)
+		{
+			m_txtInputSingleLine.requestFocusInWindow();
+			m_txtInputSingleLine.selectAll();
+
+		} else {
+			m_txtInput.requestFocusInWindow();
+			m_txtInput.selectAll();
+		}
 	}
 
 	/**
@@ -384,36 +413,6 @@ public final class OpbmInput
 
 		// Return the action and value
 		return(tup);
-	}
-
-	/**
-	 * Setting to allow only a single line input, no carriage return characters
-	 * @param setting true or false
-	 */
-	public void setSingleLineInput(boolean setting)
-	{
-		m_singleLineInput = setting;
-		validate_m_txtInput();
-	}
-
-	/**
-	 * Validates that the text in the m_txtInput field conforms to the
-	 * m_singleLineInput setting
-	 */
-	public void validate_m_txtInput()
-	{
-		String input, output;
-
-		if (m_singleLineInput)
-		{	// For single line input, no carriage returns
-			input	= m_txtInput.getText();
-			output	= Utils.removeAllCarriageReturnsAndLineFeeds(input);
-			if (!input.equals(output))
-			{	// Update it
-				m_txtInput.setText(output);
-				m_txtInput.setCaretPosition(output.length());
-			}
-		}
 	}
 
 	/**
@@ -464,7 +463,7 @@ public final class OpbmInput
 		if (e.getComponent() == m_btnNext)
 		{	// Next button was clicked
 			m_dialogResponse	= m_nextButtonText + "_button1";
-			m_dialogValue		= m_txtInput.getText();
+			m_dialogValue		= m_singleLineInput ? m_txtInputSingleLine.getText() : m_txtInput.getText();
 			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
 			++m_actionEvents;
 			m_frame.dispose();
@@ -472,7 +471,7 @@ public final class OpbmInput
 		} else if (e.getComponent() == m_btnCancel) {
 			// Cancel button was clicked
 			m_dialogResponse	= m_cancelButtonText + "_button2";
-			m_dialogValue		= m_txtInput.getText();
+			m_dialogValue		= m_singleLineInput ? m_txtInputSingleLine.getText() : m_txtInput.getText();
 			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
 			++m_actionEvents;
 			m_frame.dispose();
@@ -480,7 +479,7 @@ public final class OpbmInput
 		} else if (e.getComponent() == m_btnAccept) {
 			// Accept button was clicked
 			m_dialogResponse	= m_acceptButtonText + "_button3";
-			m_dialogValue		= m_txtInput.getText();
+			m_dialogValue		= m_singleLineInput ? m_txtInputSingleLine.getText() : m_txtInput.getText();
 			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
 			++m_actionEvents;
 			m_frame.dispose();
@@ -488,7 +487,7 @@ public final class OpbmInput
 		} else if (e.getComponent() == m_btnOkay) {
 			// Okay button was clicked
 			m_dialogResponse	= m_okayButtonText + "_button4";
-			m_dialogValue		= m_txtInput.getText();
+			m_dialogValue		= m_singleLineInput ? m_txtInputSingleLine.getText() : m_txtInput.getText();
 			m_opbm.setDialogResponse(m_id, m_dialogResponse, m_dialogValue, null, this);
 			++m_actionEvents;
 			m_frame.dispose();
@@ -516,7 +515,7 @@ public final class OpbmInput
 	public void windowClosing(WindowEvent e)
 	{	// User cancelled
 		++m_actionEvents;
-		m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_txtInput.getText(), null, this);
+		m_opbm.setDialogResponse(m_id, m_cancelButtonText, m_singleLineInput ? m_txtInputSingleLine.getText() : m_txtInput.getText(), null, this);
 	}
 
 	@Override
@@ -548,9 +547,7 @@ public final class OpbmInput
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e)
-	{
-		validate_m_txtInput();
+	public void keyReleased(KeyEvent e) {
 	}
 
 	public static final int	_NEXT_BUTTON	= 1;
@@ -588,6 +585,7 @@ public final class OpbmInput
 	public JLabel				m_lblLabel;
 	public JScrollPane			m_txtInputScroll;
 	public JTextArea			m_txtInput;
+	public JTextField			m_txtInputSingleLine;
 
 	private JButton				m_btnNext;
 	private JButton				m_btnCancel;

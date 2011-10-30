@@ -766,7 +766,7 @@ public final class Opbm extends	ModalApp
 	 */
 	public void setResultsViewerCV()
 	{
-		OpbmInput.simpleInput(m_opbm, "Specify Value", "CV Percentage (should be \"3\" for 3%):", Utils.removeLeadingZeros(Utils.doubleToString(m_settingsMaster.getCVInRed() * 100.0, 3, 0)), "results_viewer_cv", "save_results_viewer_cv");
+		OpbmInput.simpleInput(m_opbm, "Specify Value", "CV Percentage (should be \"3\" for 3%):", Utils.removeLeadingZeros(Utils.doubleToString(m_settingsMaster.getCVInRed() * 100.0, 3, 0)), "results_viewer_cv", "save_results_viewer_cv", true);
 	}
 
 	/**
@@ -2292,7 +2292,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Suite: " + ((Xml)tup.getSecond("suite")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Suite: " + ((Xml)tup.getSecond("suite")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -2390,7 +2390,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Scenario: " + ((Xml)tup.getSecond("scenario")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Scenario: " + ((Xml)tup.getSecond("scenario")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -2488,7 +2488,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Molecule: " + ((Xml)tup.getSecond("molecule")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Molecule: " + ((Xml)tup.getSecond("molecule")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -2586,7 +2586,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Atom: " + ((Xml)tup.getSecond("atom")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Atom: " + ((Xml)tup.getSecond("atom")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -3285,6 +3285,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.30 01:11pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.30 04:33pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
