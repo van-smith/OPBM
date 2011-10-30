@@ -282,7 +282,6 @@ public final class BenchmarkManifest
 			type		= m_compilation.getFirst(i);
 			name		= (String)m_compilation.getSecond(i);
 			count		= Integer.valueOf((String)m_compilation.getThird(i));
-			m_passThis	= Integer.valueOf((String)m_compilation.getFourth(i));
 
 			// Now, they can build trial, official, suite, scenario, molecule or atom, in any order
 			if (type.equalsIgnoreCase("suite"))
@@ -2559,7 +2558,7 @@ public final class BenchmarkManifest
 	 * the manifest.  Can be called when the manifest is in a virgin state, or
 	 * repeatedly if there are improvements made to the scoring algorithms, or
 	 * if it is desirable to see a previously saved manifest.xml's capture again.
-	 * @param retireOldAggregateData should any existing data be retired?  If no, then
+	 * @param retireOldData should any existing data be retired?  If no, then
 	 * it is deleted and the new data supplants it
 	 * @param saveManifest should manifest.xml be saved when finished?
 	 */
@@ -2576,9 +2575,9 @@ public final class BenchmarkManifest
 
 		// Create the results.xml output from it
 		m_bmr.computeAggregateTotals(retireOldData);
+
 		// Compute the ResultsViewer totals and generate a CSV file with all of the data
 		m_bmr.computeResultsViewerTotalsAndGenerateCSVFile();
-
 		if (saveManifest)
 			saveManifest();	// Save the new results
 	}

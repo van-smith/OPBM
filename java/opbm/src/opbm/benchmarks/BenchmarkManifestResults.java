@@ -748,7 +748,8 @@ public class BenchmarkManifestResults
 				// All of the runs have data which match all of the other runs
 			}
 			// When we get here, every abstract (atom operation/worklet that was run) has its correct timing data
-			m_bm.saveManifest();	// Save the new results
+			if (saveManifest)
+				m_bm.saveManifest();	// Save the new results
 		}
 	}
 
@@ -1314,6 +1315,7 @@ public class BenchmarkManifestResults
 		csvLines.add("");
 
 		// Iterate through the opbm.benchmarks.manifest.run entries to build the results.xml structure
+// working here, remove the leading _
 		run = m_bm.getManifestRoot().getFirstChild();
 		while (run != null)
 		{	// We're looking for "run" entries, ignoring other ones
@@ -1409,7 +1411,7 @@ public class BenchmarkManifestResults
 //////////
 // REMEMBER The following code can be used if it is desired to record the instance times, rather than the average
 // times for multiple passes.  Be sure also to remove the "break" below, which will allow each pass to be included
-// in the results (GUIDANCE#1).  A settings.xml setting should be advised here.
+// in the results (search for "GUIDANCE#1" in this file).  A settings.xml setting should be advised here.
 // BEGIN
 //							// Lookup the timing data for this instance of the run in rawResults, and load in the "timing" worklets
 //							// Grab the uuid, which is also the manifestworkletuuid
@@ -1444,7 +1446,7 @@ public class BenchmarkManifestResults
 // The following code uses the aggregate totals byAtom, to record the min, max, avg, geomean and cv for timing and scores
 // BEGIN
 							// Lookup the timing data for this instance of the run in rawResults, and load in the "timing" worklets
-							// Grab the uuid, which is also the manifestworkletuuid
+							// Grab the atomuuid, which is also the manifestworkletuuid
 							atomuuid = child.getAttribute("atomuuid");
 							result = Xml.getNodeByAttributeNameEqualsValue(m_aggregateByAtom, "atomuuid", atomuuid, false);
 							if (result != null)
@@ -1474,11 +1476,11 @@ public class BenchmarkManifestResults
 									newWorklet.appendAttribute(new Xml("tags",			""));
 									newWorklet.appendAttribute(new Xml("tested",		"yes"));
 
-// Note:  The cause of needing to check instanceResult for null
-//        may be the sign of another issue.  Researching 10/14/2011 10:00am.
+									if (instanceResult != null)	// This should ALWAYS be valid, NEVER null
+										newWorklet.appendAttribute(new Xml("status",	instanceResult.getAttribute("status")));
 
-									if (instanceResult != null)
-										newWorklet.appendAttribute(new Xml("status",		instanceResult.getAttribute("status")));
+									// If there was more than one run present, append each one as part of its three-run nature
+									// If it was an iterated run, score the main worklet many times.
 
 									// Append the runN data to the worklet (run1, run2, run3...)
 									runN = worklet.getFirstChild();
@@ -1513,11 +1515,12 @@ public class BenchmarkManifestResults
 									csvLines.add(",,cvScore,"		+ worklet.getAttribute("cvScore"));
 
 									if (instanceResult != null)
-									{
+									{	// This should ALWAYS be valid, NEVER null
 										newWorklet.appendAttribute(new Xml("status",	instanceResult.getAttribute("status")));
 										csvLines.add(",,,status,"	+ instanceResult.getAttribute("status"));
 
 									} else {
+										// This condition should never occur
 										newWorklet.appendAttribute(new Xml("status",	"success"));
 										csvLines.add(",,,status,success");
 									}

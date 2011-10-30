@@ -876,6 +876,21 @@ public final class Opbm extends	ModalApp
 		}
 	}
 
+	public void hideUserWindow()
+	{
+		// See which one is visible
+		if (m_frameSimple != null && m_settingsMaster.isSimpleSkin())
+		{	// We're viewing the simple skin
+			m_frameSimple.setVisible(false);
+
+		}
+
+		if (m_frameDeveloper != null && m_settingsMaster.isDeveloperSkin())
+		{	// We're viewing the developer window
+			m_frameDeveloper.setVisible(false);
+		}
+	}
+
 	/** Self-explanatory.  Builds the GUI for OPBM using a four-panel design:
 	 * 1)  Header
 	 * 2)  Left panel for navigation
@@ -2219,8 +2234,9 @@ public final class Opbm extends	ModalApp
 	}
 
 
-	private Tuple				m_benchmarkRun_tup;
-
+	/**
+	 * Prepares everything to run a suite benchmark
+	 */
 	public void benchmarkRunSuite(Xml				suite,
 								  int				iterations,
 								  boolean			openInNewThread,
@@ -2242,7 +2258,7 @@ public final class Opbm extends	ModalApp
 		Tuple tup = new Tuple();
 		tup.add("type",					"suite");
 		tup.add("m_bm",					new BenchmarkManifest(opbm, "compilation", "", false, false));
-		tup.add("suite",				suite);
+		tup.add("suite",				suite == null ? m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) : suite);
 		tup.add("scenario",				null);
 		tup.add("molecule",				null);
 		tup.add("atom",					null);
@@ -2275,8 +2291,10 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					OpbmInput oi = new OpbmInput(m_opbm, "Suite Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					hideUserWindow();
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Suite: " + ((Xml)tup.getSecond("suite")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
 					Tuple input = oi.readInput();
+					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -2314,6 +2332,9 @@ public final class Opbm extends	ModalApp
 		t.start();
 	}
 
+	/**
+	 * Prepares everything to run a scenario benchmark
+	 */
 	public void benchmarkRunScenario(Xml			scenario,
 									 int			iterations,
 									 boolean		openInNewThread,
@@ -2336,7 +2357,7 @@ public final class Opbm extends	ModalApp
 		tup.add("type",					"scenario");
 		tup.add("m_bm",					new BenchmarkManifest(opbm, "compilation", "", false, false));
 		tup.add("suite",				null);
-		tup.add("scenario",				scenario);
+		tup.add("scenario",				scenario == null ? m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) : scenario);
 		tup.add("molecule",				null);
 		tup.add("atom",					null);
 		tup.add("iterations",			iterations);
@@ -2368,8 +2389,10 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					OpbmInput oi = new OpbmInput(m_opbm, "Scenario Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					hideUserWindow();
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Scenario: " + ((Xml)tup.getSecond("scenario")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
 					Tuple input = oi.readInput();
+					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -2407,6 +2430,9 @@ public final class Opbm extends	ModalApp
 		t.start();
 	}
 
+	/**
+	 * Prepares everything to run a molecule benchmark
+	 */
 	public void benchmarkRunMolecule(Xml			molecule,
 									 int			iterations,
 									 boolean		openInNewThread,
@@ -2430,7 +2456,7 @@ public final class Opbm extends	ModalApp
 		tup.add("m_bm",					new BenchmarkManifest(opbm, "compilation", "", false, false));
 		tup.add("suite",				null);
 		tup.add("scenario",				null);
-		tup.add("molecule",				molecule);
+		tup.add("molecule",				molecule == null ? m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) : molecule);
 		tup.add("atom",					null);
 		tup.add("iterations",			iterations);
 		tup.add("openInNewThread",		openInNewThread);
@@ -2461,8 +2487,10 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					OpbmInput oi = new OpbmInput(m_opbm, "Molecule Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					hideUserWindow();
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Molecule: " + ((Xml)tup.getSecond("molecule")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
 					Tuple input = oi.readInput();
+					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -2500,6 +2528,9 @@ public final class Opbm extends	ModalApp
 		t.start();
 	}
 
+	/**
+	 * Prepares everything to run an atom benchmark
+	 */
 	public void benchmarkRunAtom(Xml			atom,
 								 int			iterations,
 								 boolean		openInNewThread,
@@ -2524,7 +2555,7 @@ public final class Opbm extends	ModalApp
 		tup.add("suite",				null);
 		tup.add("scenario",				null);
 		tup.add("molecule",				null);
-		tup.add("atom",					atom);
+		tup.add("atom",					atom == null ? m_benchmarkMaster.loadEntryFromPanelRightItem(pri, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) : atom);
 		tup.add("iterations",			iterations);
 		tup.add("openInNewThread",		openInNewThread);
 		tup.add("pri",					pri);
@@ -2554,8 +2585,10 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					OpbmInput oi = new OpbmInput(m_opbm, "Atom Iteration Count", "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
+					hideUserWindow();
+					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Atom: " + ((Xml)tup.getSecond("atom")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "");
 					Tuple input = oi.readInput();
+					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -2595,8 +2628,15 @@ public final class Opbm extends	ModalApp
 	}
 
 
+	// These variables are used only by the few methods above, and this one below
 	private BenchmarkManifest	m_benchmarkRun_bm		= null;
+	private Tuple				m_benchmarkRun_tup		= null;
 
+	/**
+	 * Physically completes the initial setup and execution of a compilation
+	 * run for atom, molecule, scenario or suite
+	 * @param tup the Tuple holding data for the compilation run
+	 */
 	public void runAtomMoleculeScenarioSuite(Tuple tup)
 	{
 		BenchmarkManifest	bm						= (BenchmarkManifest)	tup.getSecond("m_bm");
@@ -3245,6 +3285,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.30 12:17pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.30 01:00pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
