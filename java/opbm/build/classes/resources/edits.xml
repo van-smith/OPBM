@@ -95,7 +95,7 @@
 			<precommand p1="Edit Atoms">leftpanel</precommand>
 			<label width="250" text="Atom Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="#shortname"/>
 			<label width="250" text="Atom Listing(colon)"/>
 			<listbox name="atom">
@@ -111,7 +111,7 @@
 			</listbox>
 			<label width="250" text="Operation Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
 			<label width="250" text="Sequence of Operations(colon)"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
@@ -141,7 +141,7 @@
 			<precommand p1="Edit Molecules">leftpanel</precommand>
 			<label text="Molecule Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="#shortname"/>
 			<label text="Molecules(colon)" width="250"/>
 			<listbox name="molecule">
@@ -157,7 +157,7 @@
 			</listbox>
 			<label text="Sequence Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
 			<label text="Sequence of Operations(colon)" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
@@ -195,7 +195,7 @@
 			<precommand p1="Edit Scenarios">leftpanel</precommand>
 			<label text="Scenario Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="#shortname"/>
 			<label text="Scenarios(colon)" width="250"/>
 			<listbox name="scenario">
@@ -211,7 +211,7 @@
 			</listbox>
 			<label text="Operation Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
 			<label text="Sequence of Operations(colon)" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
@@ -256,7 +256,7 @@
 			<precommand p1="Edit Suites">leftpanel</precommand>
 			<label text="Suite Name/Description(colon)"/>
 			<textbox width="250" field="#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="#shortname"/>
 			<label text="Suites(colon)" width="250"/>
 			<listbox name="suite">
@@ -272,7 +272,7 @@
 			</listbox>
 			<label text="Operation Name/Description(colon)"/>
 			<textbox width="250" field="elements.#name"/>
-			<label width="250" text="Short Name (8 characters)(colon)"/>
+			<label width="250" text="Short Name(colon)"/>
 			<textbox width="100" field="elements.#shortname"/>
 			<label text="Sequence of Operations(colon)" width="250"/>
 			<lookupbox name="elements" autoupdate="no" height="max">
