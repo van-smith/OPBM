@@ -2106,6 +2106,22 @@ public class Utils
 		return(new Date(year - 1900, month - 1, day - 1, hour, minute, second));
 	}
 
+	public static String removeAllCarriageReturnsAndLineFeeds(String input)
+	{
+		int i;
+		String output;
+
+		output = "";
+		for (i = 0; i < input.length(); i++)
+		{	// Exclude all non-carriage-return/line-feed characters
+			if (input.charAt(i) != 13 && input.charAt(i) != 10)
+				output += input.charAt(i);
+			else
+				output += " ";
+		}
+		return(output);
+	}
+
 
 //////////
 // Class constants

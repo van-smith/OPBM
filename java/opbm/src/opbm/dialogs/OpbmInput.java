@@ -23,14 +23,14 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -47,7 +47,8 @@ import opbm.graphics.AlphaImage;
 public final class OpbmInput
 					extends		TimerTask
 					implements	MouseListener,
-								WindowListener
+								WindowListener,
+								KeyListener
 {
 	public OpbmInput(Opbm		opbm,
 					 String		caption,
@@ -77,6 +78,7 @@ public final class OpbmInput
 			id = "input";
 		}
 		m_id			= id;
+		m_singleLineInput	= false;
 		m_opbm.initializeDialogResponse(id, triggerCommand, null, this);
 		createInputWindow();
 	}
@@ -243,6 +245,7 @@ public final class OpbmInput
 		m_txtInput.setTabSize(2);
 		m_txtInput.setText(m_initValue);
  		m_txtInput.setVisible(true);
+		m_txtInput.addKeyListener(this);
 		m_pan.add(m_txtInputScroll);
 		m_pan.moveToFront(m_txtInputScroll);
 
@@ -384,6 +387,36 @@ public final class OpbmInput
 	}
 
 	/**
+	 * Setting to allow only a single line input, no carriage return characters
+	 * @param setting true or false
+	 */
+	public void setSingleLineInput(boolean setting)
+	{
+		m_singleLineInput = setting;
+		validate_m_txtInput();
+	}
+
+	/**
+	 * Validates that the text in the m_txtInput field conforms to the
+	 * m_singleLineInput setting
+	 */
+	public void validate_m_txtInput()
+	{
+		String input, output;
+
+		if (m_singleLineInput)
+		{	// For single line input, no carriage returns
+			input	= m_txtInput.getText();
+			output	= Utils.removeAllCarriageReturnsAndLineFeeds(input);
+			if (!input.equals(output))
+			{	// Update it
+				m_txtInput.setText(output);
+				m_txtInput.setCaretPosition(output.length());
+			}
+		}
+	}
+
+	/**
 	 * Timer() callback
 	 */
 	@Override
@@ -506,6 +539,20 @@ public final class OpbmInput
 	public void windowDeactivated(WindowEvent e) {
 	}
 
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		validate_m_txtInput();
+	}
+
 	public static final int	_NEXT_BUTTON	= 1;
 	public static final int	_CANCEL_BUTTON	= 2;
 	public static final int	_ACCEPT_BUTTON	= 4;
@@ -557,6 +604,7 @@ public final class OpbmInput
 	private String				m_initValue;
 	private int					m_buttons;
 	private String				m_id;
+	private boolean				m_singleLineInput;
 
 	// Used for the setTimeout() functionality
 	private Timer				m_timer;
