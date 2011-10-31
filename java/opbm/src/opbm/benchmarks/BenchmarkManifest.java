@@ -1428,6 +1428,10 @@ public final class BenchmarkManifest
 		// If we get here, we found everything, everything looks good, etc.
 		m_manifestIsLoaded	= true;
 		m_isManifestInError	= false;
+
+		// Set the run name globally for the app to access
+		m_name = m_controlRun.getAttribute("name");
+		m_opbm.setRunName(m_name);
 	}
 
 	/**
