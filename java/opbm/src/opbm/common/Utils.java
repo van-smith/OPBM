@@ -1915,11 +1915,11 @@ public class Utils
 	 * Returns the string that would be used in the HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce\opbm
 	 * registry key for restarting the application on an official run after
 	 * rebooting, but without an automatic restart of the benchmark in progress.
-	 * @return the full path required to execute the resetarter in RunOnce\opbm
+	 * @return the full path required to execute the restarter in RunOnce\opbm
 	 */
 	public static String getRestarterStringNoRestart()
 	{
-		return("\"" + Utils.getCurrentDirectory() + "\\restarter.exe\" \"" + Utils.getCurrentDirectory() + "\" \"" + Opbm.m_jvmHome + "\" opbm.jar -noRestart");
+		return(getRestarterString() + " -noRestart");
 	}
 
 	/**
@@ -1935,6 +1935,14 @@ public class Utils
 		return(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\postboot.exe\" " + fileName));
 	}
 
+	public static String getPrebootString()
+	{
+		String fileName;
+
+		fileName = getPrebootXmlFilename();
+		return(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\preboot.exe\" " + fileName));
+	}
+
 	public static String getPostbootXmlFilename()
 	{
 		String fileName;
@@ -1943,14 +1951,6 @@ public class Utils
 		if (fileName.contains(" "))
 			fileName = "\"" + fileName + "\"";
 		return(fileName);
-	}
-
-	public static String getPrebootString()
-	{
-		String fileName;
-
-		fileName = getPrebootXmlFilename();
-		return(Opbm.getCompressedPathname("\"" + Utils.getCurrentDirectory() + "\\..\\autoIt\\common\\opbm\\exe\\preboot.exe\" " + fileName));
 	}
 
 	public static String getPrebootXmlFilename()

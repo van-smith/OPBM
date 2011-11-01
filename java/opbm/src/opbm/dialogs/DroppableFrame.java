@@ -395,7 +395,7 @@ public class DroppableFrame extends JFrame
 	@Override
 	public void dispose()
 	{
-		if (m_modal)
+		if (m_modal && m_modalDialog != null)
 		{	// Release the modal
 			m_modalDialog.setVisible(false);
 			m_modalDialog = null;
@@ -423,23 +423,24 @@ public class DroppableFrame extends JFrame
 		Robot robot = null;
 
 		// Bring the window visible and to the forefront
-		if (m_modal)
-			m_modalDialog.setVisible(true);
-		setVisible(true);
-		toFront();
+		if (!m_modal)
+		{	// This method is only really valid for non-modal windows
+			setVisible(true);
+			toFront();
 
-		// Get the window's coordinates
-		bounds = getBounds();
-		insets = getInsets();
+			// Get the window's coordinates
+			bounds = getBounds();
+			insets = getInsets();
 
-		// Send a mouse click to the window's title bar
-		try {
-			robot = new Robot();
-			robot.mouseMove(bounds.x + bounds.width / 2, bounds.y + insets.top / 2);
-			robot.mousePress(InputEvent.BUTTON1_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_MASK);
+			// Send a mouse click to the window's title bar
+			try {
+				robot = new Robot();
+				robot.mouseMove(bounds.x + bounds.width / 2, bounds.y + insets.top / 2);
+				robot.mousePress(InputEvent.BUTTON1_MASK);
+				robot.mouseRelease(InputEvent.BUTTON1_MASK);
 
-		} catch (AWTException ex) {
+			} catch (AWTException ex) {
+			}
 		}
 	}
 

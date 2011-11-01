@@ -48,7 +48,7 @@
  *			</aggregate>
  *		</resultsdata>
  *
- * Last Updated:  Sep 12, 2011
+ * Last Updated:  Nov 01, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -62,7 +62,6 @@
 package opbm.benchmarks;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import opbm.Opbm;
