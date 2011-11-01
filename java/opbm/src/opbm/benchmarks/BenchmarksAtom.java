@@ -1618,7 +1618,7 @@ public class BenchmarksAtom
 	{
 		String result, postbootString;
 
-		// Compress the paths for the restart and postboot strings
+		// Compress the path for the restart and get the postboot string (which is compressed when sent)
 		restartString	= Opbm.getCompressedPathname(restartString);
 		postbootString	= Utils.getPostbootString();
 
@@ -1629,6 +1629,7 @@ public class BenchmarksAtom
 		result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", restartString);
 		if (m_bp.m_hud != null)
 			m_bp.m_hud.updateDebug(result);
+		m_bp.m_bm.getBMR().appendResultsAnnotation("runOnceOpbmWriteResult", result, "");
 
 		// add our opbmpostboot RunOnce key
 		if (result.equalsIgnoreCase("success"))
@@ -1636,13 +1637,14 @@ public class BenchmarksAtom
 			m_bp.m_bm.getBMR().appendResultsAnnotation("runOnceOpbmPostboot", postbootString, "");
 			result = Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbmpostboot", postbootString);
 		}
+		m_bp.m_bm.getBMR().appendResultsAnnotation("runOnceOpbmPostbootResult", result, "");
+
+		// Save the manifest with the recent annotations
+		if (m_bp != null)
+			m_bp.m_bm.saveManifest();
+
 		return(result);
 	}
-
-// REMEMBER this needs to be moved to the BenchmarkShutdown() logic, so it can
-// be a full post-process (write out CSV, XML files) activity, and not something
-// literally done in the middle of a benchmark.  In that way, it will shutdown
-// (and potentially restart) nicely.
 
 	/**
 	 * Handles the reboot operation
@@ -1661,14 +1663,13 @@ public class BenchmarksAtom
 		Opbm.Office2010RestoreKeys();
 
 		if (m_bp != null && m_bp.m_hud != null)
+		{
 			m_bp.m_hud.setRebooting();
-
-		if (m_bp != null && m_bp.m_bm != null)
 			m_bp.m_bm.runExecuteSetRebooting();
+		}
 
 		if (saveStateBeforeReboot)
-		{
-			// Update the HUD
+		{	// Update the HUD
 			if (m_bp != null && m_bp.m_hud != null)
 				m_bp.m_hud.updateStatus("Rebooting...");
 
@@ -1685,6 +1686,16 @@ public class BenchmarksAtom
 			if (m_bp != null && m_bp.m_hud != null)
 				m_bp.m_hud.updateStatus("Executing shutdown...");
 
+			// Launch the preboot.exe process, which will run continuously until the reboot occurs
+			if (m_bp != null && m_bp.m_hud != null)
+				m_bp.m_hud.updateStatus("Launching prebooter...");
+			prebootString = Utils.getPrebootString();
+			m_bp.m_bm.getBMR().appendResultsAnnotation("launchingPreboot", prebootString, "");
+			preboot = Runtime.getRuntime().exec(prebootString);
+			// Save the manifest with the recent annotations
+			if (m_bp != null)
+				m_bp.m_bm.saveManifest();
+
 //////////
 // Used for debugging
 // The following line is used for debugging, to keep it from rebooting between runs
@@ -1698,12 +1709,6 @@ public class BenchmarksAtom
 //////
 // End
 //////////
-
-			// Launch the preboot.exe process, which will run continuously until the reboot occurs
-			if (m_bp != null && m_bp.m_hud != null)
-				m_bp.m_hud.updateStatus("Launching prebooter...");
-			prebootString = Utils.getPrebootString();
-			preboot = Runtime.getRuntime().exec(prebootString);
 
 			// Launch the Windows shutdown process
 			process = Runtime.getRuntime().exec(Opbm.getCSIDLDirectory("SYSTEM") + "shutdown /r");
@@ -1739,7 +1744,8 @@ public class BenchmarksAtom
 		} catch (Throwable t) {
 		}
 
-		// Wait up to 60 seconds for the system to shut down
+		// Wait up to 60 seconds for the system to shut down, if it doesn't shut
+		// down, then exit the app as we'lss be in an indeterminate system state.
 		try {
 			if (!m_bp.m_errorArray.isEmpty() || !m_bp.m_outputArray.isEmpty())
 			{	// Wait a short while so they can read the output
@@ -1784,7 +1790,7 @@ public class BenchmarksAtom
 		if (m_bp != null && m_bp.m_bm != null)
 			m_bp.m_bm.runExecuteSetRebootingFailed();
 
-		// Exit the system after the watchdog
+		// Exit the system after the run-process watchdog has expired
 		Opbm.quit(0);
 	}
 

@@ -3198,11 +3198,18 @@ public final class Opbm extends	ModalApp
 		return(m_title);
 	}
 
+	/**
+	 * This is the common way to exit the system politely, when OPBM wants to
+	 * shut down normally and cleanly, and not leave the registry affected by
+	 * any previous setting which may have resulted from a failure.
+	 * @param returnCode
+	 */
 	public static void quit(int returnCode)
 	{
-		// Remove any restarter registry keys that may have been deposited earlier
-		// All other exits are handled elsewhere, and leave any setup registry keys as they were
+		// Remove any restarter registry keys and opbmpostboot executable keys that may have been deposited earlier
+		// All other exits are handled elsewhere, and leave any registry keys as they were
 		Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbm", "");
+		Opbm.SetRegistryKeyValueAsString("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\opbmpostboot", "");
 
 		// Return the code they specified
 		System.exit(returnCode);
@@ -3285,6 +3292,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.31 09:03am";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.10.31 08:48pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }
