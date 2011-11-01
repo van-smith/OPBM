@@ -75,7 +75,9 @@ public class DroppableFrame extends JFrame
 	public void setModal(int			width,
 						 int			height,
 						 Insets			fi,
-						 JLayeredPane	m_pan)
+						 JLayeredPane	m_pan,
+						 JComponent		compForFocus,
+						 boolean		selectAll)
 	{
 		int i;
 		Component[] comps;
@@ -83,11 +85,11 @@ public class DroppableFrame extends JFrame
 		Point p;
 
 		m_modal			= true;
-		m_modalDialog	= new Dialog(m_opbm.getGUIFrame(), getTitle(), true);
-		m_modalDialog.setSize(width + fi.left + fi.right, height + fi.top + (fi.bottom * 2));
-		m_modalDialog.setResizable(m_isResizeable);
-		m_modalDialog.setAlwaysOnTop(true);
+		m_modalDialog	= new JDialog(m_opbm.getGUIFrame(), getTitle(), true);
 		m_modalDialog.setLayout(null);
+		m_modalDialog.setResizable(m_isResizeable);
+		m_modalDialog.setSize(width + fi.left + fi.right, height + fi.top + (fi.bottom * 2));
+		m_modalDialog.setAlwaysOnTop(true);
 		m_modalDialog.setLocationRelativeTo(null);
 		if (m_pan != null)
 		{	// Add/copy the pane's components
@@ -98,18 +100,20 @@ public class DroppableFrame extends JFrame
 					c = m_modalDialog.add(comps[i]);
 					p = c.getLocation();
 					c.setLocation(p.x + fi.left, p.y + fi.top + fi.bottom);
+					if (c == compForFocus)
+					{
+						c.requestFocusInWindow();
+						if (selectAll)
+						{	// We can select all on JTextField and JTextArea
+							if (comps[i] instanceof JTextField)
+								((JTextField)c).selectAll();
+							else if (comps[i] instanceof JTextArea)
+								((JTextArea)c).selectAll();
+						}
+					}
 				}
 		}
-		// Create a separate thread for the window, so the EWT thread can do the rendering
-		Thread t = new Thread("modalDialog_" + getTitle())
-		{
-			@Override
-			public void run()
-			{	// In the thread we do the work
-				m_modalDialog.setVisible(true);
-			}
-		};
-		t.start();
+		m_modalDialog.setVisible(true);
 	}
 
 	/**
@@ -447,5 +451,5 @@ public class DroppableFrame extends JFrame
 	protected boolean				m_isResizeable;
 	protected boolean				m_modal;
 	protected PanelRightLookupbox	m_lookupbox;
-	protected Dialog				m_modalDialog;
+	protected JDialog				m_modalDialog;
 }

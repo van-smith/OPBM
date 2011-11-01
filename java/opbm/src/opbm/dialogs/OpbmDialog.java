@@ -266,11 +266,10 @@ public final class OpbmDialog
 			}
 		}
 
-// The modal code causes some slow component rendering.
-// Needs looked at to figure out
 		if (m_modal)
 		{	// Make it a modal window
-			m_frame.setModal(width, height, fi, m_pan);
+			m_frame.setModal(width, height, fi, m_pan, null, false);
+
 		} else {
 			// Make it a non-modal window
 			m_frame.setVisible(true);

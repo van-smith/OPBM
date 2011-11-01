@@ -42,7 +42,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import opbm.Opbm;
 import opbm.common.Tuple;
-import opbm.common.Utils;
 import opbm.graphics.AlphaImage;
 
 public final class OpbmInput
@@ -254,7 +253,6 @@ public final class OpbmInput
 		// Create the input box
 		if (m_singleLineInput)
 		{	// It's a single-line input box
-
 			m_txtInputSingleLine = new JTextField();
 			m_txtInputSingleLine.setBounds(15, 85, 421, 25);
 			m_txtInputSingleLine.setFont(fontInput);
@@ -369,25 +367,24 @@ public final class OpbmInput
 			++thisButton;
 		}
 
-// The modal code causes some slow component rendering.
-// Needs looked at to figure out
-//		if (m_modal)
-//		{	// Make it a modal window
-//			m_frame.setModal(m_width, m_height, fi, m_pan);
-//		} else {
-			// Make it a non-modal window
-			m_frame.setVisible(true);
-			m_frame.forceWindowToHaveFocus();
-//		}
-
-		if (m_singleLineInput)
-		{
-			m_txtInputSingleLine.requestFocusInWindow();
-			m_txtInputSingleLine.selectAll();
+		if (m_modal)
+		{	// Make it a modal window
+			m_frame.setModal(m_width, m_height, fi, m_pan, m_singleLineInput ? m_txtInputSingleLine : m_txtInput, true);
 
 		} else {
-			m_txtInput.requestFocusInWindow();
-			m_txtInput.selectAll();
+			// Make it a non-modal window
+			if (m_singleLineInput)
+			{
+				m_txtInputSingleLine.requestFocusInWindow();
+				m_txtInputSingleLine.selectAll();
+
+			} else {
+				m_txtInput.requestFocusInWindow();
+				m_txtInput.selectAll();
+			}
+
+			m_frame.setVisible(true);
+			m_frame.forceWindowToHaveFocus();
 		}
 	}
 
