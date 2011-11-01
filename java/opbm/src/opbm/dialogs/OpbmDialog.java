@@ -319,24 +319,28 @@ public final class OpbmDialog
 	public static String	m_sd_message;
 	public static String	m_sd_caption;
 	public static int		m_sd_timeoutSeconds;
+	public static boolean	m_sd_haveOkayButton;
 	/**
 	 * Creates a simple dialog for displaying something for an (optional)
 	 * period of time before auto-closing
 	 * @param message what to display
 	 * @param caption what to put in the caption (title bar)
 	 * @param timeoutSeconds how many seconds to pause before auto-closing
+	 * @param haveOkayButton should the dialog have the okay button?
 	 * (use 0 to disable)
 	 */
 	public static String simpleDialog(Opbm		opbm,
 									  String	message,
 									  String	caption,
-									  int		timeoutSeconds)
+									  int		timeoutSeconds,
+									  boolean	haveOkayButton)
 	{
 		m_sd_opbm			= opbm;
 		m_sd_uuid			= Utils.getUUID();
 		m_sd_message		= message;
 		m_sd_caption		= caption;
 		m_sd_timeoutSeconds	= timeoutSeconds;
+		m_sd_haveOkayButton	= haveOkayButton;
 
 		Thread t = new Thread("simpleDialog_" + m_sd_uuid)
 		{
@@ -348,8 +352,9 @@ public final class OpbmDialog
 				String	message			= m_sd_message;
 				String	caption			= m_sd_caption;
 				int		timeoutSeconds	= m_sd_timeoutSeconds;
+				boolean	haveOkayButton	= m_sd_haveOkayButton;
 
-				OpbmDialog od = new OpbmDialog(opbm, message, caption, OpbmDialog._OKAY_BUTTON, uuid, "");
+				OpbmDialog od = new OpbmDialog(opbm, message, caption, haveOkayButton ? OpbmDialog._OKAY_BUTTON : OpbmDialog._ZERO_BUTTONS, uuid, "");
 				if (timeoutSeconds != 0)
 				{	// Pause the active thread until the timeout period is reached, or until the user clicks the button
 					od.setTimeout(timeoutSeconds);

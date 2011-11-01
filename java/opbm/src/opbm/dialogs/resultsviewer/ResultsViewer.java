@@ -1100,7 +1100,7 @@ public final class ResultsViewer
 				// Let their default/favorite spreadsheet load the csv file
 				generateResultsViewerCSV();
 				Desktop.getDesktop().open(new File(Opbm.getHarnessCSVDirectory() + "ResultsViewer.csv"));
-				OpbmDialog.simpleDialog(m_opbm, "ResultsViewer.csv was created and launched", "Using Default CSV Handler", 15);
+				OpbmDialog.simpleDialog(m_opbm, "ResultsViewer.csv was created and launched", "Using Default CSV Handler", 15, true);
 
 			} catch (Throwable t) {
 			}
