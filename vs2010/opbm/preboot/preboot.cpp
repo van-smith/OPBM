@@ -37,12 +37,10 @@ char xmlTemplate[] = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<opbm>\n\t<tim
 //
 // Example usage:
 //
-//		preboot "c:\\some\\full\\path\\to\\preboot%04u.xml"
+//		preboot "c:\\some\\full\\path\\to\\preboot.xml"
 //
-// The above example will launch preboot and have it alternately write
-// to two output files, which in this case will be preboot1.xml and
-// preboot2.xml, once every second.  By so doing, the one with the
-// latest complete time will be the one used.
+// The above example will launch preboot and have it write the date + time
+// to preboot.xml, once every second.
 //
 /////
 	int APIENTRY WinMain(HINSTANCE hInstance,
@@ -53,11 +51,21 @@ char xmlTemplate[] = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<opbm>\n\t<tim
 		char		file[_MAX_FNAME];
 		char		time[sizeof(xmlTemplate) * 2];
 		FILE*		lfh;
-		int			numwritten;
+		int			i, numwritten;
 		SYSTEMTIME	st;
 
 		// Create our output file name
 		sprintf_s(file, sizeof(file), lpCmdLine);
+
+		// Verify there's not a double-quote prefixing the pathname
+		if (file[0] == '\"')
+			memcpy(&file[0], &file[1], strlen(file) + 1);
+		// Now remove all other instances of a double-quote, replacing each with a NULL (should only be one at the end if it's a properly formatted syntax line)
+		for (i = 0; i < sizeof(file); i++)
+		{
+			if (file[i] == '\"')
+				file[i] = 0;
+		}
 
 		// (Re-)Create our files
 		fopen_s(&lfh, file, "wb+");

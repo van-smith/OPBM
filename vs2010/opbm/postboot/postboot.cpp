@@ -48,11 +48,21 @@ char xmlTemplate[] = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<opbm>\n\t<tim
 		char		file[_MAX_FNAME];
 		char		time[sizeof(xmlTemplate) * 2];
 		FILE*		lfh;
-		int			numwritten;
+		int			i, numwritten;
 		SYSTEMTIME	st;
 
 		// Create our output file name
 		sprintf_s(file, sizeof(file), lpCmdLine, 1);
+
+		// Verify there's not a double-quote prefixing the pathname
+		if (file[0] == '\"')
+			memcpy(&file[0], &file[1], strlen(file) + 1);
+		// Now remove all other instances of a double-quote, replacing each with a NULL (should only be one at the end if it's a properly formatted syntax line)
+		for (i = 0; i < sizeof(file); i++)
+		{
+			if (file[i] == '\"')
+				file[i] = 0;
+		}
 
 		// (Re-)Create our file
 		fopen_s(&lfh, file, "wb+");
