@@ -2293,10 +2293,8 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					hideUserWindow();
 					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Suite: " + ((Xml)tup.getSecond("suite")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
-					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -2391,10 +2389,8 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					hideUserWindow();
 					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Scenario: " + ((Xml)tup.getSecond("scenario")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
-					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -2489,10 +2485,8 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					hideUserWindow();
 					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Molecule: " + ((Xml)tup.getSecond("molecule")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
-					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -2587,10 +2581,8 @@ public final class Opbm extends	ModalApp
 				iterations = (Integer)tup.getSecond("iterations");
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
-					hideUserWindow();
 					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Atom: " + ((Xml)tup.getSecond("atom")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
-					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
 					{	// They did not click the accept button, so they are canceling
 						return;
@@ -3295,6 +3287,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.01 12:13am";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.01 03:16pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

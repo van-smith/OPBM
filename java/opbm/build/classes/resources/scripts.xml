@@ -731,7 +731,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome Google V8" shortname="Chrome">
-				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
+				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute" atomuuid="b54c0bc8-d25a-49bb-ba0f-3ffa6742372b">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>

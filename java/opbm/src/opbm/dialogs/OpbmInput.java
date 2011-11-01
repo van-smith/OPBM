@@ -411,15 +411,17 @@ public final class OpbmInput
 		// Create a return tuple
 		tup = new Tuple();
 
-		// Loop until an action is encountered (user clicks a button, auto-closed, user-closed, etc.)
-		m_actionEvents = 0;
-		while (m_actionEvents == 0)
-		{
-			try
-			{	// Wait for 1/10th second between checks
-				Thread.sleep(100);
+		if (!m_modal)
+		{	// Loop until an action is encountered (user clicks a button, auto-closed, user-closed, etc.)
+			m_actionEvents = 0;
+			while (m_actionEvents == 0)
+			{
+				try
+				{	// Wait for 1/10th second between checks
+					Thread.sleep(100);
 
-			} catch (InterruptedException ex) {
+				} catch (InterruptedException ex) {
+				}
 			}
 		}
 

@@ -99,7 +99,7 @@ public class DroppableFrame extends JFrame
 				{	// Add and reposition the component taking into account the insets
 					c = m_modalDialog.add(comps[i]);
 					p = c.getLocation();
-					c.setLocation(p.x + fi.left, p.y + fi.top + fi.bottom);
+					c.setLocation(p.x, p.y);
 					if (c == compForFocus)
 					{
 						c.requestFocusInWindow();
