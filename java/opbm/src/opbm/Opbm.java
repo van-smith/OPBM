@@ -307,7 +307,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown atom \"" + line.substring(6 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown atom: " + line.substring(6 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown atom: " + line.substring(6 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -345,7 +345,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown atom: \"" + line.substring(6) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown atom: " + line.substring(6), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown atom: " + line.substring(6), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -384,7 +384,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown molecule: \"" + line.substring(10 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown molecule: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown molecule: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -422,7 +422,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown molecule: \"" + line.substring(10) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown molecule: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown molecule: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -461,7 +461,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown scenario: \"" + line.substring(10 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown scenario: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown scenario: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -499,7 +499,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown scenario: \"" + line.substring(10) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown scenario: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown scenario: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -538,7 +538,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown suite: \"" + line.substring(7 + digits.length() + 2) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown suite: " + line.substring(7 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown suite: " + line.substring(7 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -576,7 +576,7 @@ public final class Opbm extends	ModalApp
 										System.out.println("Ignoring unknown suite: \"" + line.substring(7) + "\"");
 										if (!isSilent)
 										{
-											od = new OpbmDialog(m_opbm, "Ignoring unknown suite: " + line.substring(7), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+											od = new OpbmDialog(m_opbm, false, "Ignoring unknown suite: " + line.substring(7), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 											// Simulates a modal message
 										}
@@ -623,7 +623,7 @@ public final class Opbm extends	ModalApp
 								System.out.println("Ignoring unknown option: \"" + line + "\"");
 								if (!isSilent)
 								{
-									od = new OpbmDialog(m_opbm, "Ignoring unknown command line option: " + line, "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+									od = new OpbmDialog(m_opbm, false, "Ignoring unknown command line option: " + line, "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
 									// Simulates a modal message
 								}
@@ -766,7 +766,7 @@ public final class Opbm extends	ModalApp
 	 */
 	public void setResultsViewerCV()
 	{
-		OpbmInput.simpleInput(m_opbm, "Specify Value", "CV Percentage (should be \"3\" for 3%):", Utils.removeLeadingZeros(Utils.doubleToString(m_settingsMaster.getCVInRed() * 100.0, 3, 0)), "results_viewer_cv", "save_results_viewer_cv", true);
+		OpbmInput.simpleInput(m_opbm, "Specify Value", "CV Percentage (should be \"3\" for 3%):", Utils.removeLeadingZeros(Utils.doubleToString(m_settingsMaster.getCVInRed() * 100.0, 3, 0)), "results_viewer_cv", "save_results_viewer_cv", true, true);
 	}
 
 	/**
@@ -1967,31 +1967,33 @@ public final class Opbm extends	ModalApp
 	 */
 	public void closeDialogWindow(String id)
 	{
-		String result;
 		int i;
 		OpbmDialog od;
 		OpbmInput oi;
 
-		for (i = 0; i < m_dialogTuple.size(); i++)
+		if (m_dialogTuple != null)
 		{
-			if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
-			{	// Found it
-				try {
-					od = (OpbmDialog)m_dialogTuple.getFifth(i);
-					if (od != null)
-						od.dispose();
-				} catch (Throwable t) {
-				}
+			for (i = 0; i < m_dialogTuple.size(); i++)
+			{
+				if (m_dialogTuple.getFirst(i).equalsIgnoreCase(id))
+				{	// Found it
+					try {
+						od = (OpbmDialog)m_dialogTuple.getFifth(i);
+						if (od != null)
+							od.dispose();
+					} catch (Throwable t) {
+					}
 
-				try {
-					oi = (OpbmInput)m_dialogTuple.getSixth(i);
-					if (oi != null)
-						oi.dispose();
-				} catch (Throwable t) {
+					try {
+						oi = (OpbmInput)m_dialogTuple.getSixth(i);
+						if (oi != null)
+							oi.dispose();
+					} catch (Throwable t) {
+					}
 				}
 			}
+			// Not found
 		}
-		// Not found
 	}
 
 	/**
@@ -2218,7 +2220,7 @@ public final class Opbm extends	ModalApp
 		bm = new BenchmarkManifest(m_opbm);
 		bm.reloadManifestAndComputeResultsXml(fileName);
 		if (bm.isManifestInError())
-			od = new OpbmDialog(m_opbm, "There was an error while processing manifest.xml", "Error", OpbmDialog._CANCEL_BUTTON, "", "");
+			od = new OpbmDialog(m_opbm, false, "There was an error while processing manifest.xml", "Error", OpbmDialog._CANCEL_BUTTON, "", "");
 		else
 			createAndShowResultsViewer(Opbm.getHarnessXMLDirectory() + getResultsViewerFilename());
 	}
@@ -2292,7 +2294,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Suite: " + ((Xml)tup.getSecond("suite")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
+					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Suite: " + ((Xml)tup.getSecond("suite")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -2390,7 +2392,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Scenario: " + ((Xml)tup.getSecond("scenario")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
+					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Scenario: " + ((Xml)tup.getSecond("scenario")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -2488,7 +2490,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Molecule: " + ((Xml)tup.getSecond("molecule")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
+					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Molecule: " + ((Xml)tup.getSecond("molecule")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -2586,7 +2588,7 @@ public final class Opbm extends	ModalApp
 				if (iterations == 0)
 				{	// Ask the user how many iterations they want
 					hideUserWindow();
-					OpbmInput oi = new OpbmInput(m_opbm, "Iteration Count for Atom: " + ((Xml)tup.getSecond("atom")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
+					OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for Atom: " + ((Xml)tup.getSecond("atom")).getAttribute("name"), "Please specify the iteration count (1 to N):", "1", OpbmInput._ACCEPT_CANCEL, "iteration_count_suite", "", true);
 					Tuple input = oi.readInput();
 					showUserWindow();
 					if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
@@ -2912,6 +2914,7 @@ public final class Opbm extends	ModalApp
 	 * Asks the user for a directory, and loads all results*.xml files, adding
 	 * up every timing point contained within, and producing an average and
 	 * output file called results_averages.xml in the same directory.
+	 * This method is only used by the developer.
 	 */
 	public void computeResultsXmlAverages()
 	{
@@ -3051,7 +3054,7 @@ public final class Opbm extends	ModalApp
 				// When we get here, we've tried all files
 				if (totalFiles == 0)
 				{	// Nothing to do
-					od = new OpbmDialog(m_opbm, "Directory had no files with opbm.rawdata.run.results elements.", "Error", OpbmDialog._OKAY_BUTTON, "", "");
+					od = new OpbmDialog(m_opbm, true, "Directory had no files with opbm.rawdata.run.results elements.", "Error", OpbmDialog._OKAY_BUTTON, "", "");
 					return;
 				}
 				// If we get here, there is some data to process
@@ -3076,11 +3079,11 @@ public final class Opbm extends	ModalApp
 				// When we get here, the output list is populated
 				fileName = directoryName + "output.csv";
 				Utils.writeTerminatedLinesToFile(fileName, output);
-				od = new OpbmDialog(m_opbm, "Compiled results to " + fileName, "Success", OpbmDialog._OKAY_BUTTON, "", "");
+				od = new OpbmDialog(m_opbm, true, "Compiled results to " + fileName, "Success", OpbmDialog._OKAY_BUTTON, "", "");
 				return;
 			}
 			// Directory contains no results*.xml files
-			od = new OpbmDialog(m_opbm, "Directory contains no results*.xml files", "Error", OpbmDialog._OKAY_BUTTON, "", "");
+			od = new OpbmDialog(m_opbm, true, "Directory contains no results*.xml files", "Error", OpbmDialog._OKAY_BUTTON, "", "");
 			return;
 		}
 	}
@@ -3092,13 +3095,13 @@ public final class Opbm extends	ModalApp
 	 */
 	public void gatherDebugInfo()
 	{
-		Thread t = new Thread("OPBMStartupThread")
+		Thread t = new Thread("GatherDebugInfoThread")
 		{
 			@Override
 			public void run()
 			{	// Display a dialog box so the user doesn't click the button twice
 				String uuid;
-				uuid = OpbmDialog.simpleDialog(m_opbm, "Creating Debug Info...please wait", "Gather Debug Info", 0, false);
+				uuid = OpbmDialog.simpleDialog(m_opbm, "Creating Debug Info...please wait", "Gather Debug Info", 0, false, true);
 
 				Xml root				= new Xml("opbm");
 				root.appendChild(new Xml("version", m_version));

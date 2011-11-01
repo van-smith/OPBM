@@ -106,7 +106,7 @@ public final class ResultsViewer
 
 		} else {
 			// Error, tell the user
-			OpbmDialog od = new OpbmDialog(m_opbm, "There was an error processing the file<br>" + filename, "OPBM - Results Viewer Error", OpbmDialog._OKAY_BUTTON, "", "");
+			OpbmDialog od = new OpbmDialog(m_opbm, true, "There was an error processing the file<br>" + filename, "OPBM - Results Viewer Error", OpbmDialog._OKAY_BUTTON, "", "");
 			return(false);
 		}
 	}
@@ -1100,7 +1100,7 @@ public final class ResultsViewer
 				// Let their default/favorite spreadsheet load the csv file
 				generateResultsViewerCSV();
 				Desktop.getDesktop().open(new File(Opbm.getHarnessCSVDirectory() + "ResultsViewer.csv"));
-				OpbmDialog.simpleDialog(m_opbm, "ResultsViewer.csv was created and launched", "Using Default CSV Handler", 15, true);
+				OpbmDialog.simpleDialog(m_opbm, "ResultsViewer.csv was created and launched", "Using Default CSV Handler", 15, true, true);
 
 			} catch (Throwable t) {
 			}

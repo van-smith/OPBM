@@ -44,6 +44,7 @@ public class DroppableFrame extends JFrame
 	 *
 	 * @param opbm Parent object referenced for global method calls
 	 * @param isZoomWindow must be set true if it's a zoom window (used for
+	 * @param isModal is the frame modal
 	 * determining what to do when closing the window)
 	 */
 	public DroppableFrame(Opbm		opbm,
@@ -51,6 +52,7 @@ public class DroppableFrame extends JFrame
 						  boolean	isResizeable)
 	{
 		super("JFrame");
+
 		m_dragSource	= DragSource.getDefaultDragSource();
 		m_dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
 		this.setDropTarget(new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this));
@@ -60,8 +62,54 @@ public class DroppableFrame extends JFrame
 		m_isZoomWindow	= isZoomWindow;
 		m_isAppWindow	= !isZoomWindow;
 		m_isResizeable	= isResizeable;
+		m_modal			= false;
 		m_lookupbox		= null;
 		setResizable(isResizeable);
+	}
+
+	/**
+	 * Sets the frame to a modal state
+	 * @param width
+	 * @param height
+	 */
+	public void setModal(int			width,
+						 int			height,
+						 Insets			fi,
+						 JLayeredPane	m_pan)
+	{
+		int i;
+		Component[] comps;
+		Component c;
+		Point p;
+
+		m_modal			= true;
+		m_modalDialog	= new Dialog(m_opbm.getGUIFrame(), getTitle(), true);
+		m_modalDialog.setSize(width + fi.left + fi.right, height + fi.top + (fi.bottom * 2));
+		m_modalDialog.setResizable(m_isResizeable);
+		m_modalDialog.setAlwaysOnTop(true);
+		m_modalDialog.setLayout(null);
+		m_modalDialog.setLocationRelativeTo(null);
+		if (m_pan != null)
+		{	// Add/copy the pane's components
+			comps = m_pan.getComponents();
+			if (comps != null)
+				for (i = 0; i < comps.length; i++)
+				{	// Add and reposition the component taking into account the insets
+					c = m_modalDialog.add(comps[i]);
+					p = c.getLocation();
+					c.setLocation(p.x + fi.left, p.y + fi.top + fi.bottom);
+				}
+		}
+		// Create a separate thread for the window, so the EWT thread can do the rendering
+		Thread t = new Thread("modalDialog_" + getTitle())
+		{
+			@Override
+			public void run()
+			{	// In the thread we do the work
+				m_modalDialog.setVisible(true);
+			}
+		};
+		t.start();
 	}
 
 	/**
@@ -273,13 +321,21 @@ public class DroppableFrame extends JFrame
 				Method mSetWindowOpacity;
 				mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
 				if (mSetWindowOpacity != null)
-					mSetWindowOpacity.invoke(null, this, opaquePercent);
+				{
+					if (m_modal)
+						mSetWindowOpacity.invoke(null, m_modalDialog, opaquePercent);
+					else
+						mSetWindowOpacity.invoke(null, this, opaquePercent);
+				}
 
 			} else {
 				// Try alternate method per http://download.oracle.com/javase/tutorial/uiswing/misc/trans_shaped_windows.html#uniform
 				// Note:  Their sample code on the web page fails if the frame is decorated (has a border, minimize, restore, close buttons, a menu, etc.)
 				// Note:  Their sample code is in error because the image they show for the translucency shows the border, as does their pixelated translucent window.
-				setOpacity(opaquePercent);		// This suggested method from Oracle's sample code, causes IllegalComponentStateException.
+				if (m_modal)
+					m_modalDialog.setOpacity(opaquePercent);
+				else
+					setOpacity(opaquePercent);	// This suggested method from Oracle's sample code, causes IllegalComponentStateException.
 				// A game developer found a workaround:
 				// The following lines must be run in succession:
 				//		dispose();
@@ -335,6 +391,12 @@ public class DroppableFrame extends JFrame
 	@Override
 	public void dispose()
 	{
+		if (m_modal)
+		{	// Release the modal
+			m_modalDialog.setVisible(false);
+			m_modalDialog = null;
+		}
+
 		if (m_lookupbox != null)
 			m_lookupbox.notifyOnClose();
 
@@ -357,6 +419,8 @@ public class DroppableFrame extends JFrame
 		Robot robot = null;
 
 		// Bring the window visible and to the forefront
+		if (m_modal)
+			m_modalDialog.setVisible(true);
 		setVisible(true);
 		toFront();
 
@@ -381,5 +445,7 @@ public class DroppableFrame extends JFrame
 	protected boolean				m_isAppWindow;
 	protected boolean				m_isZoomWindow;
 	protected boolean				m_isResizeable;
+	protected boolean				m_modal;
 	protected PanelRightLookupbox	m_lookupbox;
+	protected Dialog				m_modalDialog;
 }

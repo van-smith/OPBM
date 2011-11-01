@@ -56,7 +56,7 @@ public class Benchmarks
 		m_opbm.setTrialRun();
 		if (!automated)
 		{	// User is manually keying the benchmark, so give them the dialog option
-			OpbmInput oi = new OpbmInput(m_opbm, "Trial Run", "Assign a name to this Trial Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "trial", "", "", "Go", "", "launch_trial_run", true);
+			OpbmInput oi = new OpbmInput(m_opbm, true, "Trial Run", "Assign a name to this Trial Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "trial", "", "", "Go", "", "launch_trial_run", true);
 
 		} else {
 			// For automated processes, we go right to it
@@ -125,7 +125,7 @@ public class Benchmarks
 				@Override
 				public void run()
 				{
-					OpbmDialog od = new OpbmDialog(m_opbm, "The application directory is too deep to restart after reboot. Please run OPBM from a path closer to C:\\", "Failure", OpbmDialog._CANCEL_BUTTON, "path", "");
+					OpbmDialog od = new OpbmDialog(m_opbm, true, "The application directory is too deep to restart after reboot. Please run OPBM from a path closer to C:\\", "Failure", OpbmDialog._CANCEL_BUTTON, "path", "");
 					od.setTimeout(30);
 					Utils.monitorDialogWithTimeout(m_opbm, "path", 30);
 				}
@@ -136,7 +136,7 @@ public class Benchmarks
 		m_opbm.setOfficialRun();
 		if (!automated)
 		{	// User is manually keying the benchmark, so give them the dialog option
-			OpbmInput oi = new OpbmInput(m_opbm, "Official Run", "Assign a name to this Official Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "official", "", "", "Go", "", "launch_official_run", true);
+			OpbmInput oi = new OpbmInput(m_opbm, true, "Official Run", "Assign a name to this Official Run (optional):", "", OpbmInput._ACCEPT_CANCEL, "official", "", "", "Go", "", "launch_official_run", true);
 
 		} else {
 			// For automated processes, we go right to it
@@ -301,7 +301,7 @@ public class Benchmarks
 		// Warn user if User Account Control is not diabled
 		if (Opbm.isUACEnabled())
 		{	// It is enabled, tell the user it will not work this way
-			od = new OpbmDialog(m_opbm, "User Account Control (UAC) is enabled. OPBM cannot run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "uac", "");
+			od = new OpbmDialog(m_opbm, true, "User Account Control (UAC) is enabled. OPBM cannot run with UAC enabled.", "Failure", OpbmDialog._CANCEL_BUTTON, "uac", "");
 			od.setTimeout(10);
 			Utils.monitorDialogWithTimeout(m_opbm, "uac", 10);
 			return(false);
@@ -310,7 +310,7 @@ public class Benchmarks
 		// Warn user if User auto-logon is not enabled
 		if (isRebootRequired && !Opbm.isAutoLogonEnabled())
 		{	// It is enabled, tell the user it will not work this way
-			od = new OpbmDialog(m_opbm, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._BUTTONS1234, "autologon", "", "Yes", "No", "Cancel", "More...");
+			od = new OpbmDialog(m_opbm, true, "Auto logon is disabled.  Manual interaction will be required for logons.  Proceed?", "Potential Failure", OpbmDialog._BUTTONS1234, "autologon", "", "Yes", "No", "Cancel", "More...");
 			od.setTimeout(30);
 			Utils.monitorDialogWithTimeout(m_opbm, "autologon", 30);
 			response = m_opbm.getDialogResponse("autologon").toLowerCase();
@@ -335,7 +335,7 @@ public class Benchmarks
 			System.out.println("The OPBM Restarter will NOT be able to automatically re-launch OPBM after reboot.");
 			System.out.println("Use [-home:\"c:\\full\\path\\to\\java.exe\"] command line override to manually set java.home location (surround with double-quotes if pathname contains a space).");
 
-			od = new OpbmDialog(m_opbm, "Cannot find java.exe. Please correct (use -home:\"c:\\path\\to\\java.exe\" on command line).", "Failure", OpbmDialog._CANCEL_BUTTON, "java.home", "");
+			od = new OpbmDialog(m_opbm, true, "Cannot find java.exe. Please correct (use -home:\"c:\\path\\to\\java.exe\" on command line).", "Failure", OpbmDialog._CANCEL_BUTTON, "java.home", "");
 			od.setTimeout(10);
 			Utils.monitorDialogWithTimeout(m_opbm, "java.home", 10);
 			return(false);

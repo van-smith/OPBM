@@ -1580,7 +1580,7 @@ public class BenchmarksAtom
 				} else {
 					// Failure creating the registry key, it won't work
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY;
-					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_continue", "");
+					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, true, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_continue", "");
 					return(null);
 				}
 
@@ -1594,7 +1594,7 @@ public class BenchmarksAtom
 				} else {
 					// Failure creating the registry key, it won't work
 					m_bp.m_debuggerOrHUDAction = BenchmarkParams._STOP_FAILURE_ON_REBOOT_WRITE_REGISTRY;
-					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_continue", "");
+					OpbmDialog od = new OpbmDialog(m_bp.m_opbm, true, "Unable to set registry key for auto-restart.<br>Manual intervention required", "OPBM Failure on Reboot and Restart", OpbmDialog._OKAY_BUTTON, "reboot_and_continue", "");
 					return(null);
 				}
 
@@ -1680,7 +1680,7 @@ public class BenchmarksAtom
 		// This dialog will persist until the user clicks okay, or until the system
 		// reboots, but it is not a blocking operation, and execution will continue
 		// below at the reboot command.
-		OpbmDialog od = new OpbmDialog(m_bp.m_opbm, "System will restart...", "Rebooting", OpbmDialog._OKAY_BUTTON, "", "");
+		OpbmDialog od = new OpbmDialog(m_bp.m_opbm, false, "System will restart...", "Rebooting", OpbmDialog._OKAY_BUTTON, "", "");
 		try
 		{
 			if (m_bp != null && m_bp.m_hud != null)

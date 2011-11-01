@@ -1031,7 +1031,7 @@ public class PanelRight
 			{	// Unable to locate the specified level in the source file.
 				// This is a pretty major error, but most likely just an improperly setup scripts.xml file.
 				// We need to tell the user to manually correct the error.
-				OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing data tags. It must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+				OpbmDialog od = new OpbmDialog(m_opbm, true, "Scripts.xml is missing data tags. It must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
 				return;
 			}
 			// If we get here, we have the parent.  We need to lookup the template for this source.
@@ -1041,7 +1041,7 @@ public class PanelRight
 			{	// Unable to locate the specified template in the source file.
 				// This is a pretty major error, but most likely just an improperly setup scripts.xml file.
 				// We need to tell the user to manually correct the error.
-				OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing template data tags. It must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+				OpbmDialog od = new OpbmDialog(m_opbm, true, "Scripts.xml is missing template data tags. It must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
 				return;
 			}
 			// If we get here, we have setup our variables for the impending add
@@ -1052,7 +1052,7 @@ public class PanelRight
 				xmlLevel1 = xmlTemplate.getChildNode("level1");
 				if (xmlLevel1 == null || xmlLevel1.getFirstChild() == null)
 				{	// If we get here, we don't have our opbm.scriptdata.templates.whatever.level1 tag
-					OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing template level1 data tags. Must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+					OpbmDialog od = new OpbmDialog(m_opbm, true, "Scripts.xml is missing template level1 data tags. Must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
 					return;
 				}
 				// If we get here, we have our template
@@ -1066,7 +1066,7 @@ public class PanelRight
 				xmlLevel2 = xmlTemplate.getChildNode("level2");
 				if (xmlLevel2 == null || xmlLevel2.getFirstChild() == null)
 				{	// If we get here, we don't have our opbm.scriptdata.templates.whatever.level2 tag
-					OpbmDialog od = new OpbmDialog(m_opbm, "Scripts.xml is missing template level2 data tags. Must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
+					OpbmDialog od = new OpbmDialog(m_opbm, true, "Scripts.xml is missing template level2 data tags. Must be manually corrected.", "Error Adding", OpbmDialog._OKAY_BUTTON, "", "");
 					return;
 				}
 				// If we get here, we have our template

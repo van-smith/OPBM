@@ -20,6 +20,7 @@ package opbm.dialogs;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -45,6 +46,7 @@ public final class OpbmDialog
 							    WindowListener
 {
 	public OpbmDialog(Opbm		opbm,
+					  boolean	modal,
 					  String	message,
 					  String	caption,
 					  int		buttons,
@@ -52,6 +54,7 @@ public final class OpbmDialog
 					  String	triggerCommand)
 	{
 		m_opbm			= opbm;
+		m_modal			= modal;
 		m_message		= message;
 		m_caption		= caption;
 		m_buttons		= buttons;
@@ -65,6 +68,7 @@ public final class OpbmDialog
 	}
 
 	public OpbmDialog(Opbm		opbm,
+					  boolean	modal,
 					  String	message,
 					  String	caption,
 					  int		buttons,
@@ -76,6 +80,7 @@ public final class OpbmDialog
 					  String	button4Text)
 	{
 		m_opbm			= opbm;
+		m_modal			= modal;
 		m_message		= message;
 		m_caption		= caption;
 		m_buttons		= buttons;
@@ -105,11 +110,13 @@ public final class OpbmDialog
 		Insets inset;
 		Font fontLabel, fontButtons;
 		int actual_width, actual_height, width, height, buttonCenters, buttonBackoff, buttonWidth, buttonCount, thisButton, buttonTop;
+		String caption;
 
 		width = 450;
 		height = 315;
 		m_frame = new DroppableFrame(m_opbm, false, false);
-		m_frame.setTitle(m_caption.isEmpty() ? "OPBM Dialog" : m_caption);
+		caption = m_caption.isEmpty() ? "OPBM Dialog" : m_caption;
+		m_frame.setTitle(caption);
 
 		// Compute the actual size we need for our window, so it's properly centered
 		m_frame.pack();
@@ -117,16 +124,12 @@ public final class OpbmDialog
 		actual_width	= width  + fi.left + fi.right;
 		actual_height	= height + fi.top  + fi.bottom;
 		m_frame.setSize(width  + fi.left + fi.right,
-					  height + fi.top  + fi.bottom);
+						height + fi.top  + fi.bottom);
 
 		prefSize = new Dimension(width  + fi.left + fi.right,
 								 height + fi.top  + fi.bottom);
 		m_frame.setMinimumSize(prefSize);
 		m_frame.setPreferredSize(prefSize);
-
-		prefSize = new Dimension(width  + fi.left + fi.right,
-								 height + fi.top  + fi.bottom);
-		m_frame.setMinimumSize(prefSize);
 		m_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         m_frame.setSize(width, height);
 		m_frame.setLocationRelativeTo(null);	// Center window
@@ -263,8 +266,16 @@ public final class OpbmDialog
 			}
 		}
 
-		m_frame.setVisible(true);
-		m_frame.forceWindowToHaveFocus();
+// The modal code causes some slow component rendering.
+// Needs looked at to figure out
+		if (m_modal)
+		{	// Make it a modal window
+			m_frame.setModal(width, height, fi, m_pan);
+		} else {
+			// Make it a non-modal window
+			m_frame.setVisible(true);
+			m_frame.forceWindowToHaveFocus();
+		}
 	}
 
 	/**
@@ -320,6 +331,7 @@ public final class OpbmDialog
 	public static String	m_sd_caption;
 	public static int		m_sd_timeoutSeconds;
 	public static boolean	m_sd_haveOkayButton;
+	public static boolean	m_sd_modal;
 	/**
 	 * Creates a simple dialog for displaying something for an (optional)
 	 * period of time before auto-closing
@@ -327,13 +339,15 @@ public final class OpbmDialog
 	 * @param caption what to put in the caption (title bar)
 	 * @param timeoutSeconds how many seconds to pause before auto-closing
 	 * @param haveOkayButton should the dialog have the okay button?
+	 * @param modal should the dialog box be made modal?
 	 * (use 0 to disable)
 	 */
 	public static String simpleDialog(Opbm		opbm,
 									  String	message,
 									  String	caption,
 									  int		timeoutSeconds,
-									  boolean	haveOkayButton)
+									  boolean	haveOkayButton,
+									  boolean	modal)
 	{
 		m_sd_opbm			= opbm;
 		m_sd_uuid			= Utils.getUUID();
@@ -341,6 +355,7 @@ public final class OpbmDialog
 		m_sd_caption		= caption;
 		m_sd_timeoutSeconds	= timeoutSeconds;
 		m_sd_haveOkayButton	= haveOkayButton;
+		m_sd_modal			= modal;
 
 		Thread t = new Thread("simpleDialog_" + m_sd_uuid)
 		{
@@ -353,8 +368,9 @@ public final class OpbmDialog
 				String	caption			= m_sd_caption;
 				int		timeoutSeconds	= m_sd_timeoutSeconds;
 				boolean	haveOkayButton	= m_sd_haveOkayButton;
+				boolean modal			= m_sd_modal;
 
-				OpbmDialog od = new OpbmDialog(opbm, message, caption, haveOkayButton ? OpbmDialog._OKAY_BUTTON : OpbmDialog._ZERO_BUTTONS, uuid, "");
+				OpbmDialog od = new OpbmDialog(opbm, modal, message, caption, haveOkayButton ? OpbmDialog._OKAY_BUTTON : OpbmDialog._ZERO_BUTTONS, uuid, "");
 				if (timeoutSeconds != 0)
 				{	// Pause the active thread until the timeout period is reached, or until the user clicks the button
 					od.setTimeout(timeoutSeconds);
@@ -462,6 +478,7 @@ public final class OpbmDialog
 	public static final int _BUTTONS1234	= _BUTTON1 + _BUTTON2 + _BUTTON3 + _BUTTON4;
 
 	private Opbm				m_opbm;
+	private boolean				m_modal;
 	private String				m_message;
 	private String				m_caption;
 	private int					m_buttons;

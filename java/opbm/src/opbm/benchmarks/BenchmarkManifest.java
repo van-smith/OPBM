@@ -1464,12 +1464,12 @@ public final class BenchmarkManifest
 
 		if (m_isManifestInError)
 		{	// We cannot run this manifest because it's in error
-			OpbmDialog od = new OpbmDialog(m_opbm, m_error, "Run Error", OpbmDialog._OKAY_BUTTON, "", "");
+			OpbmDialog od = new OpbmDialog(m_opbm, true, m_error, "Run Error", OpbmDialog._OKAY_BUTTON, "", "");
 			return;
 		}
 		if (m_controlLastRunUuid.getText().equalsIgnoreCase("finished"))
 		{	// The manifest is already finished, there's nothing else to do
-			OpbmDialog od = new OpbmDialog(m_opbm, "Benchmark has completed", "Restart Error", OpbmDialog._OKAY_BUTTON, "completed", "");
+			OpbmDialog od = new OpbmDialog(m_opbm, true, "Benchmark has completed", "Restart Error", OpbmDialog._OKAY_BUTTON, "completed", "");
 			return;
 		}
 

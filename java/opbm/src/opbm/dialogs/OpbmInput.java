@@ -52,6 +52,7 @@ public final class OpbmInput
 								KeyListener
 {
 	public OpbmInput(Opbm		opbm,
+					 boolean	modal,
 					 String		caption,
 					 String		label,
 					 String		initValue,
@@ -61,6 +62,7 @@ public final class OpbmInput
 					 boolean	singleLine)
 	{
 		m_opbm				= opbm;
+		m_modal				= modal;
 		m_caption			= caption;
 		m_label				= label;
 
@@ -86,6 +88,7 @@ public final class OpbmInput
 	}
 
 	public OpbmInput(Opbm		opbm,
+					 boolean	modal,
 					 String		caption,
 					 String		label,
 					 String		initValue,
@@ -99,6 +102,7 @@ public final class OpbmInput
 					 boolean	singleLine)
 	{
 		m_opbm				= opbm;
+		m_modal				= modal;
 		m_caption			= caption;
 		m_label				= label;
 
@@ -129,7 +133,8 @@ public final class OpbmInput
 	public static String	m_si_initValue;
 	public static String	m_si_id;
 	public static String	m_si_triggerCommand;
-	public static Boolean	m_si_singleLine;
+	public static boolean	m_si_singleLine;
+	public static boolean	m_si_modal;
 	/**
 	 * Creates a simple input for inputting some value, with a post-user-action
 	 * trigger command
@@ -140,7 +145,8 @@ public final class OpbmInput
 								   String		initValue,
 								   String		id,
 								   String		triggerCommand,
-								   boolean		singleLine)
+								   boolean		singleLine,
+								   boolean		modal)
 	{
 		m_si_opbm				= opbm;
 		m_si_label				= label;
@@ -149,6 +155,7 @@ public final class OpbmInput
 		m_si_id					= id;
 		m_si_triggerCommand		= triggerCommand;
 		m_si_singleLine			= singleLine;
+		m_si_modal				= modal;
 
 		Thread t = new Thread("simpleInput_" + m_si_id)
 		{
@@ -161,9 +168,10 @@ public final class OpbmInput
 				String	initValue		= m_si_initValue;
 				String	id				= m_si_id;
 				String	triggerCommand	= m_si_triggerCommand;
-				Boolean	singleLine		= m_si_singleLine;
+				boolean	singleLine		= m_si_singleLine;
+				boolean modal			= m_si_modal;
 
-				OpbmInput oi = new OpbmInput(opbm, caption, label, initValue, OpbmInput._BUTTONS23, id, triggerCommand, singleLine);
+				OpbmInput oi = new OpbmInput(opbm, modal, caption, label, initValue, OpbmInput._BUTTONS23, id, triggerCommand, singleLine);
 			}
 		};
 		t.start();
@@ -175,11 +183,13 @@ public final class OpbmInput
 		Insets inset;
 		Font fontLabel, fontInput, fontButtons;
 		int buttonCenters, buttonBackoff, buttonWidth, buttonCount, thisButton, buttonTop;
+		String caption;
 
 		m_width		= 450;
 		m_height	= m_singleLineInput ? /*single line*/180 : /*multi-line*/250;
 		m_frame		= new DroppableFrame(m_opbm, false, false);
-		m_frame.setTitle(m_caption.isEmpty() ? "OPBM Input" : m_caption);
+		caption		= m_caption.isEmpty() ? "OPBM Input" : m_caption;
+		m_frame.setTitle(caption);
 
 		// Compute the actual size we need for our window, so it's properly centered
 		m_frame.pack();
@@ -359,8 +369,17 @@ public final class OpbmInput
 			++thisButton;
 		}
 
-		m_frame.setVisible(true);
-		m_frame.forceWindowToHaveFocus();
+// The modal code causes some slow component rendering.
+// Needs looked at to figure out
+//		if (m_modal)
+//		{	// Make it a modal window
+//			m_frame.setModal(m_width, m_height, fi, m_pan);
+//		} else {
+			// Make it a non-modal window
+			m_frame.setVisible(true);
+			m_frame.forceWindowToHaveFocus();
+//		}
+
 		if (m_singleLineInput)
 		{
 			m_txtInputSingleLine.requestFocusInWindow();
@@ -570,6 +589,7 @@ public final class OpbmInput
 	public static final int _BUTTONS1234	= _BUTTON1 + _BUTTON2 + _BUTTON3 + _BUTTON4;
 
 	private Opbm				m_opbm;
+	private boolean				m_modal;
 	private int					m_actual_width;
 	private int					m_actual_height;
 	private int					m_width;

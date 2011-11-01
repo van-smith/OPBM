@@ -950,7 +950,7 @@ public class BenchmarkManifestResults
 		if (count == 0)
 		{	// Error
 			m_bm.setError("Error:  Unable to find rawResults tag to sum up totals.");
-			OpbmDialog od = new OpbmDialog(m_opbm, "Unable to create summary data for Results Viewer. No results found.", "Error", OpbmDialog._CANCEL_BUTTON, "populateSourceDataIntoByAtomLists", "");
+			OpbmDialog od = new OpbmDialog(m_opbm, true, "Unable to create summary data for Results Viewer. No results found.", "Error", OpbmDialog._CANCEL_BUTTON, "populateSourceDataIntoByAtomLists", "");
 			od.setTimeout(30);
 			Utils.monitorDialogWithTimeout(m_opbm, "populateSourceDataIntoByAtomLists", 30);
 
