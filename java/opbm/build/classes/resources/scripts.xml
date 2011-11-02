@@ -883,7 +883,7 @@
 				</abstract>
 			</atom>
 			<atom name="Simulate Success" shortname="Sim">
-				<abstract name="Simulate success" shortname="Succeed" sourcename="execute">
+				<abstract name="Simulate success" shortname="Succeed" sourcename="execute" atomuuid="0a68fe3f-2415-4933-a35c-87bc4b9657cf">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -1209,7 +1209,7 @@
 				</abstract>
 			</atom>
 			<atom name="Java Compute" shortname="JCompute">
-				<abstract name="Java Compute" shortname="JCompute" sourcename="execute" atomuuid="ce264276-a0e1-4370-b188-44817fe6f783">
+				<abstract name="Java Compute" shortname="JCompute" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>

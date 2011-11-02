@@ -234,7 +234,7 @@ public class BenchmarkParams
 			if (output.getText().toLowerCase().contains("timing,"))
 			{	// This is a timing line
 				extractTimingLineElements(output.getText().substring(7));
-				timingData.add(m_timingName, Double.valueOf(m_timingInSeconds), Double.valueOf(m_timingOfBaseline));
+				timingData.add(m_timingName, Double.valueOf(m_timingInSeconds), Double.valueOf(m_timingOfBaseline), output.getAttribute("millisecond"));
 				++count;
 			}
 

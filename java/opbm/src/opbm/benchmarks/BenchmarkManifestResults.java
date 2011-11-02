@@ -255,12 +255,13 @@ public class BenchmarkManifestResults
 		if (timingData != null)
 		{	// Add the individual timing element items
 			for (i = 0; i < timingData.size(); i++)
-			{	// Add a line like:  <timing name="whatever" time="whatever" score="whatever"></timing>
+			{	// Add a line like:  <timing name="whatever" time="whatever" score="whatever" timing="whatever" uuid="whatever"></timing>
 				timing = new Xml("timing");
-				timing.appendAttribute(new Xml("name", timingData.getFirst(i)));
-				timing.appendAttribute(new Xml("time", Double.toString((Double)timingData.getSecond(i))));
-				timing.appendAttribute(new Xml("score", Double.toString((Double)timingData.getThird(i))));
-				timing.appendAttribute(new Xml("uuid", Utils.getUUID()));
+				timing.appendAttribute(new Xml("name",			timingData.getFirst(i)));
+				timing.appendAttribute(new Xml("time",			Double.toString((Double)timingData.getSecond(i))));
+				timing.appendAttribute(new Xml("score",			Double.toString((Double)timingData.getThird(i))));
+				timing.appendAttribute(new Xml("millisecond",	(String)timingData.getFourth(i)));
+				timing.appendAttribute(new Xml("uuid",			Utils.getUUID()));
 				result.appendChild(timing);
 			}
 			// Once the data is recorded, remove it for the next pass
@@ -1249,6 +1250,7 @@ public class BenchmarkManifestResults
 										run.appendAttribute(new Xml("timinguuid",	uuids.get(l)));
 										run.appendAttribute(new Xml("time",			timingSource.getAttribute("time")));
 										run.appendAttribute(new Xml("score",		timingSource.getAttribute("score")));
+										run.appendAttribute(new Xml("millisecond",	timingSource.getAttribute("millisecond")));
 
 										// Add it to the worklet
 										worklet.appendChild(run);
@@ -1488,9 +1490,10 @@ public class BenchmarkManifestResults
 										if (runN.getName().toLowerCase().startsWith("run"))
 										{	// Append this one, but we only need the time and score data, not the timinguuid
 											newRunN = new Xml(runN.getName());
-											newRunN.appendAttribute(new Xml("time",		runN.getAttribute("time")));
-											newRunN.appendAttribute(new Xml("score",	runN.getAttribute("score")));
-											newRunN.appendAttribute(new Xml("status",	runN.getAttribute("status")));
+											newRunN.appendAttribute(new Xml("time",			runN.getAttribute("time")));
+											newRunN.appendAttribute(new Xml("score",		runN.getAttribute("score")));
+											newRunN.appendAttribute(new Xml("status",		runN.getAttribute("status")));
+											newRunN.appendAttribute(new Xml("millisecond",	runN.getAttribute("millisecond")));
 											newWorklet.appendChild(newRunN);
 										}
 										// Continue to next sibling
