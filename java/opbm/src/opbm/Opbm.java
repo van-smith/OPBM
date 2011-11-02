@@ -1331,8 +1331,10 @@ public final class Opbm extends	ModalApp
 		Document docPanelsXml;
 
 		root			= null;
-		// If the filename contains a \ character, we assume it's a fully qualified path, otherwise we search our path for it
-		panelsXmlFile	= new File(fileName.contains("\\") ? fileName : locateFile(fileName));
+		// Remove any double-quotes from the filename, often used around "c:\paths that contain\spaces\file.xml"
+		fileName		= fileName.replace("\"", "");
+		// If the filename contains a \ or / character, we assume it's a fully qualified path, otherwise we search our path for it
+		panelsXmlFile	= new File(fileName.contains("\\") || fileName.contains("/") ? fileName : locateFile(fileName));
 		fileToProcess	= panelsXmlFile.getAbsolutePath();
 		try {
 			factory			= DocumentBuilderFactory.newInstance();
@@ -1365,6 +1367,9 @@ public final class Opbm extends	ModalApp
 	{
 		File f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13;
 		String path;
+
+		// Remove any quotes before looking
+		fileName = fileName.replace("\"", "");
 
 		f1	= new File("./"								+ fileName);
 		f2	= new File("./resources/"					+ fileName);
@@ -3287,6 +3292,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.01 05:52pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.02 05:57am";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

@@ -1779,7 +1779,7 @@ public class BenchmarkManifestResults
 		preboot		= Opbm.loadXml(prebootXmlFilename,	m_opbm);
 		postboot	= Opbm.loadXml(postbootXmlFilename,	m_opbm);
 
-		result = "0.00000000000";
+		result = "0.00000000001";
 		if (preboot != null && postboot != null)
 		{
 			preYear		= preboot.getChild("opbm.time.year");
@@ -1816,7 +1816,6 @@ public class BenchmarkManifestResults
 				result = Long.toString((postDate.getTime() - preDate.getTime()) / 1000);
 			}
 		}
-
 		return(result);
 	}
 

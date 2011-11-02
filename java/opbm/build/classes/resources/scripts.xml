@@ -731,7 +731,7 @@
 				</abstract>
 			</atom>
 			<atom name="Chrome Google V8" shortname="Chrome">
-				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute" atomuuid="b54c0bc8-d25a-49bb-ba0f-3ffa6742372b">
+				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
@@ -1154,6 +1154,22 @@
 					</options>
 				</abstract>
 			</atom>
+			<atom name="Official Run Reboot Time" shortname="ortime">
+				<abstract name="Official Run Reboot Time" shortname="ortime" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun>Yes</runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\opbm\internal\rebootTime.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Standalone Startup Settle Down" shortname="ssettle">
 				<abstract name="System Reboot" shortname="sreboot" sourcename="rebootAndContinue">
 					<options></options>
@@ -1170,22 +1186,6 @@
 						<retryAttempts></retryAttempts>
 						<retryEnabled></retryEnabled>
 						<executable>..\autoIT\opbm\internal\startupSettleDown.exe</executable>
-					</options>
-				</abstract>
-			</atom>
-			<atom name="Official Run Reboot Time" shortname="ortime">
-				<abstract name="Official Run Reboot Time" shortname="ortime" sourcename="execute">
-					<options>
-						<runOnlyOnOfficialRun>Yes</runOnlyOnOfficialRun>
-						<atomCheckConflicts></atomCheckConflicts>
-						<atomOnSpinup></atomOnSpinup>
-						<atomAfterRuns></atomAfterRuns>
-						<atomBeforeRuns></atomBeforeRuns>
-						<atomOnFailure></atomOnFailure>
-						<stopIfFailure></stopIfFailure>
-						<retryAttempts></retryAttempts>
-						<retryEnabled></retryEnabled>
-						<executable>..\autoIT\opbm\internal\rebootTime.exe</executable>
 					</options>
 				</abstract>
 			</atom>
