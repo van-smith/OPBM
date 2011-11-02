@@ -295,21 +295,21 @@ public final class BenchmarkManifest
 				}
 
 			} else if (type.equalsIgnoreCase("scenario")) {
-				if (addScenarioByName(name, count) == 0)
+				if (addScenarioByName(name, count, false) == 0)
 				{	// The scenario wasn't found
 					setError("Fatal Error: Unable to add scenario named \"" + name + "\": does not exist");
 					return(false);
 				}
 
 			} else if (type.equalsIgnoreCase("molecule")) {
-				if (addMoleculeByName(name, count) == 0)
+				if (addMoleculeByName(name, count, false) == 0)
 				{	// The molecule wasn't found
 					setError("Fatal Error: Unable to add molecule named \"" + name + "\": does not exist");
 					return(false);
 				}
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				if (addAtomByName(name, count) == 0)
+				if (addAtomByName(name, count, false) == 0)
 				{	// The atom wasn't found
 					setError("Fatal Error: Unable to add atom named \"" + name + "\": does not exist");
 					return(false);
@@ -385,7 +385,7 @@ public final class BenchmarkManifest
 				setPass(i + 1);
 				for (j = 0; j < nodes.size(); j++)
 				{	// Add each suite
-					count += addSuite(nodes.get(j));
+					count += addSuite(nodes.get(j), 0, 0);
 				}
 			}
 
@@ -403,7 +403,7 @@ public final class BenchmarkManifest
 					setPass(i + 1);
 					for (j = 0; j < nodes.size(); j++)
 					{	// Add each scenario
-						count += addScenario(nodes.get(j));
+						count += addScenario(nodes.get(j), 0, 0, false);
 					}
 				}
 
@@ -421,7 +421,7 @@ public final class BenchmarkManifest
 						setPass(i + 1);
 						for (j = 0; j < nodes.size(); j++)
 						{	// Add each molecule
-							count += addMolecule(nodes.get(j));
+							count += addMolecule(nodes.get(j), 0, 0, false);
 						}
 					}
 
@@ -439,7 +439,7 @@ public final class BenchmarkManifest
 							setPass(i + 1);
 							for (j = 0; j < nodes.size(); j++)
 							{	// Add each atom
-								count += addAtom(nodes.get(j));
+								count += addAtom(nodes.get(j), 0, 0, false);
 							}
 						}
 
@@ -478,7 +478,7 @@ public final class BenchmarkManifest
 				count = 0;
 				for (i = 0; i < iterations; i++)
 				{	// Add this iteration
-					result = addSuite(suite);
+					result = addSuite(suite, i, iterations);
 					if (result == 0)
 					{	// Failure
 						return(0);
@@ -501,7 +501,8 @@ public final class BenchmarkManifest
 	 * @return
 	 */
 	public int addScenarioByName(String		name,
-								 int		iterations)
+								 int		iterations,
+								 boolean	isPartOfParentIteration)
 	{
 		int i, count, result;
 		List<Xml> nodes = new ArrayList<Xml>(0);
@@ -516,7 +517,7 @@ public final class BenchmarkManifest
 				count = 0;
 				for (i = 0; i < iterations; i++)
 				{	// Add this iteration
-					result = addScenario(scenario);
+					result = addScenario(scenario, i, iterations, isPartOfParentIteration);
 					if (result == 0)
 					{	// Failure
 						return(0);
@@ -539,7 +540,8 @@ public final class BenchmarkManifest
 	 * @return
 	 */
 	public int addMoleculeByName(String		name,
-								 int		iterations)
+								 int		iterations,
+								 boolean	isPartOfParentIteration)
 	{
 		int i, count, result;
 		List<Xml> nodes = new ArrayList<Xml>(0);
@@ -554,7 +556,7 @@ public final class BenchmarkManifest
 				count = 0;
 				for (i = 0; i < iterations; i++)
 				{	// Add this iteration
-					result = addMolecule(molecule);
+					result = addMolecule(molecule, i, iterations, isPartOfParentIteration);
 					if (result == 0)
 					{	// Failure
 						return(0);
@@ -577,7 +579,8 @@ public final class BenchmarkManifest
 	 * @return
 	 */
 	public int addAtomByName(String		name,
-							 int		iterations)
+							 int		iterations,
+							 boolean	isPartOfParentIteration)
 	{
 		int i, count, result;
 		List<Xml> nodes = new ArrayList<Xml>(0);
@@ -592,7 +595,7 @@ public final class BenchmarkManifest
 				count = 0;
 				for (i = 0; i < iterations; i++)
 				{	// Add this iteration
-					result = addAtom(atom);
+					result = addAtom(atom, i, iterations, isPartOfParentIteration);
 					if (result == 0)
 					{	// Failure
 						return(0);
@@ -612,7 +615,9 @@ public final class BenchmarkManifest
 	 * Adds the suite to the manifest
 	 * @param name
 	 */
-	public int addSuite(Xml suite)
+	public int addSuite(Xml		suite,
+						int		iteration,
+						int		maxIterations)
 	{
 		int i, j, count;
 		List<Xml> nodes = new ArrayList<Xml>(0);
@@ -631,6 +636,10 @@ public final class BenchmarkManifest
 
 		// Add a tag for this suite in the manifest
 		m_suiteName = suite.getAttribute("name");
+		if (maxIterations > 1)
+		{	// Append on the iteration tag
+			m_suiteName = m_suiteName + " - " + Integer.toString(iteration + 1) + " of " + Integer.toString(maxIterations);
+		}
 		addTag("beginsuite", m_suiteName);
 
 		// Iterate through this suite's entries and
@@ -641,20 +650,20 @@ public final class BenchmarkManifest
 			type	= element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element, false);
+				addElement(element, false, 0, 0, maxIterations > 1);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element, true);
+				addElement(element, true, iteration, maxIterations, maxIterations > 1);
 				++count;
 
 			} else if (type.equalsIgnoreCase("scenario")) {
-				count += addScenarioByName(element.getAttribute("sourcename"), 1);
+				count += addScenarioByName(element.getAttribute("sourcename"), 1, maxIterations > 1);
 
 			} else if (type.equalsIgnoreCase("molecule")) {
-				count += addMoleculeByName(element.getAttribute("sourcename"), 1);
+				count += addMoleculeByName(element.getAttribute("sourcename"), 1, maxIterations > 1);
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				count += addAtomByName(element.getAttribute("sourcename"), 1);
+				count += addAtomByName(element.getAttribute("sourcename"), 1, maxIterations > 1);
 
 			}
 		}
@@ -671,7 +680,10 @@ public final class BenchmarkManifest
 	 * Adds the scenario to the manifest
 	 * @param name
 	 */
-	public int addScenario(Xml scenario)
+	public int addScenario(Xml			scenario,
+						   int			iteration,
+						   int			maxIterations,
+						   boolean		isPartOfParentIteration)
 	{
 		int i, j, count;
 		List<Xml> nodes = new ArrayList<Xml>(0);
@@ -689,6 +701,10 @@ public final class BenchmarkManifest
 
 		// Add a tag for this suite in the manifest
 		m_scenarioName = scenario.getAttribute("name");
+		if (maxIterations > 1)
+		{	// Append on the iteration tag
+			m_scenarioName = m_scenarioName + " - " + Integer.toString(iteration + 1) + " of " + Integer.toString(maxIterations);
+		}
 		addTag("beginscenario", m_scenarioName);
 
 		// Iterate through this suite's entries and
@@ -699,17 +715,17 @@ public final class BenchmarkManifest
 			type = element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element, false);
+				addElement(element, false, 0, 0, isPartOfParentIteration);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element, true);
+				addElement(element, true, iteration, maxIterations, isPartOfParentIteration);
 				++count;
 
 			} else if (type.equalsIgnoreCase("molecule")) {
-				count += addMoleculeByName(element.getAttribute("sourcename"), 1);
+				count += addMoleculeByName(element.getAttribute("sourcename"), 1, isPartOfParentIteration || maxIterations > 1);
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				count += addAtomByName(element.getAttribute("sourcename"), 1);
+				count += addAtomByName(element.getAttribute("sourcename"), 1, isPartOfParentIteration || maxIterations > 1);
 
 			}
 		}
@@ -726,7 +742,10 @@ public final class BenchmarkManifest
 	 * Adds the molecule to the manifest
 	 * @param name
 	 */
-	public int addMolecule(Xml molecule)
+	public int addMolecule(Xml			molecule,
+						   int			iteration,
+						   int			maxIterations,
+						   boolean		isPartOfParentIteration)
 	{
 		int i, j, count;
 		List<Xml> nodes = new ArrayList<Xml>(0);
@@ -744,6 +763,10 @@ public final class BenchmarkManifest
 
 		// Add a tag for this suite in the manifest
 		m_moleculeName = molecule.getAttribute("name");
+		if (maxIterations > 1)
+		{	// Append on the iteration tag
+			m_moleculeName = m_moleculeName + " - " + Integer.toString(iteration + 1) + " of " + Integer.toString(maxIterations);
+		}
 		addTag("beginmolecule", m_moleculeName);
 
 		// Iterate through this suite's entries and
@@ -754,14 +777,14 @@ public final class BenchmarkManifest
 			type = element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element, false);
+				addElement(element, false, 0, 0, isPartOfParentIteration);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
-				addElement(element, true);
+				addElement(element, true, iteration, maxIterations, isPartOfParentIteration);
 				++count;
 
 			} else if (type.equalsIgnoreCase("atom")) {
-				count += addAtomByName(element.getAttribute("sourcename"), 1);
+				count += addAtomByName(element.getAttribute("sourcename"), 1, isPartOfParentIteration || maxIterations > 1);
 
 			}
 		}
@@ -778,7 +801,10 @@ public final class BenchmarkManifest
 	 * Adds the atom to the manifest
 	 * @param name
 	 */
-	public int addAtom(Xml atom)
+	public int addAtom(Xml			atom,
+					   int			iteration/*0 based, begins at 0 not 1*/,
+					   int			maxIterations/*actual number, like 4 for four iterations*/,
+					   boolean		isPartOfParentIteration)
 	{
 		int i, j, count;
 		List<Xml> nodes = new ArrayList<Xml>(0);
@@ -797,6 +823,10 @@ public final class BenchmarkManifest
 
 		// Add a tag for this suite in the manifest
 		m_atomName = atom.getAttribute("name");
+		if (maxIterations > 1)
+		{	// Append on the iteration tag
+			m_atomName = m_atomName + " - " + Integer.toString(iteration + 1) + " of " + Integer.toString(maxIterations);
+		}
 		addTag("beginatom", m_atomName);
 
 		// Iterate through this suite's entries and
@@ -807,7 +837,7 @@ public final class BenchmarkManifest
 			type = element.getName();
 			if (type.equalsIgnoreCase("flow"))
 			{	// It's a flow-control directive, add it
-				addElement(element, false);
+				addElement(element, false, 0, 0, isPartOfParentIteration);
 
 			} else if (type.equalsIgnoreCase("abstract")) {
 				// For some abstracts, we only add them if we are building an official run
@@ -835,7 +865,7 @@ public final class BenchmarkManifest
 
 				if (okayToAdd)
 				{	// We're good
-					addElement(element, true);
+					addElement(element, true, iteration, maxIterations, isPartOfParentIteration);
 					++count;
 				}
 
@@ -855,10 +885,13 @@ public final class BenchmarkManifest
 	 * @param element
 	 */
 	public void addElement(Xml		element,
-						   boolean	isAtom)
+						   boolean	isAtom,
+						   int		iteration,
+						   int		maxIterations,
+						   boolean	isPartOfParentIteration)
 	{
-		String level, atomuuid;
-		Xml flowOrAtom, run, atomUuidXml;
+		String level, name;
+		Xml flowOrAtom, run, atomUuidXml, nameXml;
 
 		// Grab the current level
 		level = getLevel();
@@ -870,8 +903,9 @@ public final class BenchmarkManifest
 			// molecules, scenarios or suites, by creating a single number to
 			// reference throughout the entire manifest.
 			atomUuidXml = element.getAttributeNode("atomuuid");
-			if (atomUuidXml == null)
+			if (atomUuidXml == null || isPartOfParentIteration || maxIterations > 1)
 			{	// Create a UUID for this atom (if this atom is used again, it will be referenced with this single, unique value)
+				// For multiple iterations, we "technically assign" a new/false atomuuid, which uniquely identifies each individual iteration differently
 				element.appendAttribute("atomuuid", Utils.getUUID());
 			}
 		}
@@ -881,6 +915,16 @@ public final class BenchmarkManifest
 
 		// Tag on the level for this entry
 		flowOrAtom.appendAttribute("level", level);
+
+		// Tag on the iteration info if it's an atom
+		if (isAtom && maxIterations > 1)
+		{	// Store the iteration, and alter the name
+			flowOrAtom.appendAttribute("iterationThis", Integer.toString(iteration));
+			flowOrAtom.appendAttribute("iterationMax", Integer.toString(maxIterations));
+			nameXml = flowOrAtom.getAttributeNode("name");
+			name = nameXml.getText() + " - " + Integer.toString(iteration + 1) + " of " + Integer.toString(maxIterations);
+			nameXml.setText(name);
+		}
 
 		// Grab the current run pass we're appending to
 		run = getRunForThisPass();

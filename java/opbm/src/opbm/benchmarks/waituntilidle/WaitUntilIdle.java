@@ -94,7 +94,6 @@ public class WaitUntilIdle
 
 			} else {
 				// Was not able to settle down
-				m_bp.m_hud.updateError("Failed.");
 				m_bp.m_hud.updateError("Did not settle down after 20 seconds");
 				m_bp.m_hud.updateError("Continuing with benchmark.");
 

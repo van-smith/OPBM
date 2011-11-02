@@ -1209,7 +1209,7 @@
 				</abstract>
 			</atom>
 			<atom name="Java Compute" shortname="JCompute">
-				<abstract name="Java Compute" shortname="JCompute" sourcename="execute">
+				<abstract name="Java Compute" shortname="JCompute" sourcename="execute" atomuuid="ce264276-a0e1-4370-b188-44817fe6f783">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
