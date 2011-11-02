@@ -978,7 +978,7 @@ public class Utils
 	}
 
 	/**
-	 * Jul 04, 2011 at 11:56pm
+	 * Standard time format: Jul 04, 2011 at 11:56pm
 	 */
 	public static String getDateTimeAs_Mmm_DD__YYYY_at_HH_MMampm()
 	{
@@ -987,22 +987,22 @@ public class Utils
 	}
 
 	/**
-	 * Military time Jul 04, 2011 at 23:56
+	 * 24-hour time format: Jul 04 2011 at 23:56:00
 	 * @return
 	 */
 	public static String getDateTimeAs_Mmm_DD_YYYY_at_HH_MM_SS()
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy 'at' kk:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy 'at' HH:mm:ss");
 		return(sdf.format(new Date()));
 	}
 
 	/**
-	 * Sortable time 20110704_2356
+	 * Sortable time 2011 07 04 at 23 56
 	 * @return
 	 */
 	public static String getDateTimeAs_YYYY_MM_DD_at_HH_MM_SS()
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd 'at' kk mm ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd 'at' HH mm ss");
 		return(sdf.format(new Date()));
 	}
 
