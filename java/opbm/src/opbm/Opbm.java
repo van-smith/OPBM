@@ -195,22 +195,25 @@ public final class Opbm extends	ModalApp
 				// This function exists outside the thead so it blocks the UI until everything is created
 
 				// Create a non-edt thread to allow the GUI to continue starting up and displaying while processing
-				Thread t = new Thread("OPBMStartupThread")
+				Thread t = new Thread("OpbmCommandLineProcessingThread")
 				{
 					@Override
 					public void run()
 					{
-						boolean isSilent = false;
-						boolean errorsWereReported = false;
+						boolean isSilent;
+						boolean errorsWereReported;
 						boolean wasFound;
 						List<String>	args	= new ArrayList<String>(0);
 						List<Xml>		list	= new ArrayList<Xml>(0);
+						List<Tuple>		todos	= new ArrayList<Tuple>(0);
 						Xml target;
-						String line, name, digits;
+						String line, name, digits, group, command, temp;
 						int i, j, count, iterations, runCount;
 						BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "compilation", "", true, false);
 						OpbmDialog od;
+						Tuple todo;
 
+						// Used for the -noexit switch
 						m_noExit = false;
 
 						// Load the command line options, including those from files, into the execution sequence
@@ -220,58 +223,55 @@ public final class Opbm extends	ModalApp
 						for (i = 0; i < m_args.length; i++)
 						{
 							if (m_args[i].startsWith("@"))
-							{
-								// Load this file's entries
+							{	// Load this file's entries
 								Opbm.readTerminatedLinesFromFile(m_args[i].substring(1), args);
 
 							} else {
 								// Add this option
 								args.add(m_args[i]);
-
 							}
 						}
 
 						// Look for necessary-to-know-in-advance flags
-						runCount = 0;
+						isSilent			= false;
+						errorsWereReported	= false;
 						for (i = 0; i < args.size(); i++)
 						{
 							line = args.get(i);
 							if (line.toLowerCase().startsWith("-noexit"))
 							{	// They don't want to exit when any automated runs are complete
-								m_noExit = true;
+								todos.add(new Tuple("switch", "noexit"));
 
 							} else if (line.toLowerCase().startsWith("-silent")) {
-								isSilent = true;
+								todos.add(new Tuple("switch", "silent"));
 
 							} else if (line.toLowerCase().startsWith("-skin") || line.toLowerCase().startsWith("-simple")) {
 								// They want to launch the simple skinned window
-								showSimpleWindow();
+								todos.add(new Tuple("switch", "skin"));
 
 							} else if (line.toLowerCase().startsWith("-developer")) {
 								// They want to launch the developer window
-								showDeveloperWindow();
+								todos.add(new Tuple("switch", "developer"));
 
 							} else if (line.toLowerCase().startsWith("-home:")) {
 								// They are overriding the default java.home location for java.exe for the restarter
-								m_jvmHome = line.substring(6).replace("\"", "");
-								File f = new File(m_jvmHome);
+								temp = line.substring(6).replace("\"", "");
+								File f = new File(temp);
 								if (!f.exists())
 								{	// The override location does not exist
-									System.out.println("Warning: Java.home command-line override \"" + m_jvmHome + "\" does not exist.");
+									System.out.println("Error: Java.home command-line override \"" + temp + "\" does not exist.");
+									errorsWereReported = true;
+								} else {
+									// It does exist, add it to the todos list
+									todos.add(new Tuple("switch", "jvmhome", "temp"));
 								}
 
 							} else if (line.toLowerCase().startsWith("-restart")) {
 								// They want to restart the prior benchmark, already in progress
-// Added 10/14/2011 11:58am - to continue running forever during testing:
-//								m_executingFromCommandLine = true;
-//								++runCount;
-								m_benchmarkMaster.benchmarkManifestRestart();
-// Added 10/14/2011 11:58am - to continue running forever during testing:
-//								Utils.copyManifestDotXmlToManifestDateTimeDotXml();
-//								officialRun(true);
+								todos.add(new Tuple("switch", "restart"));
 
 							} else {
-								// We don't do anything with other options, they'll be handled below
+								// We ignore the other options for now (they'll be processed below with their errors reported there)
 							}
 						}
 
@@ -281,9 +281,7 @@ public final class Opbm extends	ModalApp
 							line = args.get(i);
 							if (line.toLowerCase().startsWith("-atom("))
 							{	// It's an iterative atom count, at least it's supposed to be
-								m_executingFromCommandLine = true;
-								digits		= Utils.extractOnlyNumbers(line.substring(6));
-								iterations	= Integer.valueOf(digits);
+								digits = Utils.extractOnlyNumbers(line.substring(6));
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 								if (!list.isEmpty())
@@ -296,21 +294,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(6 + digits.length() + 2)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Atom \"" + name + "\" for " + digits + " iterations to compilation");
-											bm.addToCompiledList("atom", name, iterations);
+											todos.add(new Tuple("switch", "atom()", name, digits));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown atom \"" + line.substring(6 + digits.length() + 2) + "\"");
+										System.out.println("Unknown atom \"" + line.substring(6 + digits.length() + 2) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown atom: " + line.substring(6 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown atom: " + line.substring(6 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -334,21 +327,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(6)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Atom \"" + name + "\" to compilation");
-											bm.addToCompiledList("atom", name, 1);
+											todos.add(new Tuple("switch", "atom", name));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown atom: \"" + line.substring(6) + "\"");
+										System.out.println("Unknown atom: \"" + line.substring(6) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown atom: " + line.substring(6), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown atom: " + line.substring(6), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -358,9 +346,7 @@ public final class Opbm extends	ModalApp
 
 							} else if (line.toLowerCase().startsWith("-molecule("))
 							{	// It's an iterative molecule count, at least it's supposed to be
-								m_executingFromCommandLine = true;
-								digits		= Utils.extractOnlyNumbers(line.substring(10));
-								iterations	= Integer.valueOf(digits);
+								digits = Utils.extractOnlyNumbers(line.substring(10));
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
 								if (!list.isEmpty())
@@ -373,21 +359,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Molecule \"" + name + "\" for " + digits + " iterations to compilation");
-											bm.addToCompiledList("molecule", name, iterations);
+											todos.add(new Tuple("switch", "molecule()", name, digits));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown molecule: \"" + line.substring(10 + digits.length() + 2) + "\"");
+										System.out.println("Unknown molecule: \"" + line.substring(10 + digits.length() + 2) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown molecule: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown molecule: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -398,7 +379,6 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-molecule:")) {
 								// It's an iterative molecule count
 								// Grab all of the molecules and iterate to find the name of the one we're after
-								m_executingFromCommandLine = true;
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.molecules.molecule", false);
 								if (!list.isEmpty())
@@ -411,21 +391,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Molecule \"" + name + "\" to compilation");
-											bm.addToCompiledList("molecule", name, 1);
+											todos.add(new Tuple("switch", "molecule", name));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown molecule: \"" + line.substring(10) + "\"");
+										System.out.println("Unknown molecule: \"" + line.substring(10) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown molecule: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown molecule: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -435,9 +410,7 @@ public final class Opbm extends	ModalApp
 
 							} else if (line.toLowerCase().startsWith("-scenario(")) {
 								// It's an iterative scenario count, at least it's supposed to be
-								m_executingFromCommandLine = true;
-								digits		= Utils.extractOnlyNumbers(line.substring(10));
-								iterations	= Integer.valueOf(digits);
+								digits = Utils.extractOnlyNumbers(line.substring(10));
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
 								if (!list.isEmpty())
@@ -450,21 +423,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10 + digits.length() + 2)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Scenario \"" + name + "\" for " + digits + " iterations to compilation");
-											bm.addToCompiledList("scenario", name, iterations);
+											todos.add(new Tuple("switch", "scenario()", name, digits));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown scenario: \"" + line.substring(10 + digits.length() + 2) + "\"");
+										System.out.println("Unknown scenario: \"" + line.substring(10 + digits.length() + 2) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown scenario: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown scenario: " + line.substring(10 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -475,7 +443,6 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-scenario:")) {
 								// It's a scenario
 								// Grab all of the scenarios and iterate to find the name of the one we're after
-								m_executingFromCommandLine = true;
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.scenarios.scenario", false);
 								if (!list.isEmpty())
@@ -488,21 +455,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(10)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Scenario \"" + name + "\" to compilation");
-											bm.addToCompiledList("scenario", name, 1);
+											todos.add(new Tuple("switch", "scenario", name));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown scenario: \"" + line.substring(10) + "\"");
+										System.out.println("Unknown scenario: \"" + line.substring(10) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown scenario: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown scenario: " + line.substring(10), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -512,9 +474,7 @@ public final class Opbm extends	ModalApp
 
 							} else if (line.toLowerCase().startsWith("-suite(")) {
 								// It's an iterative scenario count, at least it's supposed to be
-								m_executingFromCommandLine = true;
-								digits		= Utils.extractOnlyNumbers(line.substring(7));
-								iterations	= Integer.valueOf(digits);
+								digits = Utils.extractOnlyNumbers(line.substring(7));
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.suites.suite", false);
 								if (!list.isEmpty())
@@ -527,21 +487,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(7 + digits.length() + 2)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Suite \"" + name + "\" for " + digits + " iterations to compilation");
-											bm.addToCompiledList("suite", name, iterations);
+											todos.add(new Tuple("switch", "suite()", name, digits));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown suite: \"" + line.substring(7 + digits.length() + 2) + "\"");
+										System.out.println("Unknown suite: \"" + line.substring(7 + digits.length() + 2) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown suite: " + line.substring(7 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown suite: " + line.substring(7 + digits.length() + 2), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -552,7 +507,6 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-suite:")) {
 								// It's a scenario
 								// Grab all of the scenarios and iterate to find the name of the one we're after
-								m_executingFromCommandLine = true;
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.suites.suite", false);
 								if (!list.isEmpty())
@@ -565,21 +519,16 @@ public final class Opbm extends	ModalApp
 										if (name.replace(" ", "").equalsIgnoreCase(line.substring(7)))
 										{	// This is the benchmark they want to run
 											wasFound = true;
-											++runCount;
-											System.out.println("OPBM command line: Adding Suite \"" + name + "\" to compilation");
-											bm.addToCompiledList("suite", name, 1);
+											todos.add(new Tuple("switch", "suite", name));
+											break;
 										}
 									}
 									if (!wasFound)
 									{	// Display a message
 										errorsWereReported = true;
-										System.out.println("Ignoring unknown suite: \"" + line.substring(7) + "\"");
+										System.out.println("Unknown suite: \"" + line.substring(7) + "\"");
 										if (!isSilent)
-										{
-											od = new OpbmDialog(m_opbm, false, "Ignoring unknown suite: " + line.substring(7), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-											Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-											// Simulates a modal message
-										}
+											od = new OpbmDialog(m_opbm, true, "Unknown suite: " + line.substring(7), "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
 									}
 
 								} else {
@@ -588,21 +537,17 @@ public final class Opbm extends	ModalApp
 								}
 
 							} else if (line.toLowerCase().equals("-trial")) {
-								// They want to run a trial benchmark ru
-								m_executingFromCommandLine = true;
-								++runCount;
-								trialRun(true);
+								// They want to run a trial benchmark run
+								todos.add(new Tuple("switch", "trial"));
 
 							} else if (line.toLowerCase().equals("-official")) {
 								// They want to run an official benchmark run
-								m_executingFromCommandLine = true;
-								++runCount;
-								officialRun(true);
+								todos.add(new Tuple("switch", "official"));
 
 							} else if (line.toLowerCase().startsWith("-name:")) {
 								// They are specifying a name for the run
-								m_executingBenchmarkRunName = line.substring(6);
-								System.out.println("Benchmark given '" + m_executingBenchmarkRunName + "' name.");
+								temp = line.substring(6);
+								todos.add(new Tuple("switch", "name", temp));
 
 							} else if (line.toLowerCase().startsWith("-noexit")) {
 								// handled above in pre-this-loop processing
@@ -616,19 +561,153 @@ public final class Opbm extends	ModalApp
 								// handled above in pre-this-loop processing
 							} else if (line.toLowerCase().startsWith("-restart")) {
 								// handled above in pre-this-loop processing
-
 							} else {
 								// Ignore the unknown option
 								errorsWereReported = true;
-								System.out.println("Ignoring unknown option: \"" + line + "\"");
+								System.out.println("Unknown option: \"" + line + "\"");
 								if (!isSilent)
-								{
-									od = new OpbmDialog(m_opbm, false, "Ignoring unknown command line option: " + line, "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
-									Utils.monitorDialogWithTimeout(m_opbm, "cmdline", 0);
-									// Simulates a modal message
+									od = new OpbmDialog(m_opbm, true, "Unknown command line option: " + line, "Failure", OpbmDialog._OKAY_BUTTON, "cmdline", "");
+							}
+						}
+
+						// If there were failures reported in processing, exit
+						if (errorsWereReported)
+						{	// There were failures
+							quit(-1);
+						}
+
+						// Process the parsed command line parameters in the order specified by the user
+						runCount = 0;
+						for (i = 0; i < todos.size(); i++)
+						{	// Grab each item and process it in turn
+							todo	= todos.get(i);
+							group	= todo.getFirst(i);
+							command	= (String)todo.getSecond(i);
+							if (group.equalsIgnoreCase("switch"))
+							{	// It's a command line switch read at the beginning, before the others
+								if (command.equalsIgnoreCase("noexit"))
+								{	// -noexit
+									m_noExit = true;
+
+								} else if (command.equalsIgnoreCase("silent")) {
+									// -silent
+									isSilent = true;
+
+								} else if (command.equalsIgnoreCase("skin")) {
+									// -skin or -simple
+									showSimpleWindow();
+
+								} else if (command.equalsIgnoreCase("developer")) {
+									// -developer
+									showDeveloperWindow();
+
+								} else if (command.equalsIgnoreCase("jvmhome")) {
+									// -home:c:\path\to\java\dot\exe\
+									m_jvmHome = (String)todo.getThird(i);
+
+								} else if (command.equalsIgnoreCase("restart")) {
+									// -restart
+									m_benchmarkMaster.benchmarkManifestRestart();
+
+								} else if (command.equalsIgnoreCase("atom()")) {
+									// -atom(n):name
+									m_executingFromCommandLine = true;
+									name		= (String)todo.getThird(i);
+									digits		= (String)todo.getFourth(i);
+									iterations	= Integer.valueOf(digits);
+									++runCount;
+									System.out.println("Adding Atom \"" + name + "\" for " + digits + " iterations to compilation");
+									bm.addToCompiledList("atom", name, iterations);
+
+								} else if (command.equalsIgnoreCase("molecule()")) {
+									// -molecule(n):name
+									m_executingFromCommandLine = true;
+									name		= (String)todo.getThird(i);
+									digits		= (String)todo.getFourth(i);
+									iterations	= Integer.valueOf(digits);
+									++runCount;
+									System.out.println("Adding Molecule \"" + name + "\" for " + digits + " iterations to compilation");
+									bm.addToCompiledList("molecule", name, iterations);
+
+								} else if (command.equalsIgnoreCase("scenario()")) {
+									// -scenario(n):name
+									m_executingFromCommandLine = true;
+									name		= (String)todo.getThird(i);
+									digits		= (String)todo.getFourth(i);
+									iterations	= Integer.valueOf(digits);
+									++runCount;
+									System.out.println("Adding Scenario \"" + name + "\" for " + digits + " iterations to compilation");
+									bm.addToCompiledList("scenario", name, iterations);
+
+								} else if (command.equalsIgnoreCase("suite()")) {
+									// -suite(n):name
+									m_executingFromCommandLine = true;
+									name		= (String)todo.getThird(i);
+									digits		= (String)todo.getFourth(i);
+									iterations	= Integer.valueOf(digits);
+									++runCount;
+									System.out.println("Adding Suite \"" + name + "\" for " + digits + " iterations to compilation");
+									bm.addToCompiledList("suite", name, iterations);
+
+								} else if (command.equalsIgnoreCase("atom")) {
+									// -atom:name
+									m_executingFromCommandLine = true;
+									name = (String)todo.getThird(i);
+									++runCount;
+									System.out.println("Adding Atom \"" + name + "\" to compilation");
+									bm.addToCompiledList("atom", name, 1);
+
+								} else if (command.equalsIgnoreCase("molecule")) {
+									// -molecule:name
+									m_executingFromCommandLine = true;
+									name = (String)todo.getThird(i);
+									++runCount;
+									System.out.println("Adding Molecule \"" + name + "\" to compilation");
+									bm.addToCompiledList("molecule", name, 1);
+
+								} else if (command.equalsIgnoreCase("scenario")) {
+									// -scenario:name
+									m_executingFromCommandLine = true;
+									name = (String)todo.getThird(i);
+									++runCount;
+									System.out.println("Adding Scenario \"" + name + "\" to compilation");
+									bm.addToCompiledList("scenario", name, 1);
+
+								} else if (command.equalsIgnoreCase("suite")) {
+									// -suite:name
+									m_executingFromCommandLine = true;
+									name = (String)todo.getThird(i);
+									++runCount;
+									System.out.println("Adding Suite \"" + name + "\" to compilation");
+									bm.addToCompiledList("suite", name, 1);
+
+								} else if (command.equalsIgnoreCase("trial")) {
+									// -trial
+									m_executingFromCommandLine = true;
+									System.out.println("Beginning Trial Run");
+									++runCount;
+									trialRun(true);
+
+								} else if (command.equalsIgnoreCase("official")) {
+									// -official
+									m_executingFromCommandLine = true;
+									System.out.println("Beginning Official Run");
+									++runCount;
+									officialRun(true);
+
+								} else if (command.equalsIgnoreCase("name")) {
+									// -name:someName
+									m_executingBenchmarkRunName = (String)todo.getThird(i);
+									System.out.println("Benchmark given name: '" + m_executingBenchmarkRunName + "'");
+
+								} else {
+									System.out.println("Internal Opbm error: Command line switch was found with an unknown command: " + command);
+									quit(-1);
+
 								}
 							}
 						}
+						// When we get here, everything they specified on the command line has been processed
 
 						// They may have added items to the benchmark compilaiton to execute
 						if (!bm.isCompilationEmpty())
@@ -643,7 +722,7 @@ public final class Opbm extends	ModalApp
 						{	// If we get here, they want us to exit, or we did a run without any errors and we're ready to exit, or we had errors with a -silent switch
 							quit(errorsWereReported ? -1 : 0);
 						}
-						// Done doing command-line things
+						// Finished with command-line things
 						m_executingFromCommandLine = false;
 					}
 				};
@@ -2225,7 +2304,7 @@ public final class Opbm extends	ModalApp
 		bm = new BenchmarkManifest(m_opbm);
 		bm.reloadManifestAndComputeResultsXml(fileName);
 		if (bm.isManifestInError())
-			od = new OpbmDialog(m_opbm, false, "There was an error while processing manifest.xml", "Error", OpbmDialog._CANCEL_BUTTON, "", "");
+			od = new OpbmDialog(m_opbm, true, "There was an error while processing manifest.xml", "Error", OpbmDialog._CANCEL_BUTTON, "", "");
 		else
 			createAndShowResultsViewer(Opbm.getHarnessXMLDirectory() + getResultsViewerFilename());
 	}
@@ -3292,6 +3371,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.02 04:36pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.03 05:06pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

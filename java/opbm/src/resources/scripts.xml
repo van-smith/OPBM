@@ -883,7 +883,7 @@
 				</abstract>
 			</atom>
 			<atom name="Simulate Success" shortname="Sim">
-				<abstract name="Simulate success" shortname="Succeed" sourcename="execute" atomuuid="0a68fe3f-2415-4933-a35c-87bc4b9657cf">
+				<abstract name="Simulate success" shortname="Succeed" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>

@@ -62,28 +62,78 @@ import opbm.Opbm;
  * go ahead and continue processing the rest of its operation by setting up a
  * command in the Commands class, and allowing it to proceed.
  */
-public class Tuple
+public final class Tuple
 {
 	/**
-	 * Constructor, creates a UUID for unique reference to the created tuple.
-	 * If needed through global access throughout the system, also pass a
-	 * reference to the Opbm class, so a callback can be made to register it
-	 * globally.  This constructor is only used for local uses, not global.
+	 * Constructor only used for local uses, not global (does not report
+	 * itself to master class Opbm).
 	 */
 	public Tuple()
 	{
-		m_opbm				= null;
-		m_uuid				= Utils.getUUID();
-		m_first				= new ArrayList<Object>(0);
-		m_second			= new ArrayList<Object>(0);
-		m_third				= new ArrayList<Object>(0);
-		m_fourth			= new ArrayList<Object>(0);
-		m_fifth				= new ArrayList<Object>(0);
-		m_sixth				= new ArrayList<Object>(0);
-		m_seventh			= new ArrayList<Object>(0);
-		m_triggerCommand	= new ArrayList<String>(0);
-		m_triggerFilters	= new ArrayList<String>(0);
+		m_opbm = null;
+		initialize();
 	}
+
+	/**
+	 * Constructor only used for local uses, not global (does not report
+	 * itself to master class Opbm).
+	 * @param first string to add to the tuple
+	 */
+	public Tuple(String first)
+	{
+		m_opbm = null;
+		initialize();
+		add(first);
+	}
+
+	/**
+	 * Constructor only used for local uses, not global (does not report
+	 * itself to master class Opbm).
+	 * @param first string to add to the new tuple
+	 * @param second object to add to the new tuple
+	 */
+	public Tuple(String		first,
+				 Object		second)
+	{
+		m_opbm = null;
+		initialize();
+		add(first, second);
+	}
+
+	/**
+	 * Constructor only used for local uses, not global (does not report
+	 * itself to master class Opbm).
+	 * @param first string to add to the new tuple
+	 * @param second object to add to the new tuple
+	 * @param third object to add to the new tuple
+	 */
+	public Tuple(String		first,
+				 Object		second,
+				 Object		third)
+	{
+		m_opbm = null;
+		initialize();
+		add(first, second, third);
+	}
+
+	/**
+	 * Constructor only used for local uses, not global (does not report
+	 * itself to master class Opbm).
+	 * @param first string to add to the new tuple
+	 * @param second object to add to the new tuple
+	 * @param third object to add to the new tuple
+	 * @param fourth object to add to the new tuple
+	 */
+	public Tuple(String		first,
+				 Object		second,
+				 Object		third,
+				 Object		fourth)
+	{
+		m_opbm = null;
+		initialize();
+		add(first, second, third, fourth);
+	}
+
 	/**
 	 * Constructor, creates a UUID for unique reference to the created tuple.
 	 * This is necessary for an external <code>List<Tuple></code> to maintain
@@ -95,7 +145,16 @@ public class Tuple
 	@SuppressWarnings("LeakingThisInConstructor")
 	public Tuple(Opbm opbm)
 	{
-		m_opbm				= opbm;
+		m_opbm = opbm;
+		initialize();
+		opbm.addTuple(this);
+	}
+
+	/**
+	 * Creates a UUID for unique reference to the created tuple.
+	 */
+	public void initialize()
+	{
 		m_uuid				= Utils.getUUID();
 		m_first				= new ArrayList<Object>(0);
 		m_second			= new ArrayList<Object>(0);
@@ -106,7 +165,6 @@ public class Tuple
 		m_seventh			= new ArrayList<Object>(0);
 		m_triggerCommand	= new ArrayList<String>(0);
 		m_triggerFilters	= new ArrayList<String>(0);
-		opbm.addTuple(this);
 	}
 
 	/**
