@@ -507,6 +507,15 @@
 			<spacer/>
 			<text>1) Select item in left Listing</text>
 			<text>2) Double-click to run sequence</text>
+			<text></text>
+			<text></text>
+			<text>$b$Custom Compilation:</text>
+			<text>Create a custom compilation by</text>
+			<text>highlighting an item in the left</text>
+			<text>listing, and clicking the + button</text>
+			<text>to add it. It will be inserted</text>
+			<text>after the highlighted entry in</text>
+			<text>the compilation listbox.</text>
 		</left>
 
 		<left name="Execute Molecules" bgcolor="ffffff">

@@ -298,6 +298,13 @@ public class Commands
 
 
 //////////
+// COMPILATION IN
+		} else if (command.equals("compilation_in")) {
+			// User clicked the in button on a compilation
+			m_opbm.compilationInCommand(p1, p2);
+
+
+//////////
 // WEB_BROWSER
 		} else if (command.equals("web_browser")) {
 			// Wants to link to the specified web browser address
@@ -321,6 +328,8 @@ public class Commands
 			m_opbm.benchmarkRunScenario(null, 0, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 		} else if (command.equals("run_suite_sequence")) {
 			m_opbm.benchmarkRunSuite(null, 0, true, (PanelRightItem)source, m_opbm, m_macroMaster, m_settingsMaster, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		} else if (command.equals("run_compilation")) {
+			m_opbm.benchmarkRunCompilation();
 		} else if (command.equals("launch_trial_run")) {
 			m_opbm.benchmarkLaunchTrialRun(/*not automated*/false);
 		} else if (command.equals("launch_official_run")) {

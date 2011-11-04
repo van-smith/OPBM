@@ -181,6 +181,15 @@ public class PanelRightItem
 				}
 				break;
 
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+				{
+					m_compilation.setVisible(false);
+					m_compilation.remove();
+					m_compilation = null;
+				}
+				break;
+
 		}
 	}
 
@@ -235,6 +244,11 @@ public class PanelRightItem
 			case _TYPE_LOOKUPBOX:
 				if (m_lookupbox != null)
 					m_lookupbox.setVisible(true);
+				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					m_compilation.setVisible(true);
 				break;
 		}
 	}
@@ -315,7 +329,8 @@ public class PanelRightItem
 	/** Setter sets the identify of this control as to its type.
 	 *
 	 * @param type one of _TYPE_LABEL, _TYPE_BUTTON, _TYPE_CHECKBOX,
-	 * _TYPE_TEXTBOX, _TYPE_EDITBOX, _TYPE_LISTBOX, _TYPE_LINK, _TYPE_LOOKUPBOX
+	 * _TYPE_TEXTBOX, _TYPE_EDITBOX, _TYPE_LISTBOX, _TYPE_LINK,
+	 * _TYPE_LOOKUPBOX, _TYPE_COMPILATION
 	 * @return true or false, if identity was valid
 	 */
 	public boolean setIdentity(int type)
@@ -415,6 +430,15 @@ public class PanelRightItem
 				}
 				break;
 
+			case _TYPE_COMPILATION:
+				m_type = type;
+				if (m_compilation == null)
+				{
+					m_compilation = new PanelRightCompilation(m_opbm, m_panelParent, m_parentPR, this, m_commandMaster, m_macroMaster);
+					m_compilation.setVisible(false);
+				}
+				break;
+
 			case _TYPE_OPTIONS:
 				m_type = type;
 				if (m_options == null)
@@ -462,6 +486,11 @@ public class PanelRightItem
 		{
 			m_lookupbox.remove();
 			m_lookupbox = null;
+		}
+		if (m_type != _TYPE_COMPILATION && m_compilation != null)
+		{
+			m_compilation.remove();
+			m_compilation = null;
 		}
 		return(true);
 	}
@@ -546,6 +575,10 @@ public class PanelRightItem
 			case _TYPE_LOOKUPBOX:
 				m_lookupbox.afterWindowResize(newWidth, newHeight);
 				break;
+
+			case _TYPE_COMPILATION:
+				m_compilation.afterWindowResize(newWidth, newHeight);
+				break;
 		}
 	}
 
@@ -581,6 +614,9 @@ public class PanelRightItem
 
 		else if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null)
 			m_lookupbox.fillOrRefillLookupBoxArray();
+
+		else if (m_type == _TYPE_COMPILATION && m_compilation != null)
+			m_compilation.fillOrRefillLookupBoxArray();
 	}
 
 	public Xml addFieldToOptions(Xml options)
@@ -635,6 +671,18 @@ public class PanelRightItem
 	}
 
 	/**
+	 * Called to update the compilation after its identity and size is setup to its
+	 * maximum extent.  The compilation is physically resized to a smaller size, and
+	 * buttons added, etc., based upon the settings for <code>setButton*</code>.
+	 *
+	 */
+	public void updateCompilation()
+	{
+		if (m_compilation != null)
+			m_compilation.updateCompilation();
+	}
+
+	/**
 	 * Called to update the listbox contents
 	 */
 	public void renderListBox()
@@ -647,6 +695,10 @@ public class PanelRightItem
 		} else if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null) {
 			m_lookupbox.fillOrRefillLookupBoxArray();
 			m_lookupbox.select(0);
+
+		} else if (m_type == _TYPE_COMPILATION && m_compilation != null) {
+			m_compilation.fillOrRefillLookupBoxArray();
+			m_compilation.select(0);
 		}
 	}
 
@@ -753,8 +805,15 @@ public class PanelRightItem
 
 	public void lookupboxUpdateCommand(String name)
 	{
-		if (name.equalsIgnoreCase(m_name) && m_type == _TYPE_LOOKUPBOX && m_lookupbox != null )
+		if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null && name.equalsIgnoreCase(m_name))
 			m_lookupbox.lookupboxUpdateCommand();
+	}
+
+	public void compilationInCommand(String		compilationName,
+									 String		dataSourceName)
+	{
+		if (m_type == _TYPE_COMPILATION && m_compilation != null && compilationName.equalsIgnoreCase(m_name))
+			m_compilation.compilationInCommand(dataSourceName);
 	}
 
 	/**
@@ -767,6 +826,9 @@ public class PanelRightItem
 
 		else if (m_type == _TYPE_LOOKUPBOX && m_lookupbox != null)
 			m_lookupbox.repaintLookupBox();
+
+		else if (m_type == _TYPE_COMPILATION && m_compilation != null)
+			m_compilation.repaintCompilation();
 	}
 
 	public void updateRelativeToFields()
@@ -1125,6 +1187,11 @@ public class PanelRightItem
 				if (m_lookupbox != null)
 					m_lookupbox.setForeground(color);
 				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					m_compilation.setForeground(color);
+				break;
 		}
 	}
 
@@ -1189,6 +1256,14 @@ public class PanelRightItem
 				{
 					m_lookupbox.setBackground(color);
 					m_lookupbox.setOpaque(true);
+				}
+				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+				{
+					m_compilation.setBackground(color);
+					m_compilation.setOpaque(true);
 				}
 				break;
 		}
@@ -1345,6 +1420,37 @@ public class PanelRightItem
 	}
 
 	/**
+	 * Specifies the in button command and parameters
+	 *
+	 * @param command command to execute when the in button is clicked
+	 * @param p1 first parameter
+	 * @param p2 second parameter
+	 * @param p3 third parameter
+	 * @param p4 fourth parameter
+	 * @param p5 fifth parameter
+	 * @param p6 sixth parameter
+	 * @param p7 seventh parameter
+	 * @param p8 eighth parameter
+	 * @param p9 ninth parameter
+	 * @param p10 tenth parameter
+	 */
+	public void setInButton(String command,
+							String p1,
+							String p2,
+							String p3,
+							String p4,
+							String p5,
+							String p6,
+							String p7,
+							String p8,
+							String p9,
+							String p10)
+	{
+		if (m_type == _TYPE_COMPILATION)
+			m_compilation.setInButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+	}
+
+	/**
 	 * Specifies the add button is allowed on the <code>_TYPE_LISTBOX</code>
 	 * control, or on the <code>_TYPE_LOOKUPBOX</code>.
 	 *
@@ -1407,7 +1513,8 @@ public class PanelRightItem
 								String p9,
 								String p10)
 	{
-		m_listbox.setDeleteButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		if (m_type == _TYPE_LISTBOX)
+			m_listbox.setDeleteButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 	}
 
 	/**
@@ -1473,7 +1580,8 @@ public class PanelRightItem
 								  String p9,
 								  String p10)
 	{
-		m_lookupbox.setSubtractButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		if (m_type == _TYPE_LOOKUPBOX)
+			m_lookupbox.setSubtractButton(command, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 	}
 
 	/**
@@ -1923,6 +2031,11 @@ public class PanelRightItem
 				if (m_lookupbox != null)
 					m_lookupbox.setFont(font);
 				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					m_compilation.setFont(font);
+				break;
 		}
 	}
 
@@ -1976,6 +2089,11 @@ public class PanelRightItem
 			case _TYPE_LOOKUPBOX:
 				if (m_lookupbox != null)
 					m_lookupbox.setLocation(x, y);
+				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					m_compilation.setLocation(x, y);
 				break;
 		}
 	}
@@ -2061,6 +2179,12 @@ public class PanelRightItem
 				// For listbox items, an optional label is displayed also, so this setText updates the label if available, the setData method updates listbox data
 				if (m_lookupbox != null)
 					m_lookupbox.setSize(width, height);
+				break;
+
+			case _TYPE_COMPILATION:
+				// For compilation items, an optional label is displayed also, so this setText updates the label if available, the setData method updates listbox data
+				if (m_compilation != null)
+					m_compilation.setSize(width, height);
 				break;
 		}
 	}
@@ -2182,6 +2306,11 @@ public class PanelRightItem
 				if (m_lookupbox != null)
 					return(m_lookupbox.getForeground());
 				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					return(m_compilation.getForeground());
+				break;
 		}
 		return(Color.BLACK);
 	}
@@ -2229,6 +2358,11 @@ public class PanelRightItem
 			case _TYPE_LOOKUPBOX:
 				if (m_lookupbox != null)
 					return(m_lookupbox.getBackground());
+				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					return(m_compilation.getBackground());
 				break;
 		}
 		return(Color.WHITE);
@@ -2288,6 +2422,11 @@ public class PanelRightItem
 				if (m_lookupbox != null)
 					return(m_lookupbox.getFont());
 				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					return(m_compilation.getFont());
+				break;
 		}
 		return(null);
 	}
@@ -2330,13 +2469,18 @@ public class PanelRightItem
 				break;
 
 			case _TYPE_LISTBOX:
-				if (m_listbox!= null)
+				if (m_listbox != null)
 					pt = m_listbox.getLocation();
 				break;
 
 			case _TYPE_LOOKUPBOX:
-				if (m_lookupbox!= null)
+				if (m_lookupbox != null)
 					pt = m_lookupbox.getLocation();
+				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					pt = m_compilation.getLocation();
 				break;
 		}
 		return(new Dimension(pt.x, pt.y));
@@ -2385,6 +2529,11 @@ public class PanelRightItem
 			case _TYPE_LOOKUPBOX:
 				if (m_lookupbox != null)
 					return(m_lookupbox.getSize());
+				break;
+
+			case _TYPE_COMPILATION:
+				if (m_compilation != null)
+					return(m_compilation.getSize());
 				break;
 		}
 		return(new Dimension(0, 0));
@@ -2474,49 +2623,51 @@ public class PanelRightItem
 	public static final int _TYPE_LINK			= 7;
 	public static final int _TYPE_LOOKUPBOX		= 8;
 	public static final int _TYPE_OPTIONS		= 9;
+	public static final int _TYPE_COMPILATION	= 10;
 
-	private Opbm				m_opbm;
-	private Macros				m_macroMaster;
-	private Commands			m_commandMaster;
-	private PanelRight			m_parentPR;
-	private Label				m_statusBar;
-	private JPanel				m_panelParent;
-	private Color				m_background;
-	private Color				m_foreground;
-	private Font				m_font;
-	private int					m_x;
-	private int					m_y;
-	private int					m_width;
-	private int					m_height;
-	private boolean				m_autoUpdate;
-	private String				m_name;
+	private Opbm					m_opbm;
+	private Macros					m_macroMaster;
+	private Commands				m_commandMaster;
+	private PanelRight				m_parentPR;
+	private Label					m_statusBar;
+	private JPanel					m_panelParent;
+	private Color					m_background;
+	private Color					m_foreground;
+	private Font					m_font;
+	private int						m_x;
+	private int						m_y;
+	private int						m_width;
+	private int						m_height;
+	private boolean					m_autoUpdate;
+	private String					m_name;
 
 	// Variables supporting the various types (not all of them are used all the time)
-	private int					m_type;					// Used by:
-	private JLabel				m_label;				// Labels, Textbox, Editbox, (optional Listbox)
-	private JButton				m_button;				// Button
-	private JCheckBox			m_checkbox;				// Checkbox
-	private JTextField			m_textbox;				// Textbox
-	private JScrollPane			m_editboxScroller;		// For editbox, provides scrolling
-	private JTextArea			m_editbox;				// Editbox
-	private PanelRightListbox	m_listbox;				// Listbox
-	private PanelRightLookupbox	m_lookupbox;			// Lookupbox
-	private PanelRightOptions	m_options;				// Options (variable input based on user-defined variables)
-	private Xml					m_source;				// The Xml entry for which this item was last updated/used
+	private int						m_type;					// Used by:
+	private JLabel					m_label;				// Labels, Textbox, Editbox, (optional Listbox)
+	private JButton					m_button;				// Button
+	private JCheckBox				m_checkbox;				// Checkbox
+	private JTextField				m_textbox;				// Textbox
+	private JScrollPane				m_editboxScroller;		// For editbox, provides scrolling
+	private JTextArea				m_editbox;				// Editbox
+	private PanelRightListbox		m_listbox;				// Listbox
+	private PanelRightLookupbox		m_lookupbox;			// Lookupbox
+	private PanelRightCompilation	m_compilation;			// Compilation
+	private PanelRightOptions		m_options;				// Options (variable input based on user-defined variables)
+	private Xml						m_source;				// The Xml entry for which this item was last updated/used
 
-	private String				m_field;				// Associated field if this is an editable control with a listbox
-	private String				m_fieldRelativeTo;		// If field is relative to a named listbox or lookupbox, then it's stored here, otherwise the default
-	private String				m_default;				// Default value if nothing is populated in field
-	private String				m_command;
-	private String				m_commandP1;			// Parameter #1
-	private String				m_commandP2;			// Parameter #2
-	private String				m_commandP3;			// Parameter #3
-	private String				m_commandP4;			// Parameter #4
-	private String				m_commandP5;			// Parameter #5
-	private String				m_commandP6;			// Parameter #6
-	private String				m_commandP7;			// Parameter #7
-	private String				m_commandP8;			// Parameter #8
-	private String				m_commandP9;			// Parameter #9
-	private String				m_commandP10;			// Parameter #10
-	private String				m_tooltip;
+	private String					m_field;				// Associated field if this is an editable control with a listbox
+	private String					m_fieldRelativeTo;		// If field is relative to a named listbox or lookupbox, then it's stored here, otherwise the default
+	private String					m_default;				// Default value if nothing is populated in field
+	private String					m_command;
+	private String					m_commandP1;			// Parameter #1
+	private String					m_commandP2;			// Parameter #2
+	private String					m_commandP3;			// Parameter #3
+	private String					m_commandP4;			// Parameter #4
+	private String					m_commandP5;			// Parameter #5
+	private String					m_commandP6;			// Parameter #6
+	private String					m_commandP7;			// Parameter #7
+	private String					m_commandP8;			// Parameter #8
+	private String					m_commandP9;			// Parameter #9
+	private String					m_commandP10;			// Parameter #10
+	private String					m_tooltip;
 }

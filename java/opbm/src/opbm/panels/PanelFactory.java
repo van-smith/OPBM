@@ -569,6 +569,25 @@ public class PanelFactory {
 
 
 //////////
+// COMPILATION
+					} else if (child.getName().equalsIgnoreCase("compilation")) {
+						if (zoomField.isEmpty() || (!zoomField.isEmpty() && zoom.contains(zoomField))) {
+							// Okay to use
+							pri = new PanelRightItem(opbm, macroMaster, commandMaster, statusBar, pr.getJPanel(), pr);
+							pri.setIdentity(PanelRightItem._TYPE_COMPILATION);
+							setName(child, pri, macroMaster);
+							setSizeAndPosition(child, pr, pri, macroMaster, 350, 157, left, top, 5);
+							setFont(child, pri, macroMaster, textFont);
+							setColors(child, pri, macroMaster);
+							setCompilationButtons(child, pri, macroMaster);
+							setCompilationEvents(child, pri, macroMaster);
+							pri.updateCompilation();
+							left	+= 360;
+							top		= 5;
+						}
+
+
+//////////
 // PRECOMMAND
 					} else if (child.getName().equalsIgnoreCase("precommand")) {
 						pc	= macroMaster.parseMacros(child.getText());
@@ -1412,6 +1431,13 @@ public class PanelFactory {
 		return(true);
 	}
 
+	public static void setCompilationEvents(Xml				root,
+											PanelRightItem	pri,
+											Macros			macroMaster)
+	{
+		// None currently defined
+	}
+
 	public static void setListboxOrLookupboxEvents(Xml				root,
 												   PanelRightItem	pri,
 												   Macros			macroMaster)
@@ -1449,6 +1475,41 @@ public class PanelFactory {
 		}
 		pri.setSource(macroMaster.parseMacros(source.getText()), macroMaster.parseMacros(Xml.getAttributeOrChild(source, "relativeto")));
 		return(true);
+	}
+
+	/**
+	 * Sets commands and parameters for the in, subtract, clear, up and down
+	 * buttons
+	 *
+	 * @param root xml to grab fieldNames
+	 * @param pri <code>PanelRightItem</code> to update
+	 * @param macroMaster <code>Macros</code> class to parse any macros
+	 */
+	public static void setCompilationButtons(Xml				root,
+											 PanelRightItem		pri,
+											 Macros				macroMaster)
+	{
+		String pc, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
+		boolean autoPreview;
+		Xml x;
+
+		// In
+		x = Xml.getChildNode(root, "in");
+		if (x != null)
+		{
+			pc	= macroMaster.parseMacros(x.getText());
+			p1	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p1"));
+			p2	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p2"));
+			p3	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p3"));
+			p4	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p4"));
+			p5	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p5"));
+			p6	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p6"));
+			p7	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p7"));
+			p8	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p8"));
+			p9	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p9"));
+			p10	= macroMaster.parseMacros(Xml.getAttributeOrChild(x, "p10"));
+			pri.setInButton(pc, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+		}
 	}
 
 	/**

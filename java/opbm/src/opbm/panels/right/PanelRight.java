@@ -344,9 +344,16 @@ public class PanelRight
 		int i;
 
 		for (i = 0; i < m_items.size(); i++)
-		{
 			m_items.get(i).lookupboxUpdateCommand(name);
-		}
+	}
+
+	public void compilationInCommand(String		compilationName,
+									 String		dataSourceName)
+	{
+		int i;
+
+		for (i = 0; i < m_items.size(); i++)
+			m_items.get(i).compilationInCommand(compilationName, dataSourceName);
 	}
 
 	/**

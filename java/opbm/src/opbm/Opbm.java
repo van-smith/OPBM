@@ -18,6 +18,7 @@
 
 package opbm;
 
+import java.util.Collections;
 import opbm.dialogs.OpbmInput;
 import opbm.common.Xml;
 import opbm.common.Macros;
@@ -165,6 +166,7 @@ public final class Opbm extends	ModalApp
 		m_rawEditPanels				= new ArrayList<PanelRight>(0);
 		m_zoomFrames				= new ArrayList<JFrame>(0);
 		m_rvFrames					= new ArrayList<DroppableFrame>(0);
+		m_compilation				= new ArrayList<Xml>(0);
 		m_tuples					= new ArrayList<Tuple>(0);
 		m_macroMaster				= new Macros(this);
 		m_benchmarkMaster			= new Benchmarks(this);
@@ -1813,6 +1815,20 @@ public final class Opbm extends	ModalApp
 	}
 
 	/**
+	 * Search for the specified named compilation, and tell it to execute the
+	 * in command on its linked object
+	 * @param name
+	 */
+	public void compilationInCommand(String		compilationName,
+									 String		dataSourceName)
+	{
+		if (m_editActive != null)
+		{
+			m_editActive.compilationInCommand(compilationName, dataSourceName);
+		}
+	}
+
+	/**
 	 * Creates a managed window relative to the <code>PanelRight</code> panel
 	 * for size, color, etc.
 	 *
@@ -2776,6 +2792,78 @@ public final class Opbm extends	ModalApp
 			bm.run();
 	}
 
+	// Used only by benchmarkRunCompilation():
+	private Opbm				m_brc_opbm;
+	private BenchmarkManifest	m_brc_bm;
+
+	/**
+	 * Called to run whatever's in the m_compilation Xml list.
+	 */
+	public void benchmarkRunCompilation()
+	{
+		int i, iterations;
+		String type, name;
+		Xml candidate;
+		BenchmarkManifest bm;
+
+		if (!m_compilation.isEmpty())
+		{	// Create our new compilation
+			bm = new BenchmarkManifest(m_opbm, "compilation", "", true, false);
+
+			// Add items to it
+			for (i = 0; i < m_compilation.size(); i++)
+			{	// Grab the entry
+				candidate = m_compilation.get(i);
+
+				// See what type it is
+				type		= candidate.getName();
+				name		= candidate.getAttribute("name");
+				iterations	= Utils.getValueOf(candidate.getAttribute("iterations"), 0, 0, Integer.MAX_VALUE);
+				if (iterations != 0)
+				{
+					if (type.equalsIgnoreCase("atom"))
+					{	// It's an atom, add it
+						bm.addToCompiledList("atom", name, iterations);
+
+					} else if (type.equalsIgnoreCase("molecule")) {
+						// It's a molecule, add it
+						bm.addToCompiledList("molecule", name, iterations);
+
+					} else if (type.equalsIgnoreCase("scenario")) {
+						// It's a scenario, add it
+						bm.addToCompiledList("scenario", name, iterations);
+
+					} else if (type.equalsIgnoreCase("suite")) {
+						// It's a suite, add it
+						bm.addToCompiledList("suite", name, iterations);
+
+					}
+				}
+			}
+
+			if (!bm.isCompilationEmpty())
+			{	// There is a compilation, try to run it
+				m_brc_bm	= bm;
+				m_brc_opbm	= this;
+				Thread t = new Thread("OPBM_Compilation_Benchmark_Thread")
+				{
+					@Override
+					public void run()
+					{
+						OpbmDialog od;
+
+						// They may have added items to the benchmark compilaiton to execute
+						if (m_brc_bm.buildCompilation())
+							m_brc_bm.run();
+						else
+							od = new OpbmDialog(m_brc_opbm, true, "Error building the compilation.", "Failure", OpbmDialog._CANCEL_BUTTON, "", "");
+					}
+				};
+				t.start();
+			}
+		}
+	}
+
 	/** Calls <code>Macros.parseMacros()</code>
 	 *
 	 * Note:  May no longer be needed as everything now includes a passed
@@ -2987,10 +3075,154 @@ public final class Opbm extends	ModalApp
 	}
 
 	/**
+	 * Returns the compilation list
+	 */
+	public List<Xml> getCompilationXml()
+	{
+		return(m_compilation);
+	}
+
+	/**
+	 * The highlighted entry is maintained globally, so it can be accessed from
+	 * multiple different edit screens.
+	 * @return the current highlighted entry
+	 */
+	public int getCompilationHighlightEntry()
+	{
+		if (m_compilationHighlightEntry > m_compilation.size() - 1)
+			m_compilationHighlightEntry = m_compilation.size() - 1;
+
+		return(m_compilationHighlightEntry);
+	}
+
+	/**
+	 * Deletes the highlighted entry in the list
+	 */
+	public void deleteCompilationHighlightedEntries(JList listbox)
+	{
+		int i;
+		int[] indices = listbox.getSelectedIndices();
+
+		// Delete every entry that's highlighted in the listbox,
+		// which exists in a 1:1 ratio/relationship to the m_compilation list
+		for (i = indices.length - 1; i >= 0; i--)
+		{	// If this entry is selected, delete it
+			m_compilation.remove(indices[i]);
+		}
+	}
+
+	/**
+	 * Move the compilation highlighted entry up one position
+	 */
+	public void moveCompilationHighlightedEntryUpOne()
+	{
+		if (m_compilationHighlightEntry > 0)
+			Collections.swap(m_compilation, m_compilationHighlightEntry, m_compilationHighlightEntry - 1);
+	}
+
+	/**
+	 * Move the compilation highlighted entry down one position
+	 */
+	public void moveCompilationHighlightedEntryDownOne()
+	{
+		if (m_compilationHighlightEntry < m_compilation.size() - 1)
+			Collections.swap(m_compilation, m_compilationHighlightEntry + 1, m_compilationHighlightEntry);
+	}
+
+	/**
+	 * Removes everything from the compilation list
+	 */
+	public void clearCompilation()
+	{
+		m_compilation.clear();
+	}
+
+	/**
+	 * Asks the user for the specified entry's iteration count
+	 */
+	public void compilationUpdateIterations()
+	{
+		String tag, name, iterations;
+		Xml toUpdate, iterationNode;
+
+		toUpdate		= m_compilation.get(m_compilationHighlightEntry);
+		tag				= toUpdate.getName();
+		name			= toUpdate.getAttribute("name");
+		iterationNode	= toUpdate.getAttributeNode("iterations");
+		iterations		= iterationNode.getText();
+
+		// Ask the user how many iterations
+		OpbmInput oi = new OpbmInput(m_opbm, true, "Iteration Count for " + Utils.toProper(tag) + ": " + Utils.toProper(name), "Please specify the iteration count (1 to N):", iterations, OpbmInput._ACCEPT_CANCEL, "iteration_count_compilation", "", true);
+		Tuple input = oi.readInput();
+		if (!((String)input.getSecond("action")).toLowerCase().contains("accept"))
+		{	// They did not click the accept button, so they are canceling
+			return;
+		}
+		// If we get here, we have a value
+		iterations	= (String)input.getSecond("value");
+		if (Utils.getValueOf(iterations, 0, 0, Integer.MAX_VALUE) == 0)
+		{	// They did not specify a valid value
+			return;
+		}
+
+		// We're good, Insert it where they are
+		iterationNode.setText(iterations);
+	}
+
+	/**
+	 * The highlighted entry is maintained globally, so it can be accessed from
+	 * multiple different edit screens.
+	 * @param entry the new entry position to set
+	 */
+	public void setCompilationHighlightEntry(int entry)
+	{
+		entry = Math.min(entry, m_compilation.size());
+		m_compilationHighlightEntry = entry;
+	}
+
+	/**
+	 * Inserts the specified atom/molecule/scenario/suite by name and iteration
+	 * count into the list
+	 * @param type
+	 * @param name
+	 * @param iterations
+	 */
+	public void insertToCompilationXml(String	type,
+									   String	name,
+									   int		iterations)
+	{
+		Xml toAdd;
+
+		toAdd = new Xml(type);
+		toAdd.appendAttribute("name",			name);
+		toAdd.appendAttribute("iterations",		Integer.toString(iterations));
+
+		if (m_compilation.isEmpty())
+		{	// Add at the beginning
+			m_compilation.add(toAdd);
+			m_compilationHighlightEntry = 0;
+
+		} else {
+			if (m_compilationHighlightEntry + 1 > m_compilation.size())
+			{	// Append to the end
+				m_compilation.add(toAdd);
+				m_compilationHighlightEntry = m_compilation.size() - 1;
+
+			} else {
+				// Insert where we are
+				m_compilation.add(m_compilationHighlightEntry + 1, toAdd);
+				++m_compilationHighlightEntry;
+			}
+		}
+	}
+
+	/**
 	 * Asks the user for a directory, and loads all results*.xml files, adding
 	 * up every timing point contained within, and producing an average and
 	 * output file called results_averages.xml in the same directory.
+	 *
 	 * This method is only used by the developer.
+	 *
 	 */
 	public void computeResultsXmlAverages()
 	{
@@ -3350,6 +3582,8 @@ public final class Opbm extends	ModalApp
 
 	private List<JFrame>			m_zoomFrames;								// Zoom button and editing windows (that popup when new entries are added) are all called zoom windows, this holds a list of all that are open at the time
 	private List<DroppableFrame>	m_rvFrames;									// Holds list of open results viewer windows, closed automatically at benchmark run
+	private List<Xml>				m_compilation;								// Holds the built on-the-fly compilation list to execute
+	private int						m_compilationHighlightEntry;				// Holds the global offset into the m_compilation list for the highlighted item
 	private ResultsViewer			m_rv;										// What was the last loaded results viewer instance?  (multiple instances of the results viewer are possible)
 	private String					m_rvFilename;								// What was the last loaded results viewer filename?
 	private boolean					m_executingFromCommandLine;					// Are we executing from the command line?
@@ -3371,6 +3605,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.03 05:06pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.04 03:56pm";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

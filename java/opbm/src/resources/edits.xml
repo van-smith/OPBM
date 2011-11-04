@@ -333,26 +333,23 @@
 				<foreach>atom</foreach>
 				<listby p1="#name"/>
 			</listbox>
-			<label width="250" text="Sequence Description(colon)"/>
-			<textbox readonly="yes" width="250" field="elements.#name"/>
-			<label width="250" text="Sequence of Operations(colon)"/>
-			<lookupbox name="elements" autoupdate="no" height="max">
-				<up>lookupbox_move_up</up>
-				<down>lookupbox_move_down</down>
-				<source relativeto="atom">[flow,abstract]</source>
-				<foreach>[flow,abstract]</foreach>
-				<relativeedits p1="flow=flows" p2="abstract=abstracts"/>
-				<relativeoptions p1="flow=opbm.scriptdata.flows.flow" p2="abstract=opbm.scriptdata.abstracts.abstract"/>
-				<listby p1="#name"/>
-			</lookupbox>
-			<newcolumn/>
+			<vspacer height="55"/>
+			<label width="350" text="(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;(ampersand)nbsp;Build a Custom Compilation(colon)"/>
+			<compilation name="comp" height="max">
+				<in p1="atom">compilation_in</in>
+			</compilation>
+			<hspacer width="40"/>
 			<vspacer height="200"/>
-			<link text="Run Atom Sequence" fontsize="24" height="40">
+			<link text="Run Atom Listing Entry" fontsize="24" height="40">
 				<command p1="atom">run_atom_sequence_1</command>
 			</link>
-			<vspacer height="60"/>
-			<link text="Run Atom Sequence in Iteration" fontsize="24" height="40">
+			<vspacer height="50"/>
+			<link text="Run Atom(N) Listing Entry(in iteration)" fontsize="24" height="40">
 				<command p1="atom">run_atom_sequence</command>
+			</link>
+			<vspacer height="50"/>
+			<link text="Run Compilation" fontsize="24" height="40">
+				<command>run_compilation</command>
 			</link>
 		</edit>
 
@@ -387,7 +384,7 @@
 				<command p1="molecule">run_molecule_sequence_1</command>
 			</link>
 			<vspacer height="60"/>
-			<link text="Run Molecule Sequence in Iteration" fontsize="24" height="40">
+			<link text="Run Molecule(N) Sequence (in iteration)" fontsize="24" height="40">
 				<command p1="molecule">run_molecule_sequence</command>
 			</link>
 		</edit>
@@ -423,7 +420,7 @@
 				<command p1="scenario">run_scenario_sequence_1</command>
 			</link>
 			<vspacer height="60"/>
-			<link text="Run Scenario Sequence in Iteration" fontsize="24" height="40">
+			<link text="Run Scenario(N) Sequence (in iteration)" fontsize="24" height="40">
 				<command p1="scenario">run_scenario_sequence</command>
 			</link>
 		</edit>
@@ -459,7 +456,7 @@
 				<command p1="suite">run_suite_sequence_1</command>
 			</link>
 			<vspacer height="60"/>
-			<link text="Run Suite Sequence in Iteration" fontsize="24" height="40">
+			<link text="Run Suite(N) Sequence (in iteration)" fontsize="24" height="40">
 				<command p1="suite">run_suite_sequence</command>
 			</link>
 		</edit>
