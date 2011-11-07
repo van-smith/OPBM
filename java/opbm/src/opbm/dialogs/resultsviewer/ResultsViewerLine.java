@@ -72,7 +72,7 @@ public final class ResultsViewerLine
 		m_rectTabspace			= new Rectangle();
 
 		Utils.extractCommaItems(m_filterTags, node.getAttributeOrChild("tags"));
-		m_score	= Utils.doubleValueOf(node.getAttributeOrChild("score"), 0.0);
+		m_score		= Utils.doubleValueOf(node.getAttributeOrChild("score"), 0.0);
 		m_tested	= Utils.interpretBooleanAsYesNo(node.getAttributeOrChild("tested"), true).equalsIgnoreCase("Yes");
 		m_success	= node.getAttributeOrChild("status").equals("success");
 		m_name		= m_opbm.getMacroMaster().parseMacros(node.getAttributeOrChild("name"));
@@ -81,16 +81,16 @@ public final class ResultsViewerLine
 		m_instances	= Utils.integerValueOf(node.getAttributeOrChild("instances"), 1);
 
 		// Grab min/max/avg/geo/cv scores and times
-		m_minScore	= Utils.doubleValueOf(node.getAttributeOrChild("minScore"), -1.0);
-		m_maxScore	= Utils.doubleValueOf(node.getAttributeOrChild("maxScore"), -1.0);
-		m_avgScore	= Utils.doubleValueOf(node.getAttributeOrChild("avgScore"), -1.0);
-		m_geoScore	= Utils.doubleValueOf(node.getAttributeOrChild("geoScore"), -1.0);
-		m_cvScore	= Utils.doubleValueOf(node.getAttributeOrChild("cvScore"), -1.0);
-		m_minTime	= Utils.doubleValueOf(node.getAttributeOrChild("minTime"), -1.0);
-		m_maxTime	= Utils.doubleValueOf(node.getAttributeOrChild("maxTime"), -1.0);
-		m_avgTime	= Utils.doubleValueOf(node.getAttributeOrChild("avgTime"), -1.0);
-		m_geoTime	= Utils.doubleValueOf(node.getAttributeOrChild("geoTime"), -1.0);
-		m_cvTime	= Utils.doubleValueOf(node.getAttributeOrChild("cvTime"), -1.0);
+		m_minScore	= Utils.doubleValueOf(node.getAttributeOrChild("minScore"),	-1.0);
+		m_maxScore	= Utils.doubleValueOf(node.getAttributeOrChild("maxScore"),	-1.0);
+		m_avgScore	= Utils.doubleValueOf(node.getAttributeOrChild("avgScore"),	-1.0);
+		m_geoScore	= Utils.doubleValueOf(node.getAttributeOrChild("geoScore"),	-1.0);
+		m_cvScore	= Utils.doubleValueOf(node.getAttributeOrChild("cvScore"),	-1.0);
+		m_minTime	= Utils.doubleValueOf(node.getAttributeOrChild("minTime"),	-1.0);
+		m_maxTime	= Utils.doubleValueOf(node.getAttributeOrChild("maxTime"),	-1.0);
+		m_avgTime	= Utils.doubleValueOf(node.getAttributeOrChild("avgTime"),	-1.0);
+		m_geoTime	= Utils.doubleValueOf(node.getAttributeOrChild("geoTime"),	-1.0);
+		m_cvTime	= Utils.doubleValueOf(node.getAttributeOrChild("cvTime"),	-1.0);
 
 		// The tabs are comprised of two portions, the upper and lower
 		height = _BOX_HEIGHT;
@@ -411,15 +411,15 @@ public final class ResultsViewerLine
 			case 0:		// Summary level, white
 			default:	// not specified, so use white
 				return(new Color(255, 255, 255));
-			case 1:		// Suite level, yellow
+			case 1:		// Suite level, a certain shade of cyan/blue
 				return(new Color(197, 217, 241));
-			case 2:		// Scenario level, red
+			case 2:		// Scenario level, another shade of cyan/blue, more bluish
 				return(new Color(140, 179, 225));
-			case 3:		// Molecule level, green
+			case 3:		// Molecule level, another shade of cyan/blue, darker, more blue
 				return(new Color(82, 140, 212));
-			case 4:		// Atom level, blue
+			case 4:		// Atom level, another darker, bluer color
 				return(new Color(21, 53, 91));
-			case 5:		// Worklet level, cyan
+			case 5:		// Worklet level, a brighter cyan/blue color
 				return(new Color(59, 175, 255));
 		}
 	}
@@ -433,18 +433,18 @@ public final class ResultsViewerLine
 	{
 		switch (level)
 		{
-			case 0:		// Summary level, white
-			default:	// not specified, so use white
+			case 0:		// Summary level, black
+			default:	// not specified, so use black
 				return(new Color(0,0,0));
-			case 1:		// Suite level, yellow
+			case 1:		// Suite level, black
 				return(new Color(0,0,0));
-			case 2:		// Scenario level, red
+			case 2:		// Scenario level, black
 				return(new Color(0,0,0));
-			case 3:		// Molecule level, green
+			case 3:		// Molecule level, black
 				return(new Color(0,0,0));
-			case 4:		// Atom level, blue
+			case 4:		// Atom level, black
 				return(new Color(255,255,255));
-			case 5:		// Worklet level, cyan
+			case 5:		// Worklet level, white
 				return(new Color(0,0,0));
 		}
 	}

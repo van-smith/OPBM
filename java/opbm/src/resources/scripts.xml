@@ -523,7 +523,7 @@
 				</abstract>
 			</atom>
 			<atom name="Opera Google V8" shortname="Opera">
-				<abstract name="Opera Google V8" shortname="V8" sourcename="execute" atomuuid="30690ea8-0233-401b-8faa-c3ebac214e88">
+				<abstract name="Opera Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>

@@ -316,7 +316,6 @@ public final class Opbm extends	ModalApp
 							} else if (line.toLowerCase().startsWith("-atom:")) {
 								// It's an iterative atom count
 								// Grab all of the atoms and iterate to find the name of the one we're after
-								m_executingFromCommandLine = true;
 								list.clear();
 								Xml.getNodeList(list, getScriptsXml(), "opbm.scriptdata.atoms.atom", false);
 								if (!list.isEmpty())
@@ -583,8 +582,8 @@ public final class Opbm extends	ModalApp
 						for (i = 0; i < todos.size(); i++)
 						{	// Grab each item and process it in turn
 							todo	= todos.get(i);
-							group	= todo.getFirst(i);
-							command	= (String)todo.getSecond(i);
+							group	= todo.getFirst(0);
+							command	= (String)todo.getSecond(0);
 							if (group.equalsIgnoreCase("switch"))
 							{	// It's a command line switch read at the beginning, before the others
 								if (command.equalsIgnoreCase("noexit"))
@@ -605,7 +604,7 @@ public final class Opbm extends	ModalApp
 
 								} else if (command.equalsIgnoreCase("jvmhome")) {
 									// -home:c:\path\to\java\dot\exe\
-									m_jvmHome = (String)todo.getThird(i);
+									m_jvmHome = (String)todo.getThird(0);
 
 								} else if (command.equalsIgnoreCase("restart")) {
 									// -restart
@@ -614,8 +613,8 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("atom()")) {
 									// -atom(n):name
 									m_executingFromCommandLine = true;
-									name		= (String)todo.getThird(i);
-									digits		= (String)todo.getFourth(i);
+									name		= (String)todo.getThird(0);
+									digits		= (String)todo.getFourth(0);
 									iterations	= Integer.valueOf(digits);
 									++runCount;
 									System.out.println("Adding Atom \"" + name + "\" for " + digits + " iterations to compilation");
@@ -624,8 +623,8 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("molecule()")) {
 									// -molecule(n):name
 									m_executingFromCommandLine = true;
-									name		= (String)todo.getThird(i);
-									digits		= (String)todo.getFourth(i);
+									name		= (String)todo.getThird(0);
+									digits		= (String)todo.getFourth(0);
 									iterations	= Integer.valueOf(digits);
 									++runCount;
 									System.out.println("Adding Molecule \"" + name + "\" for " + digits + " iterations to compilation");
@@ -634,8 +633,8 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("scenario()")) {
 									// -scenario(n):name
 									m_executingFromCommandLine = true;
-									name		= (String)todo.getThird(i);
-									digits		= (String)todo.getFourth(i);
+									name		= (String)todo.getThird(0);
+									digits		= (String)todo.getFourth(0);
 									iterations	= Integer.valueOf(digits);
 									++runCount;
 									System.out.println("Adding Scenario \"" + name + "\" for " + digits + " iterations to compilation");
@@ -644,8 +643,8 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("suite()")) {
 									// -suite(n):name
 									m_executingFromCommandLine = true;
-									name		= (String)todo.getThird(i);
-									digits		= (String)todo.getFourth(i);
+									name		= (String)todo.getThird(0);
+									digits		= (String)todo.getFourth(0);
 									iterations	= Integer.valueOf(digits);
 									++runCount;
 									System.out.println("Adding Suite \"" + name + "\" for " + digits + " iterations to compilation");
@@ -654,7 +653,7 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("atom")) {
 									// -atom:name
 									m_executingFromCommandLine = true;
-									name = (String)todo.getThird(i);
+									name = (String)todo.getThird(0);
 									++runCount;
 									System.out.println("Adding Atom \"" + name + "\" to compilation");
 									bm.addToCompiledList("atom", name, 1);
@@ -662,7 +661,7 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("molecule")) {
 									// -molecule:name
 									m_executingFromCommandLine = true;
-									name = (String)todo.getThird(i);
+									name = (String)todo.getThird(0);
 									++runCount;
 									System.out.println("Adding Molecule \"" + name + "\" to compilation");
 									bm.addToCompiledList("molecule", name, 1);
@@ -670,7 +669,7 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("scenario")) {
 									// -scenario:name
 									m_executingFromCommandLine = true;
-									name = (String)todo.getThird(i);
+									name = (String)todo.getThird(0);
 									++runCount;
 									System.out.println("Adding Scenario \"" + name + "\" to compilation");
 									bm.addToCompiledList("scenario", name, 1);
@@ -678,7 +677,7 @@ public final class Opbm extends	ModalApp
 								} else if (command.equalsIgnoreCase("suite")) {
 									// -suite:name
 									m_executingFromCommandLine = true;
-									name = (String)todo.getThird(i);
+									name = (String)todo.getThird(0);
 									++runCount;
 									System.out.println("Adding Suite \"" + name + "\" to compilation");
 									bm.addToCompiledList("suite", name, 1);
@@ -699,7 +698,7 @@ public final class Opbm extends	ModalApp
 
 								} else if (command.equalsIgnoreCase("name")) {
 									// -name:someName
-									m_executingBenchmarkRunName = (String)todo.getThird(i);
+									m_executingBenchmarkRunName = (String)todo.getThird(0);
 									System.out.println("Benchmark given name: '" + m_executingBenchmarkRunName + "'");
 
 								} else {
@@ -3605,6 +3604,6 @@ public final class Opbm extends	ModalApp
 
 	// Used for the build-date and time
 //	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.04 03:56pm";
+	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.07 02:29am";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

@@ -330,6 +330,7 @@ public class BenchmarkManifestResults
 		m_details					= m_resultsdataRoot.appendChild(new Xml("details"));		// opbm.resultsdata.details
 		m_aggregate					= m_resultsdataRoot.appendChild(new Xml("aggregate"));		// opbm.resultsdata.aggregate
 		m_aggregateByAtom			= m_aggregate.appendChild(new Xml("byAtom"));				// opbm.resultsdata.aggregate.byAtom
+		m_aggregateByIteration		= m_aggregate.appendChild(new Xml("byIteration"));			// opbm.resultsdata.aggregate.byIteration
 		m_isLoaded = true;
 	}
 
@@ -434,6 +435,15 @@ public class BenchmarkManifestResults
 // manifestAbstracts contains one element for every
 // opbm.benchmarks.manifest.run.abstract entry (every
 // atom that was run, for all of the runs).
+//
+// Note:  An abstract is the thing that is run, such as an external script.
+//        They are called abstracts because the initial design of OPBM was to
+//        create a layer of abstraction between the requested thing in OPBM,
+//        and the physical mechanics of completing it externally, such as using
+//        AutoIt for the scripting language.  However, AutoIt was not required,
+//        but the ability to say "execute this thing" was required, so it became
+//        a layer of abstraction, hence the use of "abstract".  And in this
+//        case, the abstracts come from manifest.xml, so manifestAbstracts.
 /////
 		Xml.getNodeListContainingThisAttributeName(manifestAbstracts, m_bm.getManifestRoot(), "atomuuid", true);
 		if (!manifestAbstracts.isEmpty())
@@ -1839,4 +1849,5 @@ public class BenchmarkManifestResults
 	private Xml				m_details;					// opbm.resultsdata.results.details
 	private Xml				m_aggregate;				// opbm.resultsdata.results.aggregate
 	private Xml				m_aggregateByAtom;			// opbm.resultsdata.results.aggregate.byAtom
+	private Xml				m_aggregateByIteration;		// opbm.resultsdata.results.aggregate.byIteration
 }
