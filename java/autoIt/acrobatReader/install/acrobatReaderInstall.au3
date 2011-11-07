@@ -109,6 +109,10 @@ EndFunc
 
 Func SetSecurityUpdatesToManual()
 	opbmWinWaitActivate( $ACROBAT_READER_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader: Unable to find Window.")
+	; van:: bug #24: this is an attempt to properly give focus to the Reader window:
+	Send( "{PGDN}" )
+	Send( "{PGUP}" )
+	; van:: bug #24: End
 	
 	; Send Alt-E for edit menu, then "n" for Prefere&nces
 	Send( "!en" )
