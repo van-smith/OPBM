@@ -297,6 +297,9 @@ public class BenchmarkManifestResults
 		detail.appendAttribute(new Xml("manifestworkletuuid", manifestWorkletUuid));
 		if (failures.getFirstChild() != null)
 		{	// There was at least one failure
+			//+2011.11.12 van
+			m_fail = true;
+			//+2011.11.12 van end
 			if (success.getFirstChild() != null)
 				detail.appendChild(success);	// And there was a success
 			detail.appendChild(failures);
@@ -1560,6 +1563,12 @@ public class BenchmarkManifestResults
 
 		// Save results.xml
 		rootFile	= "results_" + Utils.convertFilenameToLettersAndNumbersOnly(Utils.getDateTimeAs_YYYY_MM_DD_at_HH_MM_SS() + "_" + m_opbm.getRunName());
+		//+2011.11.12 van
+		if( m_fail )
+		{
+			rootFile = "FAIL_" + rootFile;
+		}
+		//+2011.11.12 van end
 		xmlFile		= Opbm.getHarnessXMLDirectory() + rootFile + ".xml";
 		csvFile		= Opbm.getHarnessCSVDirectory() + rootFile + ".csv";
 
@@ -1850,4 +1859,7 @@ public class BenchmarkManifestResults
 	private Xml				m_aggregate;				// opbm.resultsdata.results.aggregate
 	private Xml				m_aggregateByAtom;			// opbm.resultsdata.results.aggregate.byAtom
 	private Xml				m_aggregateByIteration;		// opbm.resultsdata.results.aggregate.byIteration
+	//+2011.11.12 van
+	private boolean			m_fail	= false;			// boolean
+	//+2011.11.12 van end
 }
