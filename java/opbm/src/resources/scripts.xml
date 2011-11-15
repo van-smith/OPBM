@@ -702,7 +702,7 @@
 				<abstract name="Chrome SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -718,7 +718,7 @@
 				<abstract name="Chrome Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -734,7 +734,7 @@
 				<abstract name="Chrome Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Chrome Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -1235,6 +1235,7 @@
 				<atom name="Install Acrobat Reader" shortname="Acrobat" sourcename="Install Acrobat Reader"></atom>
 				<atom name="Install Firefox" shortname="Firefox" sourcename="Install Firefox"></atom>
 				<atom name="Install Safari" shortname="Safari" sourcename="Install Safari"></atom>
+				<atom name="Install Chrome" shortname="Chrome" sourcename="Install Chrome"></atom>
 			</molecule>
 			<molecule name="Presentation" shortname="Ppoint">
 				<atom name="PowerPoint Open" shortname="Open" sourcename="PowerPoint Open"></atom>
@@ -1283,6 +1284,7 @@
 				<atom name="Uninstall Acrobat Reader" shortname="Acrobat" sourcename="Uninstall Acrobat Reader"></atom>
 				<atom name="Uninstall Firefox" shortname="Firefox" sourcename="Uninstall Firefox"></atom>
 				<atom name="Uninstall Safari" shortname="Safari" sourcename="Uninstall Safari"></atom>
+				<atom name="Uninstall Chrome" shortname="Chrome" sourcename="Uninstall Chrome"></atom>
 			</molecule>
 			<molecule name="Word Processing" shortname="Word">
 				<atom name="Word Alice" shortname="Alice" sourcename="Word Alice"></atom>
