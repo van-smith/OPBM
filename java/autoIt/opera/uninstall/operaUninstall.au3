@@ -19,18 +19,18 @@ Dim $CurrentLoop
 Dim $LoopLimit
 
 ; Begin at 2 (see operaCommon for definition of 0 and 1)
-$gBaselines[2][0] = $LAUNCH_OPERA_1150_UNINSTALLER
-$gBaselines[2][1] = $LAUNCH_OPERA_1150_UNINSTALLER_SCORE
-$gBaselines[3][0] = $UNINSTALL_OPERA_1150
-$gBaselines[3][1] = $UNINSTALL_OPERA_1150_SCORE
+$gBaselines[2][0] = $LAUNCH_OPERA_UNINSTALLER	;Eliminate Version reference -rcp 11/11/11
+$gBaselines[2][1] = $LAUNCH_OPERA_UNINSTALLER_SCORE	;Eliminate Version reference -rcp 11/11/11
+$gBaselines[3][0] = $UNINSTALL_OPERA	;Eliminate Version reference -rcp 11/11/11
+$gBaselines[3][1] = $UNINSTALL_OPERA_SCORE	;Eliminate Version reference -rcp 11/11/11
 
-outputDebug( "Starting up Opera 11.50 Un-installer" )
+outputDebug( "Starting up Opera Un-installer" )	;Eliminate Version reference -rcp 11/11/11
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
 
 If not isOperaAlreadyInstalled() Then
-	outputError( "Opera 11.50 is not installed" )
+	outputError( "Opera is not installed" )	;Eliminate Version reference -rcp 11/11/11
 	Exit -1
 Endif
 
@@ -59,13 +59,13 @@ EndFunc
 
 Func LaunchUninstaller()
 	outputDebug( "Attempting to launch " & $OPERA_UNINSTALL_COMMAND )
-	
+
 	; Begin the timer as the uninstaller loads
 	TimerBegin()
 	$gPID = Run($OPERA_UNINSTALL_COMMAND, "C:\", @SW_SHOW)
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	opbmWinWaitActivate( "Opera 11.50 - Installer", "", $gTimeout, $ERROR_PREFIX & "WinWait: Opera 11.50 Uninstaller: Unable to find Window.")
-	TimerEnd( $LAUNCH_OPERA_1150_UNINSTALLER )
+	opbmWinWaitActivate( $OPERA_INSTALLER_WINDOW_NAME, "", $gTimeout, $ERROR_PREFIX & "WinWait: "& $OPERA_INSTALLER_WINDOW_NAME & ": Unable to find Window.")	;Eliminate Version reference-rcp 11/15/11
+	TimerEnd( $LAUNCH_OPERA_UNINSTALLER )	;Eliminate Version reference -rcp 11/11/11
 EndFunc
 
 Func Uninstall()
@@ -74,5 +74,6 @@ Func Uninstall()
 	Send("{Enter}")
 	TimerBegin()
 	opbmWaitUntilProcessIdle( $gPID, 10, 500, 120000 )
-	TimerEnd( $UNINSTALL_OPERA_1150 )
+	TimerEnd( $UNINSTALL_OPERA )	;Eliminate Version reference -rcp 11/11/11
+	Sleep(5000)	;Wait 5 seconds for extraineous windows to appear before moving on -rcp 11/13/2011
 EndFunc

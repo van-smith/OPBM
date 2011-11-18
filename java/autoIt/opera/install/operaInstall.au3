@@ -19,18 +19,18 @@ Dim $CurrentLoop
 Dim $LoopLimit
 
 ; Begin at 2 (see operaCommon for definition of 0 and 1)
-$gBaselines[2][0] = $LAUNCH_OPERA_1150_INSTALLER
-$gBaselines[2][1] = $LAUNCH_OPERA_1150_INSTALLER_SCORE
-$gBaselines[3][0] = $INSTALL_OPERA_1150
-$gBaselines[3][1] = $INSTALL_OPERA_1150_SCORE
+$gBaselines[2][0] = $LAUNCH_OPERA_INSTALLER	;Eliminate Version reference -rcp 11/11/11
+$gBaselines[2][1] = $LAUNCH_OPERA_INSTALLER_SCORE	;Eliminate Version reference -rcp 11/11/11
+$gBaselines[3][0] = $INSTALL_OPERA	;Eliminate Version reference -rcp 11/11/11
+$gBaselines[3][1] = $INSTALL_OPERA_SCORE	;Eliminate Version reference -rcp 11/11/11
 
-outputDebug( "Starting up Opera 11.50 Installer" )
+outputDebug( "Starting up Opera Installer" )	;Eliminate Version reference -rcp 11/11/11
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
 
 If isOperaAlreadyInstalled() Then
-	outputError( "Opera 11.50 already installed" )
+	outputError( "Opera already installed" )	;Eliminate Version reference -rcp 11/11/11
 	Exit -1
 Endif
 
@@ -51,7 +51,7 @@ outputDebug( "SetInitialSettings()" )
 SetInitialSettings()
 
 If not isOperaAlreadyInstalled() Then
-	outputError( "Opera 11.50 did not install properly" )
+	outputError( "Opera did not install properly" )	;Eliminate Version reference -rcp 11/11/11
 	opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 	Exit -1
 Endif
@@ -71,25 +71,25 @@ EndFunc
 
 Func LaunchOperaInstaller()
 	outputDebug( "Attempting to launch " & $OPERA_INSTALLER )
-	
+
 	; Begin the timer before we launch the installer
 	TimerBegin()
 	$gPID = Run($OPERA_INSTALLER, "C:\", @SW_SHOW)
-	
+
 	; Opera's installer at startup is not always using the CPU heavy, but sometimes file copying, so we wait a few seconds
 	Sleep(3000)
-	
+
 	; Wait until it is done uncompressing and begins with its dialog
-	opbmWinWaitActivate( "Opera 11.50 - Installer", "", $gTimeout, $ERROR_PREFIX & "WinWait: Opera 11.50 - Installer: Unable to find Window.")
-	TimerEnd( $LAUNCH_OPERA_1150_INSTALLER )
-	
+	opbmWinWaitActivate( $OPERA_INSTALLER_WINDOW_NAME, "", $gTimeout, $ERROR_PREFIX & "WinWait: " & $OPERA_INSTALLER_WINDOW_NAME & ": Unable to find Window.")	;Eliminate Version reference -rcp 11/11/11
+	TimerEnd( $LAUNCH_OPERA_INSTALLER )	;Eliminate Version reference -rcp 11/11/11
+
 	; Wait for the system to settle down
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 EndFunc
 
 Func AcceptAndInstall()
 	outputDebug( "Accept and install" )
-	
+
 	TimerBegin()
 	; Sent an enter key, as the default option is "Accept and Install"
 	Send("{Enter}")
@@ -98,7 +98,7 @@ Func AcceptAndInstall()
 	Sleep(3000)
 	; There is no termination screen, so we wait for the system to be idle for a long while
 	opbmWaitUntilSystemIdle( 10, 1000, 120000 )
-	TimerEnd( $INSTALL_OPERA_1150 )
+	TimerEnd( $INSTALL_OPERA )	;Eliminate Version reference -rcp 11/11/11
 EndFunc
 
 Func SetInitialSettings()

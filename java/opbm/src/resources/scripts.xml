@@ -494,7 +494,7 @@
 				<abstract name="Opera SunSpider" shortname="Spider" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -510,7 +510,7 @@
 				<abstract name="Opera Kraken" shortname="Kraken" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -526,7 +526,7 @@
 				<abstract name="Opera Google V8" shortname="V8" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>Opera Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts></atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -827,7 +827,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
-				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute">
+				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute" atomuuid="95f366b8-316a-4fb5-bc03-191421261fb6">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -1236,6 +1236,7 @@
 				<atom name="Install Firefox" shortname="Firefox" sourcename="Install Firefox"></atom>
 				<atom name="Install Safari" shortname="Safari" sourcename="Install Safari"></atom>
 				<atom name="Install Chrome" shortname="Chrome" sourcename="Install Chrome"></atom>
+				<atom name="Install Opera" shortname="Opera" sourcename="Install Opera"></atom>
 			</molecule>
 			<molecule name="Presentation" shortname="Ppoint">
 				<atom name="PowerPoint Open" shortname="Open" sourcename="PowerPoint Open"></atom>
@@ -1285,6 +1286,7 @@
 				<atom name="Uninstall Firefox" shortname="Firefox" sourcename="Uninstall Firefox"></atom>
 				<atom name="Uninstall Safari" shortname="Safari" sourcename="Uninstall Safari"></atom>
 				<atom name="Uninstall Chrome" shortname="Chrome" sourcename="Uninstall Chrome"></atom>
+				<atom name="Uninstall Opera" shortname="Opera" sourcename="Uninstall Opera"></atom>
 			</molecule>
 			<molecule name="Word Processing" shortname="Word">
 				<atom name="Word Alice" shortname="Alice" sourcename="Word Alice"></atom>
