@@ -52,31 +52,39 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_EXCEL_SCORE
 
 
 ; Functions used by Excel
-Func InitializeExcelScript()
+Func InitializeExcelScript( $retrieveProcess = 1)
 	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
+
+	outputDebug( "InitializeGlobalVariables()" )
+	InitializeGlobalVariables()
 	
+	If $retrieveProcess = 1 Then
+		$gPID = WinGetProcess ( $MICROSOFT_EXCEL )
+		outputDebug( "Excel PID: " & $gPID )
+	EndIf
+
 	; Start script timer
-	$gScriptBeginTime = TimerInit()
+	;$gScriptBeginTime = TimerInit()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 EndFunc
 
-Func ExcelGotoSheetAndCell($sheet, $cell)
-	opbmWinActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
+Func ExcelGotoSheetAndCell($sheet, $cell, $windowName)
+	opbmWinActivate($windowName, $windowName, $gTimeout, $ERROR_PREFIX & "WinWait: " & $windowName & ": Unable to find Window." )
 	Send("^g")
 	opbmWinWaitActivate("Go To", "", $gTimeout, $ERROR_PREFIX & "WinWait: Go To: Unable to find Window." )
 	ControlSend("Go To", "", "[CLASSNN:EDTBX1]", Chr(39) & $sheet & Chr(39) & Chr(33) & $cell, 1)
 	Send("{ENTER}")
-	opbmWinActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
+	opbmWinActivate($windowName, $windowName, $gTimeout, $ERROR_PREFIX & "WinWait: " & $windowName & ": Unable to find Window." )
 EndFunc
 
-Func ExcelGotoCell($cell)
-	opbmWinActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
+Func ExcelGotoCell($cell, $windowName)
+	opbmWinActivate($windowName, $windowName, $gTimeout, $ERROR_PREFIX & "WinWait: " & $windowName & ": Unable to find Window." )
 	Send("^g")
 	opbmWinWaitActivate("Go To", "", $gTimeout, $ERROR_PREFIX & "WinWait: Go To: Unable to find Window." )
 	ControlSend("Go To", "", "[CLASSNN:EDTBX1]", $cell, 1)
 	Send("{ENTER}")
-	opbmWinActivate($WINDOW_SURF_CHART, $WINDOW_SURF_CHART, $gTimeout, $ERROR_PREFIX & "WinWait: " & $WINDOW_SURF_CHART & ": Unable to find Window." )
+	opbmWinActivate($windowName, $windowName, $gTimeout, $ERROR_PREFIX & "WinWait: " & $windowName & ": Unable to find Window." )
 EndFunc
 
 Func isExcelInstalled()
