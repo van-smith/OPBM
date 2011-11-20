@@ -14,15 +14,17 @@ Const $SUNSPIDER_URL					= $DATA_DIRECTORY		&	"\driver.html"
 Const $KRAKEN_URL						= $DATA_DIRECTORY		&	"\driver.html"
 Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 
-; Executables used to install, uninstall, or execute Firefox
-Const $OPERA_INSTALLER					= $EXE_DIRECTORY		&	"\Opera_1150_int_Setup.exe"
+; Executables used to install, uninstall, or execute Opera		;Changed ro Opera from Firefox -rcp 11/11/11
+Const $OPERA_INSTALLER					= $EXE_DIRECTORY		&	"\Opera_1152_int_Setup.exe"	;Change to Version 11.52 -rcp 11/11/11
+;Const $OPERA_INSTALLER_WINDOW_NAME		= "Opera 11.52 - Installer"	;Eliminate Version references in other scripts -rcp 11/15/11
+Const $OPERA_INSTALLER_WINDOW_NAME		= "Opera 1"				;Just in case we're uninstalling a different version -rcp 11/16/11
 Const $OPERA_UNINSTALLER				= $OPERA_DIRECTORY		&	"\opera.exe"
 Const $OPERA_EXECUTABLE					= $OPERA_DIRECTORY		&	"\opera.exe"
 Const $OPERA_EXECUTABLE_TO_LAUNCH		= $OPERA_DIRECTORY		&	"\opera.exe " & $OPBM_SPLASH_HTML
-Const $OPERA_UNINSTALL_COMMAND			= $OPERA_UNINSTALLER	&	" --uninstall"
+Const $OPERA_UNINSTALL_COMMAND			= $OPERA_UNINSTALLER	&	" /uninstall"	;Change to / from -- -rcp 11/11/11
 
 ; Constants used throughout for various scripts
-Const $LAUNCH_OPERA 					= "Launch Opera 11.50"
+Const $LAUNCH_OPERA 					= "Launch Opera"	;Eliminate Version reference -rcp 11/11/11
 Const $CLOSE_OPERA 						= "Close Opera"
 Const $OPERA_WINDOW						= " - Opera"
 Const $OPEN_FILE_DIALOG_TITLE			= "Open"
@@ -30,11 +32,11 @@ Const $OPEN_FILE_DIALOG_TITLE			= "Open"
 Const $TYPE_SUNSPIDER_URL 				= "Type SunSpider URL"
 Const $TYPE_GOOGLEV8_URL				= "Type URL to Google V8 benchmark"
 Const $TYPE_KRAKEN_URL					= "Type URL to Kraken benchmark"
-Const $LAUNCH_OPERA_1150_INSTALLER		= "Launch Opera Installer"
-Const $LAUNCH_OPERA_1150_UNINSTALLER	= "Launch Opera Un-installer"
+Const $LAUNCH_OPERA_INSTALLER			= "Launch Opera Installer"	;Eliminate Version reference -rcp 11/11/11
+Const $LAUNCH_OPERA_UNINSTALLER			= "Launch Opera Un-installer"	;Eliminate Version reference -rcp 11/11/11
 Const $BYPASS_NEXT_BUTTON				= "Bypass Next Button"
-Const $INSTALL_OPERA_1150				= "Install Opera 11.50"
-Const $UNINSTALL_OPERA_1150				= "Un-install Opera 11.50"
+Const $INSTALL_OPERA					= "Install Opera"	;Eliminate Version reference -rcp 11/11/11
+Const $UNINSTALL_OPERA					= "Un-install Opera"	;Eliminate Version reference -rcp 11/11/11
 Const $CLOSE_UNINSTALLER				= "Close Un-installer"
 
 Const $RUN_SUNSPIDER 					= "Run SunSpider"
@@ -62,14 +64,14 @@ Next
 Func isOperaAlreadyInstalled()
 	If FileExists( $OPERA_EXECUTABLE ) Then
 		return True
-	EndIf	
+	EndIf
 	return False
 EndFunc
 
 Func InitializeOperaScript()
 	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	; Start script timer
 	$gScriptBeginTime = TimerInit()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
@@ -78,21 +80,21 @@ EndFunc
 Func LaunchOpera()
 	Local $i
 	outputDebug( "Attempting to launch " & $OPERA_EXECUTABLE )
-	
+
 	If Not isOperaAlreadyInstalled() Then
 		outputError("Opera is not installed.")
 		Exit -1
 	EndIf
-	
+
 	TimerBegin()
 	$gPID = Run( $OPERA_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
 	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_OPERA )
-	
+
 	; Wait for it to load completely
 	opbmWaitUntilProcessIdle( $gPID, 10, 500, 5000 )
-	
+
 	; There's a featureNotAbug in the Opera install script right now that leaves diretory contents from
 	; the prior install in place.  This has been observed on some systems to cause Opera to re-open
 	; several previous tabs as each test in Opera is run, causing multiple windows to share the cpu and
@@ -114,14 +116,14 @@ EndFunc
 Func CloseOpera()
 	; Start the timer
 	TimerBegin()
-	
+
 	; Close Opera
 	WinActivate( $OPERA_WINDOW )
-	WinClose( $OPERA_WINDOW )	
-	
+	WinClose( $OPERA_WINDOW )
+
 	; Wait until the sytem settles down
 	opbmWaitUntilSystemIdle( 10, 100, 10000 )
-	
+
 	; Take the ending timer
 	TimerEnd( $CLOSE_OPERA )
 EndFunc
