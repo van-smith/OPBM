@@ -86,9 +86,37 @@ Func LaunchOpera()
 		Exit -1
 	EndIf
 
+; Check for known extraneous windows before we start timed event-rcp 11/19/2011
+	outputDebug( "Checking for extraneous windows.")
+	$gPID = Run( $OPERA_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
+	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
+	opbmWaitUntilSystemIdle( 10, 100, 10000 )
+	;Check for Update window
+	If WinExists("Update") Then
+		WinActivate("Update")
+		WinClose("Update")
+		outputDebug( "Found Update window. Closing it.")
+
+	EndIf
+	;Check for Welcome window
+	If WinExists("Welcome") Then
+		WinActivate("Welcome")
+		WinClose("Welcome")
+		outputDebug( "Found Welcome window. Closing it.")
+	EndIf
+	;opera came up as expected so close it and get on with the test
+	If WinExists("[class:OperaWindowClass]") Then
+		WinActivate("[OperaWindowClass]")
+		WinClose("[OperaWindowClass]")
+		outputDebug( "No extraneous windows found. Continuing with test.")
+	EndIf
+	opbmWaitUntilSystemIdle( 10, 100, 10000 )
+	;End of Extraneous window check -rcp 11/19/2011
+
 	TimerBegin()
 	$gPID = Run( $OPERA_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
+
 	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_OPERA )
 
