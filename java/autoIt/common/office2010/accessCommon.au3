@@ -90,8 +90,8 @@ Func launchAccess()
 
 	; Opbm sets some registry keys at startup
 	outputDebug( $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS )
-	;Office2010SaveRegistryKeys()
-	;Office2010InstallRegistryKeys()
+	Office2010SaveRegistryKeys()
+	Office2010InstallRegistryKeys()
 
 	; Attempt to launch the application
 	outputDebug( "Attempting to launch " & $filename)
@@ -112,7 +112,7 @@ Func closeAccess()
 	TimerEnd( $CLOSE_MICROSOFT_ACCESS )
 
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
-	;Office2010RestoreRegistryKeys()
+	Office2010RestoreRegistryKeys()
 EndFunc
 
 Func runQuery( $queryName )

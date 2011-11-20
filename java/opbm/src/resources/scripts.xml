@@ -58,7 +58,7 @@
 			<flow name="return">
 				<variables></variables>
 			</flow>
-			<flow name="goto">
+			<flow name="goto">0
 				<variables>{(colon)label, LABEL(colon)}</variables>
 			</flow>
 			<flow name="label">
@@ -170,6 +170,22 @@
 			</abstract>
 		</abstracts>
 		<atoms>
+			<atom name="Excel General" shortname="ExcelG">
+				<abstract name="Excel 2010 General" shortname="ExcelG" sourcename="execute" atomuuid="839faecc-4efa-45a1-b93b-f5ea6df8e577">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts>PowerPoint Conflict Check</atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..\autoIT\office2010\excel\excelGeneral.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="PowerPoint Open" shortname="PPoint">
 				<abstract name="Open PowerPoint 2010" shortname="Open" sourcename="execute">
 					<options>
