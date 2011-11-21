@@ -73,7 +73,12 @@ Func Uninstall()
 	; Send an enter key as the default option is "Uninstall"
 	Send("{Enter}")
 	TimerBegin()
+	;Added the next two lines in case Opera is open when we trt to uninstall -ecp 11/21/2011
+	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+	Send("{Enter}")
+	;-rcp 11/21/2011
 	opbmWaitUntilProcessIdle( $gPID, 10, 500, 120000 )
 	TimerEnd( $UNINSTALL_OPERA )	;Eliminate Version reference -rcp 11/11/11
-	Sleep(5000)	;Wait 5 seconds for extraineous windows to appear before moving on -rcp 11/13/2011
+	;opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, 15000 ) ;wait up to 15 seconds to make sure we're done $gTimeoutMS
+	Sleep(10000)	;Wait 10 seconds for extraineous windows to appear before moving on -rcp 11/13/2011
 EndFunc
