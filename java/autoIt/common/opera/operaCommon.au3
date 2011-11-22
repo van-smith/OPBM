@@ -15,13 +15,13 @@ Const $KRAKEN_URL						= $DATA_DIRECTORY		&	"\driver.html"
 Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 
 ; Executables used to install, uninstall, or execute Opera		;Changed ro Opera from Firefox -rcp 11/11/11
-Const $OPERA_INSTALLER					= $EXE_DIRECTORY		&	"\Opera_1152_int_Setup.exe"	;Change to Version 11.52 -rcp 11/11/11
+Const $OPERA_INSTALLER					= $EXE_DIRECTORY		&	"\Opera_1152_int_Setup.exe /silent"	;Change to Version 11.52 and added silent switch -rcp 11/22/11
 ;Const $OPERA_INSTALLER_WINDOW_NAME		= "Opera 11.52 - Installer"	;Eliminate Version references in other scripts -rcp 11/15/11
 Const $OPERA_INSTALLER_WINDOW_NAME		= "Opera 1"				;Just in case we're uninstalling a different version -rcp 11/16/11
 Const $OPERA_UNINSTALLER				= $OPERA_DIRECTORY		&	"\opera.exe"
 Const $OPERA_EXECUTABLE					= $OPERA_DIRECTORY		&	"\opera.exe"
 Const $OPERA_EXECUTABLE_TO_LAUNCH		= $OPERA_DIRECTORY		&	"\opera.exe " & $OPBM_SPLASH_HTML
-Const $OPERA_UNINSTALL_COMMAND			= $OPERA_UNINSTALLER	&	" /uninstall"	;Change to / from -- -rcp 11/11/11
+Const $OPERA_UNINSTALL_COMMAND			= $OPERA_UNINSTALLER	&	" /uninstall /silent"	;Change to / from -- and added silent switch -rcp 11/22/11
 
 ; Constants used throughout for various scripts
 Const $LAUNCH_OPERA 					= "Launch Opera"	;Eliminate Version reference -rcp 11/11/11

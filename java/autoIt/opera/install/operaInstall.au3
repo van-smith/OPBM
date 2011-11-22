@@ -92,7 +92,7 @@ Func AcceptAndInstall()
 
 	TimerBegin()
 	; Sent an enter key, as the default option is "Accept and Install"
-	Send("{Enter}")
+	;Send("{Enter}") ; Removed due to silent install
 	; Clicking that button immediately begins the install process
 	; Opera's main installer algorithm is not always using the CPU heavy, but sometimes file copying, so we wait a few seconds
 	Sleep(3000)
