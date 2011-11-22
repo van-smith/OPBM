@@ -20,5 +20,6 @@ outputDebug( "initializeWordScript()" )
 initializeWordScript()
 outputDebug( "launchWord()" )
 launchWord()
+;FirstRunCheck()
 
 Exit

@@ -31,7 +31,7 @@ Const $LAUNCH_MICROSOFT_EXCEL			= "Launch Microsoft Excel 2010"
 Const $CLOSE_MICROSOFT_EXCEL			= "Close Microsoft Excel 2010"
 
 ; heat.au3
-Const $HEAT_CLOSE_EMPTY_WORKSHEET		= "Close Empty Worksheet" 
+Const $HEAT_CLOSE_EMPTY_WORKSHEET		= "Close Empty Worksheet"
 Const $HEAT_OPEN_WORKSHEET				= "Open Worksheet"
 Const $HEAT_SAVE_AND_CLOSE_WORKSHEET	= "Save and Close Worksheet"
 Const $HEAT_TIME_TO_ITERATE_N_TIMES		= "Time to iterate sheet " & $NBR_OF_CALCULATIONS & " times"
@@ -58,7 +58,7 @@ Func InitializeExcelScript( $retrieveProcess = 1)
 
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
+
 	If $retrieveProcess = 1 Then
 		$gPID = WinGetProcess ( $MICROSOFT_EXCEL )
 		outputDebug( "Excel PID: " & $gPID )
@@ -89,7 +89,7 @@ EndFunc
 
 Func isExcelInstalled()
 	Local $filename
-	
+
 	If FileExists($FILENAME_EXCEL_X64) Then
 		$filename = $FILENAME_EXCEL_X64
 		outputDebug( "Running 64-bit Office" )
@@ -99,19 +99,19 @@ Func isExcelInstalled()
 	Else
 		$filename = "not found"
 	EndIf
-	
+
 	return $filename
 EndFunc
 
 Func LaunchExcel()
 	Local $filename
-	
+
 	; Find out which version we're running
 	$filename = isExcelInstalled()
 	If $filename = "not found" Then
 		ErrorHandle("Launch: Excel 2010 not found in " & $FILENAME_EXCEL_X64 & " or " & $FILENAME_EXCEL_I386 & ", unable to launch.")
 	EndIf
-	
+
 	; Opbm sets some registry keys at startup
 	outputDebug( $SAVING_AND_SETTING_OFFICE_2010_REGISTRY_KEYS )
 	Office2010SaveRegistryKeys()
@@ -121,6 +121,8 @@ Func LaunchExcel()
 	outputDebug( "Attempting to launch " & $filename)
 	TimerBegin()
 	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
+	FirstRunCheck()
+	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	opbmWinWaitActivate( $MICROSOFT_EXCEL, $BOOK1, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
 	TimerEnd( $LAUNCH_MICROSOFT_EXCEL )
 EndFunc
@@ -131,7 +133,7 @@ Func CloseExcel()
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )
 	TimerEnd( $CLOSE_MICROSOFT_EXCEL )
-	
+
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )
 	Office2010RestoreRegistryKeys()
 EndFunc

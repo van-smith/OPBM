@@ -55,7 +55,7 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_PUBLISHER_SCORE
 
 Func isPublisherInstalled()
 	Local $filename
-	
+
 	; Find out which version we're running
 	If FileExists( $FILENAME_PUBLISHER_AMD64 ) Then
 		$filename = $FILENAME_PUBLISHER_AMD64
@@ -66,7 +66,7 @@ Func isPublisherInstalled()
 	Else
 		$filename = "not found"
 	EndIf
-	
+
 	return $filename
 EndFunc
 
@@ -88,6 +88,8 @@ Func launchPublisher()
 	outputDebug( "Attempting to launch " & $filename)
 	TimerBegin()
 	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
+	FirstRunCheck()
+	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	opbmWinWaitActivate( $MICROSOFT_PUBLISHER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Publisher. Unable to find Window." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $LAUNCH_MICROSOFT_PUBLISHER )
@@ -111,10 +113,10 @@ EndFunc
 Func initializePublisherScript( $retrieveProcess = 1 )
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
+
 	If $retrieveProcess = 1 Then
 		$gPID = WinGetProcess ( $MICROSOFT_PUBLISHER )
 		outputDebug( "Publisher PID: " & $gPID )

@@ -7,7 +7,7 @@
 	Initial creation date: 8.31.2011
 
 	Description: Atom to launch Microsoft Publisher 2010
-	
+
 	Usage:	publisherOpen
 
 #ce ======================================================================================================================================
@@ -19,6 +19,6 @@ initializePublisherScript()
 outputDebug( "launchPublisher()" )
 launchPublisher()
 
-FirstRunCheck()
+;FirstRunCheck()
 
 Exit

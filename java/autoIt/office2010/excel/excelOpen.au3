@@ -7,7 +7,7 @@
 	Initial creation date: 11.17.2011
 
 	Description: Atom to launch Microsoft Excel 2010
-	
+
 	Usage:	accessOpen
 
 #ce ======================================================================================================================================
@@ -19,6 +19,6 @@ initializeExcelScript()
 outputDebug( "launchExcel()" )
 launchExcel()
 
-FirstRunCheck()
+;FirstRunCheck()
 
 Exit

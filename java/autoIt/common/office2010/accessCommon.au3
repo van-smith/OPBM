@@ -53,10 +53,10 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_ACCESS_SCORE
 Func initializeAccessScript( $retrieveProcess = 1)
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
+
 	If $retrieveProcess = 1 Then
 		$gPID = WinGetProcess ( $MICROSOFT_ACCESS )
 		outputDebug( "Access PID: " & $gPID )
@@ -65,7 +65,7 @@ EndFunc
 
 Func isAccessInstalled()
 	Local $filename
-	
+
 	If FileExists( $FILENAME_ACCESS_AMD64 ) Then
 		$filename = $FILENAME_ACCESS_AMD64
 		outputDebug( "Running 64-bit Office" )
@@ -75,7 +75,7 @@ Func isAccessInstalled()
 	Else
 		$filename = "not found"
 	EndIf
-	
+
 	return $filename
 EndFunc
 
@@ -97,6 +97,8 @@ Func launchAccess()
 	outputDebug( "Attempting to launch " & $filename)
 	TimerBegin()
 	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
+	FirstRunCheck()
+	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	opbmWinWaitActivate( $MICROSOFT_ACCESS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Access. Unable to find Window." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $LAUNCH_MICROSOFT_ACCESS )

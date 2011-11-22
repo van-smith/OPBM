@@ -7,7 +7,7 @@
 	Initial creation date: 8.30.2011
 
 	Description: Atom to launch Microsoft PowerPoint 2010
-	
+
 	Usage:	powerpointOpen
 
 #ce ======================================================================================================================================
@@ -19,6 +19,6 @@ initializePowerPointScript()
 outputDebug( "LaunchPowerPoint()" )
 launchPowerPoint()
 
-FirstRunCheck()
+;FirstRunCheck()
 
 Exit

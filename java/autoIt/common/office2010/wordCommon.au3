@@ -78,7 +78,7 @@ EndFunc
 
 Func isWordInstalled()
 	Local $filename
-	
+
 	If FileExists($FILENAME_WORD_X64) Then
 		$filename = $FILENAME_WORD_X64
 	ElseIf FileExists( $FILENAME_WORD_I386 ) Then
@@ -86,7 +86,7 @@ Func isWordInstalled()
 	Else
 		$filename = "not found"
 	EndIf
-	
+
 	return $filename
 EndFunc
 
@@ -103,6 +103,8 @@ Func LaunchWord()
 	outputDebug( "Attempting to launch " & $filename)
 	TimerBegin()
 	$gPID = Run( $filename, "C:\", @SW_MAXIMIZE )
+	FirstRunCheck()
+	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, $DOCUMENT1, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word. Unable to find Window." )
 
 	; Note the time
@@ -112,25 +114,25 @@ EndFunc
 Func CloseWord()
 	Local $count
 	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
-	
+
 	; Exit word
 	TimerBegin()
-	
+
 	; File -> Exit
 	Send("!fx")
 	Sleep(250)
 	opbmWaitUntilSystemIdle( 10, 250, 1000 )
-	
+
 	; "Save Changes?" No for "Do&n't Save" button
 	Send("!n")
 	Sleep(250)
 	opbmWaitUntilSystemIdle( 10, 250, 1000 )
-	
+
 	; Note:  This Word dialog window is not like other dialogs, it uses an
 	;        internal class which does not use control HWND components, And
 	;        is therefore not visible to AutoIt.  As such, no text or controls
 	;        within the window are visible to AutoIt either.
-	
+
 	; Verify the dialog was closed, only by its title bar
 	$count = 0
 	While $count < 5 and WinExists( $MICROSOFT_WORD_WINDOW )
@@ -150,6 +152,6 @@ Func CloseWord()
 		EndIf
 		outputDebug( "Microsoft Word: Save Changes dialog closed on attempt " & ($count + 1) )
 	EndIf
-	
+
 	TimerEnd( $CLOSE_MICROSOFT_WORD )
 EndFunc

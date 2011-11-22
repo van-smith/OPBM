@@ -7,7 +7,7 @@
 	Initial creation date: 8.30.2011
 
 	Description: Atom to launch Microsoft Access 2010
-	
+
 	Usage:	accessOpen
 
 #ce ======================================================================================================================================
@@ -19,6 +19,6 @@ initializeAccessScript()
 outputDebug( "launchAccess()" )
 launchAccess()
 
-FirstRunCheck()
+;FirstRunCheck()
 
 Exit

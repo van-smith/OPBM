@@ -53,7 +53,7 @@ $gBaselines[1][1] = $CLOSE_MICROSOFT_POWERPOINT_SCORE
 
 Func isPowerPointInstalled()
 	Local $filename
-	
+
 	If FileExists( $FILENAME_POWERPOINT_AMD64 ) Then
 		$filename = $FILENAME_POWERPOINT_AMD64
 		outputDebug( "Running 64-bit Office" )
@@ -63,7 +63,7 @@ Func isPowerPointInstalled()
 	Else
 		$filename = "not found"
 	EndIf
-	
+
 	return $filename
 EndFunc
 
@@ -85,6 +85,8 @@ Func launchPowerPoint()
 	outputDebug( "Attempting to launch " & $filename)
 	TimerBegin()
 	$gPID = Run($filename, "C:\", @SW_MAXIMIZE)
+	FirstRunCheck()
+	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	opbmWinWaitActivate( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $LAUNCH_MICROSOFT_POWERPOINT )
@@ -106,10 +108,10 @@ EndFunc
 Func initializePowerPointScript( $retrieveProcess = 1 )
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
+
 	If $retrieveProcess = 1 Then
 		$gPID = WinGetProcess ( $MICROSOFT_POWERPOINT )
 		outputDebug( "PowerPoint PID: " & $gPID )
