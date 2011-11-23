@@ -171,10 +171,10 @@
 		</abstracts>
 		<atoms>
 			<atom name="Excel General" shortname="ExcelG">
-				<abstract name="Excel 2010 General" shortname="ExcelG" sourcename="execute" atomuuid="839faecc-4efa-45a1-b93b-f5ea6df8e577">
+				<abstract name="Excel 2010 General" shortname="ExcelG" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
-						<atomCheckConflicts>PowerPoint Conflict Check</atomCheckConflicts>
+						<atomCheckConflicts>Excel Conflict Check</atomCheckConflicts>
 						<atomOnSpinup></atomOnSpinup>
 						<atomAfterRuns></atomAfterRuns>
 						<atomBeforeRuns></atomBeforeRuns>
@@ -843,7 +843,7 @@
 				</abstract>
 			</atom>
 			<atom name="Install Acrobat Reader" shortname="Acrobat">
-				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute" atomuuid="95f366b8-316a-4fb5-bc03-191421261fb6">
+				<abstract name="Install Acrobat Reader" shortname="Install" sourcename="execute">
 					<options>
 						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
 						<atomCheckConflicts></atomCheckConflicts>
@@ -1271,6 +1271,7 @@
 			</molecule>
 			<molecule name="Spreadsheet" shortname="Excel">
 				<atom name="Excel Heat" shortname="Heat" sourcename="Excel Heat"></atom>
+				<atom name="Excel General" shortname="ExcelG" sourcename="Excel General"></atom>
 			</molecule>
 			<molecule name="JavaScript" shortname="Browser">
 				<atom name="Chrome SunSpider" shortname="CSpider" sourcename="Chrome SunSpider"></atom>
