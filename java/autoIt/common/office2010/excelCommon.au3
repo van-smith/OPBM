@@ -128,8 +128,11 @@ Func LaunchExcel()
 EndFunc
 
 Func CloseExcel()
+	opbmWinWaitActivate( $MICROSOFT_EXCEL, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
 	TimerBegin()
 	Send("!fx")
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Send("!n")	;Just in case there was an unanticipated change made -rcp 11/23/2011
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )
 	TimerEnd( $CLOSE_MICROSOFT_EXCEL )

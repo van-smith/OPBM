@@ -97,6 +97,8 @@ Func closePowerPoint()
 	TimerBegin()
 	Send("!fx")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	Send("!n")	;Just in case there was an unanticipated change made -rcp 11/23/2011
+	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitClose( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint: Window did not close." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $CLOSE_MICROSOFT_POWERPOINT )
