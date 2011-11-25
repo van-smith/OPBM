@@ -100,8 +100,16 @@ Func closePublisher()
 	TimerBegin()
 	Send("!fx")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	Send("!n")
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+
+	;Just in case there was an unanticipated change made -rcp 11/25/2011
+	If WinExists($MICROSOFT_PUBLISHER) Then
+		WinActivate( $MICROSOFT_PUBLISHER)
+		Send("!n")	;Don't save
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	EndIf
+	;opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	;Send("!n")
+
 	opbmWinWaitClose( $MICROSOFT_PUBLISHER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Publisher: Window did not close." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $CLOSE_MICROSOFT_PUBLISHER )

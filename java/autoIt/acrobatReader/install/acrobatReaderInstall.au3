@@ -102,23 +102,30 @@ Func AcceptAndInstall()
 EndFunc
 
 Func AcceptLicenseAgreement()
+	opbmWaitUntilSystemIdle( 5, 100, 2000 )	;added to slow down the process a bit -rcp 11/24/2011
 	opbmWinWaitActivate( $ACROBAT_READER_LICENSE_AGREEMENT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader License Agreement: Unable to find Window.")
 	opbmWaitUntilSystemIdle( 5, 100, 2000 )	;added to slow down the process a bit -rcp 11/18/2011
+	If WinExists($ACROBAT_READER_LICENSE_AGREEMENT) Then
 	ControlClick( $ACROBAT_READER_LICENSE_AGREEMENT, "", "[TEXT:Accept]", "left" )
+	EndIf
 	Sleep(1000)
 EndFunc
 
 Func SetSecurityUpdatesToManual()
 	opbmWinWaitActivate( $ACROBAT_READER_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader: Unable to find Window.")
 	; van:: bug #24: this is an attempt to properly give focus to the Reader window:
-	Send( "{PGDN}" )
-	Send( "{PGUP}" )
+	;Send( "{PGDN}" ) ; Removed because it doesn't help -rcp 11/25/2011
+	;Send( "{PGUP}" ) ; Removed because it doesn't help -rcp 11/25/2011
 	; van:: bug #24: End
 
 	; Send Alt-E for edit menu, then "n" for Prefere&nces
 	;Send( "!en" )
+	If WinExists($ACROBAT_READER_WINDOW) Then
+	WinActivate($ACROBAT_READER_WINDOW)
 	Send( "^k" )	;Go directly to the preferences window -rcp 11/18/2011
 	Sleep(500)
+	EndIf
+
 
 	opbmWinWaitActivate( $PREFERENCES, "", $gTimeout * 2, $ERROR_PREFIX & "WinWait: Acrobat Reader Preferences: Unable to find Window.")
 	; We arrive on a list of categories, but we don't know where we might be

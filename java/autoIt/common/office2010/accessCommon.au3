@@ -109,8 +109,12 @@ Func closeAccess()
 	TimerBegin()
 	Send("!fx")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	Send("!n")	;Just in case there was an unanticipated change made -rcp 11/23/2011
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	;Just in case there was an unanticipated change made -rcp 11/25/2011
+	If WinExists($MICROSOFT_ACCESS) Then
+		WinActivate( $MICROSOFT_ACCESS)1
+		Send("!n") ;Don't save
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	EndIf
 	opbmWinWaitClose( $MICROSOFT_ACCESS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Access: Window did not close." )
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $CLOSE_MICROSOFT_ACCESS )

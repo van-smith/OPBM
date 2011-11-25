@@ -76,7 +76,7 @@ For $CurrentLoop = 1 to $LoopLimit
 	Send( "!fx" )
 	opbmWaitUntilSystemIdle( 5, 100, 5000 )
 	Send( "n" )
-	
+
 
 Next
 
@@ -93,7 +93,7 @@ Func SINCOSTAN()
 	Local $xlXYScatter
 
 	TimerBegin()
-	
+
 	$ExcelTest1 = _ExcelBookNew() ;Create new book, make it visible
 	$ExcelTest1.activeworkbook.saved = 1	; To prevent 'yes/no' questions from Excel
 	;Ensure all commands will be recognized
@@ -152,7 +152,7 @@ Func PowerBall()
 	Local $index
 	Local $index1
 	Local $draws
-	
+
 	TimerBegin()
 	;
 	_ExcelSheetAddNew($ExcelTest1, "PowerBall") ; Add new sheet
@@ -212,7 +212,7 @@ Func PowerBall()
 EndFunc
 ;End of TEST 2
 
-; TEST 3: Prove Fibonacci (Golden Ration) series
+; TEST 3: Prove Fibonacci (Golden Ratio) series
 Func Fibonacci()
 	Local $index
 	Local $index1
@@ -228,7 +228,7 @@ Func Fibonacci()
 	$ExcelTest1.Range("A4:A1003").Select
 	$ExcelTest1.Selection.FillDown	;Copy down
 	;Enter Golden Ratio
-	_ExcelWriteCell($ExcelTest1, "Golden Ration", 1, 2) ;Enter a column header
+	_ExcelWriteCell($ExcelTest1, "Golden Ratio", 1, 2) ;Enter a column header
 	_ExcelWriteCell($ExcelTest1, "= A3/A2",3,2) ;Enter the Golden Ratio formula
 	$ExcelTest1.Range("B3:B1003").Select
 	$ExcelTest1.Selection.FillDown	;Copy down
@@ -277,7 +277,7 @@ Func RankPercentile()
 	Send( "!fx" )
 	opbmWaitUntilSystemIdle( 5, 100, 5000 )
 	Send( "n" )
-	opbmWaitUntilSystemIdle( 5, 100, 5000 )	
+	opbmWaitUntilSystemIdle( 5, 100, 5000 )
 
 	_ExcelSheetAddNew($ExcelTest1, "GPD Rank") ; Add new sheet
 	_ExcelSheetActivate($ExcelTest1, "GPD Rank") ; Make sure it's the active sheet
@@ -332,7 +332,7 @@ EndFunc
 ;TEST 5: Load an external file (720KB)
 Func Census()
 	TimerBegin()
-	
+
 	_ExcelSheetAddNew($ExcelTest1, "Census") ; Add new sheet
 	_ExcelSheetActivate($ExcelTest1, "Census") ; Make sure it's the active sheet
 	Local $censusFilePath1 = @ScriptDir & "\data\2000_Census.csv"
@@ -354,7 +354,7 @@ Func Census()
 	Send( "!fx" )
 	opbmWaitUntilSystemIdle( 5, 100, 5000 )
 	Send( "n" )
-	
+
 	opbmWaitUntilSystemIdle( 5, 100, 5000 )
 	TimerEnd( $EXCEL_GENERAL_CENSUS )
 	Sleep( 2000 )

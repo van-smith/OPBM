@@ -132,8 +132,12 @@ Func CloseExcel()
 	TimerBegin()
 	Send("!fx")
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	Send("!n")	;Just in case there was an unanticipated change made -rcp 11/23/2011
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	;Just in case there was an unanticipated change made -rcp 11/25/2011
+	If WinExists($MICROSOFT_EXCEL) Then
+		WinActivate( $MICROSOFT_EXCEL)
+		Send("!n")	;Don't save
+		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	EndIf
 	opbmWinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )
 	TimerEnd( $CLOSE_MICROSOFT_EXCEL )
 

@@ -113,7 +113,7 @@ EndFunc
 
 Func CloseWord()
 	Local $count
-	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint. Unable to find Window." )
+	opbmWinWaitActivate( $MICROSOFT_WORD_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Word. Unable to find Window." )
 
 	; Exit word
 	TimerBegin()
