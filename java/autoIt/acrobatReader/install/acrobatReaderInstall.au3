@@ -96,15 +96,15 @@ Func AcceptAndInstall()
 
 	; The disk hammers away for a long time after the process ends, so wait for it to settle down for 2 seconds
 	outputDebug( "Waiting for hard disk to settle down" )
-	opbmWaitUntilSystemIdle( 10, 2000, 120000 )
+	opbmWaitUntilSystemIdle( 5, 2000, 120000 )
 
 	TimerEnd( $INSTALL_ACROBAT_READER )
 EndFunc
 
 Func AcceptLicenseAgreement()
-	opbmWaitUntilSystemIdle( 5, 100, 2000 )	;added to slow down the process a bit -rcp 11/24/2011
-	opbmWinWaitActivate( $ACROBAT_READER_LICENSE_AGREEMENT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader License Agreement: Unable to find Window.")
-	opbmWaitUntilSystemIdle( 5, 100, 2000 )	;added to slow down the process a bit -rcp 11/18/2011
+	opbmWaitUntilSystemIdle( 2, 1000, 5000 )	;added to slow down the process a bit -rcp 11/24/2011
+	opbmWinWaitActivate( $ACROBAT_READER_LICENSE_AGREEMENT, "", 5000, $ERROR_PREFIX & "WinWait: Acrobat Reader License Agreement: Unable to find Window.")
+	opbmWaitUntilSystemIdle( 2, 1000, 5000 )	;added to slow down the process a bit -rcp 11/18/2011
 	If WinExists($ACROBAT_READER_LICENSE_AGREEMENT) Then
 	ControlClick( $ACROBAT_READER_LICENSE_AGREEMENT, "", "[TEXT:Accept]", "left" )
 	EndIf
@@ -112,7 +112,7 @@ Func AcceptLicenseAgreement()
 EndFunc
 
 Func SetSecurityUpdatesToManual()
-	opbmWinWaitActivate( $ACROBAT_READER_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Acrobat Reader: Unable to find Window.")
+	opbmWinWaitActivate( $ACROBAT_READER_WINDOW, "", 5000, $ERROR_PREFIX & "WinWait: Acrobat Reader: Unable to find Window.")
 	; van:: bug #24: this is an attempt to properly give focus to the Reader window:
 	;Send( "{PGDN}" ) ; Removed because it doesn't help -rcp 11/25/2011
 	;Send( "{PGUP}" ) ; Removed because it doesn't help -rcp 11/25/2011
@@ -133,7 +133,7 @@ Func SetSecurityUpdatesToManual()
 	Send( "{end}" )
 	Sleep(100)
 	; This process takes a long time to load the first time
-	opbmWaitUntilSystemIdle( 10, 1000, 120000 )
+	opbmWaitUntilSystemIdle( 5, 1000, 120000 )
 
 	; Choose the "Do &not download or install updates automatically"
 	Send( "!n" )
