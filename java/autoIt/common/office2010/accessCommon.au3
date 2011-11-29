@@ -111,7 +111,7 @@ Func closeAccess()
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	;Just in case there was an unanticipated change made -rcp 11/25/2011
 	If WinExists($MICROSOFT_ACCESS) Then
-		WinActivate( $MICROSOFT_ACCESS)1
+		WinActivate( $MICROSOFT_ACCESS)
 		Send("!n") ;Don't save
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	EndIf
