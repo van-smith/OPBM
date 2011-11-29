@@ -3603,7 +3603,6 @@ public final class Opbm extends	ModalApp
 	public volatile static int		m_rvsync					= 0;	// Used by createAndShowResultsViewer
 
 	// Used for the build-date and time
-//	public final static String		m_version					= "Built 2011.08.22 05:19am";
-	public final static String		m_version					= "-- 1.2.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.07 02:29am";
+	public final static String		m_version					= "-- 1.3.0 -- DEV BRANCH BUILD -- UNSTABLE -- Built 2011.11.29 05:00PM";
 	public final static String		m_title						= "OPBM - Office Productivity Benchmark - " + m_version;
 }

@@ -170,6 +170,54 @@
 			</abstract>
 		</abstracts>
 		<atoms>
+			<atom name="Install AviSynth" shortname="InstallAviSynth">
+				<abstract name="Install AviSynth" shortname="InstallAviSynth" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns>Uninstall AviSynth</atomBeforeRuns>
+						<atomOnFailure>Uninstall AviSynth</atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\x264hd\installAviSynth.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Uninstall AviSynth" shortname="UninstallAviSynth">
+				<abstract name="Uninstall AviSynth" shortname="UninstallAviSynth" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\x264hd\uninstallAviSynth.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="x264 HD benchmark" shortname="x264hd">
+				<abstract name="x264 HD benchmark" shortname="x264hd" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<retryEnabled></retryEnabled>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<executable>..\autoIT\x264hd\x264hdBench.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Excel General" shortname="ExcelG">
 				<abstract name="Excel 2010 General" shortname="ExcelG" sourcename="execute">
 					<options>
@@ -1253,6 +1301,7 @@
 				<atom name="Install Safari" shortname="Safari" sourcename="Install Safari"></atom>
 				<atom name="Install Chrome" shortname="Chrome" sourcename="Install Chrome"></atom>
 				<atom name="Install Opera" shortname="Opera" sourcename="Install Opera"></atom>
+				<atom name="Install AviSynth" shortname="InstallAviSynth" sourcename="Install AviSynth"></atom>
 			</molecule>
 			<molecule name="Presentation" shortname="Ppoint">
 				<atom name="PowerPoint Open" shortname="Open" sourcename="PowerPoint Open"></atom>
@@ -1304,6 +1353,10 @@
 				<atom name="Uninstall Safari" shortname="Safari" sourcename="Uninstall Safari"></atom>
 				<atom name="Uninstall Chrome" shortname="Chrome" sourcename="Uninstall Chrome"></atom>
 				<atom name="Uninstall Opera" shortname="Opera" sourcename="Uninstall Opera"></atom>
+				<atom name="Uninstall AviSynth" shortname="UninstallAviSynth" sourcename="Uninstall AviSynth"></atom>
+			</molecule>
+			<molecule name="Video" shortname="Video">
+				<atom name="x264 HD benchmark" shortname="x264hd" sourcename="x264 HD benchmark"></atom>
 			</molecule>
 			<molecule name="Word Processing" shortname="Word">
 				<atom name="Word Alice" shortname="Alice" sourcename="Word Alice"></atom>
@@ -1323,6 +1376,7 @@
 				<molecule name="JavaScript" shortname="Browser" sourcename="JavaScript"></molecule>
 				<molecule name="Java" shortname="Java" sourcename="Java"></molecule>
 				<molecule name="File Operations" shortname="File" sourcename="File Operations"></molecule>
+				<molecule name="Video" shortname="Video" sourcename="Video"></molecule>
 				<molecule name="Word Processing" shortname="Word" sourcename="Word Processing"></molecule>
 				<molecule name="Uninstall Applications" shortname="Uninstall" sourcename="Uninstall Applications"></molecule>
 			</scenario>
