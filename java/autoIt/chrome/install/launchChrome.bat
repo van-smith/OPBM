@@ -1,0 +1,1 @@
+"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Google Chrome\Google Chrome.lnk" %1

@@ -33,17 +33,17 @@ Endif
 outputDebug( "InitializeChromeScript()" )
 InitializeChromeScript()
 
-KillChromeIfRunning()
+;KillChromeIfRunning();rcp
 
 outputDebug( "Install()" )
 Install()
 
-KillChromeIfRunning()	; Will force-close if it "resiss" normal close attempts
+;KillChromeIfRunning()	; Will force-close if it "resiss" normal close attempts;rcp
 
 ; Close any instances of the browser which may have auto-launched
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 
-KillChromeIfRunning()
+KillChromeIfRunning();rcp
 
 outputDebug( "SetInitialSettings()" )
 SetInitialSettings()
@@ -69,20 +69,27 @@ Func Install()
 	Local $error
 	outputDebug( "Attempting to launch " & $CHROME_INSTALLER )
 
-	KillChromeIfRunning()
+	;KillChromeIfRunning();rcp
 
 	TimerBegin()
 	$gPID = Run($CHROME_INSTALLER, "C:\", @SW_MAXIMIZE)
 	Sleep(8000)
 	; The install process is a little quirky on this one, so we wait a full second
+	;Added the following for slow installs -rcp
+	;The installer takes about 90 sec mostly looking for the Internet
+	If(WinExists("Google Chrome Installer")) Then
+		WinWaitNotActive("Google Chrome Installer"," ",120000)
+	EndIf
+	;-rcp
 	opbmWaitUntilSystemIdle( $gPercent, 1000, 45000 )
 	TimerEnd( $INSTALL_CHROME )
-	
+
 	; Wait for a possible (optional?) post-launch window to arrive
 	Sleep(10000)
+	Send("{enter}") ;just in case it's required
 	WinClose( "Google Chrome" )
-	
-	KillChromeIfRunning()
+
+	;KillChromeIfRunning();rcp
 EndFunc
 
 Func SetInitialSettings()

@@ -15,7 +15,7 @@ Const $KRAKEN_URL						= $DATA_DIRECTORY		&	"\driver.html"
 Const $GOOGLEV8_URL						= $DATA_DIRECTORY		&	"\run.html"
 
 ; Executables used to install, uninstall, or execute Firefox
-Const $FIREFOX_INSTALLER				= chr(34) & $EXE_DIRECTORY		&	"\Firefox Setup 5.0.1.exe" & chr(34)
+Const $FIREFOX_INSTALLER				= chr(34) & $EXE_DIRECTORY		&	"\Firefox Setup 8.0.1.exe" & chr(34)
 Const $FIREFOX_UNINSTALLER				= chr(34) & $FIREFOX_DIRECTORY	&	"\uninstall\helper.exe" & chr(34)
 Const $FIREFOX_EXECUTABLE				= chr(34) & $FIREFOX_DIRECTORY	&	"\firefox.exe" & chr(34)
 Const $FIREFOX_EXECUTABLE_TO_LAUNCH		= chr(34) & $FIREFOX_DIRECTORY	&	"\firefox.exe" & chr(34) & " " & $OPBM_SPLASH_HTML
@@ -64,17 +64,17 @@ Next
 Func isFirefoxAlreadyInstalled()
 	If FileExists( $FIREFOX_EXECUTABLE ) Then
 		return True
-	EndIf	
+	EndIf
 	If FileExists( StringReplace( $FIREFOX_EXECUTABLE, chr(34), "" ) ) Then
 		return True
-	EndIf	
+	EndIf
 	return False
 EndFunc
 
 Func InitializeFirefoxScript()
 	Opt("WinTitleMatchMode", -2)		; 1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	; Start script timer
 	$gScriptBeginTime = TimerInit()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
@@ -82,12 +82,12 @@ EndFunc
 
 Func LaunchFirefox()
 	outputDebug( "Attempting to launch " & $FIREFOX_EXECUTABLE )
-	
+
 	If Not isFirefoxAlreadyInstalled() Then
 		outputError("Firefox is not installed.")
 		Exit -1
 	EndIf
-	
+
 	TimerBegin()
 	$gPID = Run( $FIREFOX_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
 	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
@@ -98,14 +98,14 @@ EndFunc
 Func CloseFirefox()
 	; Start the timer
 	TimerBegin()
-	
+
 	; Close Firefox
 	WinActivate( $FIREFOX_WINDOW )
-	WinClose( $FIREFOX_WINDOW )	
-	
+	WinClose( $FIREFOX_WINDOW )
+
 	; Wait until the sytem settles down
 	opbmWaitUntilSystemIdle( 10, 100, 10000 )
-	
+
 	; Take the ending timer
 	TimerEnd( $CLOSE_FIREFOX )
 EndFunc

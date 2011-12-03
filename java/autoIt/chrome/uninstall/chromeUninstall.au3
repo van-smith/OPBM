@@ -92,6 +92,10 @@ Func LaunchUninstaller()
 			EndIf
 		EndIf
 	EndIf
+	If $gPID = 0 Then
+		$gPID = Run( 'uninstallChrome.bat', @ScriptDir, @SW_HIDE )
+	EndIf
+
 	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitActivate( "Uninstall Google Chrome", "", $gTimeout, $ERROR_PREFIX & "WinWait: Uninstall Google Chrome: Unable to find Window.")
 	TimerEnd( $LAUNCH_CHROME_UNINSTALLER )
