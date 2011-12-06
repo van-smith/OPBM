@@ -41,6 +41,10 @@ InitializeOperaScriptInstallSpecific()
 outputDebug( "LaunchOperaInstaller()" )
 LaunchOperaInstaller()
 
+;Added to resolve "pin to taksbar" problem -rcp 12/6/2011
+outputDebug( "ChooseOptions()" )
+ChooseOptions()
+
 outputDebug( "AcceptAndInstall()" )
 AcceptAndInstall()
 
@@ -86,6 +90,28 @@ Func LaunchOperaInstaller()
 	; Wait for the system to settle down
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 EndFunc
+
+; Added to resolve "pin to task bar" problem -rcp 12/6/2011
+Func ChooseOptions()
+	outputDebug( "Choose Options")
+	opbmWinWaitActivate( $OPERA_INSTALLER_WINDOW_NAME, "", $gTimeout)
+	SendKeepActive($OPERA_INSTALLER_WINDOW_NAME)
+	Send("+{TAB}") ;To get to Options button
+	Sleep(1000) ;So I can see it happen
+	Send("{Enter}") ; To get to Options
+	Sleep(1000) ;So I can see it happen
+	Send("+{TAB 2}") ;To get to the first shortcut
+	Sleep(1000) ;So I can see it happen
+	Send("{SPACE}") ;To uncheck Opera as default browser
+	Sleep(1000) ;So I can see it happen
+	Send("+{TAB}") ;To get to the second shortcut
+	Sleep(1000) ;So I can see it happen
+	Send("{SPACE}") ;To uncheck pin to taskbar
+	Sleep(1000) ;So I can see it happen
+	; Wait for the system to settle down
+	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+EndFunc
+; -rcp
 
 Func AcceptAndInstall()
 	outputDebug( "Accept and install" )

@@ -73,7 +73,8 @@ Func Uninstall()
 	; Send an enter key as the default option is "Uninstall"
 	Send("{Enter}")
 	TimerBegin()
-	;Added the next two lines in case Opera is open when we trt to uninstall -ecp 11/21/2011
+	;Added the next two lines in case Opera is open when we tries to uninstall -rcp 11/21/2011
+	;The unfortunate side effect is that it may hit the Cancel button
 	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 	Send("{Enter}")
 	;-rcp 11/21/2011
