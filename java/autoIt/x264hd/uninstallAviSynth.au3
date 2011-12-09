@@ -38,6 +38,12 @@ $gBaselines[0][1] = $LAUNCH_AVISYNTH_UNINSTALL_SCORE
 $gBaselines[1][0] = $RUN_AVISYNTH_UNINSTALL
 $gBaselines[1][1] = $RUN_AVISYNTH_UNINSTALL_SCORE
 
+; -rcp Added 2011_12_08
+if not isAviSynthAlreadyInstalled() Then
+	outputError( "AviSynth is not installed" )
+	Exit -1
+Endif
+; -rcp
 outputDebug( "initializeAviSynthUninstallScript" )
 initializeAviSynthUninstallScript()
 outputDebug( "launchAviSynthUninstaller()" )
@@ -71,7 +77,19 @@ Sleep( 2000 )
 ; Check to make sure uninstaller is closed
 
 Exit
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -rcp Added 2011_12_08
+Func isAviSynthAlreadyInstalled()
+	If FileExists( $FILENAME_AVISYNTH_UNINSTALL ) Then
+		return True
+	EndIf
+	If FileExists( StringReplace( $FILENAME_AVISYNTH_UNINSTALL, chr(34), "" ) ) Then
+		return True
+	EndIf
+	return False
+EndFunc
+; -rcp
 Func launchAviSynthUninstaller()
 	; Attempt to launch the application
 	outputDebug( "Attempting to launch " & $FILENAME_AVISYNTH_UNINSTALL)
@@ -85,10 +103,10 @@ EndFunc
 Func initializeAviSynthUninstallScript( $retrieveProcess = 1)
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
+
 	If $retrieveProcess = 1 Then
 		$gPID = WinGetProcess ( $WINDOW_AVISYNTH_UNINSTALL_1 )
 		outputDebug( "AviSynth Uninstaller PID: " & $gPID )
