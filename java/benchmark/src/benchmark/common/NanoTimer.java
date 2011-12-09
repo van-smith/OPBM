@@ -124,7 +124,7 @@ public class NanoTimer
 		count		= 0;
 		for (i = 0; i < times.length; i++)
 		{	// We ignore -1 entries, as they were never populated with valid times
-			if (times[i] != -1)
+			if( times[i] > 0 )
 			{	// Compute both time and score data
 				time		= times[i] / _ONE_BILLION;
 				score		= (baselineTime / time) * 100.0;

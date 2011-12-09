@@ -28,9 +28,13 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import benchmark.common.RandomData;
+
 
 public final class AesData
 {
+	private static final int		_BASELINE_STRING_LENGTH		= 256;	// One for every ANSI+128 character
+    
 	/**
 	 * Constructor. Builds N-element strings for encryption / decryption
 	 */
@@ -38,8 +42,30 @@ public final class AesData
 	{
 		m_aesOriginal	= new byte[_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE][];
 		m_aesEncrypted	= new byte[_NUMBER_OF_AES_STRINGS_TO_ENCODE_AND_DECODE][];
-	}
 
+		// Generate a baseline random sequence of 256 alphanumeric characters
+		byte m_baseline[] = new byte[_BASELINE_STRING_LENGTH];
+		for (int i = 0; i < _BASELINE_STRING_LENGTH; i++)
+        {
+			m_baseline[ i ] = (byte)( RandomData.m_rdStringBuildBaseline.nextFloat() * 
+                              (float)( _BASELINE_STRING_LENGTH - 1 ) );
+        }
+
+		// Populate the strings needed for AES encoding from the random baseline
+		for( int i = 0; i < m_aesOriginal.length; i++ )
+		{	// Populate it with random characters from baseline
+			m_aesOriginal[ i ] = new byte[ _AES_STRING_LENGTH ];
+			for ( int j = 0; j < _AES_STRING_LENGTH; j++ )
+			{	// Grab a character from our pseudo-randomly created list of characters above
+				m_aesOriginal[ i ][ j ] = m_baseline[ 
+                        (int)( RandomData.m_rdStringCharInBaseline.nextFloat() * 
+                        (float)( _BASELINE_STRING_LENGTH - 1 ) ) ];
+			}
+		}
+		// When we get here, our list is populated with random-length text from _MIN_AES_STRING_LENGTH to _MAX_AES_STRING_LENGTH characters in length
+
+    }
+        
 	/**
 	 * Initialization algorithm to setup the AES keys, specs and cipher engine.
 	 */

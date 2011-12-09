@@ -35,7 +35,7 @@
  * timing, and tells the JBM when it's exited completely.
  *
  * -----
- * Last Updated:  Oct 6, 2011
+ * Last Updated:  December 8, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -106,137 +106,70 @@ public class Benchmark
 		AesData.initialize();
 
 		// Create instances of each test so they pre-load required data
-		m_is = new IntegerSort(m_handle, /*2500x total*/ /*warmup*/500, /*scoring pass*/1500, /*cooldown*/500, 16384);
-		m_sg = new StringTest(m_handle);
-		m_ae = new AesEncrypt(m_handle);
-		m_ad = new AesDecrypt(m_handle);
-		m_sh = new SHA256(m_handle);
-		m_sm = new Stream(m_handle);
 	}
 
 	/**
 	 * Main test entry point, executes each test in sequence
 	 */
-	public void run()
+	public void run() throws InterruptedException
 	{
 		integerSort();			// Sort 128KB data set
+        
 		string();				// Build 32KB string This test Generates the random strings needed by aesEncrypt() and aesDecrypt()
+        
 		aesEncrypt();			// Encrypt 10K strings
+        
 		aesDecrypt();			// Decrypt and compare 10K strings
+        
 		sha256();				// Compute 20K SHA-256 hashes
+        
 		stream();				// STREAM memory bandwidth test
 
 		// Tell the JBM we're done by setting the current test beyond the max, and reporting 100.0% finished
-		reportTestN(m_handle, _TEST_MAX_COUNT + 1, "Finished");					// Set counter beyond max
+		reportTestN(m_handle, TOTAL_TEST_COUNT + 1, "Finished");					// Set counter beyond max
 		reportCompletionN(m_handle, 1.0f);										// Indicate 100% finished
 	}
-	/**
-	 * Performs sort on 128KB of 64-bit integer array
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void integerSort()
+
+	public void runSort() throws InterruptedException
 	{
-		reportTestN(m_handle, m_testNumber++, "Integer Sort");
-		m_is.run();
+		integerSort();			// Sort 128KB data set
+        
+		// Tell the JBM we're done by setting the current test beyond the max, and reporting 100.0% finished
+		reportTestN(m_handle, TOTAL_TEST_COUNT + 1, "Finished");					// Set counter beyond max
+		reportCompletionN(m_handle, 1.0f);										// Indicate 100% finished
+	}
+    
+	public void runString() throws InterruptedException
+	{
+		string();				// Build 32KB string This test Generates the random strings needed by aesEncrypt() and aesDecrypt()
+
+        // Tell the JBM we're done by setting the current test beyond the max, and reporting 100.0% finished
+		reportTestN(m_handle, TOTAL_TEST_COUNT + 1, "Finished");					// Set counter beyond max
+		reportCompletionN(m_handle, 1.0f);										// Indicate 100% finished
 	}
 
-	/**
-	 * Performs String builder test, building a 32KB String through a random
-	 * selection from a fixed string.
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void string()
+	public void runSecurity() throws InterruptedException
 	{
-		Benchmark.reportTestN(m_handle, Benchmark.m_testNumber++, "Build String");
-		m_sg.run();
+		aesEncrypt();			// Encrypt 10K strings
+		aesDecrypt();			// Decrypt and compare 10K strings
+		sha256();				// Compute 20K SHA-256 hashes
+
+		// Tell the JBM we're done by setting the current test beyond the max, and reporting 100.0% finished
+		reportTestN(m_handle, TOTAL_TEST_COUNT + 1, "Finished");					// Set counter beyond max
+		reportCompletionN(m_handle, 1.0f);										// Indicate 100% finished
 	}
 
-	/**
-	 * Performs AES encrypt test, constructs 2,000 AES encrypted strings
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void aesEncrypt()
+	public void runStream() throws InterruptedException
 	{
-		// Try to setup our cipher encryption engine
-		AesData.initializeCipherEncryptionEngine();
-		// If it's valid, run the test
-		if (AesData.m_isValid)
-		{	// We're good
-			// Report the test we're on
-			reportTestN(m_handle, m_testNumber++, "AES Encrypt");
-			m_ae.run();
-		}
+		stream();				// STREAM memory bandwidth test
+
+		// Tell the JBM we're done by setting the current test beyond the max, and reporting 100.0% finished
+		reportTestN(m_handle, TOTAL_TEST_COUNT + 1, "Finished");					// Set counter beyond max
+		reportCompletionN(m_handle, 1.0f);										// Indicate 100% finished
 	}
-
-	/**
-	 * Performs AES decrypt test, decrypts strings previously constructed in
-	 * aesEncrypt()
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void aesDecrypt()
-	{
-		// If it's valid, run the test
-		if (AesData.m_isValid)
-		{	// We're good
-			// Report the test we're on
-			reportTestN(m_handle, m_testNumber++, "AES Decrypt");
-			m_ad.run();
-		}
-	}
-
-	/**
-	 * Performs SHA-256 encryption test
-	 * @param test the test number to report to the monitor app through native interface
-	 */
-	public void sha256()
-	{
-		reportTestN(m_handle, m_testNumber++, "SHA-256");
-		m_sh.run();
-	}
-
-	/**
-	 * Performs STREAM test.  STREAM is part of miniBench, and is a C++ app.
-	 * It runs in a JNI DLL.
-	 * @param test
-	 */
-	public void stream()
-	{
-		reportTestN(m_handle, m_testNumber++, "STREAM");
-		m_sm.run();
-	}
-
-	/**
-	 * Main app entry point, initiates the test after pausing several seconds.
-	 * Command line syntax is:  "benchmark.jar 1" (where 1 is the instance,
-	 * must be a value >= 1 and <= the maximum value passed to JBM.exe as its
-	 * parameter)
-	 * @param args
-	 */
-	public static void main(String[] args) throws InterruptedException
-	{
-		int waitCount;
-
-		if (args[0] == null)
-		{	// No command line parameter for the name of this instance was provided
-			System.out.println("Syntax:  benchmark.jar \"Instance Title\"");
-			System.out.println("Syntax:  c:\\path\\to\\java.exe -jar benchmark.jar \"Instance Title\"");
-			System.exit(-1);
-		}
-
-		// Initialize everything up front, before we check in
-		Benchmark bm = new Benchmark();
-
-		// Assign a UUID, initialize our test number at the start, and report in to the monitor app
-		m_uuid			= Utils.getUUID();
-		m_testNumber	= 1;													// An increment used to help JBM determine how far through the overall testing we are
-		m_handle		= firstConnectN(m_uuid, args[0]/*title*/, _TEST_MAX_COUNT);
-		if (m_handle < 0)
-		{	// Some error connecting to JBM
-			System.out.println("Error connecting to the JBM. Please ensure the JBM is running first.");
-			System.exit(-2);
-		}
-		System.out.println("This benchmark instnace was assigned handle \"" + Integer.toString(m_handle) + "\".");
-
+    
+    public void syncThreadsStart()
+    {
 //////////
 //
 // Now, wait until all launched JVM instances report in, allowing the
@@ -246,7 +179,7 @@ public class Benchmark
 //
 //////////
 		// Only wait for up to _TIMEOUT_SECONDS before terminating in error.
-		waitCount = 0;
+		int waitCount = 0;        
 		while (waitCount < _TIMEOUT_SECONDS * _STARTUP_POLLS_PER_SECOND)
 		{
 			if (okayToBeginN())
@@ -254,9 +187,11 @@ public class Benchmark
 				break;
 			}
 			// Pause before asking again
-			try {
+			try 
+            {
 				Thread.sleep(1000 / _STARTUP_POLLS_PER_SECOND);
-			} catch (InterruptedException ex) {
+			} catch (InterruptedException ex) 
+            {
 			}
 
 			++waitCount;
@@ -266,13 +201,11 @@ public class Benchmark
 			System.out.println("Error waiting for all JVMs to launch. Timeout after " + Integer.toString(_TIMEOUT_SECONDS) + " seconds.");
 			System.exit(-3);
 		}
+        
+    }
 
-		// Run the benchmark
-		System.out.println("Benchmark \"" + args[0] + "\" begins.");
-		bm.run();
-		System.out.println("Benchmark \"" + args[0] + "\" ends.");
-
-
+    public void syncThreadsEnd()
+    {
 //////////
 //
 // Now, wait until all launched JVM instances report in that they have
@@ -284,7 +217,7 @@ public class Benchmark
 //////////
 		// Only wait for up to _TIMEOUT_SECONDS before terminating after
 		// reporting the condition.
-		waitCount = 0;
+		int waitCount = 0;        
 		while (waitCount < _TIMEOUT_SECONDS * _STARTUP_POLLS_PER_SECOND)
 		{
 			if (okayToExitN())
@@ -303,7 +236,191 @@ public class Benchmark
 		{	// All of the JVMs did not launch within the timeout
 			System.out.println("Error waiting for all JVMs to finish. Timeout after " + Integer.toString(_TIMEOUT_SECONDS) + " seconds.");
 		}
+    }
+    
+    
+	/**
+	 * Performs sort on 128KB of 64-bit integer array
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	public void integerSort()
+	{
+		reportTestN(m_handle, m_testNumber++, "Integer Sort");
+		m_is = new IntegerSort(m_handle, /*2500x total*/ /*warmup*/500, /*scoring pass*/1500, /*cooldown*/500, 16384);
+		m_is.run();
+	}
 
+	/**
+	 * Performs String builder test, building a 32KB String through a random
+	 * selection from a fixed string.
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	public void string()
+	{
+		reportTestN(m_handle, m_testNumber++, "Build String");
+		m_sg = new StringTest(m_handle);
+		m_sg.run();
+	}
+
+	/**
+	 * Performs AES encrypt test, constructs 2,000 AES encrypted strings
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	public void aesEncrypt()
+	{
+		// Try to setup our cipher encryption engine
+		AesData.initializeCipherEncryptionEngine();
+		// If it's valid, run the test
+		if (AesData.m_isValid)
+		{	// We're good
+			// Report the test we're on
+			reportTestN(m_handle, m_testNumber++, "AES Encrypt");
+    		m_ae = new AesEncrypt(m_handle);
+			m_ae.run();
+		}
+	}
+
+	/**
+	 * Performs AES decrypt test, decrypts strings previously constructed in
+	 * aesEncrypt()
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	public void aesDecrypt()
+	{
+		// If it's valid, run the test
+		if (AesData.m_isValid)
+		{	// We're good
+			// Report the test we're on
+			reportTestN(m_handle, m_testNumber++, "AES Decrypt");
+    		m_ad = new AesDecrypt(m_handle);
+			m_ad.run();
+		}
+	}
+
+	/**
+	 * Performs SHA-256 encryption test
+	 * @param test the test number to report to the monitor app through native interface
+	 */
+	public void sha256()
+	{
+		reportTestN(m_handle, m_testNumber++, "SHA-256");
+		m_sh = new SHA256(m_handle);
+		m_sh.run();
+	}
+
+	/**
+	 * Performs STREAM test.  STREAM is part of miniBench, and is a C++ app.
+	 * It runs in a JNI DLL.
+	 * @param test
+	 */
+	public void stream()
+	{
+		reportTestN(m_handle, m_testNumber++, "STREAM");
+		m_sm = new Stream(m_handle);
+		m_sm.run();
+	}
+
+	/**
+	 * Main app entry point, initiates the test after pausing several seconds.
+	 * Command line syntax is:  "benchmark.jar 1" (where 1 is the instance,
+	 * must be a value >= 1 and <= the maximum value passed to JBM.exe as its
+	 * parameter)
+	 * @param args
+	 */
+	public static void main(String[] args) throws InterruptedException
+	{
+        int lTestCount = 1;
+
+		if (args[0] == null)
+		{	// No command line parameter for the name of this instance was provided
+			System.out.println("Syntax:  benchmark.jar \"Instance Title\" test");
+			System.out.println("Syntax:  c:\\path\\to\\java.exe -jar benchmark.jar \"Instance Title\" test");
+			System.exit(-1);
+		}
+
+		// Initialize everything up front, before we check in
+		Benchmark bm = new Benchmark();
+
+		// Assign a UUID, initialize our test number at the start, and report in to the monitor app
+		m_uuid			= Utils.getUUID();
+		m_testNumber	= 1; // An increment used to help JBM determine how far through the overall testing we are
+
+		// Run the benchmark
+		System.out.println("Benchmark \"" + args[0] + "\" begins.");
+        
+        for( int i = 0; i < args.length; i++ )
+        {
+            if( args[i].indexOf( "sort" ) >= 0 )
+            {
+                m_handle		= firstConnectN(m_uuid, args[0]/*title*/, lTestCount);
+                if (m_handle < 0)
+                {	// Some error connecting to JBM
+                    System.out.println("Error connecting to the JBM. Please ensure the JBM is running first.");
+                    System.exit(-2);
+                }
+                System.out.println("This benchmark instance was assigned handle \"" + Integer.toString(m_handle) + "\".");
+
+                bm.syncThreadsStart();
+                bm.runSort();
+                break;
+            } else if( args[i].indexOf( "string" ) >= 0 )
+            {
+                m_handle		= firstConnectN(m_uuid, args[0]/*title*/, lTestCount);
+                if (m_handle < 0)
+                {	// Some error connecting to JBM
+                    System.out.println("Error connecting to the JBM. Please ensure the JBM is running first.");
+                    System.exit(-2);
+                }
+                System.out.println("This benchmark instance was assigned handle \"" + Integer.toString(m_handle) + "\".");
+
+                bm.syncThreadsStart();
+                bm.runString();                
+                break;
+            } else if( args[i].indexOf( "security" ) >= 0 )
+            {
+                m_handle		= firstConnectN(m_uuid, args[0]/*title*/, 3 * lTestCount);
+                if (m_handle < 0)
+                {	// Some error connecting to JBM
+                    System.out.println("Error connecting to the JBM. Please ensure the JBM is running first.");
+                    System.exit(-2);
+                }
+                System.out.println("This benchmark instance was assigned handle \"" + Integer.toString(m_handle) + "\".");
+
+                bm.syncThreadsStart();
+                bm.runSecurity();
+                break;
+            } else if( args[i].indexOf( "stream" ) >= 0 )
+            {
+                m_handle = firstConnectN(m_uuid, args[0]/*title*/, lTestCount);
+                if (m_handle < 0)
+                {	// Some error connecting to JBM
+                    System.out.println("Error connecting to the JBM. Please ensure the JBM is running first.");
+                    System.exit(-2);
+                }
+                System.out.println("This benchmark instance was assigned handle \"" + Integer.toString(m_handle) + "\".");
+
+                bm.syncThreadsStart();
+                bm.runStream();
+                break;
+            } else if( args[i].indexOf( "runall" ) >= 0 )
+            {
+                m_handle = firstConnectN(m_uuid, args[0]/*title*/, TOTAL_TEST_COUNT);
+                if (m_handle < 0)
+                {	// Some error connecting to JBM
+                    System.out.println("Error connecting to the JBM. Please ensure the JBM is running first.");
+                    System.exit(-2);
+                }
+                System.out.println("This benchmark instance was assigned handle \"" + Integer.toString(m_handle) + "\".");
+
+                bm.syncThreadsStart();
+                bm.run();
+                break;
+            }
+        }
+        
+		System.out.println("Benchmark \"" + args[0] + "\" ends.");
+
+        bm.syncThreadsEnd();
 		// All done
 		reportExitingN(m_handle);
 		System.exit(0);
@@ -312,7 +429,7 @@ public class Benchmark
 	// Class variables
 	private static String		m_uuid;											// UUID assigned at startup, used to identify this instance to the monitor app
 	private static int			m_handle;										// Handle assigned by JBM
-	public	static int			m_testNumber;									// Current test being executed, starts at 1 and runs to _TEST_MAX_COUNT
+	public	static int			m_testNumber;									// Current test being executed, starts at 1 and runs to TOTAL_TEST_COUNT
 
 	// Tests
 	private	IntegerSort			m_is;											// Instantiated in integer()
@@ -331,5 +448,5 @@ public class Benchmark
 	private static final int	_MAX_AES_DECRYPT_TESTS		= 1;
 	private static final int	_MAX_SHA_256_TESTS			= 1;
 	private static final int	_MAX_STREAM_TESTS			= 1;
-	private static final int	_TEST_MAX_COUNT				= _MAX_INTEGER_TESTS + _MAX_AES_ENCRYPT_TESTS + _MAX_AES_DECRYPT_TESTS + _MAX_SHA_256_TESTS + _MAX_STRING_TESTS + _MAX_STREAM_TESTS;
+	public static final int     TOTAL_TEST_COUNT	= _MAX_INTEGER_TESTS + _MAX_AES_ENCRYPT_TESTS + _MAX_AES_DECRYPT_TESTS + _MAX_SHA_256_TESTS + _MAX_STRING_TESTS + _MAX_STREAM_TESTS;
 }

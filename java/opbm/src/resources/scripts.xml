@@ -1272,6 +1272,70 @@
 					</options>
 				</abstract>
 			</atom>
+			<atom name="Java Sort" shortname="JSort">
+				<abstract name="Java Sort" shortname="JSort" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\java\compute\javaComputeSort.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Java String" shortname="JString">
+				<abstract name="Java String" shortname="JString" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\java\compute\javaComputeString.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Java Security" shortname="JSecurity">
+				<abstract name="Java Security" shortname="JSecurity" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\java\compute\javaComputeSecurity.exe</executable>
+					</options>
+				</abstract>
+			</atom>
+			<atom name="Java Stream" shortname="JStream">
+				<abstract name="Java Stream" shortname="JStream" sourcename="execute">
+					<options>
+						<runOnlyOnOfficialRun></runOnlyOnOfficialRun>
+						<atomCheckConflicts></atomCheckConflicts>
+						<atomOnSpinup></atomOnSpinup>
+						<atomAfterRuns></atomAfterRuns>
+						<atomBeforeRuns></atomBeforeRuns>
+						<atomOnFailure></atomOnFailure>
+						<stopIfFailure></stopIfFailure>
+						<retryAttempts></retryAttempts>
+						<retryEnabled></retryEnabled>
+						<executable>..\autoIT\java\compute\javaComputeStream.exe</executable>
+					</options>
+				</abstract>
+			</atom>
 			<atom name="Java Compute" shortname="JCompute">
 				<abstract name="Java Compute" shortname="JCompute" sourcename="execute">
 					<options>
@@ -1340,7 +1404,10 @@
 				<atom name="Safari Google V8" shortname="SV8" sourcename="Safari Google V8"></atom>
 			</molecule>
 			<molecule name="Java" shortname="Java">
-				<atom name="Compute" shortname="JCompute" sourcename="Java Compute"></atom>
+				<atom name="Java Sort" shortname="JSort" sourcename="Java Sort"></atom>
+				<atom name="Java String" shortname="JString" sourcename="Java String"></atom>
+				<atom name="Java Security" shortname="JSecurity" sourcename="Java Security"></atom>
+				<atom name="Java Stream" shortname="JStream" sourcename="Java Stream"></atom>
 			</molecule>
 			<molecule name="File Operations" shortname="File">
 				<atom name="File I/O" shortname="fileio" sourcename="File I/O Run Test"></atom>

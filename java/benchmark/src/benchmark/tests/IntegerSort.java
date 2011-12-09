@@ -10,7 +10,7 @@
  *		(new IntegerSort()).run()
  *
  * -----
- * Last Updated:  Oct 6, 2011
+ * Last Updated:  Dec 8, 2011
  *
  * by Van Smith
  * Cossatot Analytics Laboratories, LLC. (Cana Labs)
@@ -91,20 +91,20 @@ public class IntegerSort
 		for (pass = 0; pass < max; pass++)
 		{
 			// Step 1:  Generate the list
-				for (i = 0; i < m_max_integers; i++)
-				{	// Two lists are created, one for ascending sort, one for descending
-					m_list1[i] = RandomData.m_rdIntegerSort.nextLong();
-					m_list2[i] = m_list1[i];
-				}
+            for (i = 0; i < m_max_integers; i++)
+            {	// Two lists are created, one for ascending sort, one for descending
+                m_list1[i] = RandomData.m_rdIntegerSort.nextLong();
+                m_list2[i] = m_list1[i];
+            }
 
 			m_nano.start();
 			//////////
 			// Test code
 			//////
-				// Step 2:  Sort the list in ascending
-					Arrays.sort(m_list1);
-				// Step 3:  Sort the list in descending
-					Arrays.sort(m_list2, Collections.reverseOrder());
+            // Step 2:  Sort the list in ascending
+            Arrays.sort(m_list1);
+            // Step 3:  Sort the list in descending
+            Arrays.sort(m_list2, Collections.reverseOrder());
 			//////
 			// End
 			//////////
@@ -138,5 +138,5 @@ public class IntegerSort
 	private	Long[]					m_list1;
 	private	Long[]					m_list2;
 
-	private static final double		_INTEGERSORT_BASELINE_TIME	= 0.0095772565;		// Taken from reference machine, time to produce a score of 100.0
+	private static final double		_INTEGERSORT_BASELINE_TIME	= 0.00496 / 4;		// Taken from reference machine, time to produce a score of 100.0
 }

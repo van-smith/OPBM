@@ -32,17 +32,17 @@ public final class RandomData
 	{
 		// Note: Always give them the same seed, so all machines will test
 		// using the same pseudo-random data set
-		m_rdIntegerSort				= new Random(12192011);
+		m_rdIntegerSort			= new Random(12192011);
 		m_rdStringBuildBaseline		= new Random(12192011);
 		m_rdStringCharInBaseline	= new Random(12192011);
 		m_rdStringCharToInsert		= new Random(12192011);
-		m_rdStringInsertAt			= new Random(12192011);
+		m_rdStringInsertAt		= new Random(12192011);
 	}
 
 	// Create our pseudo-random starting points for each class
-	public	static	Random			m_rdIntegerSort;							// IntegerSort
+	public	static	Random			m_rdIntegerSort;						// IntegerSort
 	public	static	Random			m_rdStringBuildBaseline;					// StringTest
 	public	static	Random			m_rdStringCharInBaseline;					// StringTest
 	public	static	Random			m_rdStringCharToInsert;						// StringTest
-	public	static	Random			m_rdStringInsertAt;							// StringTest
+	public	static	Random			m_rdStringInsertAt;						// StringTest
 }
