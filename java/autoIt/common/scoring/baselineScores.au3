@@ -203,12 +203,18 @@ Const $INSTALL_SEVENZIP_SCORE						= 14.154999042		; Placeholder. Not officially
 Const $LAUNCH_SEVENZIP_UNINSTALLER_SCORE			= 0.4087737230		; Placeholder. Not officially assigned yet
 Const $UNINSTALL_SEVENZIP_SCORE						= 4.2507326948		; Placeholder. Not officially assigned yet
 ; 7zipRunTest.au3
-Const $SEVENZIP_CREATE_7Z_ARCHIVE_SCORE				= 55.1601422391581	; Placeholder. Not officially assigned yet
-Const $SEVENZIP_CREATE_ZIP_ARCHIVE_SCORE			= 62.0753465813396	; Placeholder. Not officially assigned yet
-Const $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES_SCORE		= 62.1698270806001	; Placeholder. Not officially assigned yet
-Const $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES_SCORE		= 21.850377531907	; Placeholder. Not officially assigned yet
-Const $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY_SCORE		= 9.42108409452225	; Placeholder. Not officially assigned yet
-Const $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY_SCORE	= 1.10049678312566	; Placeholder. Not officially assigned yet
+;Const $SEVENZIP_CREATE_7Z_ARCHIVE_SCORE			= 55.1601422391581	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_CREATE_7Z_ARCHIVE_SCORE				= 47.2510798406368	;Updated 2011_12_11 -rcp
+;Const $SEVENZIP_CREATE_ZIP_ARCHIVE_SCORE			= 62.0753465813396	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_CREATE_ZIP_ARCHIVE_SCORE			= 115.328927104886	;Updated 2011_12_11 -rcp
+;Const $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES_SCORE		= 62.1698270806001	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_7Z_UNARCHIVE_FIVE_TIMES_SCORE		= 5.91206755057729	;Updated 2011_12_11 -rcp
+;Const $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES_SCORE		= 21.850377531907	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_ZIP_UNARCHIVE_FIVE_TIMES_SCORE		= 6.45850487705019	;Updated 2011_12_11 -rcp
+;Const $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY_SCORE	= 9.42108409452225	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_TEST_7Z_ARCHIVE_INTEGRITY_SCORE		= 1.14342080572347	;Updated 2011_12_11 -rcp
+;Const $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY_SCORE	= 1.10049678312566	; Placeholder. Not officially assigned yet
+Const $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY_SCORE	= 0.935839835503731	;Updated 2011_12_11 -rcp
 
 ; fileioCommon.au3
 Const $FILEIO_CREATE_FILES_SCORE					= 439.29954400524	; Placeholder. Not officially assigned yet
