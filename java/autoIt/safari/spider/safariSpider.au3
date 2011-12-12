@@ -26,9 +26,9 @@ $gBaselines[3][1] = $SAFARI_RUN_SUNSPIDER_SCORE
 
 outputDebug( "Starting up Safari SunSpider" )
 
-if $CmdLine[0] > 0 then 
-	$LoopLimit = $CmdLine[1] 
-Else 
+if $CmdLine[0] > 0 then
+	$LoopLimit = $CmdLine[1]
+Else
 	$LoopLimit = 1
 EndIf
 For $CurrentLoop = 1 to $LoopLimit
@@ -40,12 +40,12 @@ For $CurrentLoop = 1 to $LoopLimit
 	LaunchSafari()
 	outputDebug( "TypeURL()" )
 	opbmTypeURLSafari( $SUNSPIDER_URL, $TYPE_SUNSPIDER_URL )
-	
+
 	; Unique portions to this benchmark
 	outputDebug( "RunSunSpider()" )
 	RunSunSpider()
 	; End
-	
+
 	outputDebug( "CloseSafari()" )
 	CloseSafari( "Benchmark Results" )
 	outputDebug( "FinalizeScript()" )
@@ -60,17 +60,17 @@ Exit
 Func RunSunSpider()
 	; As we press enter it begins processing
 	Send( "{Enter}" )
-	
+
 	; Start the timer for the benchmark
 	TimerBegin()
 	Sleep(5000)
- 	
+
 	; Wait up to six minutes for the benchmark to complete:
-	opbmWaitUntilSystemIdle( 10, 250, 360000 )
-	
+	opbmWaitUntilSystemIdle( 10, 500, 360000 ) ;Changed from 250 to 500 -rcp 12/12/2011
+
 	; Record ending time
 	TimerEnd( $RUN_SUNSPIDER )
-	
+
 	; Wait for system to settle down
 	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
 EndFunc
