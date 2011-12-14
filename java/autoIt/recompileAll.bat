@@ -23,6 +23,8 @@ call recompileOpbm.bat
 echo .
 call recompileSafari.bat
 echo .
+call recompilex264hd.bat
+echo .
 call recompileSpinup.bat
 echo [Recompile All Complete]
 echo [See compile\ directory for text of any errors encountered]

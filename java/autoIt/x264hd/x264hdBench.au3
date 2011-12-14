@@ -24,9 +24,9 @@ Const $DIRECTORY_SOURCE_X264				= @ScriptDir & "\data\" & $directoryX264Benchmar
 Const $FILENAME_RUN_BENCHMARK				= "run_opbm_x264hd_bench.bat"
 
 Const $COPY_X264_FILES						= "Copy x264hd files"
-Const $COPY_X264_FILES_SCORE				= 0.07
+Const $COPY_X264_FILES_SCORE				= 0.714107504			;Updated 2011_12_13 -rcp  0.07
 Const $RUN_X264HD_BENCHMARK					= "Run x264hd benchmark"
-Const $RUN_X264HD_BENCHMARK_SCORE			= 246
+Const $RUN_X264HD_BENCHMARK_SCORE			= 243.8252516			;Updated 2011_12_13 -rcp  246
 
 Const $CPU_USAGE_THRESHOLD 					= 5 ; percent
 Const $CPU_USAGE_THRESHOLD_TIME				= 100 ; milliseconds
@@ -50,7 +50,7 @@ Exit
 Func initializeX264hdBenchScript()
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
 
@@ -71,5 +71,5 @@ Func runX264Benchmark()
 	$gErrorTrap = RunWait( $filenameRunX264Benchmark, $directoryX264Benchmark, @SW_MAXIMIZE )
 	outputDebug( "RunWait returned " & $gErrorTrap )
 	; If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & $RUN_X264HD_BENCHMARK & ": Run x264hd benchmark returned an error.")
-	TimerEnd( $RUN_X264HD_BENCHMARK )	
-EndFunc	
+	TimerEnd( $RUN_X264HD_BENCHMARK )
+EndFunc
