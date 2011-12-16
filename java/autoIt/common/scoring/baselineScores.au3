@@ -174,7 +174,7 @@ Const $STARTUP_SETTLE_DOWN_SCORE					= 12.29044354			;Updated 2011_12_15 -rcp 60
 ;Const $REBOOT_TIME_SCORE							= 54.66666667			;Updated 2011_12_15 -rcp ; not used
 ; The reboot time is recorded as an internal function of the harness
 ; It is scored there also.  See the HUD's stream gobbler's commands.
-; And specifically see BenchmarkParams' processHUDcommand() method.			;Updated 2011_12_15 -rcp ; And specifically see BenchmarkParams' getRebootTimeScore() method.
+; Declared as $REBOOT_TIME_SCORE in BenchmarkParams' processHUDcommand() method.	;Updated 2011_12_15 -rcp ; And specifically see BenchmarkParams' getRebootTimeScore() method.
 
 ; safariCommon.au3
 Const $LAUNCH_SAFARI_SCORE							= 0.751664311			;Updated 2011_12_13 -rcp 0.7298296366
@@ -219,3 +219,22 @@ Const $SEVENZIP_TEST_ZIP_ARCHIVE_INTEGRITY_SCORE	= 0.939271253			;Updated 2011_1
 ; fileioCommon.au3
 Const $FILEIO_CREATE_FILES_SCORE					= 135.6407395			;Updated 2011_12_13 -rcp 439.29954400524	; Placeholder. Not officially assigned yet
 Const $FILEIO_COPY_FILES_SCORE						= 149.280586			;Updated 2011_12_13 -rcp 401.2560807856	; Placeholder. Not officially assigned yet
+
+;excelGeneral.au3
+Const $EXCEL_GENERAL_SINCOSTAN_SCORE 				= 17.24783105			;Added/Updated 2011_12_16 -rcp
+Const $EXCEL_GENERAL_POWERBALL_SCORE 				= 37.67529768			;Added/Updated 2011_12_16 -rcp
+Const $EXCEL_GENERAL_FIBONACCI_SCORE 				= 67.827651				;Added/Updated 2011_12_16 -rcp
+Const $EXCEL_GENERAL_RANKPERCENTILE_SCORE 			= 42.68786179			;Added/Updated 2011_12_16 -rcp
+Const $EXCEL_GENERAL_CENSUS_SCORE 					= 2.918158597			;Added/Updated 2011_12_16 -rcp
+
+;installAviSynth.au3
+Const $LAUNCH_AVISYNTH_INSTALL_SCORE				= 1.268034864			;Added/Updated 2011_12_16 -rcp
+Const $RUN_AVISYNTH_INSTALL_SCORE					= 1.250468203			;Added/Updated 2011_12_16 -rcp
+
+;uninstallAviSynth.au3
+Const $LAUNCH_AVISYNTH_UNINSTALL_SCORE				= 0.922777684			;Added/Updated 2011_12_16 -rcp
+Const $RUN_AVISYNTH_UNINSTALL_SCORE					= 0.570758179			;Added/Updated 2011_12_16 -rcp
+
+;x264hdBenchmark.au3
+Const $COPY_X264_FILES_SCORE						= 0.714107504			;Added/Updated 2011_12_16 -rcp
+Const $RUN_X264HD_BENCHMARK_SCORE					= 243.8252516			;Added/Updated 2011_12_16 -rcp

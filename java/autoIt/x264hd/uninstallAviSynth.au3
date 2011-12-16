@@ -21,10 +21,10 @@ Const $FILENAME_AVISYNTH_UNINSTALL			= "C:\Program Files (x86)\AviSynth 2.5\Unin
 Const $WINDOW_AVISYNTH_UNINSTALL_1			= "Installer Language"
 Const $WINDOW_AVISYNTH_UNINSTALL_2			= "AviSynth Uninstall"
 
-Const $LAUNCH_AVISYNTH_UNINSTALL				= "Launch AviSynth Uninstall"
-Const $LAUNCH_AVISYNTH_UNINSTALL_SCORE		= 0.922777684			;Updated 2011_12_13 -rcp  1.0
+Const $LAUNCH_AVISYNTH_UNINSTALL			= "Launch AviSynth Uninstall"
+;Const $LAUNCH_AVISYNTH_UNINSTALL_SCORE		= 0.922777684			;Moved to baselineScores 2011_12_16 -rcp  1.0
 Const $RUN_AVISYNTH_UNINSTALL				= "Run AviSynth Uninstall"
-Const $RUN_AVISYNTH_UNINSTALL_SCORE			= 0.570758179			;Updated 2011_12_13 -rcp  1.0
+;Const $RUN_AVISYNTH_UNINSTALL_SCORE		= 0.570758179			;Moved to baselineScores 2011_12_16 -rcp  1.0
 
 Const $CPU_USAGE_THRESHOLD 					= 5 ; percent
 Const $CPU_USAGE_THRESHOLD_TIME				= 100 ; milliseconds
