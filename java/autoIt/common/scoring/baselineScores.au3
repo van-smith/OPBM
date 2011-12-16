@@ -49,7 +49,7 @@ Const $LAUNCH_CHROME_UNINSTALLER_SCORE				= 1.092401531			;Updated 2011_12_13 -r
 Const $UNINSTALL_CHROME_SCORE						= 0.514046371			;Updated 2011_12_13 -rcp 1.3385230413
 
 ; firefoxCommon.au3
-Const $LAUNCH_FIREFOX_SCORE							= 1.328500621			;Updated 2011_12_13 -rcp 0.9391000844
+Const $LAUNCH_FIREFOX_SCORE							= 0.990902311			;Updated 2011_12_15 -rcp 0.9391000844
 Const $CLOSE_FIREFOX_SCORE							= 0.941136787			;Updated 2011_12_13 -rcp 0.9265976358
 ; firefoxGoogleV8.au3
 Const $FIREFOX_TYPE_GOOGLEV8_URL_SCORE				= 3.555826013			;Updated 2011_12_13 -rcp 2.2150851332
@@ -170,11 +170,11 @@ Const $LAUNCH_OPERA_UNINSTALLER_SCORE				= 0.579729318			;Updated 2011_12_13 -rc
 Const $UNINSTALL_OPERA_SCORE						= 1.385014004			;Updated 2011_12_13 -rcp 0.514981939	;Eliminate Version reference -rcp 11/11/11
 
 ; opbmInternal.au3 (used by rebootTime.au3, startupSettleDown.au3)
-Const $STARTUP_SETTLE_DOWN_SCORE					= 60.0		; placeholder
-;Const $REBOOT_TIME_SCORE							= ; not used
+Const $STARTUP_SETTLE_DOWN_SCORE					= 12.29044354			;Updated 2011_12_15 -rcp 60.0		; placeholder
+;Const $REBOOT_TIME_SCORE							= 54.66666667			;Updated 2011_12_15 -rcp ; not used
 ; The reboot time is recorded as an internal function of the harness
 ; It is scored there also.  See the HUD's stream gobbler's commands.
-; And specifically see BenchmarkParams' getRebootTimeScore() method.
+; And specifically see BenchmarkParams' processHUDcommand() method.			;Updated 2011_12_15 -rcp ; And specifically see BenchmarkParams' getRebootTimeScore() method.
 
 ; safariCommon.au3
 Const $LAUNCH_SAFARI_SCORE							= 0.751664311			;Updated 2011_12_13 -rcp 0.7298296366
