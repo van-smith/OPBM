@@ -7,7 +7,7 @@
 	Initial creation date:  Sep 26, 2011
 
 	Description: Atom to check if Microsoft Excel 2010 is installed
-	
+
 	Usage:	excelMustBeInstalled
 
 #ce ======================================================================================================================================
@@ -16,7 +16,7 @@
 
 
 outputDebug( "Check Conflicts Microsoft Excel 2010" )
-InitializeGlobalVariables()
+;InitializeGlobalVariables()
 InitializeExcelScript()
 
 If isExcelInstalled() = "not found" Then

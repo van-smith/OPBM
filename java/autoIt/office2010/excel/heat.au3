@@ -39,8 +39,8 @@ Else
 	$LoopLimit = 1
 EndIf
 For $CurrentLoop = 1 to $LoopLimit
-	outputStatus( "InitializeGlobalVariables()" )
-	InitializeGlobalVariables()
+	;outputStatus( "InitializeGlobalVariables()" )
+	;InitializeGlobalVariables()
 
 	outputStatus( "InitializeExcelScript()" )
 	InitializeExcelScript()

@@ -20,6 +20,11 @@ cd office2010\excel
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in heat.au3 > ..\..\compile\heat.txt
 cd ..\..
 
+echo    +-- Excel General
+cd office2010\excel
+"C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in excelGeneral.au3 > ..\..\compile\excelGeneral.txt
+cd ..\..
+
 echo    +-- PowerPoint Open
 cd office2010\powerpoint
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in powerpointOpen.au3 > ..\..\compile\powerpointOpen.txt

@@ -134,6 +134,18 @@ public final class Opbm extends	ModalApp
 		{	// Give a warning
 			System.out.println("Warning: JVM home does not exist. Use -home:path override");
 		}
+                
+                // Check to see if the current filepath is too long. -rcp 12/12/2011
+                String currentFilepath = Utils.getCurrentDirectory();
+                if (currentFilepath.length() >= 170)
+                {
+                    System.out.println("Filepath " + currentFilepath +" is too long. \nPlease move to a shorter filepath.");
+                    // It is too long, tell the user and quit
+                    JOptionPane.showMessageDialog(m_frameSimple, "Filepath " + currentFilepath +" is too long. \nPlease move to a shorter filepath.");
+                    quit(-1);  
+                          
+                }
+
 
 /*
  * Used for debugging, or reference.  This data comes from the opbm64.dll or opbm32.dll functions:

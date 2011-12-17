@@ -22,9 +22,9 @@ Const $WINDOW_AVISYNTH_INSTALL_1			= "Installer Language"
 Const $WINDOW_AVISYNTH_INSTALL_2			= "AviSynth 2."
 
 Const $LAUNCH_AVISYNTH_INSTALL				= "Launch AviSynth Install"
-Const $LAUNCH_AVISYNTH_INSTALL_SCORE		= 1.0
+;Const $LAUNCH_AVISYNTH_INSTALL_SCORE		= 1.268034864			;Moved to baselineScores 2011_12_16 -rcp  1.0
 Const $RUN_AVISYNTH_INSTALL					= "Run AviSynth Install"
-Const $RUN_AVISYNTH_INSTALL_SCORE			= 1.0
+;Const $RUN_AVISYNTH_INSTALL_SCORE			= 1.250468203			;Moved to baselineScores 2011_12_16 -rcp  1.0
 
 Const $CPU_USAGE_THRESHOLD 					= 5 ; percent
 Const $CPU_USAGE_THRESHOLD_TIME				= 100 ; milliseconds
@@ -84,10 +84,10 @@ EndFunc
 Func initializeAviSynthInstallScript( $retrieveProcess = 1)
 	Opt("WinTitleMatchMode", 2)     ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 	HotKeySet("{ESC}", "Terminate")
-	
+
 	outputDebug( "InitializeGlobalVariables()" )
 	InitializeGlobalVariables()
-	
+
 	If $retrieveProcess = 1 Then
 		$gPID = WinGetProcess ( $WINDOW_AVISYNTH_INSTALL_1 )
 		outputDebug( "AviSynth Installer PID: " & $gPID )

@@ -11,17 +11,17 @@ cd chrome\install
 cd ..\..
 
 echo    +-- Chrome Kraken
-cd C:\cana\java\autoIT\chrome\kraken
+cd chrome\kraken
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in chromeKraken.au3 > ..\..\compile\chromeKraken.txt
 cd ..\..
 
 echo    +-- Chrome Spider
-cd C:\cana\java\autoIT\chrome\spider
+cd chrome\spider
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in chromeSpider.au3 > ..\..\compile\chromeSpider.txt
 cd ..\..
 
 echo    +-- Chrome Un-install
-cd C:\cana\java\autoIT\chrome\uninstall
+cd chrome\uninstall
 "C:\Program Files (x86)\AutoIt3\Aut2Exe\Aut2Exe.exe" /in chromeUninstall.au3 > ..\..\compile\chromeUninstall.txt
 cd ..\..
 echo        [Finished]

@@ -349,6 +349,7 @@ public class BenchmarkParams
 	public void processHUDcommand(String command)
 	{
 		String result, line;
+                double $REBOOT_TIME_SCORE = 54.66666667; //-rcp 12/15/2011
 
 		if (command.equalsIgnoreCase("record_reboot_time"))
 		{	// They want the time between the last reboot and restart recorded
@@ -368,7 +369,8 @@ public class BenchmarkParams
 				line = "timing,Reboot Time,0.000000000,0.0";
 			} else {
 				// Success
-				line = "timing,Reboot Time," + result + "," + Double.toString(150.0 * 100.0 / Double.valueOf(result));
+				//line = "timing,Reboot Time," + result + "," + Double.toString(150.0 * 100.0 / Double.valueOf(result));
+                                line = "timing,Reboot Time," + result + "," + Double.toString($REBOOT_TIME_SCORE * 100.0 / Double.valueOf(result)); //-rcp 12/15/2011
 			}
 			m_outputArray.add(Utils.getTimestamp() + ": " + line);
 			m_hud.updateTiming(line.substring(7), line);		// Update the status display with this information
