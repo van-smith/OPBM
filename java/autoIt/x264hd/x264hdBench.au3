@@ -60,10 +60,10 @@ Func initializeX264hdBenchScript()
 	; Delete the document in case it wasn't deleted last time
 	DirRemove( $directoryX264Benchmark, 1 )
 	; copy the database file:
-	TimerBegin()
+	;TimerBegin()	;Removed due to inconsistent behavior -rcp 11/17/2011
 	$gErrorTrap = DirCopy( $DIRECTORY_SOURCE_X264, $directoryX264Benchmark, 1)
 	If $gErrorTrap = 0 Then ErrorHandle($ERROR_PREFIX & "DirCopy: " & $DIRECTORY_SOURCE_X264 & ": Unable to copy x264hd source directory.")
-	TimerEnd( $COPY_X264_FILES )
+	;TimerEnd( $COPY_X264_FILES )	;Removed due to inconsistent behavior -rcp 11/17/2011
 EndFunc
 
 Func runX264Benchmark()
