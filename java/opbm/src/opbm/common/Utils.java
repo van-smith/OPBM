@@ -1405,28 +1405,49 @@ public class Utils
 	}
 
 	/**
-	 * Removes the leading zeros from a string like "001" and returns "1"
+	 * Removes the leading zeros, spaces and commas from a string.
+     * e.g.: 0,123 -> 123
+     * Also adds a leading zero if the first character is a decimal point.
 	 * @param number input, like "001"
 	 * @return "1"
 	 */
-	public static String removeLeadingZeros(String number)
+	public static String removeLeadingZeros(String astrNumber)
 	{
 		int i;
+        int liStringStart = 0;
 
-		// Skip forward until we find the first non-zero character
-		for (i = 0; i < number.length(); i++)
+		// Search through the string until the first non-zero or non-space
+        // character is found:
+		for( i = 0; i < astrNumber.length(); i++ )
 		{
-			if (number.charAt(i) != '0' && number.charAt(i) != ' ')
-			{	// We've found our last entry
-				if (i == 0 && number.charAt(i) == '.')
-					return("0" + number);	// For entries that don't have a leading zero of any kind, we add one
-
-				if (number.charAt(i) == '.' && i > 0)
-					--i;	// Back off for the leading zero before the decimal point
-				return(number.substring(i));
-			}
-		}
-		// If we get here, it's all zeros
+            liStringStart = i;
+            // if the currect character is not a zero, space or comma:
+			if( astrNumber.charAt( i ) != '0' 
+                && astrNumber.charAt( i ) != ' '
+                && astrNumber.charAt( i ) != ',' )
+			{	
+                // is it a decimal point?
+                if( astrNumber.charAt( i ) == '.' )
+                {
+                    // if the first character is a decimal point, add a zero and 
+                    // return that string:
+                    if( i == 0 )
+                    {
+                        // For entries that don't have a leading zero of any kind, 
+                        // we add one:
+                        return( "0" + astrNumber );	
+                    } else // we find the decimal point but it's not in the first location
+                    {
+                        // Back off for the leading zero before the decimal point
+                        liStringStart = i - 1;
+                    }
+                }
+                // we've skipped leading zeros and spaces, so return the 
+                // substring:
+                return( astrNumber.substring( liStringStart ) );
+            }
+        }
+		// If we get here, it's all zeros or spaces
 		return("0");
 	}
 

@@ -512,9 +512,9 @@ public final class ResultsViewerLine
 				cvScore = (Double)m_runList.getFifth(i);
 				cvTime	= (Double)m_runList.getFourth(i);
 				if (mode == ResultsViewer._SCORES)
-					text = Utils.removeLeadingZeros(Utils.doubleToString(cvScore * 100, 3, 1));
+					text = Utils.removeLeadingZeros(Utils.doubleToString(cvScore * 100, 6, 1));
 				else
-					text = Utils.removeLeadingZeros(Utils.doubleToString(cvTime * 100, 3, 1));
+					text = Utils.removeLeadingZeros(Utils.doubleToString(cvTime * 100, 6, 1));
 
 				if ((mode == ResultsViewer._SCORES ? cvScore : cvTime) >= m_opbm.getSettingsMaster().getCVInRed())
 				{	// Make it red with yellow text
@@ -529,7 +529,7 @@ public final class ResultsViewerLine
 			} else if (i == m_runList.size() - 1) {
 				// Average total score
 				if (mode == ResultsViewer._SCORES)
-					text = Utils.removeLeadingZeros(Utils.doubleToString(score, 3, 0));
+					text = Utils.removeLeadingZeros(Utils.doubleToString(score, 6, 0));
 				else
 					text = Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff(time));
 
@@ -540,7 +540,7 @@ public final class ResultsViewerLine
 				// Regular run score
 				if (mode == ResultsViewer._SCORES)
 				{
-					text = Utils.removeLeadingZeros(Utils.doubleToString(score, 3, 0));
+					text = Utils.removeLeadingZeros( Utils.doubleToString(score, 6, 0) );
 					error	= (score == 0.0);
 				} else {
 					text = Utils.removeLeadingZeroTimes(Utils.convertSecondsToHHMMSSff(time));
