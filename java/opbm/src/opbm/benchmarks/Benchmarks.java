@@ -199,6 +199,7 @@ public class Benchmarks
 	{
 		// Note:  A reboot MAY be required here, but we are in restart mode now, so they would've already been warned if there was some need of warning
 		BenchmarkManifest bm = new BenchmarkManifest(m_opbm, "", Opbm.getRunningDirectory() + "manifest.xml", true, false);
+                System.out.println("Beginning run in Restart mode"); //-rcp 12/18/2011
 		if (!bm.isManifestInError())
 			bm.run();
 	}

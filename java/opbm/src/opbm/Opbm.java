@@ -620,7 +620,8 @@ public final class Opbm extends	ModalApp
 
 								} else if (command.equalsIgnoreCase("restart")) {
 									// -restart
-									m_benchmarkMaster.benchmarkManifestRestart();
+									m_restartedManifest = true; //+rcp 12/19/2011
+                                                                        m_benchmarkMaster.benchmarkManifestRestart();
 
 								} else if (command.equalsIgnoreCase("atom()")) {
 									// -atom(n):name
@@ -731,7 +732,8 @@ public final class Opbm extends	ModalApp
 								System.out.println("Fatal Error: Unable to run the prepared compilation.");
 						}
 
-						if (!m_noExit && (runCount != 0 || (isSilent && errorsWereReported)))
+						//if (!m_noExit && (runCount != 0 || (isSilent && errorsWereReported))) //-rcp 12/18/2011
+                                                if (!m_noExit && (runCount != 0 || (isSilent && errorsWereReported) || (m_restartedManifest && m_executingFromCommandLine))) //+rcp 12/18/2011
 						{	// If we get here, they want us to exit, or we did a run without any errors and we're ready to exit, or we had errors with a -silent switch
 							quit(errorsWereReported ? -1 : 0);
 						}
@@ -2241,7 +2243,23 @@ public final class Opbm extends	ModalApp
 			return("manual");
 	}
 
-	public void setRunName(String name)
+	// +rcp 12/18/2011
+        public void setExecutingFromCommandLine(Boolean automated)
+	{
+            m_executingFromCommandLine = automated;
+        }
+        //+rcp
+
+        // +rcp 12/18/2011
+        public boolean getExecutingFromCommandLine()
+        {
+            return(m_executingFromCommandLine);
+        }
+        //+rcp
+
+        
+        
+        public void setRunName(String name)
 	{
 		m_executingBenchmarkRunName = name;
 	}
@@ -3603,6 +3621,7 @@ public final class Opbm extends	ModalApp
 	private String					m_executingBenchmarkRunName;				// The name of the run assigned on the command line
 	private boolean					m_noExit;									// Was the -noexit command line option specified?
 	private Tuple					m_dialogTuple;								// Holds references (by id, in getFirst(n)) for all responses and last actions (see getDialog* and setDialog* responses)
+        private boolean                                 m_restartedManifest = false;                            //Defines a restarted manifest +rcp 12/18/2011
 
 	// Static variables used throughout
 	public static boolean			m_breakpointsEnabled;						// Used for debugging (An internal debugger flag, to determine if certain breakpoints used during development should be stopped at or not)

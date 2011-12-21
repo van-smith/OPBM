@@ -1473,7 +1473,12 @@ public final class BenchmarkManifest
 		m_manifestIsLoaded	= true;
 		m_isManifestInError	= false;
 
-		// Set the run name globally for the app to access
+		//+rcp 12/18/2011
+                // Set automated globally so it can be used when we return
+                m_opbm.setExecutingFromCommandLine(m_automated);
+                //+rcp
+
+                // Set the run name globally for the app to access
 		m_name = m_controlRun.getAttribute("name");
 		m_opbm.setRunName(m_name);
 	}

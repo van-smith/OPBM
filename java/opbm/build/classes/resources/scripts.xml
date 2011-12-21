@@ -1388,24 +1388,18 @@
 			</molecule>
 			<molecule name="JavaScript" shortname="Browser">
 				<atom name="Chrome SunSpider" shortname="CSpider" sourcename="Chrome SunSpider"></atom>
-				<atom name="Chrome Kraken" shortname="CKraken" sourcename="Chrome Kraken"></atom>
 				<atom name="Chrome Google V8" shortname="CV8" sourcename="Chrome Google V8"></atom>
 				<atom name="Firefox SunSpider" shortname="FSpider" sourcename="Firefox SunSpider"></atom>
-				<atom name="Firefox Kraken" shortname="FKraken" sourcename="Firefox Kraken"></atom>
 				<atom name="Firefox Google V8" shortname="FV8" sourcename="Firefox Google V8"></atom>
 				<atom name="IE SunSpider" shortname="ISpider" sourcename="IE SunSpider"></atom>
-				<atom name="IE Kraken" shortname="IKraken" sourcename="IE Kraken"></atom>
 				<atom name="IE Google V8" shortname="IV8" sourcename="IE Google V8"></atom>
 				<atom name="Opera SunSpider" shortname="OSpider" sourcename="Opera SunSpider"></atom>
-				<atom name="Opera Kraken" shortname="OKraken" sourcename="Opera Kraken"></atom>
 				<atom name="Opera Google V8" shortname="OV8" sourcename="Opera Google V8"></atom>
 				<atom name="Safari SunSpider" shortname="SSpider" sourcename="Safari SunSpider"></atom>
-				<atom name="Safari Kraken" shortname="SKraken" sourcename="Safari Kraken"></atom>
 				<atom name="Safari Google V8" shortname="SV8" sourcename="Safari Google V8"></atom>
 			</molecule>
 			<molecule name="Java" shortname="Java">
 				<atom name="Java Sort" shortname="JSort" sourcename="Java Sort"></atom>
-				<atom name="Java String" shortname="JString" sourcename="Java String"></atom>
 				<atom name="Java Security" shortname="JSecurity" sourcename="Java Security"></atom>
 				<atom name="Java Stream" shortname="JStream" sourcename="Java Stream"></atom>
 			</molecule>

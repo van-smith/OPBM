@@ -16,6 +16,8 @@
 
 Dim $CurrentLoop
 Dim $LoopLimit
+Dim $ChromeLocalAppData
+Dim $googleUpdateFolder
 
 $gBaselines[2][0] = $INSTALL_CHROME
 $gBaselines[2][1] = $INSTALL_CHROME_SCORE
@@ -35,10 +37,15 @@ InitializeChromeScript()
 
 ;KillChromeIfRunning();rcp
 
+;+rcp 12/21/2011 To remove old preferences, etc.
+outputDebug( "Removing Chrome localappdata")
+RemoveChromeLocalAppData()
+;rcp
+
 outputDebug( "Install()" )
 Install()
 
-;KillChromeIfRunning()	; Will force-close if it "resiss" normal close attempts;rcp
+;KillChromeIfRunning()	; Will force-close if it "resists" normal close attempts;rcp
 
 ; Close any instances of the browser which may have auto-launched
 opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
@@ -54,6 +61,11 @@ If not isChromeAlreadyInstalled() Then
 	opbmPauseAndCloseAllWindowsNotPreviouslyNoted()
 	Exit -1
 Endif
+
+;+rcp 12/21/2011 To remove automatic updates
+outputDebug( "Removing Google updater" )
+RemoveGoogleUpdater()
+;rcp
 
 outputDebug( "FinalizeScript()" )
 opbmFinalizeScript( "chromeInstallTimes.csv" )
@@ -78,7 +90,8 @@ Func Install()
 	;Added the following for slow installs -rcp
 	;The installer takes about 90 sec mostly looking for the Internet
 	If(WinExists("Google Chrome Installer")) Then
-		WinWaitNotActive("Google Chrome Installer"," ",120000)
+		WinActivate("Google Chrome Installer")
+		WinWaitNotActive("Google Chrome Installer"," ",180000)
 	EndIf
 	;-rcp
 	opbmWaitUntilSystemIdle( $gPercent, 1000, 45000 )
@@ -86,8 +99,17 @@ Func Install()
 
 	; Wait for a possible (optional?) post-launch window to arrive
 	Sleep(10000)
-	Send("{enter}") ;just in case it's required
-	WinClose( "Google Chrome" )
+	;+rcp 12/21/2011
+	If(WinExists("Installation")) Then
+		WinActivate("Installation")
+		Send("{enter}") ;just in case it's required
+	EndIf
+
+	If (WinExists("Google Chrome")) Then
+		WinActivate("Google Chrome")
+		WinClose( "Google Chrome" )
+	EndIf
+	;rcp
 
 	;KillChromeIfRunning();rcp
 EndFunc
@@ -97,3 +119,25 @@ Func SetInitialSettings()
 	; This feature was wrapped into this C++ function in the opbm.dll
 	ChromeInstallerAssist()
 EndFunc
+
+;+rcp 12/21/2011 To remove old preferences, etc.
+Func RemoveChromeLocalAppData()
+	$ChromeLocalAppData = EnvGet("localappdata")&"\google"
+	If FileExists($ChromeLocalAppData) Then
+		DirRemove($ChromeLocalAppData,1)
+	Else
+		outputDebug($ChromeLocalAppData&" does not exist")
+	EndIf
+EndFunc
+;rcp
+
+;+rcp 12/21/2011 To remove automatic updates
+Func RemoveGoogleUpdater()
+	$googleUpdateFolder = EnvGet("ProgramFiles(x86)")&"\Google\Update"
+	If FileExists($googleUpdateFolder) Then
+		DirRemove($googleUpdateFolder,1)
+	Else
+		outputDebug($googleUpdateFolder&" does not exist")
+	EndIf
+EndFunc
+;rcp
