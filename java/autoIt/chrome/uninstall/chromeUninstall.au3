@@ -23,7 +23,7 @@ $gBaselines[2][1] = $LAUNCH_CHROME_UNINSTALLER_SCORE
 $gBaselines[3][0] = $UNINSTALL_CHROME
 $gBaselines[3][1] = $UNINSTALL_CHROME_SCORE
 
-outputDebug( "Starting up Chrome Un-installer" )
+outputDebug( "Starting up Chrome Uninstaller" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
@@ -96,7 +96,7 @@ Func LaunchUninstaller()
 		$gPID = Run( 'uninstallChrome.bat', @ScriptDir, @SW_HIDE )
 	EndIf
 
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	;opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitActivate( "Uninstall Google Chrome", "", $gTimeout, $ERROR_PREFIX & "WinWait: Uninstall Google Chrome: Unable to find Window.")
 	TimerEnd( $LAUNCH_CHROME_UNINSTALLER )
 EndFunc

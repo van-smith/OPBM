@@ -131,14 +131,14 @@ Func CloseExcel()
 	opbmWinWaitActivate( $MICROSOFT_EXCEL, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel. Unable to find Window." )
 	TimerBegin()
 	Send("!fx")
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
-	;Just in case there was an unanticipated change made -rcp 11/25/2011
-	If WinExists($MICROSOFT_EXCEL) Then
-		WinActivate( $MICROSOFT_EXCEL)
-		Send("!n")	;Don't save
-		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	If WinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout ) = 0 Then
+		If WinExists($MICROSOFT_EXCEL) Then
+			WinActivate( $MICROSOFT_EXCEL)
+			TimerBegin()
+			Send("!n")	;Don't save
+		EndIf
 	EndIf
-	opbmWinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )
+	opbmWinWaitClose( $MICROSOFT_EXCEL, $STATUS_BAR, $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Excel: Window did not close." )			
 	TimerEnd( $CLOSE_MICROSOFT_EXCEL )
 
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )

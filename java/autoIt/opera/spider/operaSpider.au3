@@ -19,10 +19,10 @@ Dim $CurrentLoop
 Dim $LoopLimit
 
 ; Begin at 2 (see operaCommon for definition of 0 and 1)
-$gBaselines[2][0] = $TYPE_SUNSPIDER_URL
-$gBaselines[2][1] = $OPERA_TYPE_SUNSPIDER_URL_SCORE
-$gBaselines[3][0] = $RUN_SUNSPIDER
-$gBaselines[3][1] = $OPERA_RUN_SUNSPIDER_SCORE
+;$gBaselines[2][0] = $TYPE_SUNSPIDER_URL
+;$gBaselines[2][1] = $OPERA_TYPE_SUNSPIDER_URL_SCORE
+$gBaselines[2][0] = $RUN_SUNSPIDER
+$gBaselines[2][1] = $OPERA_RUN_SUNSPIDER_SCORE
 
 outputDebug( "Starting up Opera Spider" )
 

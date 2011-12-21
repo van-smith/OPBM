@@ -79,7 +79,7 @@ Func Launch7ZipInstaller()
 	TimerBegin()
 	$gPID = Run( $installer, "C:\", @SW_SHOW )
 	; Wait for it to load
-	opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
+	;opbmWaitUntilSystemIdle( $gPercent, $gDurationMS, $gTimeoutMS )
 	
 	; Wait until it is done uncompressing and begins with its dialog
 	opbmWinWaitActivate( $InstallerWindowTitle, "Welcome", 30, $ERROR_PREFIX & "WinWait: 7-Zip 9.20 Setup: Unable to find Window.")

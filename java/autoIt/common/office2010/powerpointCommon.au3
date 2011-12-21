@@ -104,7 +104,7 @@ Func closePowerPoint()
 		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	EndIf
 	opbmWinWaitClose( $MICROSOFT_POWERPOINT, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft PowerPoint: Window did not close." )
-	opbmWaitUntilSystemIdle( 10, 100, 5000 )
+	;opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $CLOSE_MICROSOFT_POWERPOINT )
 
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )

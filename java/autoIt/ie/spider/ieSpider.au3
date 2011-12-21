@@ -18,10 +18,10 @@
 Dim $CurrentLoop
 Dim $LoopLimit
 
-$gBaselines[2][0] = $TYPE_SUNSPIDER_URL
-$gBaselines[2][1] = $IE_TYPE_SUNSPIDER_URL_SCORE
-$gBaselines[3][0] = $RUN_SUNSPIDER
-$gBaselines[3][1] = $IE_RUN_SUNSPIDER_SCORE
+;$gBaselines[2][0] = $TYPE_SUNSPIDER_URL
+;$gBaselines[2][1] = $IE_TYPE_SUNSPIDER_URL_SCORE
+$gBaselines[2][0] = $RUN_SUNSPIDER
+$gBaselines[2][1] = $IE_RUN_SUNSPIDER_SCORE
 
 outputDebug( "Starting up Internet Explorer SunSpider" )
 

@@ -26,8 +26,8 @@ Const $LAUNCH_AVISYNTH_INSTALL				= "Launch AviSynth Install"
 Const $RUN_AVISYNTH_INSTALL					= "Run AviSynth Install"
 ;Const $RUN_AVISYNTH_INSTALL_SCORE			= 1.250468203			;Moved to baselineScores 2011_12_16 -rcp  1.0
 
-Const $CPU_USAGE_THRESHOLD 					= 5 ; percent
-Const $CPU_USAGE_THRESHOLD_TIME				= 100 ; milliseconds
+Const $CPU_USAGE_THRESHOLD 					= 3 ; percent
+Const $CPU_USAGE_THRESHOLD_TIME				= 200 ; milliseconds
 Const $CPU_USAGE_THRESHOLD_TIMEOUT			= 5000 ; milliseconds
 
 Dim $gBaselineSize
@@ -77,7 +77,7 @@ Func launchAviSynthInstaller()
 	TimerBegin()
 	$gPID = Run( $FILENAME_AVISYNTH_INSTALL, "C:\", @SW_SHOWDEFAULT )
 	opbmWinWaitActivate( $WINDOW_AVISYNTH_INSTALL_1, "", $gTimeout, $ERROR_PREFIX & "WinWait: AviSynthInstall. Unable to find Window." )
-	opbmWaitUntilSystemIdle( $CPU_USAGE_THRESHOLD, $CPU_USAGE_THRESHOLD_TIME, $CPU_USAGE_THRESHOLD_TIMEOUT )
+	;opbmWaitUntilSystemIdle( $CPU_USAGE_THRESHOLD, $CPU_USAGE_THRESHOLD_TIME, $CPU_USAGE_THRESHOLD_TIMEOUT )
 	TimerEnd( $LAUNCH_AVISYNTH_INSTALL )
 EndFunc
 

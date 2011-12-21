@@ -30,7 +30,7 @@ Const $CLOSE_MICROSOFT_PUBLISHER		= "Close Microsoft Publisher 2010"
 Const $HEDGE_OPEN_FLYER					= "Open HEDGE flyer"
 Const $HEDGE_PAGE						= "Page through HEDGE flyer"
 Const $HEDGE_ROTATE						= "Rotate HEDGE flyer"
-Const $HEDGE_ZOOM_XPS					= "Zoon HEDGE XPS"
+Const $HEDGE_ZOOM_XPS					= "Zoom HEDGE XPS"
 Const $HEDGE_SAVE_XPS					= "Save HEDGE flyer as XPS"
 Const $HEDGE_XPS_EXIT					= "Exit HEDGE XPS flyer"
 Const $HEDGE_SAVE_AND_CLOSE_FLYER		= "Save and close HEDGE flyer"
@@ -99,19 +99,19 @@ Func closePublisher()
 	opbmWinWaitActivate( $MICROSOFT_PUBLISHER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Publisher. Unable to find Window." )
 	TimerBegin()
 	Send("!fx")
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	opbmWaitUntilProcessIdle( $gPID, 2, 200, $gTimeoutMS )
 
 	;Just in case there was an unanticipated change made -rcp 11/25/2011
 	If WinExists($MICROSOFT_PUBLISHER) Then
 		WinActivate( $MICROSOFT_PUBLISHER)
 		Send("!n")	;Don't save
-		opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+		;opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	EndIf
 	;opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	;Send("!n")
 
 	opbmWinWaitClose( $MICROSOFT_PUBLISHER, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Publisher: Window did not close." )
-	opbmWaitUntilSystemIdle( 10, 100, 5000 )
+	;opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $CLOSE_MICROSOFT_PUBLISHER )
 
 	outputDebug( $RESTORING_OFFICE_2010_REGISTRY_KEYS )

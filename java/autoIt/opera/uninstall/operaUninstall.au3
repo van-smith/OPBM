@@ -24,7 +24,7 @@ $gBaselines[2][1] = $LAUNCH_OPERA_UNINSTALLER_SCORE	;Eliminate Version reference
 $gBaselines[3][0] = $UNINSTALL_OPERA	;Eliminate Version reference -rcp 11/11/11
 $gBaselines[3][1] = $UNINSTALL_OPERA_SCORE	;Eliminate Version reference -rcp 11/11/11
 
-outputDebug( "Starting up Opera Un-installer" )	;Eliminate Version reference -rcp 11/11/11
+outputDebug( "Starting up Opera Uninstaller" )	;Eliminate Version reference -rcp 11/11/11
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
@@ -63,7 +63,7 @@ Func LaunchUninstaller()
 	; Begin the timer as the uninstaller loads
 	TimerBegin()
 	$gPID = Run($OPERA_UNINSTALL_COMMAND, "C:\", @SW_SHOW)
-	opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
+	;opbmWaitUntilProcessIdle( $gPID, $gPercent, $gDurationMS, $gTimeoutMS )
 	opbmWinWaitActivate( $OPERA_INSTALLER_WINDOW_NAME, "", $gTimeout, $ERROR_PREFIX & "WinWait: "& $OPERA_INSTALLER_WINDOW_NAME & ": Unable to find Window.")	;Eliminate Version reference-rcp 11/15/11
 	TimerEnd( $LAUNCH_OPERA_UNINSTALLER )	;Eliminate Version reference -rcp 11/11/11
 EndFunc

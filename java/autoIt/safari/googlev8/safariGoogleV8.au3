@@ -19,10 +19,10 @@ Dim $CurrentLoop
 Dim $LoopLimit
 
 ; Begin at 2 (see safariCommon for definition of 0 and 1)
-$gBaselines[2][0] = $TYPE_GOOGLEV8_URL
-$gBaselines[2][1] = $SAFARI_TYPE_GOOGLEV8_URL_SCORE
-$gBaselines[3][0] = $RUN_GOOGLEV8
-$gBaselines[3][1] = $SAFARI_RUN_GOOGLEV8_SCORE
+;$gBaselines[2][0] = $TYPE_GOOGLEV8_URL
+;$gBaselines[2][1] = $SAFARI_TYPE_GOOGLEV8_URL_SCORE
+$gBaselines[2][0] = $RUN_GOOGLEV8
+$gBaselines[2][1] = $SAFARI_RUN_GOOGLEV8_SCORE
 
 outputDebug( "Starting up Safari Google V8" )
 

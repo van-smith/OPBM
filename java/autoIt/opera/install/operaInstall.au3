@@ -121,7 +121,7 @@ Func AcceptAndInstall()
 	Send("{Enter}")
 	; Clicking that button immediately begins the install process
 	; Opera's main installer algorithm is not always using the CPU heavy, but sometimes file copying, so we wait a few seconds
-	Sleep(3000)
+	;Sleep(3000)
 	; There is no termination screen, so we wait for the system to be idle for a long while
 	opbmWaitUntilSystemIdle( 10, 1000, 120000 )
 	TimerEnd( $INSTALL_OPERA )	;Eliminate Version reference -rcp 11/11/11

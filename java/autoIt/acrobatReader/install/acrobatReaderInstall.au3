@@ -69,7 +69,7 @@ Func LaunchAcrobatReaderInstaller()
 	$gPID = Run( $ACROBAT_READER_INSTALLER, "C:\", @SW_SHOW )
 
 	; Acrobat's installer at startup is not always using the CPU heavy, but sometimes file copying, so we wait a few seconds
-	Sleep(3000)
+	;Sleep(3000)
 
 	; Wait until it is done uncompressing and begins with its dialog
 	opbmWinWaitActivate( $ACROBAT_READER_INSTALLER_WINDOW, $READY_TO_INSTALL, 120, $ERROR_PREFIX & "WinWait: Acrobat Reader Setup: Unable to find Window.")
@@ -96,8 +96,8 @@ Func AcceptAndInstall()
 
 	; The disk hammers away for a long time after the process ends, so wait for it to settle down for 2 seconds
 	outputDebug( "Waiting for hard disk to settle down" )
-	opbmWaitUntilSystemIdle( 5, 2000, 120000 )
-
+	;opbmWaitUntilSystemIdle( 5, 2000, 120000 )
+	WinWaitClose( $ACROBAT_READER_INSTALLER_WINDOW, "", 60000 )
 	TimerEnd( $INSTALL_ACROBAT_READER )
 EndFunc
 
@@ -113,10 +113,10 @@ EndFunc
 
 Func SetSecurityUpdatesToManual()
 	opbmWinWaitActivate( $ACROBAT_READER_WINDOW, "", 5000, $ERROR_PREFIX & "WinWait: Acrobat Reader: Unable to find Window.")
-	; van:: bug #24: this is an attempt to properly give focus to the Reader window:
-	;Send( "{PGDN}" ) ; Removed because it doesn't help -rcp 11/25/2011
-	;Send( "{PGUP}" ) ; Removed because it doesn't help -rcp 11/25/2011
-	; van:: bug #24: End
+	; van:: bug #74: this is an attempt to properly give focus to the Reader window:
+	Send( "{PGDN}" )
+	Send( "{PGUP}" )
+	; van:: bug #74: End
 
 	; Send Alt-E for edit menu, then "n" for Prefere&nces
 	;Send( "!en" )

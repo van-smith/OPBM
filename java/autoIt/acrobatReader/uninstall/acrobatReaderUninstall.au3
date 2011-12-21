@@ -24,7 +24,7 @@ $gBaselines[2][1] = $LAUNCH_ACROBAT_READER_UNINSTALLER_SCORE
 $gBaselines[3][0] = $UNINSTALL_ACROBAT_READER
 $gBaselines[3][1] = $UNINSTALL_ACROBAT_READER_SCORE
 
-outputDebug( "Starting up Adobe Acrobat Un-installer" )
+outputDebug( "Starting up Adobe Acrobat Uninstaller" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
@@ -60,7 +60,7 @@ Func LaunchAcrobatReaderUninstaller()
 	$gPID = Run( $ACROBAT_READER_UNINSTALLER, "C:\", @SW_SHOW )
 	
 	; Adobe's installer at startup is not always using the CPU heavy, but sometimes file copying, so we wait a few seconds
-	Sleep(3000)
+	;Sleep(3000)
 	
 	; Wait until it is done uncompressing and begins with its dialog
 	opbmWinWaitActivate( $ACROBAT_READER_INSTALLER_WINDOW, $ADOBE_READER_X_MAINTENANCE , 120, $ERROR_PREFIX & "WinWait: Acrobat Reader Setup: Unable to find Window.")

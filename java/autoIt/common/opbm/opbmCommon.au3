@@ -445,7 +445,7 @@ Func opbmTypeURL( $url, $timerText, $open = "Attempting to open URL", $waitForWi
 	outputDebug( $open )
 	
 	; Begin the timer before we press Ctrl+L for the address bar
-	TimerBegin()
+	;TimerBegin()
 	Send( "^l" )
 	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
 	
@@ -461,7 +461,7 @@ Func opbmTypeURL( $url, $timerText, $open = "Attempting to open URL", $waitForWi
 		; If we get here, then the window was found
 	EndIf
 	; Store our timing for this part
-	TimerEnd( $timerText )
+	;TimerEnd( $timerText )
 	; Don't sleep afterward because the caller will handle all of that
 EndFunc
 
@@ -469,7 +469,7 @@ Func opbmTypeURLSafari( $url, $timerText, $open = "Attempting to open URL", $wai
 	outputDebug( $open )
 	
 	; Begin the timer before we press Ctrl+L for the address bar
-	TimerBegin()
+	;TimerBegin()
 	Send( "^l" )
 	opbmWaitUntilProcessIdle( $gPID, 10, 100, 5000 )
 	
@@ -485,7 +485,7 @@ Func opbmTypeURLSafari( $url, $timerText, $open = "Attempting to open URL", $wai
 		; If we get here, then the window was found
 	EndIf
 	; Store our timing for this part
-	TimerEnd( $timerText )
+	;TimerEnd( $timerText )
 	; Don't sleep afterward because the caller will handle all of that
 EndFunc
 

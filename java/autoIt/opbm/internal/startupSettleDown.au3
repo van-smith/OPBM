@@ -26,18 +26,22 @@ Dim $timeout
 Dim $pollInterval
 Dim $threshhold
 
-; Iterate until we reach a 10 second interval of 5% or less CPU utilization
-; Timeout after 6 minutes, poll every 2 seconds, that way our times are never
-; more than two seconds off true
-$pollInterval		= 2		; seconds
+; Iterate until we reach a 10 second interval of 3% or less CPU utilization
+; Timeout after 10 minutes, poll every second, that way our times are never
+; more than ten seconds off
+$pollInterval		= 1		; seconds
 $threshhold			= 10	; seconds
-$timeout			= 360	; seconds
-$threshholdPercent	= 5		; percent
+$timeout			= 600	; seconds
+$threshholdPercent	= 3		; percent
 
 ; Iterate repeatedly until we reach one of those conditions
 TimerBegin()
+
+;+van 2011.12.18
+
 $count = 0
 While ($count * $pollInterval) < $threshhold AND ($totalCount * $pollInterval) < $timeout
+	; 
 	$percent = opbmWaitUntilSystemIdle( $threshholdPercent, $pollInterval * 1000, 1000 )
 	If $percent <= $threshholdPercent Then
 		$count = $count + 1
@@ -50,8 +54,19 @@ While ($count * $pollInterval) < $threshhold AND ($totalCount * $pollInterval) <
 	$totalCount = $totalCount + 1
 WEnd
 If ($totalCount * $pollInterval) >= $timeout Then
-	outputDebug("Did not settle down to " & $threshholdPercent & "% after " & $timeout & " seconds")
+	outputError("Did not settle down to " & $threshholdPercent & "% after " & $timeout & " seconds")
 EndIf
+
+#cs
+	$percent = opbmWaitUntilSystemIdle( $threshholdPercent, $threshhold * 1000, $timeout * 1000 )
+	If $percent > $threshholdPercent Then
+		outputDebug("Did not settle down to " & $threshholdPercent & "% after " & $timeout & " seconds")
+	Else
+		outputDebug( Int($percent) & "% at " & Int(TimerDiff( $gTimer ) / 1000) & " seconds" )
+	EndIf
+;+van 2011.12.18 - end
+#ce
+
 TimerEnd( $STARTUP_SETTLE_DOWN )
 opbmFinalizeScript( "startupSettleDown.csv" )
 Exit

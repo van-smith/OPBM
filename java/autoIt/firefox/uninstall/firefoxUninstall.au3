@@ -25,7 +25,7 @@ $gBaselines[3][1] = $UNINSTALL_FIREFOX_SCORE
 $gBaselines[4][0] = $CLOSE_UNINSTALLER
 $gBaselines[4][1] = $CLOSE_UNINSTALLER_SCORE
 
-outputDebug( "Starting up Firefox 5.0.1 Un-installer" )
+outputDebug( "Starting up Firefox 5.0.1 Uninstaller" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()

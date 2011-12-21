@@ -18,10 +18,10 @@
 Dim $CurrentLoop
 Dim $LoopLimit
 
-$gBaselines[2][0] = $TYPE_GOOGLEV8_URL
-$gBaselines[2][1] = $CHROME_TYPE_GOOGLEV8_URL_SCORE
-$gBaselines[3][0] = $RUN_GOOGLEV8
-$gBaselines[3][1] = $CHROME_RUN_GOOGLEV8_SCORE
+;$gBaselines[2][0] = $TYPE_GOOGLEV8_URL
+;$gBaselines[2][1] = $CHROME_TYPE_GOOGLEV8_URL_SCORE
+$gBaselines[2][0] = $RUN_GOOGLEV8
+$gBaselines[2][1] = $CHROME_RUN_GOOGLEV8_SCORE
 
 outputDebug( "Starting up Chrome Google V8" )
 

@@ -26,7 +26,7 @@ $gBaselines[2][1] = $LAUNCH_SEVENZIP_UNINSTALLER_SCORE
 $gBaselines[3][0] = $UNINSTALL_SEVENZIP
 $gBaselines[3][1] = $UNINSTALL_SEVENZIP_SCORE
 
-outputDebug( "Starting up 7zip Un-installer" )
+outputDebug( "Starting up 7zip Uninstaller" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()
@@ -123,10 +123,10 @@ Func Uninstallx64()
 
 	; Click the "Finish" button
 	Send( "!f" )
-	Sleep(250)
+	;Sleep(250)
 
 	; Wait for system to be idle
-	opbmWaitUntilSystemIdle( 10, 200, 10000 )
+	opbmWaitUntilSystemIdle( 3, 200, 10000 )
 	
 	TimerEnd( $UNINSTALL_SEVENZIP)
 EndFunc
@@ -144,7 +144,7 @@ Func Uninstalli386()
 	Sleep(250)
 
 	; Wait for system to be idle
-	opbmWaitUntilSystemIdle( 10, 200, 10000 )
+	opbmWaitUntilSystemIdle( 3, 200, 10000 )
 	
 	TimerEnd( $UNINSTALL_SEVENZIP)
 EndFunc

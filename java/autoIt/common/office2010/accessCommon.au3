@@ -100,7 +100,7 @@ Func launchAccess()
 	FirstRunCheck()
 	opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	opbmWinWaitActivate( $MICROSOFT_ACCESS, "", $gTimeout, $ERROR_PREFIX & "WinWait: Microsoft Access. Unable to find Window." )
-	opbmWaitUntilSystemIdle( 10, 100, 5000 )
+	;opbmWaitUntilSystemIdle( 10, 100, 5000 )
 	TimerEnd( $LAUNCH_MICROSOFT_ACCESS )
 EndFunc
 

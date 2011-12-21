@@ -24,7 +24,7 @@ $gBaselines[2][1] = $SAFARI_LAUNCH_SAFARI_UNINSTALLER_SCORE
 $gBaselines[3][0] = $UNINSTALL_SAFARI
 $gBaselines[3][1] = $SAFARI_UNINSTALL_SAFARI_SCORE
 
-outputDebug( "Starting up Safari 5.1.7534.50 Un-installer" )
+outputDebug( "Starting up Safari 5.1.7534.50 Uninstaller" )
 
 outputDebug( "InitializeGlobalVariables()" )
 InitializeGlobalVariables()

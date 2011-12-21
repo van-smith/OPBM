@@ -33,11 +33,11 @@ Const $TYPE_SUNSPIDER_URL 				= "Type SunSpider URL"
 Const $TYPE_GOOGLEV8_URL				= "Type URL to Google V8 benchmark"
 Const $TYPE_KRAKEN_URL					= "Type URL to Kraken benchmark"
 Const $LAUNCH_OPERA_INSTALLER			= "Launch Opera Installer"	;Eliminate Version reference -rcp 11/11/11
-Const $LAUNCH_OPERA_UNINSTALLER			= "Launch Opera Un-installer"	;Eliminate Version reference -rcp 11/11/11
+Const $LAUNCH_OPERA_UNINSTALLER			= "Launch Opera Uninstaller"	;Eliminate Version reference -rcp 11/11/11
 Const $BYPASS_NEXT_BUTTON				= "Bypass Next Button"
 Const $INSTALL_OPERA					= "Install Opera"	;Eliminate Version reference -rcp 11/11/11
-Const $UNINSTALL_OPERA					= "Un-install Opera"	;Eliminate Version reference -rcp 11/11/11
-Const $CLOSE_UNINSTALLER				= "Close Un-installer"
+Const $UNINSTALL_OPERA					= "Uninstall Opera"	;Eliminate Version reference -rcp 11/11/11
+Const $CLOSE_UNINSTALLER				= "Close Uninstaller"
 
 Const $RUN_SUNSPIDER 					= "Run SunSpider"
 Const $RUN_GOOGLEV8						= "Run Google V8"

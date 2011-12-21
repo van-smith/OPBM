@@ -30,11 +30,11 @@ Const $TYPE_SUNSPIDER_URL 				= "Type SunSpider URL"
 Const $TYPE_GOOGLEV8_URL				= "Type URL to Google V8 benchmark"
 Const $TYPE_KRAKEN_URL					= "Type URL to Kraken benchmark"
 Const $LAUNCH_FIREFOX_INSTALLER			= "Launch Firefox Installer"
-Const $LAUNCH_FIREFOX_UNINSTALLER		= "Launch Firefox Un-installer"
+Const $LAUNCH_FIREFOX_UNINSTALLER		= "Launch Firefox Uninstaller"
 Const $BYPASS_NEXT_BUTTON				= "Bypass Next Button"
 Const $INSTALL_FIREFOX					= "Install Firefox 5.0.1"
-Const $UNINSTALL_FIREFOX				= "Un-install Firefox 5.0.1"
-Const $CLOSE_UNINSTALLER				= "Close Un-installer"
+Const $UNINSTALL_FIREFOX				= "Uninstall Firefox 5.0.1"
+Const $CLOSE_UNINSTALLER				= "Close Uninstaller"
 Const $MOZILLA_FIREFOX_SETUP			= "Mozilla Firefox Setup"
 Const $WELCOME_TO_FIREFOX				= "Welcome to Firefox"
 Const $IMPORT_WIZARD					= "Import Wizard"
@@ -90,7 +90,7 @@ Func LaunchFirefox()
 
 	TimerBegin()
 	$gPID = Run( $FIREFOX_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
-	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
+	;opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
 	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_FIREFOX )
 EndFunc
@@ -104,7 +104,8 @@ Func CloseFirefox()
 	WinClose( $FIREFOX_WINDOW )
 
 	; Wait until the sytem settles down
-	opbmWaitUntilSystemIdle( 10, 100, 10000 )
+	;opbmWaitUntilSystemIdle( 10, 100, 10000 )
+	opbmWinWaitClose( $FIREFOX_WINDOW, "", $gTimeout, $ERROR_PREFIX & "WinWait: Firefox: Window did not close." )			
 
 	; Take the ending timer
 	TimerEnd( $CLOSE_FIREFOX )

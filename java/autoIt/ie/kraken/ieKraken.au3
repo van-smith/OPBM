@@ -19,10 +19,10 @@ Dim $CurrentLoop
 Dim $LoopLimit
 
 ; Begin at 2 (see ieCommon for definition of 0 and 1)
-$gBaselines[2][0] = $TYPE_KRAKEN_URL
-$gBaselines[2][1] = $IE_TYPE_KRAKEN_URL_SCORE
-$gBaselines[3][0] = $RUN_KRAKEN
-$gBaselines[3][1] = $IE_RUN_KRAKEN_SCORE
+;$gBaselines[2][0] = $TYPE_KRAKEN_URL
+;$gBaselines[2][1] = $IE_TYPE_KRAKEN_URL_SCORE
+$gBaselines[2][0] = $RUN_KRAKEN
+$gBaselines[2][1] = $IE_RUN_KRAKEN_SCORE
 
 outputDebug( "Starting up IE Kraken" )
 

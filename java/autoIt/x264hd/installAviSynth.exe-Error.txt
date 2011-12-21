@@ -1,0 +1,3 @@
+**************************************
+12/20/2011  12:43:28
+installAviSynth.exe:-1: WinWait: AviSynthInstall. Unable to find Window.

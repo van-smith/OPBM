@@ -31,11 +31,11 @@ Const $TYPE_SUNSPIDER_URL 				= "Type SunSpider URL"
 Const $TYPE_GOOGLEV8_URL				= "Type URL to Google V8 benchmark"
 Const $TYPE_KRAKEN_URL					= "Type URL to Kraken benchmark"
 Const $LAUNCH_SAFARI_INSTALLER			= "Launch Safari 5.1.7534.50 Installer"
-Const $LAUNCH_SAFARI_UNINSTALLER		= "Launch Safari 5.1.7534.50 Un-installer"
+Const $LAUNCH_SAFARI_UNINSTALLER		= "Launch Safari 5.1.7534.50 Uninstaller"
 Const $BYPASS_NEXT_BUTTON				= "Bypass Next Button"
 Const $INSTALL_SAFARI					= "Install Safari 5.1.7534.50"
-Const $UNINSTALL_SAFARI					= "Un-install Safari 5.1.7534.50"
-Const $CLOSE_UNINSTALLER				= "Close Un-installer"
+Const $UNINSTALL_SAFARI					= "Uninstall Safari 5.1.7534.50"
+Const $CLOSE_UNINSTALLER				= "Close Uninstaller"
 
 Const $RUN_SUNSPIDER 					= "Run SunSpider"
 Const $RUN_GOOGLEV8						= "Run Google V8"
@@ -84,7 +84,7 @@ Func LaunchSafari()
 	
 	TimerBegin()
 	$gPID = Run( $SAFARI_EXECUTABLE_TO_LAUNCH, "C:\", @SW_SHOWMAXIMIZED )
-	opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
+	;opbmWaitUntilProcessIdle( $gPID, 5, 100, 5000 )
 	opbmWinWaitActivate( $OPBM_SPLASH_HTML_TITLE, "", 30 )
 	TimerEnd( $LAUNCH_SAFARI )
 EndFunc
